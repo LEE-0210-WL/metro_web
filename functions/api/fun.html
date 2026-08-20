@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>好玩的东西 - 走进新天地·Railway</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Bahnschrift;
+  background:linear-gradient(135deg,#f0f4ff,#e0e7ff);
+  color:#333;
+  line-height:1.6;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.back-link{
+  position:fixed;
+  top:16px;
+  left:16px;
+  color:#2563eb;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  padding:8px 14px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(4px);
+  transition:all 0.2s ease;
+  z-index:100;
+}
+.back-link:hover{
+  background:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.page-title{
+  font-size:28px;
+  font-weight:700;
+  color:#1e3a8a;
+  margin-bottom:8px;
+  text-align:center;
+}
+.page-subtitle{
+  font-size:14px;
+  color:#6b7280;
+  margin-bottom:32px;
+  text-align:center;
+}
+#funcounter-wrap{
+  max-width:800px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.fc-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:24px 28px;
+  border-radius:20px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  flex-wrap:wrap;
+  gap:20px;
+  transition:all 0.3s ease;
+}
+.fc-row:hover{
+  box-shadow:0 8px 32px rgba(0,0,0,0.12);
+}
+.fc-estate{
+  background:linear-gradient(135deg,#eff6ff,#dbeafe);
+  border:1px solid #bfdbfe;
+}
+.fc-blast{
+  background:#dc2626;
+  border:1px solid #b91c1c;
+  color:#fff;
+}
+.fc-blast.done{
+  background:linear-gradient(135deg,#16a34a,#15803d);
+  border-color:#166534;
+}
+.fc-left{flex:1;min-width:260px}
+.fc-right{flex-shrink:0}
+.fc-title{font-size:24px;font-weight:700;margin-bottom:8px}
+.fc-estate .fc-title{color:#1d4ed8}
+.fc-blast .fc-title{color:#fbbf24}
+.fc-sub{font-size:14px;color:#6b7280;margin-bottom:4px}
+.fc-blast .fc-sub{color:#fecaca}
+.fc-sold{font-size:13px;color:#9ca3af}
+.fc-blast .fc-sold{color:#fca5a5}
+#fc-estate-num,#fc-sold-num{
+  font-weight:700;
+  color:#1d4ed8;
+  font-size:32px;
+  font-family:Bahnschrift;
+}
+#fc-blast-num{
+  font-weight:700;
+  color:#fbbf24;
+  font-size:32px;
+  font-family:Bahnschrift;
+}
+.fc-barwrap{
+  width:100%;
+  height:10px;
+  background:rgba(255,255,255,0.3);
+  border-radius:5px;
+  margin-top:10px;
+  overflow:hidden;
+}
+.fc-bar{
+  height:100%;
+  background:#fbbf24;
+  border-radius:5px;
+  transition:width 0.5s ease;
+  width:5%;
+}
+.fc-btns{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.fc-btn{
+  padding:10px 18px;
+  border-radius:10px;
+  border:none;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-family:Bahnschrift;
+}
+.fc-estate .fc-btn{
+  background:#2563eb;
+  color:#fff;
+}
+.fc-estate .fc-btn:hover{
+  background:#1d4ed8;
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+}
+.fc-blast .fc-btn{
+  background:#fbbf24;
+  color:#7c2d12;
+}
+.fc-blast .fc-btn:hover{
+  background:#f59e0b;
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(251,191,36,0.3);
+}
+.fc-btn:active{transform:translateY(0)scale(0.96)}
+.fc-custom{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.fc-custom input{
+  width:90px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #d1d5db;
+  font-size:14px;
+  text-align:center;
+  font-family:Bahnschrift;
+}
+.fc-estate .fc-custom input:focus{
+  outline:none;
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+.fc-blast .fc-custom input{
+  background:rgba(255,255,255,0.9);
+  border-color:#fca5a5;
+  color:#7c2d12;
+}
+.fc-blast .fc-custom input:focus{
+  outline:none;
+  border-color:#fbbf24;
+  box-shadow:0 0 0 3px rgba(251,191,36,0.25);
+}
+.funcounter-egg{
+  position:fixed;
+  top:20%;
+  left:50%;
+  transform:translateX(-50%)scale(0.8);
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  color:#1f2937;
+  padding:16px 32px;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  box-shadow:0 8px 32px rgba(251,191,36,0.4);
+  z-index:10000;
+  opacity:0;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;
+  white-space:nowrap;
+}
+.funcounter-egg.show{
+  opacity:1;
+  transform:translateX(-50%)scale(1);
+}
+.funcounter-blastdone{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(8px);
+  z-index:10001;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 0.4s ease;
+  pointer-events:none;
+}
+.funcounter-blastdone.show{
+  opacity:1;
+  pointer-events:auto;
+}
+.bbd-inner{
+  background:#fff;
+  border-radius:20px;
+  padding:40px 36px;
+  text-align:center;
+  max-width:400px;
+  width:90%;
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+  transform:scale(0.9);
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.funcounter-blastdone.show .bbd-inner{transform:scale(1)}
+.bbd-inner h2{font-size:24px;color:#dc2626;margin-bottom:12px}
+.bbd-inner p{font-size:16px;color:#6b7280;margin-bottom:24px}
+#bbd-close{
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:12px 32px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s ease;
+}
+#bbd-close:hover{background:#b91c1c;transform:translateY(-2px)}
+@media(max-width:768px){
+  .fc-row{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:18px;
+  }
+  .fc-right{width:100%}
+  .fc-btns{width:100%;justify-content:flex-start}
+  .fc-title{font-size:20px}
+  #fc-estate-num,#fc-sold-num{font-size:26px;font-family:Bahnschrift}
+  #fc-blast-num{font-size:26px;font-family:Bahnschrift}
+  .page-title{font-size:22px}
+}
+</style>
+</head>
+<body>
+<a href="index" class="back-link">返回首页</a>
+<h1 class="page-title">楼盘进度计数器</h1>
+<p class="page-subtitle">实时进度，速度受Workers KV影响</p>
+<div id="funcounter-wrap"></div>
+
+<script>
+(function(){
+"use strict";
+var API_BASE=" ";
+var POLL_INTERVAL=3000;
+var remaining=11300000000;
+var sold=50000000;
+var blast=5.0;
+var lastSync=0;
+function fmtMoney(n){return n.toLocaleString("zh-CN")}
+function fmtBlast(n){return n.toFixed(1)}
+var eggMessages={
+  estate:{
+    1:["又卖了一套！深铁阅云境火爆热销中","恭喜业主喜提新房！","+1套，开发商笑开花"],
+    5:["大单！神秘买家一次性购入5套！","整层客户出现！","5套成交，销售冠军诞生"],
+    10:["整层售罄！开发商笑醒了","10套大单！这栋楼要清盘了","豪横！直接拿下10套"],
+    custom:["成交！数字由你定义","自定义大单，牛！","这数字...有故事啊"]
+  },
+  blast:{
+    0.1:["爆破队正在热身...","0.1%进度，炸药已就位","开始倒计时..."],
+    0.5:["轰！又炸掉一层！","半个百分点，尘土飞扬","爆破进度稳步推进"],
+    1:["巨响！这栋楼又矮了一层","+1%！震感强烈","爆破专家在线施工"],
+    custom:["自定义爆破量，专业！","这数字...精准打击","爆破进度由你掌控"]
+  }
+};
+function showEgg(type,amount){
+  var msgs;
+  if(type==="estate"){
+    if(amount===1)msgs=eggMessages.estate[1];
+    else if(amount===5)msgs=eggMessages.estate[5];
+    else if(amount===10)msgs=eggMessages.estate[10];
+    else msgs=eggMessages.estate.custom;
+  }else{
+    if(Math.abs(amount-0.1)<0.01)msgs=eggMessages.blast[0.1];
+    else if(Math.abs(amount-0.5)<0.01)msgs=eggMessages.blast[0.5];
+    else if(Math.abs(amount-1)<0.01)msgs=eggMessages.blast[1];
+    else msgs=eggMessages.blast.custom;
+  }
+  var msg=msgs[Math.floor(Math.random()*msgs.length)];
+  var div=document.createElement("div");
+  div.className="funcounter-egg";
+  div.textContent=msg;
+  document.body.appendChild(div);
+  requestAnimationFrame(function(){div.classList.add("show")});
+  setTimeout(function(){
+    div.classList.remove("show");
+    setTimeout(function(){div.remove()},400);
+  },2200);
+}
+async function apiGet(){
+  try{
+    var r=await fetch(API_BASE+"/api/counters");
+    if(!r.ok)throw new Error("http"+r.status);
+    return await r.json();
+  }catch(e){console.error("sync-get",e);return null}
+}
+async function apiPost(id,delta){
+  try{
+    var r=await fetch(API_BASE+"/api/counters",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({id:id,delta:delta})
+    });
+    if(!r.ok)throw new Error("http"+r.status);
+    return await r.json();
+  }catch(e){console.error("sync-post",e);return null}
+}
+function renderEstate(){
+  var el=document.getElementById("fc-estate-num");
+  var sl=document.getElementById("fc-sold-num");
+  if(el)el.textContent=fmtMoney(remaining);
+  if(sl)sl.textContent=fmtMoney(sold);
+}
+function renderBlast(){
+  var el=document.getElementById("fc-blast-num");
+  var bar=document.getElementById("fc-blast-bar");
+  if(el)el.textContent=fmtBlast(blast)+"/100.0";
+  if(bar)bar.style.width=Math.min(blast,100)+"%";
+  if(blast>=100){
+    var wrap=document.getElementById("fc-blast-wrap");
+    if(wrap&&!wrap.classList.contains("done")){
+      wrap.classList.add("done");
+      showBlastDone();
+    }
+  }
+}
+function showBlastDone(){
+  var div=document.createElement("div");
+  div.className="funcounter-blastdone";
+  div.innerHTML='<div class="bbd-inner"><h2>大楼已完全爆破！</h2><p>吵吵吵楼已成为历史</p><button id="bbd-close">我知道了</button></div>';
+  document.body.appendChild(div);
+  requestAnimationFrame(function(){div.classList.add("show")});
+  div.querySelector("#bbd-close").onclick=function(){
+    div.classList.remove("show");
+    setTimeout(function(){div.remove()},400);
+  };
+}
+function bindEstate(){
+  document.getElementById("fc-btn-e1").onclick=function(){doEstate(1)};
+  document.getElementById("fc-btn-e5").onclick=function(){doEstate(5)};
+  document.getElementById("fc-btn-e10").onclick=function(){doEstate(10)};
+  document.getElementById("fc-btn-ec").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-e").value,10);
+    if(v>0&&v<=100000000){doEstate(v)}
+    else{alert("请输入1-1亿之间的整数")}
+  };
+}
+function bindBlast(){
+  document.getElementById("fc-btn-b01").onclick=function(){doBlast(0.1)};
+  document.getElementById("fc-btn-b05").onclick=function(){doBlast(0.5)};
+  document.getElementById("fc-btn-b1").onclick=function(){doBlast(1)};
+  document.getElementById("fc-btn-bc").onclick=function(){
+    var v=parseFloat(document.getElementById("fc-inp-b").value);
+    if(v>0&&v<=5){doBlast(v)}
+    else{alert("请输入0.1-5之间的数字")}
+  };
+}
+async function doEstate(n){
+  var cost=n*1000000;
+  if(remaining<cost){alert("剩余楼盘不足！");return}
+  var res=await apiPost("estate",n);
+  if(res&&res.ok){
+    remaining=res.remaining;
+    sold=res.sold;
+    renderEstate();
+    showEgg("estate",n);
+  }else{alert("同步失败，请重试")}
+}
+async function doBlast(n){
+  if(blast>=100){alert("大楼已完全爆破！");return}
+  var res=await apiPost("blast",n);
+  if(res&&res.ok){
+    blast=res.blast;
+    renderBlast();
+    showEgg("blast",n);
+  }else{alert("同步失败，请重试")}
+}
+async function syncFromServer(){
+  var now=Date.now();
+  if(now-lastSync<2000)return;
+  lastSync=now;
+  var data=await apiGet();
+  if(!data)return;
+  if(data.remaining!==undefined)remaining=data.remaining;
+  if(data.sold!==undefined)sold=data.sold;
+  if(data.blast!==undefined)blast=data.blast;
+  renderEstate();
+  renderBlast();
+}
+function init(){
+  var wrap=document.getElementById("funcounter-wrap");
+  if(!wrap)return;
+  wrap.innerHTML=
+    '<div class="fc-row fc-estate">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title">大运TOD巨作深铁阅云境</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-estate-num">'+fmtMoney(remaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-sold-num">'+fmtMoney(sold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" id="fc-btn-e1">-1套</button>'+
+          '<button class="fc-btn" id="fc-btn-e5">-5套</button>'+
+          '<button class="fc-btn" id="fc-btn-e10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-e" placeholder="自定义" min="1" max="100000000">'+
+            '<button class="fc-btn" id="fc-btn-ec">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="fc-row fc-blast" id="fc-blast-wrap">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title">吵吵吵楼</div>'+
+        '<div class="fc-sub">爆破进度 <span id="fc-blast-num">'+fmtBlast(blast)+'/100.0</span></div>'+
+        '<div class="fc-barwrap"><div class="fc-bar" id="fc-blast-bar"></div></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" id="fc-btn-b01">+0.1</button>'+
+          '<button class="fc-btn" id="fc-btn-b05">+0.5</button>'+
+          '<button class="fc-btn" id="fc-btn-b1">+1</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-b" placeholder="自定义" min="0.1" max="5" step="0.1">'+
+            '<button class="fc-btn" id="fc-btn-bc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  bindEstate();
+  bindBlast();
+  renderEstate();
+  renderBlast();
+  syncFromServer();
+  setInterval(syncFromServer,POLL_INTERVAL);
+}
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",init);
+}else{
+  init();
+}
+})();
+</script>
+</body>
+</html>
