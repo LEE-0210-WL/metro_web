@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深圳地铁建设历程 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    
+    /* 顶部导航栏 */
+    .header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
+    .logo img { width: 100%; height: 100%; object-fit: cover; }
+    .site-name { font-size: 16px; font-weight: 600; color: white; }
+    .current-time { font-size: 12px; color: #9ca3af; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a {
+      padding: 8px 16px; border-radius: 8px;
+      text-decoration: none; font-size: 14px; font-weight: 500;
+      color: #d1d5db; transition: all 0.3s ease;
+    }
+    .nav-links a:hover { background-color: #374151; color: white; }
+    .nav-links a.active { background-color: #2563eb; color: white; }
+    .mobile-menu-btn { display: none; background: none; border: none; color: white; cursor: pointer; }
+    
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+    
+    /* 页面标题 - 左对齐 */
+    .page-header {
+      margin-bottom: 40px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      gap: 20px; 
+      flex-wrap: wrap;
+      padding: 20px 0;
+    }
+
+    /* 标题行：图标 + 标题横向排列 */
+    .page-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 标题图标尺寸限制 */
+    .page-title-icon {
+     width: 32px;
+     height: 32px;
+     flex-shrink: 0;
+     color: #1e293b;
+    }
+
+     /* 返回按钮行内样式 */
+     .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-subtitle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+    .page-subtitle-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      color: #1e293b;
+    }
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+    
+    /* 统计概览卡片 */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2563eb;
+      line-height: 1.2;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    
+    /* 时间线主容器 */
+    .timeline-wrapper {
+      position: relative;
+      padding-left: 60px;
+    }
+    
+    /* 中心竖线 */
+    .timeline-wrapper::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #2563eb 0%, #7c3aed 50%, #f59e0b 100%);
+      border-radius: 3px;
+    }
+    
+    /* 年代分组标题 */
+    .era-group {
+      margin-bottom: 48px;
+      position: relative;
+    }
+    .era-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .era-badge {
+      position: absolute;
+      left: -60px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+      z-index: 2;
+    }
+    .era-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .era-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin-left: auto;
+    }
+    
+    /* 事件卡片 */
+    .event-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .event-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border-color: #cbd5e1;
+      transform: translateX(4px);
+    }
+    
+    /* 左侧日期标记 */
+    .event-card::before {
+      content: '';
+      position: absolute;
+      left: -44px;
+      top: 28px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #2563eb;
+      z-index: 2;
+    }
+    .event-card.highlight::before {
+      border-color: #f59e0b;
+      background: #f59e0b;
+      box-shadow: 0 0 0 4px rgba(245,158,11,0.2);
+    }
+    .event-card.milestone::before {
+      border-color: #ef4444;
+      background: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.2);
+    }
+    
+    /* 事件头部 */
+    .event-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .event-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .event-date svg { width: 14px; height: 14px; }
+    .event-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .event-badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .badge-newline { background: #dcfce7; color: #166534; }
+    .badge-extension { background: #fef3c7; color: #92400e; }
+    .badge-milestone { background: #fee2e2; color: #991b1b; }
+    .badge-express { background: #e0e7ff; color: #3730a3; }
+    .badge-unmanned { background: #f3e8ff; color: #7c3aed; }
+    .badge-intercity { background: #cffafe; color: #0e7490; }
+    
+    .event-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    
+    /* 线路信息网格 */
+    .line-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .line-info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .line-info-item svg {
+      width: 18px;
+      height: 18px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+    .line-info-item .label {
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .line-info-item .value {
+      color: #1e293b;
+      font-weight: 600;
+      margin-left: auto;
+    }
+    
+    /* 事件描述 */
+    .event-desc {
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .event-desc p { margin-bottom: 8px; }
+    .event-desc p:last-child { margin-bottom: 0; }
+    
+    /* 站点列表 */
+    .station-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .station-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    .station-tag.transfer {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .line-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    
+    /* 累计里程进度条 */
+    .mileage-track {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .mileage-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mileage-progress {
+      flex: 1;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mileage-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 1s ease;
+    }
+    .mileage-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2563eb;
+      white-space: nowrap;
+    }
+    
+    /* 折叠/展开 */
+    .event-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .event-details.expanded {
+      max-height: 2000px;
+      opacity: 1;
+    }
+    .expand-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: #2563eb;
+      font-weight: 600;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px 0;
+      margin-top: 8px;
+    }
+    .expand-btn:hover { color: #1d4ed8; }
+    .expand-btn svg { width: 14px; height: 14px; transition: transform 0.3s ease; }
+    .expand-btn.expanded svg { transform: rotate(180deg); }
+    
+    /* 返回按钮 */
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 60px; }
+      .nav-links { display: none; width: 100%; flex-direction: column; padding: 10px 0; background: #1f2937; position: absolute; top: 60px; left: 0; }
+      .nav-links.active { display: flex; }
+      .nav-links a { padding: 12px 20px; border-radius: 0; }
+      .mobile-menu-btn { display: block; }
+      .current-time { display: none; }
+      .container { margin-top: 20px; padding: 0 16px;
+    width: min(90%, 1200px);
+}
+      .page-title { font-size: 24px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .timeline-wrapper { padding-left: 44px; }
+      .timeline-wrapper::before { left: 16px; }
+      .era-badge { left: -44px; width: 36px; height: 36px; font-size: 11px; }
+      .event-card::before { left: -32px; width: 10px; height: 10px; }
+      .event-header { flex-direction: column; align-items: flex-start; }
+      .line-info-grid { grid-template-columns: 1fr; }
+    }
+  
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+</style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+  
+  <main class="container">
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <svg class="page-title-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <h1 class="page-title">深圳地铁建设历程</h1>
+      </div>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </div>
+
+<!-- 副标题单独放在外面 -->
+<div class="page-subtitle-wrapper">
+  <p class="page-subtitle">从2004年首条线路开通到2026年迈入650公里时代，记录深圳轨道交通22年发展脉络</p>
+</div>
+    
+    <!-- 统计概览 -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-number">22</div>
+        <div class="stat-label">建设年数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">17</div>
+        <div class="stat-label">运营线路</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">653.8</div>
+        <div class="stat-label">运营里程(km)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">452</div>
+        <div class="stat-label">车站数量</div>
+      </div>
+    </div>
+    
+    <!-- 时间线 -->
+    <div class="timeline-wrapper" id="timeline">
+      <!-- 由JS动态生成 -->
+    </div>
+  </main>
+
+  <script>
+    // 深圳地铁开通历史数据（按时间倒序排列）
+    const historyData = [
+      {
+        era: "2026",
+        eraTitle: "2026年 · 南北大动脉贯通",
+        eraDesc: "13号线全线贯通，线网突破650公里",
+        events: [
+          {
+            date: "2026年6月28日",
+            title: "13号线二期北延段开通",
+            badges: ["extension", "express", "unmanned"],
+            lines: [{ name: "13号线二期北延", color: "#F6AD2D" }],
+            mileage: "19.25",
+            totalMileage: 653.7,
+            stations: "11座",
+            type: "市域快线延伸",
+            operator: "港铁中铁电化（深圳）",
+            desc: "上屋站（不含）— 李松蓢站，与一期贯通运营。深圳中西部南北向骨干线路全线贯通，串联南山科技园、留仙洞总部基地、石岩、光明科学城等核心片区。光明中心至南山中心仅需约45分钟。",
+            significance: "被称为深圳南北向'王炸'大线，预留与东莞地铁衔接条件，助力粤港澳大湾区互联互通。",
+            stationList: ["红坳公园站", "光明城站", "德雅路站", "凤凰城站", "月亮路站", "将围站", "新庄站", "公明广场站", "上村站", "下村站", "李松蓢站"],
+            transferStations: ["光明城站(6支/高铁)", "凤凰城站(6号线)"],
+            highlight: true
+          }
+        ]
+      },
+      {
+        era: "2025",
+        eraTitle: "2025年 · 四线齐发，迈入600公里",
+        eraDesc: "全年分三批开通6条（段）新线，实现区区通地铁",
+        events: [
+          {
+            date: "2025年12月28日",
+            title: "四线同步开通（第二批）",
+            badges: ["extension", "milestone"],
+            lines: [
+              { name: "5号线西延", color: "#9E4DAA" },
+              { name: "8号线三期", color: "#B95800" },
+              { name: "11号线二期红岭南段", color: "#672146" },
+              { name: "13号线一期北段", color: "#F6AD2D" }
+            ],
+            mileage: "28.4",
+            totalMileage: 634.5,
+            stations: "21座",
+            type: "多线延伸",
+            operator: "深铁集团 / 港铁（深圳）",
+            desc: "5号线西延：黄贝岭—大剧院，全长2.88km，设湖贝、东门、大剧院3站，5号线无需换乘2号线即可直达罗湖核心商圈。8号线三期：小梅沙—溪涌，全长3.69km，设溪涌1站，地铁首次进入大鹏新区。11号线二期红岭南段：华强南—红岭南，全长2.3km，设红岭南1站，加强罗湖中心区轨道快线服务。13号线一期北段：高新中—上屋，全长22.44km，设16站，串联西丽综合交通枢纽、留仙洞总部基地、石岩片区。",
+            significance: "深圳实现10个区（新区）轨道交通全覆盖，正式迈入600公里时代。",
+            stationList: ["湖贝站", "东门站", "大剧院站", "溪涌站", "红岭南站", "高新北站", "西丽高铁站(越站)", "港大站", "应人石站", "罗租站", "石岩站", "上屋站"],
+            transferStations: ["大剧院站(1/2号线)", "溪涌站(未来规划)", "红岭南站(9号线·出站换乘)", "上屋站(6号线)"],
+            milestone: true
+          },
+          {
+            date: "2025年9月28日",
+            title: "16号线二期 & 6号线支线二期开通",
+            badges: ["extension", "unmanned"],
+            lines: [
+              { name: "16号线二期", color: "#181BA5" },
+              { name: "6号线支线二期", color: "#027776" }
+            ],
+            mileage: "14.4",
+            totalMileage: 609.6,
+            stations: "11座",
+            type: "延伸线",
+            operator: "深铁集团",
+            desc: "16号线二期：大运—园山西坑，全长9.46km，设8站，加强龙岗中心城与园山片区联系，实现东部中心'内聚外联'。6号线支线二期：光明—光明城，全长4.95km，设3站，采用GOA4级全自动无人驾驶，光明城站实现与广深港高铁、赣深高铁、13号线无缝接驳。",
+            significance: "深圳城市轨道交通线网运营总里程突破600公里，正式迈入600公里时代。",
+            stationList: ["金源站", "吉溪站", "大安站", "园山站", "大康站", "福坑站", "安良站", "园山西坑站", "碧眼站", "虹桥公园站", "光明城站"],
+            transferStations: ["光明城站(13号线/高铁)", "园山站(19号线·规划)"]
+          },
+          {
+            date: "2025年1月10日",
+            title: "13号线一期南段开通",
+            badges: ["newline", "express", "intercity"],
+            lines: [{ name: "13号线一期南段", color: "#F6AD2D" }],
+            mileage: "6.4",
+            totalMileage: 595.1,
+            stations: "7座",
+            type: "市域快线",
+            operator: "港铁中铁电化（深圳）",
+            desc: "深圳湾口岸—高新中，全长6.4km，设7站。深圳首条由港铁参与运营的线路，采用GOA4级全自动运行系统。南起深圳湾口岸，北接高新科技园，是连接深港的重要跨境交通走廊。",
+            significance: "深圳湾口岸首次接入地铁网络，极大便利深港两地人员往来，强化粤港澳大湾区互联互通。",
+            stationList: ["深圳湾口岸站", "人才公园站", "后海站", "科苑站", "粤海门站", "深大站", "高新中站"],
+            transferStations: ["后海站(2/11号线)", "科苑站(2号线)", "粤海门站(9号线)", "深大站(1号线)", "高新中站(未来规划)"],
+            highlight: true
+          }
+        ]
+      },
+      {
+        era: "2024",
+        eraTitle: "2024年 · 五线齐发，20周年里程碑",
+        eraDesc: "地铁开通20周年纪念日集中开通",
+        events: [
+          {
+            date: "2024年12月28日",
+            title: "五线同步开通",
+            badges: ["extension", "milestone"],
+            lines: [
+              { name: "3号线四期", color: "#00A9DF" },
+              { name: "7号线二期", color: "#0131AC" },
+              { name: "11号线二期（岗厦北—华强南）", color: "#672146" },
+              { name: "12号线二期", color: "#A092B2" },
+              { name: "13号线一期南段", color: "#F6AD2D" }
+            ],
+            mileage: "约30km",
+            totalMileage: 595.1,
+            stations: "多站",
+            type: "多线延伸",
+            operator: "深铁集团 / 港铁（深圳）",
+            desc: "3号线四期：双龙—坪地六联，全长9.28km，设7站，龙岗东部地区地铁覆盖进一步完善。7号线二期：西丽湖—深大丽湖，全长2.22km，设2站，服务深圳大学丽湖校区及西丽科教城。11号线二期（岗厦北—华强南）：全长2.1km，设福星、华强南2站，加强福田中心区与罗湖联系。12号线二期：海上田园东—松岗，全长8.05km，设6站，宝安北部交通网络加密。",
+            significance: "在地铁开通20周年纪念日当天五线齐发，深圳轨道交通进入高质量发展新阶段。",
+            stationList: ["梨园站", "新生站", "坪西站", "低碳城站", "白石塘站", "富坪站", "坪地六联站", "北大站", "深大丽湖站", "福星站", "华强南站", "蚝乡站", "沙蚝站", "沙井古墟站", "步涌站", "朗下站", "松岗站"],
+            transferStations: ["松岗站(6/11号线)", "华强南站(7号线)", "新生站(21号线·规划)"]
+          }
+        ]
+      },
+      {
+        era: "2023",
+        eraTitle: "2023年 · 滨海线东延",
+        eraDesc: "8号线延伸至小梅沙，服务东部滨海旅游",
+        events: [
+          {
+            date: "2023年12月27日",
+            title: "8号线二期开通",
+            badges: ["extension"],
+            lines: [{ name: "8号线二期", color: "#B95800" }],
+            mileage: "8.0",
+            totalMileage: 555.5,
+            stations: "4座",
+            type: "旅游观光线延伸",
+            operator: "深铁集团",
+            desc: "盐田路—小梅沙，全长8.0km，设4站。线路穿越梧桐山隧道群，将地铁服务延伸至大小梅沙滨海旅游区。",
+            significance: "深圳东部黄金海岸线全面接入地铁网络，极大促进滨海旅游经济发展。",
+            stationList: ["鸿安围站", "盐田墟站", "大梅沙站", "小梅沙站"],
+            transferStations: []
+          }
+        ]
+      },
+      {
+        era: "2022",
+        eraTitle: "2022年 · 四期工程集中爆发",
+        eraDesc: "深圳地铁历史上开通里程最长的一年，共128公里",
+        events: [
+          {
+            date: "2022年12月28日",
+            title: "14号线、16号线、6号线支线、11号线福岗段开通",
+            badges: ["newline", "express", "unmanned"],
+            lines: [
+              { name: "14号线", color: "#F4CB67" },
+              { name: "16号线", color: "#181BA5" },
+              { name: "6号线支线", color: "#027776" },
+              { name: "11号线福岗段", color: "#672146" }
+            ],
+            mileage: "128",
+            totalMileage: 547.5,
+            stations: "多站",
+            type: "新线+延伸线",
+            operator: "深铁集团",
+            desc: "14号线：岗厦北—沙田，全长50.34km，设18站，深圳首条东部快线，最高时速120km/h，采用GOA4级全自动无人驾驶，预留延伸至惠州条件。16号线：大运—田心，全长29.2km，设24站，服务龙岗、坪山两区。6号线支线：光明—深理工，全长6.13km，设4站，服务光明科学城及中山大学深圳校区。11号线福岗段：福田—岗厦北，全长1.6km，设岗厦北1站，实现11号线与14号线同台换乘。",
+            significance: "深圳地铁历史上开通里程最长的一年，东部快线网络成型，坪山区首次接入地铁。",
+            stationList: ["岗厦北站", "黄木岗站", "罗湖北站", "布吉站", "石芽岭站", "六约北站", "龙南站", "宝龙站", "锦龙站", "坪山围站", "坪山广场站", "六和站", "东纵纪念馆站", "沙田站", "大运站", "田心站", "光明站", "圳美站", "中大站", "深理工站"],
+            transferStations: ["岗厦北站(2/10/11号线)", "黄木岗站(7/24号线·规划)", "布吉站(3/5号线)", "大运站(3/14号线)", "坪山围站(14/16号线)"],
+            milestone: true
+          },
+          {
+            date: "2022年11月28日",
+            title: "12号线一期开通",
+            badges: ["newline", "unmanned"],
+            lines: [{ name: "12号线一期", color: "#A092B2" }],
+            mileage: "40.5",
+            totalMileage: 419.5,
+            stations: "33座",
+            type: "普速干线",
+            operator: "深铁集团",
+            desc: "左炮台东—海上田园东，全长40.5km，设33站，其中18座换乘站。穿越南山、宝安两区，是深圳换乘站最多的线路之一。",
+            significance: "南山至宝安西部走廊的重要交通动脉，极大缓解1号线客流压力。",
+            stationList: ["左炮台东站", "太子湾站", "海上世界站", "花果山站", "四海站", "南油站", "南光站", "南山站", "桃园站", "南头古城站", "中山公园站", "同乐南站", "新安公园站", "灵芝站", "上川站", "流塘站", "宝安客运站", "宝田一路站", "平峦山站", "西乡桃源站", "钟屋南站", "黄田站", "兴围站", "机场东站", "福围站", "怀德站", "福永站", "桥头站", "塘尾站", "马安山站", "沙井站", "蚝乡站", "海上田园东站"],
+            transferStations: ["海上世界站(2号线)", "南油站(9号线)", "南山站(11号线)", "桃园站(1号线)", "灵芝站(5号线)", "流塘站(15号线·规划)", "机场东站(1/20号线·规划)"]
+          }
+        ]
+      },
+      {
+        era: "2021",
+        eraTitle: "2021年 · 全自动时代开启",
+        eraDesc: "首条GoA4级全自动无人驾驶线路投入运营",
+        events: [
+          {
+            date: "2021年12月28日",
+            title: "20号线一期开通",
+            badges: ["newline", "unmanned", "milestone"],
+            lines: [{ name: "20号线一期", color: "#87DBDF" }],
+            mileage: "8.43",
+            totalMileage: 419.5,
+            stations: "5座",
+            type: "全自动无人驾驶示范线",
+            operator: "深铁集团",
+            desc: "机场北—会展城，全长8.43km，设5站。深圳首条采用GoA4级全自动无人驾驶系统的地铁线路，全球首次批量应用车-车通信技术。",
+            significance: "标志着深圳地铁正式迈入全自动无人驾驶时代，为后续新线建设树立技术标杆。",
+            stationList: ["机场北站", "国展南站", "国展站", "国展北站", "会展城站"],
+            transferStations: ["机场北站(11号线/穗莞深城际)", "国展南站(12号线)", "国展站(12号线/30号线·规划)"]
+          }
+        ]
+      },
+      {
+        era: "2020",
+        eraTitle: "2020年 · 四期工程启动，6线齐发",
+        eraDesc: "年内分两次开通6条（段）新线，新增107公里",
+        events: [
+          {
+            date: "2020年12月28日",
+            title: "四线同步开通（第二批）",
+            badges: ["extension", "newline"],
+            lines: [
+              { name: "2号线三期", color: "#B95800" },
+              { name: "3号线南延", color: "#00A9DF" },
+              { name: "4号线北延", color: "#D42E0F" },
+              { name: "8号线一期", color: "#B95800" }
+            ],
+            mileage: "约40km",
+            totalMileage: 411,
+            stations: "多站",
+            type: "延伸线+新线",
+            operator: "深铁集团 / 港铁（深圳）",
+            desc: "2号线三期：新秀—莲塘，全长3.82km，设3站，服务莲塘片区。3号线南延：益田—福保，全长1.45km，设1站，服务福田保税区。4号线北延：清湖—牛湖，全长10.8km，设8站，观澜片区首次接入地铁。8号线一期：莲塘—盐田路，全长12.36km，设6站，盐田区首条地铁线路。",
+            significance: "盐田区、福田保税区、观澜片区首次接入地铁网络，深圳轨道交通覆盖范围大幅扩展。",
+            stationList: ["莲塘站", "仙湖路站", "梧桐山南站", "福保站", "竹村站", "茜坑站", "长湖站", "观澜站", "松元厦站", "观澜湖站", "牛湖站", "梧桐山南站", "沙头角站", "海山站", "盐田港西站", "深外高中站", "盐田路站"],
+            transferStations: ["莲塘站(2/8号线)", "福保站(未来规划)", "观澜站(22号线·规划)"]
+          },
+          {
+            date: "2020年8月18日",
+            title: "6号线 & 10号线开通",
+            badges: ["newline", "milestone"],
+            lines: [
+              { name: "6号线", color: "#01C4B7" },
+              { name: "10号线", color: "#F67599" }
+            ],
+            mileage: "约67km",
+            totalMileage: 383,
+            stations: "多站",
+            type: "新线",
+            operator: "深铁集团",
+            desc: "6号线：科学馆—松岗，全长49.39km，设27站，包含15座高架站。光明区首条地铁线路，南北贯通罗湖、福田、龙华、光明四区。10号线：福田口岸—双拥街，全长29.3km，设24站。平湖、坂田片区首条地铁，有效缓解4号线客流压力。",
+            significance: "光明区、平湖片区首次接入地铁，深圳轨道交通进入'10线运营'时代。",
+            stationList: ["科学馆站", "通新岭站", "体育中心站", "八卦岭站", "银湖站", "翰岭站", "梅林关站", "深圳北站", "红山站", "上芬站", "元芬站", "阳台山东站", "官田站", "上屋站", "长圳站", "凤凰城站", "光明大街站", "光明站", "科学公园站", "楼村站", "红花山站", "公明广场站", "合水口站", "薯田埔站", "松岗公园站", "溪头站", "松岗站", "福田口岸站", "福民站", "岗厦站", "岗厦北站", "莲花村站", "冬瓜岭站", "孖岭站", "雅宝站", "南坑站", "光雅园站", "五和站", "坂田北站", "贝尔路站", "华为站", "岗头站", "雪象站", "甘坑站", "凉帽山站", "上李朗站", "木古站", "华南城站", "禾花站", "平湖站", "双拥街站"],
+            transferStations: ["科学馆站(1号线)", "通新岭站(3号线)", "八卦岭站(6/7号线)", "银湖站(9号线)", "深圳北站(4/5号线)", "红山站(4号线)", "官田站(25号线·规划)", "上屋站(13号线)", "凤凰城站(13号线)", "光明站(6号线支线)", "公明广场站(13号线·规划)", "松岗站(11/12号线)", "福田口岸站(4号线)", "岗厦站(1号线)", "岗厦北站(2/11/14号线)", "莲花村站(3号线)", "五和站(5号线)", "贝尔路站(25号线·规划)", "平湖站(18号线·规划)"]
+          }
+        ]
+      },
+      {
+        era: "2019",
+        eraTitle: "2019年 · 三期调整工程启动",
+        eraDesc: "5号线、9号线延伸，网络加密",
+        events: [
+          {
+            date: "2019年9月28日",
+            title: "5号线二期开通",
+            badges: ["extension"],
+            lines: [{ name: "5号线二期", color: "#9E4DAA" }],
+            mileage: "7.65",
+            totalMileage: 316,
+            stations: "7座",
+            type: "延伸线",
+            operator: "深铁集团",
+            desc: "前海湾—赤湾，全长7.65km，设7站。5号线延伸至蛇口片区，前海自贸区与蛇口工业区实现地铁直连。",
+            significance: "前海蛇口自贸片区全面接入地铁网络，助力自贸区发展。",
+            stationList: ["桂湾站", "前湾站", "前湾公园站", "妈湾站", "铁路公园站", "荔湾站", "赤湾站"],
+            transferStations: ["前湾站(9号线)", "赤湾站(2号线)"]
+          },
+          {
+            date: "2019年8月18日",
+            title: "9号线二期开通",
+            badges: ["extension"],
+            lines: [{ name: "9号线二期", color: "#896B70" }],
+            mileage: "7.6",
+            totalMileage: 308,
+            stations: "10座",
+            type: "延伸线",
+            operator: "深铁集团",
+            desc: "红树湾南—前湾，全长7.6km，设10站。9号线西延至前海，覆盖前海核心区域。",
+            significance: "前海核心区首次接入地铁，9号线成为服务前海的重要线路。",
+            stationList: ["深湾站", "深圳湾公园站", "下沙站", "车公庙站", "香梅站", "景田站", "梅景站", "下梅林站", "梅村站", "上梅林站"],
+            transferStations: ["深圳湾公园站(未来规划)", "车公庙站(1/7/11号线)", "景田站(2号线)", "上梅林站(4号线)"]
+          }
+        ]
+      },
+      {
+        era: "2016",
+        eraTitle: "2016年 · 三期工程元年，快线成网",
+        eraDesc: "新增3条线路，首条市域快线11号线开通",
+        events: [
+          {
+            date: "2016年12月28日",
+            title: "7号线 & 9号线一期开通",
+            badges: ["newline"],
+            lines: [
+              { name: "7号线", color: "#0131AC" },
+              { name: "9号线一期", color: "#896B70" }
+            ],
+            mileage: "约55km",
+            totalMileage: 285,
+            stations: "多站",
+            type: "新线",
+            operator: "深铁集团",
+            desc: "7号线：西丽湖—太安，全长30.17km，设27站。东西向加密线，穿越深圳最繁华的商业区。9号线一期：红树湾南—文锦，全长25.38km，设22站。南北向加密线，服务南山、福田、罗湖三区。",
+            significance: "深圳轨道交通网络从骨架线向加密线转型，中心城区覆盖大幅提升。",
+            stationList: ["西丽湖站", "西丽站", "茶光站", "珠光站", "龙井站", "桃源村站", "深云站", "安托山站", "农林站", "车公庙站", "上沙站", "沙尾站", "石厦站", "皇岗村站", "福民站", "皇岗口岸站", "福邻站", "赤尾站", "华强南站", "华强北站", "华新站", "黄木岗站", "八卦岭站", "红岭北站", "笋岗站", "洪湖站", "田贝站", "太安站", "红树湾南站", "深湾站", "深圳湾公园站", "下沙站", "车公庙站", "香梅站", "景田站", "梅景站", "下梅林站", "梅村站", "上梅林站", "孖岭站", "银湖站", "泥岗站", "红岭北站", "园岭站", "红岭站", "红岭南站", "鹿丹村站", "人民南站", "向西村站", "文锦站"],
+            transferStations: ["西丽站(5号线)", "安托山站(2号线)", "车公庙站(1/9/11号线)", "石厦站(3号线)", "福民站(4/7/10号线)", "华强北站(2号线)", "华新站(3号线)", "黄木岗站(14号线·规划)", "八卦岭站(6号线)", "红岭北站(7号线)", "田贝站(3号线)", "太安站(5号线)", "红树湾南站(11号线)", "车公庙站(1/7/11号线)", "景田站(2号线)", "上梅林站(4号线)", "银湖站(6号线)", "红岭北站(7号线)", "红岭站(3号线)", "红岭南站(9号线·出站换乘)"]
+          },
+          {
+            date: "2016年6月28日",
+            title: "11号线开通",
+            badges: ["newline", "express", "milestone"],
+            lines: [{ name: "11号线", color: "#672146" }],
+            mileage: "51.9",
+            totalMileage: 230,
+            stations: "18座",
+            type: "市域快线",
+            operator: "深铁集团",
+            desc: "福田—碧头，全长51.9km，设18站，其中地下站14座、高架站4座。深圳首条时速120km/h的市域快线，设商务车厢，串联福田中心区、南山中心区、前海、宝安中心区、机场、福永、沙井等区域。",
+            significance: "深圳首条市域快线，实现市中心与机场30分钟直达，开创商务车厢服务模式。",
+            stationList: ["福田站", "车公庙站", "红树湾南站", "后海站", "南山站", "前海湾站", "宝安站", "碧海湾站", "机场站", "机场北站", "福永站", "桥头站", "塘尾站", "马安山站", "沙井站", "后亭站", "松岗站", "碧头站"],
+            transferStations: ["福田站(2/3号线)", "车公庙站(1/7/9/11号线)", "红树湾南站(9号线)", "后海站(2号线)", "南山站(12号线)", "前海湾站(1/5号线)", "机场北站(20号线/穗莞深城际)", "松岗站(6/12号线)"]
+          }
+        ]
+      },
+      {
+        era: "2011",
+        eraTitle: "2011年 · 二期工程集中开通",
+        eraDesc: "深圳地铁历史上首个集中开通期，两周内连开多条线路",
+        events: [
+          {
+            date: "2011年6月28日",
+            title: "2号线全线 & 4号线二期开通",
+            badges: ["extension", "milestone"],
+            lines: [
+              { name: "2号线东延线", color: "#B95800" },
+              { name: "4号线二期", color: "#D42E0F" }
+            ],
+            mileage: "约30km",
+            totalMileage: 178,
+            stations: "多站",
+            type: "延伸线",
+            operator: "深铁集团 / 港铁（深圳）",
+            desc: "2号线东延线：世界之窗—新秀，全长20.65km，设17站。蛇口线正式成型，覆盖深圳湾、华侨城、罗湖等片区。4号线二期：少年宫—清湖，全长15.8km，设10站。龙华线延伸至龙华中心区，龙华片区首次接入地铁。",
+            significance: "4号线由港铁（深圳）接管运营，引入港式服务标准，龙华进入地铁时代。",
+            stationList: ["侨城北站", "深康站", "安托山站", "侨香站", "香蜜站", "香梅北站", "景田站", "莲花西站", "福田站", "市民中心站", "岗厦北站", "华强北站", "燕南站", "大剧院站", "湖贝站", "黄贝岭站", "新秀站", "莲花北站", "上梅林站", "民乐站", "白石龙站", "深圳北站", "红山站", "上塘站", "龙胜站", "龙华站", "清湖站"],
+            transferStations: ["安托山站(7号线)", "景田站(9号线)", "福田站(2/3/11号线)", "岗厦北站(10/11/14号线)", "华强北站(7号线)", "大剧院站(1/2号线)", "黄贝岭站(5号线)", "上梅林站(9号线)", "深圳北站(5/6号线)", "红山站(6号线)"]
+          },
+          {
+            date: "2011年6月22日",
+            title: "5号线一期开通",
+            badges: ["newline", "milestone"],
+            lines: [{ name: "5号线一期", color: "#9E4DAA" }],
+            mileage: "40.0",
+            totalMileage: 148,
+            stations: "27座",
+            type: "环中线",
+            operator: "深铁集团",
+            desc: "前海湾—黄贝岭，全长40.0km，设27站。深圳首条东西向骨干线路，串联前海、宝安、南山、龙岗、罗湖五区，是国内一次性开通单条线路最长的地铁工程。",
+            significance: "深圳轨道交通从'十字骨架'升级为'环+放射'网络结构，东西向交通瓶颈得到根本缓解。",
+            stationList: ["前海湾站", "临海站", "宝华站", "宝安中心站", "翻身站", "灵芝站", "洪浪北站", "兴东站", "留仙洞站", "西丽站", "大学城站", "塘朗站", "长岭陂站", "深圳北站", "民治站", "五和站", "坂田站", "杨美站", "上水径站", "下水径站", "长龙站", "布吉站", "百鸽笼站", "布心站", "太安站", "怡景站", "黄贝岭站"],
+            transferStations: ["前海湾站(1/11号线)", "宝安中心站(1号线)", "灵芝站(12号线)", "西丽站(7号线)", "大学城站(27号线·规划)", "深圳北站(4/6号线)", "五和站(10号线)", "布吉站(3/14号线)", "太安站(7号线)", "黄贝岭站(2/8号线)"]
+          },
+          {
+            date: "2011年6月15日",
+            title: "1号线续建段开通",
+            badges: ["extension"],
+            lines: [{ name: "1号线续建段", color: "#01AF55" }],
+            mileage: "23.6",
+            totalMileage: 108,
+            stations: "12座",
+            type: "延伸线",
+            operator: "深铁集团",
+            desc: "世界之窗—机场东，全长23.6km，设12站。1号线延伸至宝安中心区及深圳机场，实现市中心与机场地铁直连。",
+            significance: "深圳宝安国际机场首次接入地铁网络，空港经济迎来新机遇。",
+            stationList: ["白石洲站", "高新园站", "深大站", "桃园站", "大新站", "鲤鱼门站", "前海湾站", "新安站", "宝安中心站", "宝体站", "坪洲站", "西乡站", "固戍站", "后瑞站", "机场东站"],
+            transferStations: ["深大站(13号线)", "桃园站(12号线)", "前海湾站(5/11号线)", "宝安中心站(5号线)", "机场东站(12/20号线·规划)"]
+          }
+        ]
+      },
+      {
+        era: "2010",
+        eraTitle: "2010年 · 十字线网初步形成",
+        eraDesc: "2号线、3号线一期工程同步开通",
+        events: [
+          {
+            date: "2010年12月28日",
+            title: "2号线一期 & 3号线一期开通",
+            badges: ["newline", "milestone"],
+            lines: [
+              { name: "2号线一期", color: "#B95800" },
+              { name: "3号线一期", color: "#00A9DF" }
+            ],
+            mileage: "约44km",
+            totalMileage: 65,
+            stations: "多站",
+            type: "新线",
+            operator: "深铁集团",
+            desc: "2号线一期：赤湾—世界之窗，全长15.1km，设12站。服务蛇口、深圳湾、华侨城片区。3号线一期：双龙—草埔，全长32.9km，设22站。龙岗线，深圳首条高架为主的线路，龙岗区首条地铁。",
+            significance: "深圳轨道交通从'一横一纵'发展为'十字'骨架，龙岗区首次接入地铁网络。",
+            stationList: ["赤湾站", "蛇口港站", "海上世界站", "水湾站", "东角头站", "湾厦站", "海月站", "登良站", "后海站", "科苑站", "红树湾站", "世界之窗站", "双龙站", "南联站", "龙城广场站", "吉祥站", "爱联站", "大运站", "荷坳站", "永湖站", "横岗站", "塘坑站", "六约站", "丹竹头站", "大芬站", "木棉湾站", "布吉站", "草埔站", "水贝站", "田贝站", "翠竹站", "晒布站", "老街站", "红岭站", "通新岭站", "华新站", "莲花村站", "少年宫站", "福田站", "购物公园站", "石厦站", "益田站"],
+            transferStations: ["海上世界站(12号线)", "后海站(11号线)", "科苑站(13号线)", "世界之窗站(1号线)", "大运站(14/16号线)", "布吉站(5/14号线)", "老街站(1/3号线)", "红岭站(3号线)", "通新岭站(6号线)", "华新站(7号线)", "莲花村站(3/10号线)", "少年宫站(4号线)", "福田站(2/11号线)", "购物公园站(1号线)", "石厦站(7号线)"]
+          }
+        ]
+      },
+      {
+        era: "2009",
+        eraTitle: "2009年 · 1号线西进",
+        eraDesc: "地铁向宝安中心区延伸",
+        events: [
+          {
+            date: "2009年9月28日",
+            title: "1号线西延段首批站点开通",
+            badges: ["extension"],
+            lines: [{ name: "1号线西延段（首批）", color: "#01AF55" }],
+            mileage: "3.3",
+            totalMileage: 21,
+            stations: "3座",
+            type: "延伸线",
+            operator: "深铁集团",
+            desc: "世界之窗—深大，全长3.3km，设白石洲、高新园、深大3站。1号线首次向科技园片区延伸。",
+            significance: "深圳高新区（科技园）首次接入地铁，为科技产业发展提供交通支撑。",
+            stationList: ["白石洲站", "高新园站", "深大站"],
+            transferStations: ["深大站(13号线)"]
+          }
+        ]
+      },
+      {
+        era: "2007",
+        eraTitle: "2007年 · 跨境接驳",
+        eraDesc: "4号线福田口岸站启用，连接香港",
+        events: [
+          {
+            date: "2007年6月28日",
+            title: "4号线福田口岸站启用",
+            badges: ["extension", "intercity"],
+            lines: [{ name: "4号线福田口岸站", color: "#D42E0F" }],
+            mileage: "—",
+            totalMileage: 23.5,
+            stations: "1座",
+            type: "跨境接驳站",
+            operator: "深铁集团",
+            desc: "福田口岸站正式开通，与香港港铁东铁线落马洲站实现无缝接驳。",
+            significance: "深圳地铁首次实现与香港轨道交通跨境连接，深港融合迈出重要一步。",
+            stationList: ["福田口岸站"],
+            transferStations: ["福田口岸站(香港东铁线·落马洲站)"]
+          }
+        ]
+      },
+      {
+        era: "2004",
+        eraTitle: "2004年 · 地铁元年来临",
+        eraDesc: "深圳正式进入地铁时代",
+        events: [
+          {
+            date: "2004年12月28日",
+            title: "深圳地铁一期工程开通试运营",
+            badges: ["newline", "milestone"],
+            lines: [
+              { name: "1号线一期", color: "#01AF55" },
+              { name: "4号线一期", color: "#D42E0F" }
+            ],
+            mileage: "21.3",
+            totalMileage: 21.3,
+            stations: "19座",
+            type: "首期工程",
+            operator: "深铁集团",
+            desc: "1号线一期：罗湖—世界之窗，全长17.3km，设15站。深圳首条地铁线路，东西向骨干线。4号线一期：福田口岸—少年宫，全长4.0km，设4站。南北向骨干线，连接福田中心区与皇岗口岸。",
+            significance: "深圳正式迈入'地铁时代'，成为中国大陆第5个拥有地铁的城市（前四个为北京、上海、广州、天津）。",
+            stationList: ["罗湖站", "国贸站", "老街站", "大剧院站", "科学馆站", "华强路站", "岗厦站", "会展中心站", "购物公园站", "香蜜湖站", "车公庙站", "竹子林站", "侨城东站", "华侨城站", "世界之窗站", "福田口岸站", "福民站", "会展中心站", "市民中心站", "少年宫站"],
+            transferStations: ["老街站(1/3号线)", "大剧院站(1/2号线)", "科学馆站(6号线)", "岗厦站(10号线)", "会展中心站(1/4号线)", "购物公园站(1/3号线)", "车公庙站(1/7/9/11号线)", "世界之窗站(1/2号线)", "福民站(4/7/10号线)", "会展中心站(1/4号线)", "市民中心站(2/4号线)", "少年宫站(3/4号线)"],
+            milestone: true
+          }
+        ]
+      }
+    ];
+    
+    // 站点所属线路颜色映射
+    const stationLineColorMap = {
+      // 2026年 13号线二期
+      'event-2026-0': {
+        '红坳公园站': '#F6AD2D', '光明城站': '#F6AD2D', '德雅路站': '#F6AD2D',
+        '凤凰城站': '#F6AD2D', '月亮路站': '#F6AD2D', '将围站': '#F6AD2D',
+        '新庄站': '#F6AD2D', '公明广场站': '#F6AD2D', '上村站': '#F6AD2D',
+        '下村站': '#F6AD2D', '李松蓢站': '#F6AD2D'
+      },
+      // 2025年12月 四线
+      'event-2025-0': {
+        '湖贝站': '#9E4DAA', '东门站': '#9E4DAA', '大剧院站': '#9E4DAA',
+        '溪涌站': '#B95800', '红岭南站': '#672146',
+        '高新北站': '#F6AD2D', '西丽高铁站(越站)': '#F6AD2D', '港大站': '#F6AD2D',
+        '应人石站': '#F6AD2D', '罗租站': '#F6AD2D', '石岩站': '#F6AD2D', '上屋站': '#F6AD2D'
+      },
+      // 2025年9月 16号线二期 & 6号线支线二期
+      'event-2025-1': {
+        '金源站': '#181BA5', '吉溪站': '#181BA5', '大安站': '#181BA5',
+        '园山站': '#181BA5', '大康站': '#181BA5', '福坑站': '#181BA5',
+        '安良站': '#181BA5', '园山西坑站': '#181BA5',
+        '碧眼站': '#027776', '虹桥公园站': '#027776', '光明城站': '#027776'
+      },
+      // 2025年1月 13号线一期南段
+      'event-2025-2': {
+        '深圳湾口岸站': '#F6AD2D', '人才公园站': '#F6AD2D', '后海站': '#F6AD2D',
+        '科苑站': '#F6AD2D', '粤海门站': '#F6AD2D', '深大站': '#F6AD2D', '高新中站': '#F6AD2D'
+      },
+      // 2024年 五线
+      'event-2024-0': {
+        '梨园站': '#00A9DF', '新生站': '#00A9DF', '坪西站': '#00A9DF',
+        '低碳城站': '#00A9DF', '白石塘站': '#00A9DF', '富坪站': '#00A9DF', '坪地六联站': '#00A9DF',
+        '北大站': '#0131AC', '深大丽湖站': '#0131AC',
+        '福星站': '#672146', '华强南站': '#672146',
+        '蚝乡站': '#A092B2', '沙蚝站': '#A092B2', '沙井古墟站': '#A092B2',
+        '步涌站': '#A092B2', '朗下站': '#A092B2', '松岗站': '#A092B2'
+      },
+      // 2023年 8号线二期
+      'event-2023-0': {
+        '鸿安围站': '#B95800', '盐田墟站': '#B95800', '大梅沙站': '#B95800', '小梅沙站': '#B95800'
+      },
+      // 2022年12月 14/16/6支/11
+      'event-2022-0': {
+        '岗厦北站': '#F4CB67', '黄木岗站': '#F4CB67', '罗湖北站': '#F4CB67',
+        '布吉站': '#F4CB67', '石芽岭站': '#F4CB67', '六约北站': '#F4CB67',
+        '龙南站': '#F4CB67', '宝龙站': '#F4CB67', '锦龙站': '#F4CB67',
+        '坪山围站': '#F4CB67', '坪山广场站': '#F4CB67', '六和站': '#F4CB67',
+        '东纵纪念馆站': '#F4CB67', '沙田站': '#F4CB67',
+        '大运站': '#181BA5', '田心站': '#181BA5',
+        '光明站': '#027776', '圳美站': '#027776', '中大站': '#027776', '深理工站': '#027776'
+      },
+      // 2022年11月 12号线
+      'event-2022-1': {
+        '左炮台东站': '#A092B2', '太子湾站': '#A092B2', '海上世界站': '#A092B2',
+        '花果山站': '#A092B2', '四海站': '#A092B2', '南油站': '#A092B2',
+        '南光站': '#A092B2', '南山站': '#A092B2', '桃园站': '#A092B2',
+        '南头古城站': '#A092B2', '中山公园站': '#A092B2', '同乐南站': '#A092B2',
+        '新安公园站': '#A092B2', '灵芝站': '#A092B2', '上川站': '#A092B2',
+        '流塘站': '#A092B2', '宝安客运站': '#A092B2', '宝田一路站': '#A092B2',
+        '平峦山站': '#A092B2', '西乡桃源站': '#A092B2', '钟屋南站': '#A092B2',
+        '黄田站': '#A092B2', '兴围站': '#A092B2', '机场东站': '#A092B2',
+        '福围站': '#A092B2', '怀德站': '#A092B2', '福永站': '#A092B2',
+        '桥头站': '#A092B2', '塘尾站': '#A092B2', '马安山站': '#A092B2',
+        '沙井站': '#A092B2', '蚝乡站': '#A092B2', '海上田园东站': '#A092B2'
+      },
+      // 2021年 20号线
+      'event-2021-0': {
+        '机场北站': '#87DBDF', '国展南站': '#87DBDF', '国展站': '#87DBDF',
+        '国展北站': '#87DBDF', '会展城站': '#87DBDF'
+      },
+      // 2020年12月 2/3/4/8
+      'event-2020-0': {
+        '莲塘站': '#B95800', '仙湖路站': '#B95800', '梧桐山南站': '#B95800',
+        '福保站': '#00A9DF',
+        '竹村站': '#D42E0F', '茜坑站': '#D42E0F', '长湖站': '#D42E0F',
+        '观澜站': '#D42E0F', '松元厦站': '#D42E0F', '观澜湖站': '#D42E0F', '牛湖站': '#D42E0F',
+        '沙头角站': '#B95800', '海山站': '#B95800', '盐田港西站': '#B95800',
+        '深外高中站': '#B95800', '盐田路站': '#B95800'
+      },
+      // 2020年8月 6/10
+      'event-2020-1': {
+        '科学馆站': '#01C4B7', '通新岭站': '#01C4B7', '体育中心站': '#01C4B7',
+        '八卦岭站': '#01C4B7', '银湖站': '#01C4B7', '翰岭站': '#01C4B7',
+        '梅林关站': '#01C4B7', '深圳北站': '#01C4B7', '红山站': '#01C4B7',
+        '上芬站': '#01C4B7', '元芬站': '#01C4B7', '阳台山东站': '#01C4B7',
+        '官田站': '#01C4B7', '上屋站': '#01C4B7', '长圳站': '#01C4B7',
+        '凤凰城站': '#01C4B7', '光明大街站': '#01C4B7', '光明站': '#01C4B7',
+        '科学公园站': '#01C4B7', '楼村站': '#01C4B7', '红花山站': '#01C4B7',
+        '公明广场站': '#01C4B7', '合水口站': '#01C4B7', '薯田埔站': '#01C4B7',
+        '松岗公园站': '#01C4B7', '溪头站': '#01C4B7', '松岗站': '#01C4B7',
+        '福田口岸站': '#F67599', '福民站': '#F67599', '岗厦站': '#F67599',
+        '岗厦北站': '#F67599', '莲花村站': '#F67599', '冬瓜岭站': '#F67599',
+        '孖岭站': '#F67599', '雅宝站': '#F67599', '南坑站': '#F67599',
+        '光雅园站': '#F67599', '五和站': '#F67599', '坂田北站': '#F67599',
+        '贝尔路站': '#F67599', '华为站': '#F67599', '岗头站': '#F67599',
+        '雪象站': '#F67599', '甘坑站': '#F67599', '凉帽山站': '#F67599',
+        '上李朗站': '#F67599', '木古站': '#F67599', '华南城站': '#F67599',
+        '禾花站': '#F67599', '平湖站': '#F67599', '双拥街站': '#F67599'
+      },
+      // 2019年9月 5号线二期
+      'event-2019-0': {
+        '桂湾站': '#9E4DAA', '前湾站': '#9E4DAA', '前湾公园站': '#9E4DAA',
+        '妈湾站': '#9E4DAA', '铁路公园站': '#9E4DAA', '荔湾站': '#9E4DAA', '赤湾站': '#9E4DAA'
+      },
+      // 2019年8月 9号线二期
+      'event-2019-1': {
+        '深湾站': '#896B70', '深圳湾公园站': '#896B70', '下沙站': '#896B70',
+        '车公庙站': '#896B70', '香梅站': '#896B70', '景田站': '#896B70',
+        '梅景站': '#896B70', '下梅林站': '#896B70', '梅村站': '#896B70', '上梅林站': '#896B70'
+      },
+      // 2016年12月 7/9
+      'event-2016-0': {
+        '西丽湖站': '#0131AC', '西丽站': '#0131AC', '茶光站': '#0131AC',
+        '珠光站': '#0131AC', '龙井站': '#0131AC', '桃源村站': '#0131AC',
+        '深云站': '#0131AC', '安托山站': '#0131AC', '农林站': '#0131AC',
+        '车公庙站': '#0131AC', '上沙站': '#0131AC', '沙尾站': '#0131AC',
+        '石厦站': '#0131AC', '皇岗村站': '#0131AC', '福民站': '#0131AC',
+        '皇岗口岸站': '#0131AC', '福邻站': '#0131AC', '赤尾站': '#0131AC',
+        '华强南站': '#0131AC', '华强北站': '#0131AC', '华新站': '#0131AC',
+        '黄木岗站': '#0131AC', '八卦岭站': '#0131AC', '红岭北站': '#0131AC',
+        '笋岗站': '#0131AC', '洪湖站': '#0131AC', '田贝站': '#0131AC', '太安站': '#0131AC',
+        '红树湾南站': '#896B70', '深湾站': '#896B70', '深圳湾公园站': '#896B70',
+        '下沙站': '#896B70', '车公庙站': '#896B70', '香梅站': '#896B70',
+        '景田站': '#896B70', '梅景站': '#896B70', '下梅林站': '#896B70',
+        '梅村站': '#896B70', '上梅林站': '#896B70', '孖岭站': '#896B70',
+        '银湖站': '#896B70', '泥岗站': '#896B70', '红岭北站': '#896B70',
+        '园岭站': '#896B70', '红岭站': '#896B70', '红岭南站': '#896B70',
+        '鹿丹村站': '#896B70', '人民南站': '#896B70', '向西村站': '#896B70', '文锦站': '#896B70'
+      },
+      // 2016年6月 11号线
+      'event-2016-1': {
+        '福田站': '#672146', '车公庙站': '#672146', '红树湾南站': '#672146',
+        '后海站': '#672146', '南山站': '#672146', '前海湾站': '#672146',
+        '宝安站': '#672146', '碧海湾站': '#672146', '机场站': '#672146',
+        '机场北站': '#672146', '福永站': '#672146', '桥头站': '#672146',
+        '塘尾站': '#672146', '马安山站': '#672146', '沙井站': '#672146',
+        '后亭站': '#672146', '松岗站': '#672146', '碧头站': '#672146'
+      },
+      // 2011年6月28日 2/4
+      'event-2011-0': {
+        '侨城北站': '#B95800', '深康站': '#B95800', '安托山站': '#B95800',
+        '侨香站': '#B95800', '香蜜站': '#B95800', '香梅北站': '#B95800',
+        '景田站': '#B95800', '莲花西站': '#B95800', '福田站': '#B95800',
+        '市民中心站': '#B95800', '岗厦北站': '#B95800', '华强北站': '#B95800',
+        '燕南站': '#B95800', '大剧院站': '#B95800', '湖贝站': '#B95800',
+        '黄贝岭站': '#B95800', '新秀站': '#B95800',
+        '莲花北站': '#D42E0F', '上梅林站': '#D42E0F', '民乐站': '#D42E0F',
+        '白石龙站': '#D42E0F', '深圳北站': '#D42E0F', '红山站': '#D42E0F',
+        '上塘站': '#D42E0F', '龙胜站': '#D42E0F', '龙华站': '#D42E0F', '清湖站': '#D42E0F'
+      },
+      // 2011年6月22日 5号线
+      'event-2011-1': {
+        '前海湾站': '#9E4DAA', '临海站': '#9E4DAA', '宝华站': '#9E4DAA',
+        '宝安中心站': '#9E4DAA', '翻身站': '#9E4DAA', '灵芝站': '#9E4DAA',
+        '洪浪北站': '#9E4DAA', '兴东站': '#9E4DAA', '留仙洞站': '#9E4DAA',
+        '西丽站': '#9E4DAA', '大学城站': '#9E4DAA', '塘朗站': '#9E4DAA',
+        '长岭陂站': '#9E4DAA', '深圳北站': '#9E4DAA', '民治站': '#9E4DAA',
+        '五和站': '#9E4DAA', '坂田站': '#9E4DAA', '杨美站': '#9E4DAA',
+        '上水径站': '#9E4DAA', '下水径站': '#9E4DAA', '长龙站': '#9E4DAA',
+        '布吉站': '#9E4DAA', '百鸽笼站': '#9E4DAA', '布心站': '#9E4DAA',
+        '太安站': '#9E4DAA', '怡景站': '#9E4DAA', '黄贝岭站': '#9E4DAA'
+      },
+      // 2011年6月15日 1号线
+      'event-2011-2': {
+        '白石洲站': '#01AF55', '高新园站': '#01AF55', '深大站': '#01AF55',
+        '桃园站': '#01AF55', '大新站': '#01AF55', '鲤鱼门站': '#01AF55',
+        '前海湾站': '#01AF55', '新安站': '#01AF55', '宝安中心站': '#01AF55',
+        '宝体站': '#01AF55', '坪洲站': '#01AF55', '西乡站': '#01AF55',
+        '固戍站': '#01AF55', '后瑞站': '#01AF55', '机场东站': '#01AF55'
+      },
+      // 2010年 2/3
+      'event-2010-0': {
+        '赤湾站': '#B95800', '蛇口港站': '#B95800', '海上世界站': '#B95800',
+        '水湾站': '#B95800', '东角头站': '#B95800', '湾厦站': '#B95800',
+        '海月站': '#B95800', '登良站': '#B95800', '后海站': '#B95800',
+        '科苑站': '#B95800', '红树湾站': '#B95800', '世界之窗站': '#B95800',
+        '双龙站': '#00A9DF', '南联站': '#00A9DF', '龙城广场站': '#00A9DF',
+        '吉祥站': '#00A9DF', '爱联站': '#00A9DF', '大运站': '#00A9DF',
+        '荷坳站': '#00A9DF', '永湖站': '#00A9DF', '横岗站': '#00A9DF',
+        '塘坑站': '#00A9DF', '六约站': '#00A9DF', '丹竹头站': '#00A9DF',
+        '大芬站': '#00A9DF', '木棉湾站': '#00A9DF', '布吉站': '#00A9DF',
+        '草埔站': '#00A9DF', '水贝站': '#00A9DF', '田贝站': '#00A9DF',
+        '翠竹站': '#00A9DF', '晒布站': '#00A9DF', '老街站': '#00A9DF',
+        '红岭站': '#00A9DF', '通新岭站': '#00A9DF', '华新站': '#00A9DF',
+        '莲花村站': '#00A9DF', '少年宫站': '#00A9DF', '福田站': '#00A9DF',
+        '购物公园站': '#00A9DF', '石厦站': '#00A9DF', '益田站': '#00A9DF'
+      },
+      // 2009年 1号线
+      'event-2009-0': {
+        '白石洲站': '#01AF55', '高新园站': '#01AF55', '深大站': '#01AF55'
+      },
+      // 2007年 4号线
+      'event-2007-0': {
+        '福田口岸站': '#D42E0F'
+      },
+      // 2004年 1/4
+      'event-2004-0': {
+        '罗湖站': '#01AF55', '国贸站': '#01AF55', '老街站': '#01AF55',
+        '大剧院站': '#01AF55', '科学馆站': '#01AF55', '华强路站': '#01AF55',
+        '岗厦站': '#01AF55', '会展中心站': '#01AF55', '购物公园站': '#01AF55',
+        '香蜜湖站': '#01AF55', '车公庙站': '#01AF55', '竹子林站': '#01AF55',
+        '侨城东站': '#01AF55', '华侨城站': '#01AF55', '世界之窗站': '#01AF55',
+        '福田口岸站': '#D42E0F', '福民站': '#D42E0F', '会展中心站': '#D42E0F',
+        '市民中心站': '#D42E0F', '少年宫站': '#D42E0F'
+      }
+    };
+
+    function getStationLineColor(event, stationName) {
+      const map = stationLineColorMap[event.id];
+      if (map && map[stationName]) {
+        return map[stationName];
+      }
+      // 单线路事件默认使用线路颜色
+      if (event.lines.length === 1) {
+        return event.lines[0].color;
+      }
+      return '#94a3b8';
+    }
+
+    // 渲染时间线
+    const timeline = document.getElementById('timeline');
+    
+    historyData.forEach(era => {
+      // 年代分组
+      const eraGroup = document.createElement('div');
+      eraGroup.className = 'era-group';
+      
+      // 年代标题
+      const eraHeader = document.createElement('div');
+      eraHeader.className = 'era-header';
+      eraHeader.innerHTML = `
+        <div class="era-badge">${era.era}</div>
+        <h2 class="era-title">${era.eraTitle}</h2>
+        <span class="era-desc">${era.eraDesc}</span>
+      `;
+      eraGroup.appendChild(eraHeader);
+      
+      // 事件列表
+      era.events.forEach((event, idx) => {
+        const card = document.createElement('div');
+        card.className = `event-card ${event.highlight ? 'highlight' : ''} ${event.milestone ? 'milestone' : ''}`;
+        card.id = `event-${era.era}-${idx}`;
+        event.id = card.id; // 将 id 同步到 event 对象，供颜色映射使用
+        
+        // 徽章
+        const badgeMap = {
+          newline: { cls: 'badge-newline', text: '新线' },
+          extension: { cls: 'badge-extension', text: '延伸' },
+          milestone: { cls: 'badge-milestone', text: '里程碑' },
+          express: { cls: 'badge-express', text: '快线' },
+          unmanned: { cls: 'badge-unmanned', text: '无人驾驶' },
+          intercity: { cls: 'badge-intercity', text: '跨境' }
+        };
+        const badgesHtml = event.badges.map(b => {
+          const info = badgeMap[b] || { cls: '', text: b };
+          return `<span class="event-badge ${info.cls}">${info.text}</span>`;
+        }).join('');
+        
+        // 线路颜色条
+        const lineColorsHtml = event.lines.map(l => 
+          `<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${l.color};margin-right:4px;vertical-align:middle;"></span>${l.name}`
+        ).join('、');
+        
+        // 站点标签 - 带线路色块
+        const stationTagsHtml = event.stationList.map(s => {
+          const isTransfer = event.transferStations.some(t => s.includes(t.split('(')[0]));
+          const lineColor = getStationLineColor(event, s);
+          return `<span class="station-tag ${isTransfer ? 'transfer' : ''}"><span class="line-dot" style="background:${lineColor}"></span>${s}</span>`;
+        }).join('');
+        
+        // 进度条百分比（基于653.7km最大值）
+        const progressPct = Math.round((event.totalMileage / 653.7) * 100);
+        
+        card.innerHTML = `
+          <div class="event-header">
+            <span class="event-date">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              ${event.date}
+            </span>
+            <div class="event-badges">${badgesHtml}</div>
+          </div>
+          <div class="event-title">${event.title}</div>
+          <div class="line-info-grid">
+            <div class="line-info-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span class="label">新增里程</span>
+              <span class="value">${event.mileage} km</span>
+            </div>
+            <div class="line-info-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="label">新增车站</span>
+              <span class="value">${event.stations}</span>
+            </div>
+            <div class="line-info-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7" />
+              </svg>
+              <span class="label">线路类型</span>
+              <span class="value">${event.type}</span>
+            </div>
+            <div class="line-info-item">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <span class="label">运营商</span>
+              <span class="value">${event.operator}</span>
+            </div>
+          </div>
+          <div class="event-desc">
+            <p><strong style="color:#1e293b;">线路概况：</strong>${lineColorsHtml}</p>
+            <p>${event.desc}</p>
+            <p><strong style="color:#1e293b;">历史意义：</strong>${event.significance}</p>
+          </div>
+          <button class="expand-btn" onclick="toggleDetails('${card.id}')">
+            <span>查看站点详情</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="event-details" id="details-${card.id}">
+            <div class="station-list">${stationTagsHtml}</div>
+          </div>
+          <div class="mileage-track">
+            <div class="mileage-bar">
+              <div class="mileage-progress">
+                <div class="mileage-fill" style="width: ${progressPct}%"></div>
+              </div>
+              <span class="mileage-text">累计 ${event.totalMileage} km</span>
+            </div>
+          </div>
+        `;
+
+        eraGroup.appendChild(card);
+      });
+
+      timeline.appendChild(eraGroup);
+    });
+
+    // 折叠/展开
+    function toggleDetails(cardId) {
+      const details = document.getElementById('details-' + cardId);
+      const btn = document.querySelector('#' + cardId + ' .expand-btn');
+      details.classList.toggle('expanded');
+      btn.classList.toggle('expanded');
+      btn.querySelector('span').textContent = details.classList.contains('expanded') ? '收起站点详情' : '查看站点详情';
+    }
+
+    // 实时时间
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const timeEl = document.getElementById('currentTime');
+      if (timeEl) {
+        timeEl.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+      }
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 移动端菜单
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    // 滚动动画
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.event-card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(card);
+    });
+  </script>
+</body>
+</html>

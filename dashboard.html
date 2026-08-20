@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线路仪表板 - 走进新天地·Railway</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+<script src="all-lines-enhanced.js"></script>
+<script src="passenger-data.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f3f4f6;color:#1f2937;line-height:1.6}
+.container{max-width:min(90%,1200px);margin:20px auto;padding:20px}
+
+/* 线路标题栏 */
+.line-header{border-radius:20px;padding:40px 32px;margin-bottom:24px;color:white;display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
+.line-header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);pointer-events:none}
+.line-number-big{width:100px;height:100px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;flex-shrink:0;position:relative;z-index:1;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.line-header-info{flex:1;position:relative;z-index:1}
+.line-header-name{font-size:40px;font-weight:700;margin-bottom:6px}
+.line-header-alias{font-size:18px;opacity:0.9;margin-bottom:12px}
+.line-header-tags{display:flex;gap:10px;flex-wrap:wrap}
+.line-header-tag{font-size:13px;padding:5px 14px;border-radius:20px;background:rgba(255,255,255,0.2);backdrop-filter:blur(4px);font-weight:500}
+
+/* 返回链接 */
+.back-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 20px;background:#111827;color:white;text-decoration:none;border-radius:10px;font-size:14px;font-weight:500}
+
+/* KPI 卡片 */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+.kpi-card{background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:4px solid var(--line-color,#3b82f6);transition:transform 0.2s}
+.kpi-card:hover{transform:translateY(-2px)}
+.kpi-card-icon{font-size:24px;margin-bottom:8px}
+.kpi-card-value{font-size:26px;font-weight:700;color:#111827;line-height:1}
+.kpi-card-label{font-size:12px;color:#6b7280;margin-top:6px}
+
+/* 区块标题 */
+.section-title{font-size:20px;font-weight:700;color:#111827;margin:32px 0 16px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--line-color,#e5e7eb)}
+
+/* 排名图表 */
+.rank-chart-container{background:white;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:24px}
+.rank-chart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fafafa}
+.rank-chart-title{font-size:15px;font-weight:600;color:#111827}
+.rank-chart-legend{display:flex;align-items:center;gap:16px}
+.rank-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280}
+.rank-chart-legend-dot{width:10px;height:10px;border-radius:3px}
+.rank-chart-svg-wrapper{padding:24px;position:relative}
+.rank-chart-svg-wrapper svg{width:100%;display:block}
+.rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:12px;color:#9ca3af;text-align:center}
+
+/* 线路走向图占位 */
+.route-map-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px;display:none}
+.route-map-container{width:100%;overflow:auto;border-radius:8px}
+.route-map-image{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
+.route-map-caption{text-align:center;font-size:14px;color:#6b7280;margin-top:12px}
+.route-map-placeholder{background:#f9fafb;border:2px dashed #e5e7eb;border-radius:12px;padding:60px 20px;text-align:center;color:#9ca3af}
+.route-map-placeholder-icon{font-size:48px;margin-bottom:12px}
+.route-map-placeholder-text{font-size:14px}
+
+/* 换乘信息卡片 */
+.transfer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
+.transfer-card{background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-left:4px solid var(--line-color,#3b82f6);display:flex;align-items:center;justify-content:space-between;transition:all 0.2s}
+.transfer-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.transfer-station-name{font-size:18px;font-weight:700;color:#111827}
+.transfer-station-sub{font-size:13px;color:#6b7280;margin-top:2px}
+.transfer-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.transfer-badge{display:inline-block;padding:4px 12px;border-radius:14px;font-size:13px;font-weight:600;color:white}
+
+/* 车辆信息卡片 */
+.train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.train-card{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:4px solid var(--line-color,#3b82f6)}
+.train-card-model{font-size:20px;font-weight:700;color:#111827;margin-bottom:12px}
+.train-card-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;color:#4b5563;border-bottom:1px dashed #e5e7eb}
+.train-card-row:last-child{border-bottom:none}
+.train-card-label{color:#6b7280}
+.train-encountered{color:#10b981;font-weight:600}
+.train-no-encounter{color:#9ca3af;font-style:italic}
+.train-note{font-size:12px;color:#9ca3af;margin-top:8px;font-style:italic}
+
+/* 建设中时间线 */
+.timeline-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px}
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:#e5e7eb}
+.timeline-item{position:relative;padding-bottom:20px}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--line-color,#999);border:3px solid white;box-shadow:0 0 0 2px var(--line-color,#e5e7eb)}
+.timeline-item:last-child::before{background:#f59e0b;box-shadow:0 0 0 2px #f59e0b40;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px #f59e0b40}50%{box-shadow:0 0 0 6px #f59e0b20}}
+.timeline-date{font-size:14px;font-weight:700;color:#111827}
+.timeline-content{font-size:14px;color:#4b5563;margin-top:4px}
+
+/* 相关链接 */
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.related-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:white;border-radius:12px;text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s}
+.related-link:hover{background:var(--line-color,#3b82f6);color:white;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+
+/* 错误页面 */
+.error-page{text-align:center;padding:80px 20px}
+.error-page h2{font-size:28px;color:#111827;margin-bottom:12px}
+.error-page p{font-size:16px;color:#6b7280}
+
+/* 响应式 */
+@media(max-width:768px){.container{padding:0 12px;margin-top:70px}.line-header{padding:24px 20px;gap:16px}.line-number-big{width:70px;height:70px;font-size:32px}.line-header-name{font-size:24px}.line-header-alias{font-size:14px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.transfer-grid{grid-template-columns:1fr}.train-grid{grid-template-columns:1fr}.route-map-image{width:100%;height:auto}}
+</style>
+<base target="_blank">
+</head>
+<body>
+<script src="navbar.js"></script>
+
+<main class="container" id="mainContainer">
+<!-- 内容由 JS 动态渲染 -->
+</main>
+
+<script>
+// ==================== 辅助函数 ====================
+function adjustColor(hex,amount){
+const num=parseInt(hex.replace("#",""),16);
+const r=Math.min(255,Math.max(0,(num>>16)+amount));
+const g=Math.min(255,Math.max(0,((num>>8)&0x00FF)+amount));
+const b=Math.min(255,Math.max(0,(num&0x0000FF)+amount));
+return"#"+((r<<16)|(g<<8)|b).toString(16).padStart(6,"0");
+}
+
+function fmtOpenDate(dateStr){
+if(!dateStr)return'';
+const parts=dateStr.split(/；|;/).map(p=>p.trim()).filter(Boolean);
+let html='';
+parts.forEach((part,i)=>{
+const m=part.match(/^(.+)[：:](.+)$/);
+if(m){html+='<strong>'+m[1]+'：</strong>'+m[2]}
+else{html+=part}
+if(i<parts.length-1)html+='<br>';
+});
+return html;
+}
+
+function getOtherLineColor(lineId){
+const line=ALL_LINES_ENHANCED.find(l=>l.id===lineId);
+if(!line)return"#9CA3AF";
+if(line.category==="construction")return"#9CA3AF";
+return line.color;
+}
+
+function getLineDisplayName(lineId){
+if(lineId==="6z")return"6号线支线";
+return lineId+"号线";
+}
+
+function getLineParam(){
+const params=new URLSearchParams(window.location.search);
+return params.get('line')||'';
+}
+
+// ==================== 排名图表通用渲染器 ====================
+const rankChartConfig={width:900,height:420,margin:{top:30,right:40,bottom:70,left:50},barWidth:32,barFillRatio:0.75,fontSize:{yAxis:11,lineName:13,value:13},animDuration:600,staggerDelay:25,barRadius:4,yMaxPadding:1.12,gridSteps:5};
+
+function startNumberAnimation(el,from,to,duration){
+if(el._rafId){cancelAnimationFrame(el._rafId);el._rafId=null}
+const startTime=performance.now();
+function update(time){
+const progress=Math.min((time-startTime)/duration,1);
+const eased=1-Math.pow(1-progress,1.5);
+const current=from+(to-from)*eased;
+el.textContent=(decimals=>decimals===0?Math.round(current).toString():current.toFixed(decimals))(parseInt(el.dataset.decimals||'2'));
+el.setAttribute('data-current-value',current);
+if(progress<1){el._rafId=requestAnimationFrame(update)}
+else{el.textContent=(decimals=>decimals===0?Math.round(to).toString():to.toFixed(decimals))(parseInt(el.dataset.decimals||'2'));el.setAttribute('data-current-value',to);el._rafId=null}
+}
+el._rafId=requestAnimationFrame(update);
+}
+
+function animateBar(element,fromX,fromY,fromHeight,toX,toY,toHeight,duration){
+if(fromX===toX&&fromY===toY&&fromHeight===toHeight)return;
+const dx=fromX-toX,dy=fromY-toY;
+element.style.transition='none';
+element.style.transform='translate('+dx+'px,'+dy+'px)';
+element.style.transformOrigin='bottom center';
+void element.offsetHeight;
+const opt={duration:duration,easing:'ease-out',fill:'forwards'};
+const ha=element.animate([{height:fromHeight+'px'},{height:toHeight+'px'}],opt);
+const ta=element.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'translate(0,0)'}],opt);
+let fc=0;
+const cf=()=>{fc++;if(fc===2){element.style.transition='';element.style.transform='';element.style.transformOrigin=''}};
+ha.onfinish=cf;ta.onfinish=cf;
+}
+
+function animateText(element,fromX,fromY,toX,toY,duration){
+if(fromX===toX&&fromY===toY)return;
+const dx=fromX-toX,dy=fromY-toY;
+element.style.transition='none';
+element.style.transform='translate('+dx+'px,'+dy+'px)';
+void element.offsetHeight;
+const anim=element.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'translate(0,0)'}],{duration:duration,easing:'ease-out',fill:'forwards'});
+anim.onfinish=()=>{element.style.transition='';element.style.transform=''};
+}
+
+function renderRankChart(containerId,items,unit,decimals){
+const container=document.getElementById(containerId);
+if(!container)return;
+const{width,height,margin,barWidth,barFillRatio,fontSize,animDuration,barRadius,yMaxPadding,gridSteps}=rankChartConfig;
+const chartW=width-margin.left-margin.right;
+const chartH=height-margin.top-margin.bottom;
+const n=items.length;
+const slotW=chartW/n;
+const bw=Math.min(barWidth,slotW*barFillRatio);
+const gap=slotW-bw;
+const maxVal=Math.max(...items.map(d=>d.value))*yMaxPadding;
+const scaleY=chartH/maxVal;
+const baseY=height-margin.bottom;
+
+let svg=container.querySelector('svg');
+let barsG,labelsG,valuesG,gridG;
+if(!svg){
+svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+svg.setAttribute('viewBox','0 0 '+width+' '+height);
+svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+svg.style.width='100%';
+svg.style.display='block';
+const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+const filter=document.createElementNS('http://www.w3.org/2000/svg','filter');
+filter.setAttribute('id','barShadow-'+containerId);
+filter.setAttribute('x','-5%');filter.setAttribute('y','-5%');
+filter.setAttribute('width','110%');filter.setAttribute('height','120%');
+const fe=document.createElementNS('http://www.w3.org/2000/svg','feDropShadow');
+fe.setAttribute('dx','0');fe.setAttribute('dy','2');fe.setAttribute('stdDeviation','3');
+fe.setAttribute('flood-color','#000');fe.setAttribute('flood-opacity','0.08');
+filter.appendChild(fe);defs.appendChild(filter);svg.appendChild(defs);
+gridG=document.createElementNS('http://www.w3.org/2000/svg','g');
+barsG=document.createElementNS('http://www.w3.org/2000/svg','g');
+labelsG=document.createElementNS('http://www.w3.org/2000/svg','g');
+valuesG=document.createElementNS('http://www.w3.org/2000/svg','g');
+gridG.id='grid-'+containerId;
+barsG.id='bars-'+containerId;
+labelsG.id='labels-'+containerId;
+valuesG.id='values-'+containerId;
+svg.appendChild(gridG);svg.appendChild(barsG);svg.appendChild(labelsG);svg.appendChild(valuesG);
+container.appendChild(svg);
+}else{
+gridG=svg.querySelector('#grid-'+containerId)||svg.querySelector('g:nth-child(2)');
+barsG=svg.querySelector('#bars-'+containerId)||svg.querySelector('g:nth-child(3)');
+labelsG=svg.querySelector('#labels-'+containerId)||svg.querySelector('g:nth-child(4)');
+valuesG=svg.querySelector('#values-'+containerId)||svg.querySelector('g:nth-child(5)');
+}
+
+// 记录旧位置用于动画
+const oldPositions=new Map();
+barsG.querySelectorAll('rect').forEach(bar=>{
+const key=bar.id.replace('bar-'+containerId+'-','');
+oldPositions.set(key,{
+x:parseFloat(bar.getAttribute('x'))||0,
+y:parseFloat(bar.getAttribute('y'))||0,
+h:parseFloat(bar.getAttribute('height'))||0
+});
+});
+
+// 网格线
+gridG.innerHTML='';
+for(let i=0;i<=gridSteps;i++){
+const val=(maxVal/gridSteps)*i;
+const y=baseY-val*scaleY;
+const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+line.setAttribute('x1',margin.left);line.setAttribute('y1',y);
+line.setAttribute('x2',width-margin.right);line.setAttribute('y2',y);
+line.setAttribute('stroke','#e5e7eb');line.setAttribute('stroke-width','1');
+line.setAttribute('stroke-dasharray',i===0?'':'4,4');
+gridG.appendChild(line);
+const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+text.setAttribute('x',margin.left-8);text.setAttribute('y',y+4);
+text.setAttribute('text-anchor','end');text.setAttribute('fill','#9ca3af');
+text.setAttribute('font-size',fontSize.yAxis);text.setAttribute('font-weight','500');
+text.textContent=decimals===0?Math.round(val).toString():val.toFixed(decimals);
+gridG.appendChild(text);
+}
+
+// 绘制柱子
+items.forEach((item,i)=>{
+const x=margin.left+i*slotW+gap/2;
+const barH=item.value*scaleY;
+const y=baseY-barH;
+const color=item.color||'#666';
+const key=item.key;
+const bid='bar-'+containerId+'-'+key;
+const lid='lab-'+containerId+'-'+key;
+const vid='val-'+containerId+'-'+key;
+
+let bar=barsG.querySelector('#'+bid);
+let lab=labelsG.querySelector('#'+lid);
+let val=valuesG.querySelector('#'+vid);
+
+if(!bar){
+bar=document.createElementNS('http://www.w3.org/2000/svg','rect');
+bar.setAttribute('id',bid);
+bar.setAttribute('x',x);bar.setAttribute('y',baseY);
+bar.setAttribute('width',bw);bar.setAttribute('height',0);
+bar.setAttribute('rx',barRadius);bar.setAttribute('fill',color);
+bar.setAttribute('filter','url(#barShadow-'+containerId+')');
+barsG.appendChild(bar);
+lab=document.createElementNS('http://www.w3.org/2000/svg','text');
+lab.setAttribute('id',lid);lab.setAttribute('x',x+bw/2);lab.setAttribute('y',baseY+20);
+lab.setAttribute('text-anchor','middle');lab.setAttribute('fill','#374151');
+lab.setAttribute('font-size',fontSize.lineName);lab.setAttribute('font-weight','600');
+lab.textContent=item.name;
+labelsG.appendChild(lab);
+val=document.createElementNS('http://www.w3.org/2000/svg','text');
+val.setAttribute('id',vid);val.setAttribute('x',x+bw/2);val.setAttribute('y',baseY-6);
+val.setAttribute('text-anchor','middle');val.setAttribute('fill','#374151');
+val.setAttribute('font-size',fontSize.value);val.setAttribute('font-weight','600');
+val.setAttribute('opacity','1');
+val.textContent='0';
+val.dataset.decimals=decimals;
+val.setAttribute('data-current-value','0');
+valuesG.appendChild(val);
+// 首次加载动画
+bar.setAttribute('y',y);bar.setAttribute('height',barH);
+animateBar(bar,x,baseY,0,x,y,barH,animDuration);
+val.setAttribute('y',y-6);
+animateText(val,x,baseY-6,x,y-6,animDuration);
+startNumberAnimation(val,0,item.value,animDuration);
+}else{
+// 已存在，更新位置和数值
+const old=oldPositions.get(key);
+bar.setAttribute('x',x);bar.setAttribute('y',y);bar.setAttribute('height',barH);bar.setAttribute('fill',color);
+if(lab){lab.setAttribute('x',x+bw/2);lab.textContent=item.name;}
+if(val){
+const valY=y-6;
+val.setAttribute('x',x+bw/2);val.setAttribute('y',valY);
+let oldVal=parseFloat(val.getAttribute('data-current-value'));
+if(isNaN(oldVal))oldVal=0;
+if(Math.abs(oldVal-item.value)>0.0001){startNumberAnimation(val,oldVal,item.value,animDuration)}
+else{val.textContent=decimals===0?Math.round(item.value).toString():item.value.toFixed(decimals);val.setAttribute('data-current-value',item.value)}
+if(old&&(old.x!==x||old.y!==y||old.h!==barH)){
+animateBar(bar,old.x,old.y,old.h,x,y,barH,animDuration);
+animateText(val,old.x+bw/2,old.y-6,x+bw/2,valY,animDuration);
+}
+}
+}
+});
+
+// 移除多余元素
+const curKeys=new Set(items.map(d=>d.key));
+barsG.querySelectorAll('rect').forEach(el=>{if(!curKeys.has(el.id.replace('bar-'+containerId+'-','')))el.remove()});
+labelsG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('lab-'+containerId+'-','')))el.remove()});
+valuesG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('val-'+containerId+'-','')))el.remove()});
+}
+
+// ==================== 数据预处理 ====================
+function preprocessTransferCounts(){
+const counts={};
+ALL_LINES_ENHANCED.forEach(l=>{counts[l.id]=0});
+ALL_LINES_ENHANCED.forEach(l=>{
+const transfers=l.transfers||{};
+Object.values(transfers).forEach(lineIds=>{
+lineIds.forEach(lid=>{
+if(counts[lid]!==undefined)counts[lid]++;
+});
+});
+});
+ALL_LINES_ENHANCED.forEach(l=>{l.transferCount=counts[l.id]});
+}
+
+function calcAvgPassengerFlow(){
+const avgs={};
+const NO_FLOW=['4','13'];
+ALL_LINES_ENHANCED.forEach(l=>{avgs[l.id]=null});
+const dates=Object.keys(passengerData||{}).sort();
+if(dates.length===0)return avgs;
+dates.forEach(date=>{
+const dayData=passengerData[date];
+(dayData.lines||[]).forEach(line=>{
+if(NO_FLOW.includes(line.key))return;
+if(!avgs[line.key])avgs[line.key]={sum:0,count:0};
+avgs[line.key].sum+=line.passengers;
+avgs[line.key].count++;
+});
+});
+const result={};
+Object.keys(avgs).forEach(k=>{
+if(avgs[k]&&avgs[k].count>0){result[k]=avgs[k].sum/avgs[k].count}
+else{result[k]=null}
+});
+return result;
+}
+
+// ==================== 1. 获取线路参数 ====================
+const LINE_ID=getLineParam();
+const lineData=LINE_ID?getEnhancedLineData(LINE_ID):null;
+
+// 设置主题色
+const COLOR=lineData?(lineData.color||'#3b82f6'):'#2563eb';
+const DARK_COLOR=lineData?adjustColor(COLOR,-30):'#1e40af';
+document.documentElement.style.setProperty('--line-color',COLOR);
+
+const container=document.getElementById('mainContainer');
+
+// 预处理换乘次数
+preprocessTransferCounts();
+
+// ==================== 2. 模式判断 ====================
+if(!LINE_ID){
+// ===== 总览模式：显示全部线路 =====
+renderOverview();
+}else if(!lineData){
+// 单线路但 ID 无效
+container.innerHTML=`
+<div class="error-page">
+<h2>线路未找到</h2>
+<p>请检查 URL 参数是否正确，例如：<code>dashboard?line=1</code></p>
+<a href="index" class="back-link" style="margin-top:20px">返回首页</a>
+</div>
+`;
+throw new Error('Line not found: '+LINE_ID);
+}else{
+// ===== 单线路模式 =====
+renderSingleLine();
+}
+
+// ==================== 3. 总览渲染 ====================
+function renderOverview(){
+const totalLines=ALL_LINES_ENHANCED.length;
+const operating=ALL_LINES_ENHANCED.filter(l=>l.category==='operating');
+const construction=ALL_LINES_ENHANCED.filter(l=>l.category==='construction');
+const totalLength=653.8;
+const totalStations=452;
+const totalTrains=ALL_LINES_ENHANCED.reduce((s,l)=>{
+if(!l.trains)return s;
+let cnt=0;
+for(const t of l.trains){
+const nr=t.numberRange||'';
+let m=nr.match(/(\d+)-(\d+)/);
+if(m){cnt+=parseInt(m[2])-parseInt(m[1])+1;continue}
+m=nr.match(/\/(\d+)-.*\/(\d+)/);
+if(m){cnt+=parseInt(m[2])-parseInt(m[1])+1;continue}
+m=nr.match(/预计(\d+)/);
+if(m)cnt+=parseInt(m[1]);
+}
+return s+cnt;
+},0);
+
+// 准备排名数据
+const lengthData=ALL_LINES_ENHANCED.map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:l.lengthKm||0,color:l.color||'#999'})).sort((a,b)=>b.value-a.value);
+const stationData=ALL_LINES_ENHANCED.map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:(l.stationList||[]).length,color:l.color||'#999'})).sort((a,b)=>b.value-a.value);
+const transferData=ALL_LINES_ENHANCED.map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:Object.keys(l.transfers||{}).length,color:l.color||'#999'})).sort((a,b)=>b.value-a.value);
+const beTransferredData=ALL_LINES_ENHANCED.map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:l.transferCount||0,color:l.color||'#999'})).sort((a,b)=>b.value-a.value);
+
+const avgFlows=calcAvgPassengerFlow();
+const flowData=operating.map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:avgFlows[l.id]||0,color:l.color||'#999'})).filter(d=>d.value>0).sort((a,b)=>b.value-a.value);
+
+container.innerHTML=`
+<!-- 返回首页 -->
+<a href="index" class="back-link">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<line x1="19" y1="12" x2="5" y2="12"></line>
+<polyline points="12 19 5 12 12 5"></polyline>
+</svg>
+返回首页
+</a>
+
+<!-- 总览标题栏 -->
+<div class="line-header" style="background:linear-gradient(135deg,#2563eb,#1e40af);box-shadow:0 8px 32px #2563eb40;">
+<div class="line-number-big" style="color:#2563eb;font-size:40px;">📊</div>
+<div class="line-header-info">
+<div class="line-header-name">线路仪表板总览</div>
+<div class="line-header-alias">深圳地铁全线路数据一览</div>
+<div class="line-header-tags">
+<span class="line-header-tag">${totalLines} 条线路</span>
+<span class="line-header-tag">${operating.length} 条已开通</span>
+<span class="line-header-tag">${construction.length} 条建设中</span>
+</div>
+</div>
+</div>
+
+<!-- KPI 总览 -->
+<div class="kpi-grid">
+<div class="kpi-card"><div class="kpi-card-icon">🚇</div><div class="kpi-card-value">${totalLines}</div><div class="kpi-card-label">线路总数</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">📏</div><div class="kpi-card-value">${totalLength}</div><div class="kpi-card-label">运营里程 km</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🚉</div><div class="kpi-card-value">${totalStations}</div><div class="kpi-card-label">运营车站</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🚃</div><div class="kpi-card-value">${totalTrains>0?totalTrains:'913'}</div><div class="kpi-card-label">车辆总数</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🟢</div><div class="kpi-card-value">${operating.length}</div><div class="kpi-card-label">已开通</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🟡</div><div class="kpi-card-value">${construction.length}</div><div class="kpi-card-label">建设中</div></div>
+</div>
+
+<!-- 已开通线路 -->
+<h2 class="section-title">🟢 已开通线路 (${operating.length})</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
+${operating.map(l=>lineCard(l)).join('')}
+</div>
+
+<!-- 建设中线路 -->
+<h2 class="section-title">🟡 建设中线路 (${construction.length})</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
+${construction.map(l=>lineCard(l)).join('')}
+</div>
+
+<!-- ===== 排名图表区 ===== -->
+<h2 class="section-title">📊 全线路数据排名</h2>
+
+<!-- 里程排名 -->
+<div class="rank-chart-container">
+<div class="rank-chart-header"><div class="rank-chart-title">📏 里程排名（公里）</div></div>
+<div class="rank-chart-svg-wrapper" id="rank-length"></div>
+<div class="rank-chart-footer">按线路长度降序排列 · 包含建设中线路</div>
+</div>
+
+<!-- 站点数排名 -->
+<div class="rank-chart-container">
+<div class="rank-chart-header"><div class="rank-chart-title">🚉 站点数排名</div></div>
+<div class="rank-chart-svg-wrapper" id="rank-stations"></div>
+<div class="rank-chart-footer">按车站数量降序排列 · 包含建设中线路</div>
+</div>
+
+<!-- 换乘站数排名 -->
+<div class="rank-chart-container">
+<div class="rank-chart-header"><div class="rank-chart-title">🔄 换乘站数排名</div></div>
+<div class="rank-chart-svg-wrapper" id="rank-transfers"></div>
+<div class="rank-chart-footer">按换乘站数量降序排列 · 包含建设中线路</div>
+</div>
+
+<!-- 被换乘次数排名 -->
+<div class="rank-chart-container">
+<div class="rank-chart-header"><div class="rank-chart-title">🔀 被换乘次数排名</div></div>
+<div class="rank-chart-svg-wrapper" id="rank-be-transferred"></div>
+<div class="rank-chart-footer">统计各线路被其他线路换乘的总次数 · 数值越高说明该线路越"枢纽"</div>
+</div>
+
+<!-- 平均客流排名 -->
+<div class="rank-chart-container">
+<div class="rank-chart-header"><div class="rank-chart-title">👥 平均客流排名（万人次）</div></div>
+<div class="rank-chart-svg-wrapper" id="rank-avg-flow"></div>
+<div class="rank-chart-footer">按历史日均客流降序排列 · 仅已开通线路（不含港铁4号线、13号线）</div>
+</div>
+
+<!-- 相关链接 -->
+<h2 class="section-title">🔗 相关链接</h2>
+<div class="related-grid">
+<a href="passenger-flow" class="related-link">📊 每日客流</a>
+<a href="tools" class="related-link">🛠️ 工具箱</a>
+<a href="line-colors" class="related-link">🎨 线路色号</a>
+</div>
+`;
+
+// 渲染图表（延迟确保 DOM 已插入）
+requestAnimationFrame(()=>{
+renderRankChart('rank-length',lengthData,'km',2);
+renderRankChart('rank-stations',stationData,'站',0);
+renderRankChart('rank-transfers',transferData,'站',0);
+renderRankChart('rank-be-transferred',beTransferredData,'次',0);
+if(flowData.length>0){renderRankChart('rank-avg-flow',flowData,'万人次',2)}
+else{document.getElementById('rank-avg-flow').innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af;">暂无客流数据</div>'}
+});
+}
+
+function lineCard(l){
+const isOp=l.category==='operating';
+const statusEmoji=isOp?'🟢':'🟡';
+const shortName=l.name.replace('深圳地铁','').split('（')[0];
+return`
+<a href="dashboard?line=${l.id}" style="text-decoration:none;color:inherit;">
+<div style="background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-left:4px solid ${l.color||'#999'};transition:all 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
+<div style="position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+<div style="width:44px;height:44px;border-radius:50%;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;">${l.id==='6z'?'6Z':l.id}</div>
+<div style="flex:1;min-width:0;padding-right:70px;">
+<div style="font-size:15px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
+<div style="font-size:12px;color:#6b7280;margin-top:2px;">${l.alias||''}</div>
+</div>
+<div style="position:absolute;top:0;right:0;font-size:11px;padding:3px 8px;border-radius:10px;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;">
+${statusEmoji} ${isOp?'已开通':'建设中'}
+</div>
+</div>
+<div style="display:flex;gap:12px;font-size:13px;color:#4b5563;">
+<span>📏 ${l.lengthKm||0} km</span>
+<span>🚉 ${l.stationList?.length||0} 站</span>
+</div>
+<div style="margin-top:10px;font-size:12px;padding:4px 10px;border-radius:12px;display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
+${fmtOpenDate(l.openDate)}
+</div>
+</div>
+</a>
+`;
+}
+
+// ==================== 4. 单线路渲染 ====================
+function renderSingleLine(){
+const stationCount=lineData.stationList?.length||0;
+const transferCount=Object.keys(lineData.transfers||{}).length;
+const trainCount=(()=>{
+let total=0;
+if(!lineData.trains)return 0;
+for(const t of lineData.trains){
+const nr=t.numberRange||'';
+let m=nr.match(/(\d+)-(\d+)/);
+if(m){total+=parseInt(m[2])-parseInt(m[1])+1;continue}
+m=nr.match(/\/(\d+)-.*\/(\d+)/);
+if(m){total+=parseInt(m[2])-parseInt(m[1])+1;continue}
+m=nr.match(/预计(\d+)/);
+if(m)total+=parseInt(m[1]);
+}
+return total;
+})();
+
+const isOperating=lineData.category==='operating';
+const statusText=isOperating?'已开通运营':'建设中';
+const statusIcon=isOperating?'已开通':'建设中';
+const shortName=lineData.name.replace('深圳地铁','').split('（')[0];
+
+const NO_FLOW_LINES=['4','13'];
+const showPassengerFlow=!NO_FLOW_LINES.includes(LINE_ID);
+
+container.innerHTML=`
+<!-- 顶部导航 -->
+<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+<a href="line ${LINE_ID}" class="back-link">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<line x1="19" y1="12" x2="5" y2="12"></line>
+<polyline points="12 19 5 12 12 5"></polyline>
+</svg>
+返回 ${shortName}百科
+</a>
+<a href="dashboard" class="back-link">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<line x1="19" y1="12" x2="5" y2="12"></line>
+<polyline points="12 19 5 12 12 5"></polyline>
+</svg>
+查看全部线路对比
+</a>
+</div>
+
+<!-- 线路标题栏 -->
+<div class="line-header" style="background:linear-gradient(135deg,${COLOR},${DARK_COLOR});box-shadow:0 8px 32px ${COLOR}40;">
+<div class="line-number-big" style="color:${COLOR}">${LINE_ID==='6z'?'6Z':lineData.id}</div>
+<div class="line-header-info">
+<div class="line-header-name">${LINE_ID==='6z'?'6号线支线':shortName}</div>
+<div class="line-header-alias">${lineData.alias||''}</div>
+<div class="line-header-tags">
+<span class="line-header-tag">${statusIcon}</span>
+</div>
+<div class="line-header-tags" style="margin-top:6px;flex-direction:column;align-items:flex-start;gap:6px;">
+${(()=>{
+const parts=(lineData.openDate||'').split(/；|;/).map(p=>p.trim()).filter(Boolean);
+return parts.map(part=>{
+const m=part.match(/^(.+)[：:](.+)$/);
+const text=m?'<strong>'+m[1]+'：</strong>'+m[2]:part;
+return'<span class="line-header-tag">'+text+'</span>';
+}).join('');
+})()}
+</div>
+</div>
+</div>
+
+<!-- KPI 卡片 -->
+<div class="kpi-grid">
+<div class="kpi-card"><div class="kpi-card-icon">📏</div><div class="kpi-card-value">${lineData.lengthKm||0}</div><div class="kpi-card-label">线路长度 km</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🚉</div><div class="kpi-card-value">${stationCount}</div><div class="kpi-card-label">车站数量</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🔄</div><div class="kpi-card-value">${transferCount}</div><div class="kpi-card-label">换乘站</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">🚃</div><div class="kpi-card-value">${trainCount>0?trainCount:'-'}</div><div class="kpi-card-label">车辆总数</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">⚙️</div><div class="kpi-card-value">${lineData.formationCode||'-'}</div><div class="kpi-card-label">车辆编组</div></div>
+<div class="kpi-card"><div class="kpi-card-icon">⚡</div><div class="kpi-card-value">${lineData.maxSpeedKmh||0}</div><div class="kpi-card-label">设计时速 km/h</div></div>
+${lineData.maxPassengerFlow?`
+<div class="kpi-card"><div class="kpi-card-icon">👥</div><div class="kpi-card-value" style="font-size:16px">${lineData.maxPassengerFlow}</div><div class="kpi-card-label">历史最大客流</div></div>
+`:''}
+</div>
+
+<!-- 线路走向图 -->
+<h2 class="section-title">🗺️ 线路图</h2>
+<div class="route-map-section" id="routeMapSection">
+<div class="route-map-container">
+<img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false">
+</div>
+<div class="route-map-caption" id="routeMapCaption"></div>
+</div>
+<div class="route-map-section" id="routeMapPlaceholder" style="display:block;">
+<div class="route-map-placeholder">
+<div class="route-map-placeholder-icon">🗺️</div>
+<div class="route-map-placeholder-text">
+暂无线路图<br><span style="font-size:12px">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>
+</div>
+</div>
+</div>
+
+<!-- 换乘信息 -->
+${transferCount>0?`
+<h2 class="section-title">🔄 换乘信息 (${transferCount}座换乘站)</h2>
+<div class="transfer-grid">
+${Object.entries(lineData.transfers||{}).map(([station,lines])=>{
+const badges=lines.map(lid=>{
+const lc=getOtherLineColor(lid);
+return`<span class="transfer-badge" style="background:${lc}">${getLineDisplayName(lid)}</span>`;
+}).join('');
+return`
+<div class="transfer-card">
+<div>
+<div class="transfer-station-name">${station}站</div>
+<div class="transfer-station-sub">可换乘 ${lines.length} 条线路</div>
+</div>
+<div class="transfer-badges">${badges}</div>
+</div>
+`;
+}).join('')}
+</div>
+`:''}
+
+<!-- 车辆信息 -->
+${lineData.trains&&lineData.trains.length>0?`
+<h2 class="section-title">🚃 车辆信息 (${lineData.trains.length}种车型)</h2>
+<div class="train-grid">
+${lineData.trains.map(train=>{
+const enc=train.encountered;
+const encHtml=enc?`<span class="train-encountered">已遇到：${enc}</span>`:`<span class="train-no-encounter">暂未遇到</span>`;
+return`
+<div class="train-card">
+<div class="train-card-model">${train.model}</div>
+<div class="train-card-row"><span class="train-card-label">编号范围</span><span>${train.numberRange}</span></div>
+<div class="train-card-row"><span class="train-card-label">制造商</span><span>${train.manufacturer}</span></div>
+<div class="train-card-row"><span class="train-card-label">记录</span>${encHtml}</div>
+${train.note?`<div class="train-note">备注：${train.note}</div>`:''}
+</div>
+`;
+}).join('')}
+</div>
+`:'<h2 class="section-title">🚃 车辆信息</h2><p style="color:#9ca3af;padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
+
+<!-- 建设中时间线 -->
+${!isOperating?`
+<h2 class="section-title">🏗️ 建设进度</h2>
+<div class="timeline-section">
+<div class="timeline">
+<div class="timeline-item">
+<div class="timeline-date">规划批复</div>
+<div class="timeline-content">${lineData.name} 纳入深圳市城市轨道交通建设规划</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-date">开工建设</div>
+<div class="timeline-content">一期工程正式开工</div>
+</div>
+<div class="timeline-item">
+<div class="timeline-date">${lineData.openDate}</div>
+<div class="timeline-content">预计开通运营 · ${lineData.lengthDesc} · ${lineData.stationsDesc}</div>
+</div>
+</div>
+</div>
+`:''}
+
+<!-- 相关链接 -->
+<h2 class="section-title">🔗 相关链接</h2>
+<div class="related-grid">
+<a href="line ${LINE_ID}" class="related-link">📖 线路百科</a>
+${showPassengerFlow?`<a href="passenger-flow?line=${LINE_ID}" class="related-link">📊 客流数据</a>`:''}
+<a href="progress-tracking?line=${LINE_ID}" class="related-link">📰 进度跟踪</a>
+<a href="trains?line=${LINE_ID}" class="related-link">🚇 车辆详情</a>
+<a href="history?line=${LINE_ID}" class="related-link">🏗️ 建设历程</a>
+<a href="line-colors" class="related-link">🎨 线路色号</a>
+</div>
+`;
+
+// 线路走向图自动加载
+(function(){
+// const isMobile=window.innerWidth<=768;
+// const suffix=isMobile?'phone':'compu';
+const suffix='compu';
+const imgName='line'+lineData.id+'-'+suffix+'.jpg';
+const testImg=new Image();
+testImg.onload=function(){
+const section=document.getElementById('routeMapSection');
+const placeholder=document.getElementById('routeMapPlaceholder');
+const img=document.getElementById('routeMapImage');
+const caption=document.getElementById('routeMapCaption');
+if(section&&img){
+img.src=imgName;
+img.alt='深圳地铁'+getLineDisplayName(lineData.id)+'线路图';
+if(caption)caption.textContent='深圳地铁'+getLineDisplayName(lineData.id)+'线路图';
+section.style.display='block';
+if(placeholder)placeholder.style.display='none';
+}
+};
+testImg.onerror=function(){
+const placeholderText=document.querySelector('#routeMapPlaceholder .route-map-placeholder-text');
+if(placeholderText){
+placeholderText.innerHTML='暂无线路图<br><span style="font-size:12px">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>';
+}
+};
+testImg.src=imgName;
+})();
+}
+</script>
+</body>
+</html>

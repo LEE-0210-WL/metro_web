@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: HarmonyOS Sans;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ========= Banner 轮播 ========= */
+    .banner-carousel {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      aspect-ratio: 7087 / 709;
+    }
+
+    @media (orientation: portrait) {
+      .banner-carousel {
+        aspect-ratio: 4536 / 1418;
+      }
+    }
+
+    .banner-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: translateX(100%);
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+
+    .banner-slide.active {
+      transform: translateX(0);
+      z-index: 2;
+    }
+
+    .banner-slide.prev {
+      transform: translateX(-100%);
+      z-index: 1;
+    }
+
+    .banner-slide picture,
+    .banner-slide img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+
+    .banner-dots {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0);
+    }
+
+    .banner-dot {
+      width: 20px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      padding: 0;
+    }
+
+    .banner-dot.active {
+      background: rgba(255,255,255,0.9);
+      width: 28px;
+      height: 6px;
+    }
+
+    /* ========= 消息滚动栏 ========= */
+    .message-bar {
+      background: #fbbf24;
+      color: #1f2937;
+      padding: 8px 16px;
+      font-size: 16px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 12px;
+      z-index: 99;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .message-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.6);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-weight: 500;
+      flex-shrink: 0;
+      color: #1f2937;
+    }
+    .message-scroll {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 32px;
+      line-height: 32px;
+      min-width: 0;
+    }
+    .message-scroll ul {
+      display: block;
+      white-space: nowrap;
+      padding-left: 0;
+      margin: 0;
+      list-style: none;
+    }
+    .message-scroll li {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+    }
+    .message-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.6);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      color: #1f2937;
+    }
+
+    /* ========= 主内容区域 ========= */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+
+    /* 线路网格 */
+    .lines-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .line-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      /* 颜色由内联 style 控制 */
+    }
+
+    .line-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .line-number {
+      font-size: 24px;
+      font-weight: 700;
+      /* 颜色由内联 style 控制 */
+    }
+
+    /* ========= 全屏通知弹窗 ========= */
+    .notice-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      backdrop-filter: blur(0px);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.35s ease, backdrop-filter 0.35s ease, background 0.35s ease;
+      pointer-events: none;
+    }
+    .notice-overlay.active {
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .notice-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -42%) scale(0.92);
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      max-width: 520px;
+      width: 90%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+    .notice-modal.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+    .notice-modal.closing {
+      opacity: 0;
+      transform: translate(-50%, -58%) scale(0.92);
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .notice-modal-header {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease 0.1s, transform 0.35s ease 0.1s;
+    }
+    .notice-modal.active .notice-modal-header {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notice-modal-body {
+      font-size: 16px;
+      color: #374151;
+      line-height: 1.8;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 4px;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .notice-modal.active .notice-modal-body {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .notice-modal-body.slide-out {
+      animation: bodySlideOut 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+    .notice-modal-body.slide-in {
+      animation: bodySlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    .notice-modal-body.switching {
+      transition: none !important;
+      animation-fill-mode: both;
+    }
+    .notice-modal-body.open-anim {
+      animation: bodyOpen 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.18s forwards;
+    }
+    @keyframes bodyOpen {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bodySlideOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(-40px); }
+    }
+    @keyframes bodySlideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .notice-modal-progress {
+      text-align: center;
+      font-size: 13px;
+      color: #9ca3af;
+      margin: 20px 0 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.26s;
+    }
+    .notice-modal.active .notice-modal-progress {
+      opacity: 1;
+    }
+
+    .notice-modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease 0.32s, transform 0.3s ease 0.32s;
+    }
+    .notice-modal-body.no-transition {
+      transition: none !important;
+    }
+    .notice-modal.active .notice-modal-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notice-btn {
+      padding: 10px 28px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .notice-btn:hover {
+      transform: translateY(-2px);
+    }
+    .notice-btn:active {
+      transform: translateY(0) scale(0.96);
+      transition-duration: 0.1s;
+    }
+    .notice-btn-skip {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .notice-btn-skip:hover {
+      background: #e5e7eb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .notice-btn-next {
+      background: #2563eb;
+      color: #fff;
+    }
+    .notice-btn-next:hover {
+      background: #1d4ed8;
+      box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+    }
+
+    .notice-btn-prev {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .notice-btn-prev:hover:not(:disabled) {
+      background: #e5e7eb;
+    }
+    .notice-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    @media(max-width:768px){
+      .notice-modal { padding: 28px 20px 22px; }
+      .notice-modal-header { font-size: 20px; }
+      .notice-modal-body { font-size: 15px; }
+      .notice-btn { padding: 9px 22px; font-size: 14px; }
+    }
+
+    /* 快捷入口 */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quick-link:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .quick-link svg {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 8px;
+    }
+
+    .quick-link span {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ========= 响应式 ========= */
+    @media (max-width: 900px) {
+      .message-bar {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        padding: 6px 12px;
+      }
+      .message-left {
+        display: none;
+      }
+      .message-scroll {
+        order: 1;
+        flex: 1;
+        width: auto;
+        min-width: 0;
+        white-space: nowrap;
+      }
+      .message-scroll ul {
+        white-space: nowrap;
+        text-align: left;
+      }
+      .message-scroll li {
+        display: inline-block;
+        width: 100%;
+        text-align: left;
+        margin: 0;
+      }
+      .message-right {
+        order: 2;
+        margin-left: 8px;
+        flex-shrink: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .banner-dots {
+        bottom: -2px;
+        padding: 4px 8px;
+        gap: 4px;
+      }
+      .banner-dot {
+        width: 16px;
+        height: 4px;
+      }
+      .banner-dot.active {
+        width: 22px;
+      }
+      .container {
+        margin-top: 10px;
+        padding: 0 16px;
+      }
+      .page-title { font-size: 26px; }
+      .quick-links { grid-template-columns: repeat(2, 1fr); }
+      .lines-grid { gap: 12px; }
+      .line-card { width: 48px; height: 48px; }
+      .line-number { font-size: 18px; }
+    }
+  </style>
+  <base target="_blank">
+</head>
+<body>
+  <script src="navbar.js"></script>
+  <!-- 引入增强数据 -->
+  <script src="all-lines-enhanced.js"></script>
+
+  <!-- ========== Banner 轮播 ========== -->
+  <div class="banner-carousel">
+    <!-- banner-shuffle.js 会自动填充内容 -->
+  </div>
+
+  <!-- ========== 消息滚动栏 ========== -->
+  <div class="message-bar">
+    <div class="message-left">最新消息</div>
+    <div class="message-scroll">
+      <ul id="messageList"><li>加载中...</li></ul>
+    </div>
+    <div class="message-right" id="messageRight"></div>
+  </div>
+
+  <!-- ========== 主内容区域 ========== -->
+  <main class="container">
+    <h1 class="page-title">走进新天地&middot;Railway</h1>
+    <p class="page-subtitle">车迷的栖息地</p>
+
+    <h2 class="section-title">目前已开通线路</h2>
+    <div class="lines-grid" id="openedLinesGrid">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <h2 class="section-title">五期线路（建设中）</h2>
+    <div class="lines-grid" id="constructionLinesGrid">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <h2 class="section-title">快捷入口</h2>
+    <div class="quick-links">
+      <!-- 【可修改】快捷入口：href 改链接，渐变色改 style，图标改 svg，文字改 span -->
+      <a href="videos" class="quick-link" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+        <span>视频</span>
+      </a>
+      <a href="photos" class="quick-link" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span>照片</span>
+      </a>
+      <a href="materials" class="quick-link" style="background: linear-gradient(135deg, #a855f7, #9333ea);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span>资料</span>
+      </a>
+      <a href="wiki" class="quick-link" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Wiki</span>
+      </a>
+      <a href="articles" class="quick-link" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+        <span>图文</span>
+      </a>
+      <a href="announcements" class="quick-link" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <span>报站</span>
+      </a>
+      <a href="progress-tracking" class="quick-link" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+        <span>进度跟踪</span>
+      </a>
+  <a href="tools" class="quick-link" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+      <path d="M4.7 19.3a1 1 0 0 0 1.4 0l3.77-3.77" />
+    </svg>
+    <span>工具</span>
+  </a>
+    </div>
+  </main>
+
+  <script src="festival-data.js"></script>
+  <script src="banner-shuffle.js"></script>
+  <script>
+    // ========= Banner 轮播 =========
+    
+
+    // ========= 线路颜色映射表（用于消息高亮） =========
+    /* 【可修改】与 CSS 中的线路颜色保持对应，格式：'线路名': '颜色值' */
+    const lineColorMap = {
+      '1号线': '#01AF55',
+      '2号线': '#B95800',
+      '3号线': '#00A9DF',
+      '4号线': '#D42E0F',
+      '5号线': '#9E4DAA',
+      '6号线': '#01C4B7',
+      '6号线支线': '#027776',
+      '7号线': '#0131AC',
+      '8号线': '#B95800',
+      '9号线': '#896B70',
+      '10号线': '#F67599',
+      '11号线': '#672146',
+      '12号线': '#A092B2',
+      '13号线': '#F6AD2D',
+      '14号线': '#F4CB67',
+      '16号线': '#181BA5',
+      '20号线': '#87DBDF',
+      // 五期线路（建设中）
+      '15号线': '#86BE00',
+      '17号线': '#D2C0CD',
+      '19号线': '#BA16A4',
+      '22号线': '#F5E524',
+      '25号线': '#FDAD76',
+      '27号线': '#4E8D8E',
+      '29号线': '#92D6AC',
+      '32号线': '#735128'
+    };
+
+    const anniversaryData = [
+      // 1号线
+      { line: '1号线', segment: '一期', stations: '', year: 2004, month: 12, day: 28 },
+      { line: '1号线', segment: '续建试验段', stations: '', year: 2009, month: 9, day: 28 },
+      { line: '1号线', segment: '续建段', stations: '', year: 2011, month: 6, day: 15 },
+      // 2号线
+      { line: '2号线', segment: '一期', stations: '', year: 2010, month: 12, day: 28 },
+      { line: '2号线', segment: '二期', stations: '', year: 2011, month: 6, day: 28 },
+      { line: '2号线', segment: '三期', stations: '', year: 2020, month: 10, day: 28 },
+      // 3号线
+      { line: '3号线', segment: '一期', stations: '', year: 2010, month: 12, day: 28 },
+      { line: '3号线', segment: '二期', stations: '', year: 2011, month: 6, day: 28 },
+      { line: '3号线', segment: '三期', stations: '', year: 2020, month: 10, day: 28 },
+      { line: '3号线', segment: '四期', stations: '', year: 2024, month: 12, day: 28 },
+      // 4号线
+      { line: '4号线', segment: '一期', stations: '', year: 2004, month: 12, day: 28 },
+      { line: '4号线', segment: '二期', stations: '', year: 2011, month: 6, day: 16 },
+      { line: '4号线', segment: '三期', stations: '', year: 2020, month: 10, day: 28 },
+      // 5号线
+      { line: '5号线', segment: '一期', stations: '', year: 2011, month: 6, day: 22 },
+      { line: '5号线', segment: '二期', stations: '', year: 2019, month: 9, day: 28 },
+      { line: '5号线', segment: '西延段', stations: '', year: 2025, month: 12, day: 28 },
+      // 6号线
+      { line: '6号线', segment: '全线', stations: '', year: 2020, month: 8, day: 18 },
+      // 6号线支线
+      { line: '6号线支线', segment: '一期', stations: '', year: 2022, month: 11, day: 28 },
+      { line: '6号线支线', segment: '二期', stations: '', year: 2025, month: 9, day: 28 },
+      // 7号线
+      { line: '7号线', segment: '一期', stations: '', year: 2016, month: 10, day: 28 },
+      { line: '7号线', segment: '二期', stations: '', year: 2024, month: 12, day: 28 },
+      // 8号线
+      { line: '8号线', segment: '一期', stations: '', year: 2020, month: 10, day: 28 },
+      { line: '8号线', segment: '二期', stations: '', year: 2023, month: 12, day: 27 },
+      { line: '8号线', segment: '三期', stations: '', year: 2025, month: 12, day: 28 },
+      // 9号线
+      { line: '9号线', segment: '一期', stations: '', year: 2016, month: 10, day: 28 },
+      { line: '9号线', segment: '二期', stations: '', year: 2019, month: 12, day: 8 },
+      // 10号线
+      { line: '10号线', segment: '全线', stations: '', year: 2020, month: 8, day: 18 },
+      // 11号线
+      { line: '11号线', segment: '一期', stations: '', year: 2016, month: 6, day: 28 },
+      { line: '11号线', segment: '二期①', stations: '', year: 2022, month: 10, day: 28 },
+      { line: '11号线', segment: '二期②', stations: '', year: 2024, month: 12, day: 28 },
+      { line: '11号线', segment: '二期③', stations: '', year: 2025, month: 12, day: 28 },
+      // 12号线
+      { line: '12号线', segment: '一期', stations: '', year: 2022, month: 11, day: 28 },
+      { line: '12号线', segment: '二期', stations: '', year: 2024, month: 12, day: 28 },
+      // 13号线
+      { line: '13号线', segment: '一期南段', stations: '', year: 2024, month: 12, day: 28 },
+      { line: '13号线', segment: '一期北段', stations: '', year: 2025, month: 12, day: 28 },
+      { line: '13号线', segment: '二期北延', stations: '', year: 2026, month: 6, day: 28 },
+      // 14号线
+      { line: '14号线', segment: '全线', stations: '', year: 2022, month: 10, day: 28 },
+      // 16号线
+      { line: '16号线', segment: '一期', stations: '', year: 2022, month: 12, day: 28 },
+      { line: '16号线', segment: '二期', stations: '', year: 2025, month: 9, day: 28 },
+      // 20号线
+      { line: '20号线', segment: '一期', stations: '', year: 2021, month: 12, day: 28 }
+    ];
+
+    // ========= 获取今天的周年纪念（可能多条） =========
+    function getTodayAnniversaryTexts() {
+      const now = new Date();
+      const m = now.getMonth() + 1;
+      const d = now.getDate();
+      const y = now.getFullYear();
+      const matches = anniversaryData.filter(item => item.month === m && item.day === d);
+      if (matches.length === 0) return [];
+      return matches.map(item => {
+        const years = y - item.year;
+        const stationPart = item.stations ? `（${item.stations}）` : '';
+        return {
+          text: `今天是${item.line}${item.segment}${stationPart}开通${years}周年`,
+          line: item.line
+        };
+      });
+    }
+
+    // ========= 获取下一个即将到来的周年倒计时（可能多条） =========
+    function getNextAnniversaryTexts() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const candidates = [];
+
+      anniversaryData.forEach(item => {
+        const thisYearDate = new Date(currentYear, item.month - 1, item.day);
+        const diffThis = Math.floor((thisYearDate - now) / (1000 * 60 * 60 * 24));
+        if (diffThis > 0) {
+          candidates.push({
+            days: diffThis,
+            years: currentYear - item.year + 1,
+            line: item.line,
+            segment: item.segment,
+            stations: item.stations
+          });
+        } else {
+          const nextYearDate = new Date(currentYear + 1, item.month - 1, item.day);
+          const diffNext = Math.floor((nextYearDate - now) / (1000 * 60 * 60 * 24));
+          if (diffNext > 0) {
+            candidates.push({
+              days: diffNext,
+              years: currentYear + 1 - item.year + 1,
+              line: item.line,
+              segment: item.segment,
+              stations: item.stations
+            });
+          }
+        }
+      });
+
+      if (candidates.length === 0) return [];
+
+      const minDays = Math.min(...candidates.map(c => c.days));
+      const nearest = candidates.filter(c => c.days === minDays);
+      return nearest.map(item => {
+        const stationPart = item.stations ? `（${item.stations}）` : '';
+        return {
+          text: `距离${item.line}${item.segment}${stationPart}开通${item.years}周年还有${item.days}天`,
+          line: item.line
+        };
+      });
+    }
+
+    // ========= 消息滚动栏逻辑 =========
+const baseMessages = [
+  // ===== 更新公告 =====
+  "个人站(v114) 更新公告（2026.8.18 20:50）请查收：",
+  "客流passenger-data数据更新至8月18日，详细数据请跳转查看！",
+  "整合全部线路百科页面，数据统一引用js文件，新的工具“线路仪表板”开启测试！",
+  "新增一个楼盘计数器页面，可以快捷买房（",
+  "全线路！仪表板更新！！1/2/8/11/14の仪表板各自的线路图已上线！（14号线的线路图少标了个站点，下一个版本将修复）",
+  "加上了创新设计的banner，除了logo外，每条线路均有自己的诗句作为搭配！",
+  "新增了三篇神秘文章（是什么呢？🤔）",
+
+  // ===== 运营动态 =====
+  "五周年准备中。。。（五周年？好吃吗？）",
+
+  // ===== 闲聊彩蛋 =====
+  "？卧槽这么多版本了吗，好吧看来是要一直这样下去了",
+  "好累啊，咕噜咕噜咕噜咕噜咕噜咕噜咕噜咕噜咕噜",
+  "这是个什么都没有的空消息，只有聪明人可以看见它"
+];
+
+    let currentIndex = 0;
+    let scrollTimeout = null;
+    let isScrolling = false;
+    const SCROLL_SPEED = 150;
+    const PAUSE_DURATION = 2000;
+
+    function buildMessages() {
+      const todayMsgs = getTodayAnniversaryTexts();
+      const nextMsgs = getNextAnniversaryTexts();
+      const base = baseMessages.map(text => ({ text, line: null }));
+
+      const all = [...todayMsgs, ...nextMsgs, ...base];
+      return all.map(item => {
+        if (item.line && lineColorMap[item.line]) {
+          const colored = `<span style="color: ${lineColorMap[item.line]}; font-weight: 700;">${item.line}</span>`;
+          return item.text.replace(item.line, colored);
+        }
+        return item.text;
+      });
+    }
+
+    let messages = buildMessages();
+
+    function updateMessageContent() {
+      const ul = document.getElementById('messageList');
+      if (!ul) return;
+      ul.innerHTML = '<li>' + messages[currentIndex] + '</li>';
+      ul.style.transition = 'none';
+      ul.style.transform = 'translateX(100%)';
+    }
+
+    function scrollMessage() {
+      if (isScrolling) return;
+      isScrolling = true;
+
+      const ul = document.getElementById('messageList');
+      if (!ul) { isScrolling = false; return; }
+
+      const container = ul.parentElement;
+      const containerWidth = container.offsetWidth;
+      ul.style.display = 'block';
+      void ul.offsetWidth;
+      const textWidth = ul.scrollWidth;
+      const totalDistance = containerWidth + textWidth;
+      const duration = (totalDistance / SCROLL_SPEED) * 1000;
+
+      requestAnimationFrame(() => {
+        ul.style.transition = 'transform ' + duration + 'ms linear';
+        ul.style.transform = 'translateX(-' + textWidth + 'px)';
+      });
+
+      scrollTimeout = setTimeout(function() {
+        isScrolling = false;
+        currentIndex = (currentIndex + 1) % messages.length;
+        updateMessageContent();
+        scrollTimeout = setTimeout(scrollMessage, PAUSE_DURATION);
+      }, duration);
+    }
+
+    function initMessageBar() {
+      messages = buildMessages();
+      currentIndex = 0;
+      updateMessageContent();
+      scrollTimeout = setTimeout(scrollMessage, PAUSE_DURATION);
+    }
+
+    let resizeTimeout = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(scrollTimeout);
+      clearTimeout(resizeTimeout);
+      isScrolling = false;
+      const ul = document.getElementById('messageList');
+      if (ul) {
+        ul.style.transition = 'none';
+        ul.style.transform = 'translateX(100%)';
+      }
+      resizeTimeout = setTimeout(function() {
+        currentIndex = 0;
+        updateMessageContent();
+        scrollTimeout = setTimeout(scrollMessage, PAUSE_DURATION);
+      }, 150);
+    });
+
+    // ========= 网站运行天数 =========
+    function getSiteRunDays() {
+      const start = new Date(2026, 1, 10);
+      const today = new Date();
+      start.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+      return diffDays >= 0 ? diffDays : 0;
+    }
+
+    function updateRightMessage() {
+      const rightDiv = document.getElementById('messageRight');
+      if (!rightDiv) return;
+      const days = getSiteRunDays();
+      const fest = typeof getFestivalOrSolarTerm === 'function' ? getFestivalOrSolarTerm() : null;
+      let html = `已运行 ${days} 天`;
+      if (fest) html += ` | ${fest}`;
+      rightDiv.innerHTML = html;
+    }
+
+    initMessageBar();
+    updateRightMessage();
+
+    // ========= 全屏通知弹窗 =========
+    function isFirstEntry(){
+      var ref=document.referrer;
+      if(!ref)return true;
+      try{return new URL(ref).hostname!==location.hostname;}
+      catch(e){return true;}
+    }
+    var noticeIdx=0,noticeMsgs=[];
+    var noticeTimer = null;
+
+    function openNotice(){
+      if(!isFirstEntry())return;
+      noticeMsgs=buildMessages();
+      if(noticeMsgs.length===0)return;
+      noticeIdx=0;
+      var wrap=document.getElementById('noticeWrap');
+      if(!wrap)return;
+      wrap.style.display='block';
+      var overlay=wrap.querySelector('.notice-overlay');
+      var modal=wrap.querySelector('.notice-modal');
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          overlay.classList.add('active');
+          modal.classList.add('active');
+        });
+      });
+      renderNotice(false);
+    }
+
+    function closeNotice(){
+      clearTimeout(noticeTimer);
+      var wrap=document.getElementById('noticeWrap');
+      if(!wrap)return;
+      var modal=wrap.querySelector('.notice-modal');
+      var overlay=wrap.querySelector('.notice-overlay');
+      modal.classList.remove('active');
+      modal.classList.add('closing');
+      overlay.classList.remove('active');
+      setTimeout(function(){
+        wrap.style.display='none';
+        modal.classList.remove('closing');
+      },350);
+    }
+
+    function renderNotice(animate){
+      var body=document.getElementById('noticeBody');
+      var prog=document.getElementById('noticeProgress');
+      var btn=document.getElementById('noticeNextBtn');
+      var prevBtn=document.getElementById('noticePrevBtn');
+
+      clearTimeout(noticeTimer);
+
+      if(animate && body){
+        body.style.transition='none';
+        body.classList.remove('slide-in');
+        body.classList.add('slide-out');
+
+        noticeTimer = setTimeout(function(){
+          body.innerHTML = noticeMsgs[noticeIdx];
+          body.classList.remove('slide-out');
+          body.classList.add('slide-in');
+
+          noticeTimer = setTimeout(function(){
+            body.classList.remove('slide-in');
+            body.style.transition='';
+          },350);
+        },280);
+      } else {
+        if(body) body.innerHTML = noticeMsgs[noticeIdx];
+      }
+
+      if(prog) prog.textContent=(noticeIdx+1)+' / '+noticeMsgs.length;
+      if(btn){
+        if(noticeIdx>=noticeMsgs.length-1){
+          btn.textContent='我知道了';
+          btn.onclick=closeNotice;
+        }else{
+          btn.textContent='下一条';
+          btn.onclick=nextNotice;
+        }
+      }
+      if(prevBtn){
+        prevBtn.disabled=noticeIdx<=0;
+      }
+    }
+
+    function prevNotice(){
+      if(noticeIdx<=0)return;
+      noticeIdx--;
+      renderNotice(true);
+    }
+
+    function nextNotice(){
+      if(noticeIdx>=noticeMsgs.length-1){
+        closeNotice();
+        return;
+      }
+      noticeIdx++;
+      renderNotice(true);
+    }
+
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape')closeNotice();
+    });
+
+    document.addEventListener('DOMContentLoaded', openNotice);
+
+    // ========= 首页线路卡片动态渲染（从 all-lines-enhanced.js 读取） =========
+    (function renderLineCards() {
+      if (typeof ALL_LINES_ENHANCED === 'undefined') {
+        console.error('all-lines-enhanced.js 未加载，线路卡片无法渲染');
+        return;
+      }
+
+      // 辅助函数：根据背景色判断文字颜色（阈值 130）
+      function getTextColor(hex) {
+        let r, g, b;
+        if (hex && hex.startsWith('#')) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          if (result) {
+            r = parseInt(result[1], 16);
+            g = parseInt(result[2], 16);
+            b = parseInt(result[3], 16);
+          } else {
+            const resultShort = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+            if (resultShort) {
+              r = parseInt(resultShort[1] + resultShort[1], 16);
+              g = parseInt(resultShort[2] + resultShort[2], 16);
+              b = parseInt(resultShort[3] + resultShort[3], 16);
+            }
+          }
+        }
+        if (r === undefined) return 'black';
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        return brightness > 130 ? 'black' : 'white';
+      }
+
+      // 排序函数
+      function sortLines(lines) {
+        return lines.sort((a, b) => {
+          const idA = a.id.toString();
+          const idB = b.id.toString();
+          const numA = parseInt(idA);
+          const numB = parseInt(idB);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          if (!isNaN(numA)) return -1;
+          if (!isNaN(numB)) return 1;
+          return idA.localeCompare(idB);
+        });
+      }
+
+      // 获取已开通和建设中线路
+      const operating = ALL_LINES_ENHANCED.filter(l => l.category === 'operating');
+      const construction = ALL_LINES_ENHANCED.filter(l => l.category === 'construction');
+
+      // 对 6z 特殊处理：显示为 6Z
+      function getDisplayId(id) {
+        return id === '6z' ? '6Z' : id;
+      }
+
+      // 渲染函数
+      function renderGrid(lines, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        const sorted = sortLines(lines);
+        sorted.forEach(line => {
+          const color = line.color || '#888';
+          const textColor = getTextColor(color);
+          const displayId = getDisplayId(line.id);
+
+          const a = document.createElement('a');
+          a.className = 'line-card';
+          a.href = `line ${line.id}`;  // 保持与原 href 一致
+          a.style.backgroundColor = color;
+          a.style.color = textColor;
+
+          const div = document.createElement('div');
+          div.className = 'line-number';
+          div.textContent = displayId;
+          div.style.color = textColor;
+
+          a.appendChild(div);
+          container.appendChild(a);
+        });
+      }
+
+      renderGrid(operating, 'openedLinesGrid');
+      renderGrid(construction, 'constructionLinesGrid');
+    })();
+  </script>
+  <div id="noticeWrap" style="display:none;">
+    <div class="notice-overlay" onclick="closeNotice()"></div>
+    <div class="notice-modal">
+      <div class="notice-modal-header">最新通知</div>
+      <div class="notice-modal-body" id="noticeBody"></div>
+      <div class="notice-modal-progress" id="noticeProgress"></div>
+      <div class="notice-modal-actions">
+        <button class="notice-btn notice-btn-prev" id="noticePrevBtn" onclick="prevNotice()">上一条</button>
+        <button class="notice-btn notice-btn-skip" onclick="closeNotice()">跳过</button>
+        <button class="notice-btn notice-btn-next" id="noticeNextBtn" onclick="nextNotice()">下一条</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

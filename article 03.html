@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>摄站系列 · EP01 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #00A9E0, #0077b3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>摄站系列 · EP01：梨园站</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">摄站系列 · EP01</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2025.12.26
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+      <p>作为3号线四期的一个站点，同时也是深圳地铁全网最后的高架站，它的设计充满了独特性。这种"最后"的身份，让我格外想记录下它。</p>
+      
+      <p>说来也巧，与梨园站的相遇并非计划之中。今天因高考体检来到龙岗中心医院，一转头，便看见了这座矗立在龙岗大道旁、线条流畅的银白色建筑。它不像多数地铁站那样隐入地下，而是以一种舒展的姿态拥抱天空，这让我瞬间挪不动脚——就它了，作为我"摄站系列"的开篇，再合适不过。</p>
+
+      <h2>一、车站概况</h2>
+      
+      <p>梨园站是深圳地铁3号线四期（东延）工程的站点之一，已于2024年12月28日随线路一同开通运营。具体位置位于深圳市龙岗区，龙岗大道与内环北路交叉路口的南侧。</p>
+      
+      <p>它是一座地上两层（不含架空层）的高架岛式车站。在3号线四期全线7座车站中，唯有它采用了高架设计，其余均为地下站。在深圳地铁已公布的近期建设规划中，它也被广泛认为是全线网"最后的高架站"。车站地面层是架空间和设备区，二层是站厅，三层则是候车站台。目前，车站开放了B、C、D三个出入口，像过街天桥一样横跨龙岗大道，连接东西两侧。特别的是，梨园站采取了尽头出入口设计，在两端设立了入口通道，一端的B、C两口直接相连，由一个通风廊道相连引向站厅，这与3号线的其他高架站是截然不同的。</p>
+
+      <!-- 图片画廊 -->
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item full-width" onclick="openModal('图文3-1.jpg')">
+            <img src="图文3-1.jpg" alt="梨园站外观全景">
+            <div class="gallery-caption">图文3-1：梨园站外观全景</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-2.jpg')">
+            <img src="图文3-2.jpg" alt="站外立面玻璃幕墙">
+            <div class="gallery-caption">图文3-2：站外立面玻璃幕墙</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-3.jpg')">
+            <img src="图文3-3.jpg" alt="出入口横跨龙岗大道">
+            <div class="gallery-caption">图文3-3：出入口横跨龙岗大道</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-4.jpg')">
+            <img src="图文3-4.jpg" alt="尽头出入口设计">
+            <div class="gallery-caption">图文3-4：尽头出入口设计</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-5.jpg')">
+            <img src="图文3-5.jpg" alt="站厅层全景">
+            <div class="gallery-caption">图文3-5：站厅层全景</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-6.jpg')">
+            <img src="图文3-6.jpg" alt="站厅层自然光效果">
+            <div class="gallery-caption">图文3-6：站厅层自然光效果</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-7.jpg')">
+            <img src="图文3-7.jpg" alt="高架岛式站台">
+            <div class="gallery-caption">图文3-7：高架岛式站台</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-8.jpg')">
+            <img src="图文3-8.jpg" alt="站台层玻璃幕墙">
+            <div class="gallery-caption">图文3-8：站台层玻璃幕墙</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-9.jpg')">
+            <img src="图文3-9.jpg" alt="光伏发电系统">
+            <div class="gallery-caption">图文3-9：光伏发电系统</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-10.jpg')">
+            <img src="图文3-10.jpg" alt="色块拼接装饰">
+            <div class="gallery-caption">图文3-10：色块拼接装饰</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-11.jpg')">
+            <img src="图文3-11.jpg" alt="站内标识">
+            <div class="gallery-caption">图文3-11：站内标识</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-12.jpg')">
+            <img src="图文3-12.jpg" alt="设备区架空层">
+            <div class="gallery-caption">图文3-12：设备区架空层</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-13.jpg')">
+            <img src="图文3-13.jpg" alt="车站与周边环境">
+            <div class="gallery-caption">图文3-13：车站与周边环境</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文3-14.jpg')">
+            <img src="图文3-14.jpg" alt="黄昏时分的车站">
+            <div class="gallery-caption">图文3-14：黄昏时分的车站</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>二、"阳光+低碳"的设计内核</h2>
+      
+      <p>如果仅仅把梨园站看作一个交通工具的停靠点，那就大大低估了它的价值。它的设计内核，源于一个名为"阳光+低碳"的主题。</p>
+      
+      <p>站在站台下，你能清晰地感受到设计者的巧思。整个车站通过大面积的玻璃幕墙，将自然光最大限度地引入室内，使得白天的站厅和站台明亮而通透，真正实现了"阳光+"的构想。</p>
+      
+      <p>资料显示，梨园站的屋顶铺设了光伏发电系统，能够直接将光能转化为电能。这些绿色电力被用于车站的照明、空调、电梯等所有低压用电设备，实实在在地践行着节能减排的承诺。可以说，它不仅仅是一座车站，更是一个展示绿色建筑理念的科普馆。同时，车站随处可见的色块拼接，强化了"阳光+低碳"的主题。</p>
+
+      <h2>三、意义与展望</h2>
+      
+      <p>梨园站的启用，标志着坪地片区正式进入了地铁时代，龙岗东部与福田中心的连接变得更加紧密。</p>
+      
+      <p>选择梨园站作为这个系列的开始，于我而言，像是一种必然。它"最后的高架站"身份，象征着一个建设时代的段落；它"阳光+低碳"的设计，又指向了未来城市发展的方向。我痴迷于记录轨道交通，正是着迷于这种在钢铁与混凝土中看到的、城市跳动的脉搏和面向未来的表情。</p>
+      
+      <h2>写在最后</h2>
+      
+      <p>摄站系列，下一站会是哪里？我不知道。但我知道，只要带着观察的眼睛，每一个车站，都会有一段独一无二的故事。</p>
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>各线路车辆编组信息 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: HarmonyOS Sans;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* 顶部导航栏 - 黑色 */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    /* 导航链接 */
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    /* 移动端菜单 */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .page-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+    
+    /* 线路卡片 */
+    .lines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .line-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .line-header {
+      padding: 16px 16px;
+      font-weight: 600;
+      font-size: 20px;
+    }
+    
+    .line-content {
+      padding: 16px 20px;
+    }
+    
+    .train-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .train-item:last-child {
+      border-bottom: none;
+    }
+    
+    .train-model {
+      font-size: 18px;
+      font-weight: 500;
+      color: #111827;
+      font-family: HarmonyOS Sans;
+      line-height: 1.4;
+    }
+    
+    .train-range {
+      font-size: 15px;
+      color: #6b7280;
+      font-family: HarmonyOS Sans;
+      flex-shrink: 0;
+      text-align: right;
+      margin-left: 12px;
+    }
+    
+    .train-manufacturer {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    
+    /* 返回按钮 */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    
+    .back-link:hover {
+      background: #374151;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+      
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .current-time {
+        display: none;
+      }
+      
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      
+      .lines-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .page-title {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+  <script src="all-lines-enhanced.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>目前已知各线路车辆信息</span>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </h1>
+    <p class="page-subtitle">收集深圳地铁/港铁深圳各线路车型、编组、制造商等信息，来源网络</p>
+    <p class="page-subtitle">注1：8号线现有一节“08A0904株”4A编组车正在试验混跑，工作日少量开行，其余4A暂未查找到信息</br>注2：港铁未采用深铁编号方式，仅为车辆做数字编号，因此不提供4/13号线列车编号和制造商信息</p>
+    <p class="page-subtitle">最近一次更新：2026/8/1 12:00---把已经遇到的车号单独开辟一个新的html，数据更整洁了</p>
+    
+    <div class="lines-grid" id="linesGrid"></div>
+  </main>
+
+  <script>
+    (function() {
+      if (typeof ALL_LINES_ENHANCED === 'undefined') {
+        console.error('all-lines-enhanced.js 未加载');
+        return;
+      }
+
+      // 辅助函数：根据背景色判断文字颜色
+      function getTextColor(hex) {
+        let r, g, b;
+        if (hex.startsWith('#')) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          if (result) {
+            r = parseInt(result[1], 16);
+            g = parseInt(result[2], 16);
+            b = parseInt(result[3], 16);
+          } else {
+            const resultShort = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+            if (resultShort) {
+              r = parseInt(resultShort[1] + resultShort[1], 16);
+              g = parseInt(resultShort[2] + resultShort[2], 16);
+              b = parseInt(resultShort[3] + resultShort[3], 16);
+            }
+          }
+        }
+        if (r === undefined) return 'black';
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        return brightness > 160 ? 'black' : 'white';
+      }
+
+      // ----- 数据整理 -----
+      const lines = ALL_LINES_ENHANCED;
+
+      function sortLines(arr) {
+        return arr.sort((a, b) => {
+          const idA = a.id.toString();
+          const idB = b.id.toString();
+          const numA = parseInt(idA);
+          const numB = parseInt(idB);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          if (!isNaN(numA)) return -1;
+          if (!isNaN(numB)) return 1;
+          return idA.localeCompare(idB);
+        });
+      }
+
+      const sortedLines = sortLines(lines);
+
+      let displayItems = [];
+      let line2Data = null;
+      let line8Data = null;
+
+      sortedLines.forEach(line => {
+        if (line.id === '2') {
+          line2Data = line;
+        } else if (line.id === '8') {
+          line8Data = line;
+        } else {
+          displayItems.push(line);
+        }
+      });
+
+      if (line2Data && line8Data) {
+        const combinedTrains = [...(line2Data.trains || []), ...(line8Data.trains || [])];
+        const merged = {
+          ...line2Data,
+          id: '2_8',
+          name: '2号线+8号线',
+          alias: '2/8号线',
+          trains: combinedTrains,
+          formationCode: line2Data.formationCode || '6A'
+        };
+        const index = displayItems.findIndex(l => l.id === '1');
+        if (index !== -1) {
+          displayItems.splice(index + 1, 0, merged);
+        } else {
+          displayItems.unshift(merged);
+        }
+      } else if (line2Data) {
+        displayItems.push(line2Data);
+      } else if (line8Data) {
+        displayItems.push(line8Data);
+      }
+
+      displayItems = displayItems.filter(line => line.trains && line.trains.length > 0);
+
+      const order = ['1','2_8','3','4','5','6','6z','7','9','10','11','12','13','14','15','16','17','19','20','22','25','27','29','32'];
+      displayItems.sort((a, b) => {
+        const idA = a.id;
+        const idB = b.id;
+        const idxA = order.indexOf(idA);
+        const idxB = order.indexOf(idB);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return idA.localeCompare(idB);
+      });
+
+      // ----- 渲染 -----
+      const grid = document.getElementById('linesGrid');
+      grid.innerHTML = '';
+
+      displayItems.forEach(line => {
+        let displayName = '';
+        let formationCode = line.formationCode || '';
+        let color = line.color || '#888';
+
+        if (line.id === '2_8') {
+          displayName = '2/8号线';
+        } else if (line.id === '6z') {
+          displayName = '6号线支线';
+        } else {
+          const match = line.name.match(/(\d+)号线/);
+          if (match) {
+            displayName = match[0];
+          } else {
+            displayName = line.id + '号线';
+          }
+        }
+
+        const isConstruction = line.category === 'construction';
+        if (isConstruction) {
+          displayName = '★' + displayName;
+        }
+
+        let formationDisplay = '';
+        if (formationCode) {
+          formationDisplay = `（${formationCode}）`;
+        } else if (line.formationDesc) {
+          const match = line.formationDesc.match(/(\d节编组.?[A-Z])/);
+          if (match) {
+            formationDisplay = `（${match[1]}）`;
+          }
+        }
+        const title = displayName + formationDisplay;
+        const textColor = getTextColor(color);
+
+        let trainHTML = '';
+        line.trains.forEach(train => {
+          let model = train.model || '未知';
+          // ★ 如果 model 包含斜杠，在斜杠后插入 <br>（但要避免已存在 <br> 的情况）
+          if (model.includes('/') && !model.includes('<br>')) {
+            model = model.replace('/', '/<br>');
+          }
+          const range = train.numberRange || '—';
+          const manufacturer = train.manufacturer || '厂商未知';
+          trainHTML += `
+            <div class="train-item">
+              <div>
+                <div class="train-model">${model}</div>
+                <div class="train-manufacturer">${manufacturer}</div>
+              </div>
+              <div class="train-range">${range}</div>
+            </div>
+          `;
+        });
+
+        const card = document.createElement('div');
+        card.className = 'line-card';
+        card.innerHTML = `
+          <div class="line-header" style="background-color: ${color}; color: ${textColor};">${title}</div>
+          <div class="line-content">
+            ${trainHTML}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // 实时时间
+      function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const weekDay = weekDays[now.getDay()];
+        document.getElementById('currentTime').textContent = 
+          `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      if (mobileBtn) {
+        mobileBtn.addEventListener('click', () => {
+          document.querySelector('.nav-links').classList.toggle('active');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

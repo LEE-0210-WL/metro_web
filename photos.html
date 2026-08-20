@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>照片 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <script src="all-lines-enhanced.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 顶部导航栏 */
+    .header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
+    .logo img { width: 100%; height: 100%; object-fit: cover; }
+    .site-name { font-size: 16px; font-weight: 600; color: white; }
+    .current-time { font-size: 14px; color: #ffffff; font-weight: 500; }
+
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a {
+      padding: 8px 16px; border-radius: 8px;
+      text-decoration: none; font-size: 14px; font-weight: 500;
+      color: #d1d5db; transition: all 0.3s ease;
+    }
+    .nav-links a:hover { background-color: #374151; color: white; }
+    .nav-links a.active { background-color: #2563eb; color: white; }
+
+    .mobile-menu-btn {
+      display: none; background: none; border: none;
+      color: white; cursor: pointer;
+    }
+
+    /* 主内容区域 */
+    .container {
+      max-width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* 标题行 */
+    .page-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 20px 0 0 0;
+      gap: 16px;
+    }
+    .page-title-wrap { display: flex; align-items: center; gap: 12px; }
+    .page-icon { width: 32px; height: 32px; flex-shrink: 0; color: #111827; }
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+
+    /* 返回按钮 */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+
+    /* 线路跳转卡片 */
+    .line-cards-section { margin-bottom: 20px; }
+    .line-cards-title {
+      font-size: 14px; font-weight: 600; color: #6b7280;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .line-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+    }
+    .line-card {
+      background: white; border-radius: 12px; padding: 12px 8px;
+      text-align: center; cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--lc, #999);
+      text-decoration: none; color: inherit;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .line-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .line-card.construction {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+    .line-card-badge {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      margin: 0 auto 8px;
+    }
+    .line-card-name { font-size: 13px; font-weight: 600; color: #111827; }
+    .line-card-count { font-size: 11px; color: #6b7280; margin-top: 2px; }
+    .line-card-status {
+      font-size: 10px; padding: 1px 6px; border-radius: 8px;
+      display: inline-block; margin-top: 4px; font-weight: 500;
+    }
+
+    /* 分类导航 */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 24px; justify-content: flex-start;
+    }
+    .filter-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 8px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; border: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .filter-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .filter-btn.active { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); }
+    .filter-btn .count { font-size: 12px; font-weight: 400; opacity: 0.7; }
+    .filter-btn.all { background: #111827; color: white; }
+    .filter-btn.all .count { color: #9ca3af; }
+
+    /* 线路颜色 */
+    .line-1 { background: #01AF55; color: white; }
+    .line-2 { background: #B95800; color: white; }
+    .line-3 { background: #00A9DF; color: #000; }
+    .line-4 { background: #D42E0F; color: white; }
+    .line-5 { background: #9E4DAA; color: white; }
+    .line-6 { background: #01C4B7; color: #000; }
+    .line-6z { background: #027776; color: white; }
+    .line-7 { background: #0131AC; color: white; }
+    .line-8 { background: #B95800; color: white; }
+    .line-9 { background: #896B70; color: white; }
+    .line-10 { background: #F67599; color: #000; }
+    .line-11 { background: #672146; color: white; }
+    .line-12 { background: #A092B2; color: #000; }
+    .line-13 { background: #F6AD2D; color: #000; }
+    .line-14 { background: #F4CB67; color: #000; }
+    .line-15 { background: #86BE00; color: white; }
+    .line-16 { background: #181BA5; color: white; }
+    .line-17 { background: #D2C0CD; color: #000; }
+    .line-19 { background: #BA16A4; color: white; }
+    .line-20 { background: #87DBDF; color: #000; }
+    .line-22 { background: #F5E524; color: #000; }
+    .line-25 { background: #FDAD76; color: #000; }
+    .line-27 { background: #4E8D8E; color: white; }
+    .line-29 { background: #92D6AC; color: #000; }
+    .line-32 { background: #735128; color: white; }
+
+    /* 照片流 - 竖向瀑布流 */
+    .photo-stream {
+      column-count: 3;
+      column-gap: 16px;
+      min-height: 300px;
+    }
+    @media (max-width: 1024px) { .photo-stream { column-count: 2; } }
+    @media (max-width: 640px) { .photo-stream { column-count: 1; } }
+
+    /* 照片卡片 */
+    .photo-card {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .photo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    .photo-card img {
+      width: 100%; height: auto; display: block;
+    }
+    .photo-info {
+      padding: 12px 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .photo-filename {
+      font-size: 13px; color: #374151; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* 图片加载占位 */
+    .img-placeholder {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      aspect-ratio: 4/3;
+      width: 100%; display: block;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* 图片弹窗 */
+    .image-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .image-modal.active { display: flex; }
+    .image-modal-content {
+      max-width: 90%; max-height: 85vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+    .image-modal img {
+      max-width: 100%; max-height: 70vh;
+      object-fit: contain; border-radius: 8px;
+    }
+    .image-modal-info { margin-top: 20px; text-align: center; color: white; }
+    .image-modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .image-modal-desc { font-size: 14px; color: #d1d5db; max-width: 600px; line-height: 1.6; }
+    .image-modal-close {
+      position: absolute; top: 20px; right: 20px;
+      color: white; font-size: 36px; cursor: pointer;
+      background: none; border: none;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.3s ease;
+    }
+    .image-modal-close:hover { background: rgba(255, 255, 255, 0.1); }
+
+    /* 分页 */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: 8px; margin-top: 40px; flex-wrap: wrap;
+    }
+    .pagination-btn {
+      padding: 10px 20px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #d1d5db;
+      background: white; color: #374151;
+    }
+    .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination-btn.primary { background: #2563eb; color: white; border-color: #2563eb; }
+    .pagination-btn.primary:hover:not(:disabled) { background: #1d4ed8; }
+    .pagination-btn.secondary:hover:not(:disabled) { background: #f3f4f6; }
+    .pagination-info { font-size: 14px; color: #6b7280; white-space: nowrap; }
+    .page-numbers { display: flex; gap: 6px; }
+    .page-number {
+      min-width: 40px; padding: 10px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      transition: all 0.3s ease; border: 1px solid #d1d5db;
+      background: white; color: #374151; text-align: center;
+    }
+    .page-number:hover { background: #f3f4f6; }
+    .page-number.active { background: #2563eb; color: white; border-color: #2563eb; }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 60px; }
+      .nav-links { display: none; width: 100%; flex-direction: column;
+        padding: 10px 0; background: #1f2937;
+        position: absolute; top: 60px; left: 0;
+      }
+      .nav-links.active { display: flex; }
+      .nav-links a { padding: 12px 20px; border-radius: 0; }
+      .mobile-menu-btn { display: block; }
+      .current-time { display: none; }
+      .container { margin-top: 20px; padding: 0 16px; width: min(90%, 1200px); }
+      .page-title { font-size: 24px; }
+      .filter-bar { gap: 6px; }
+      .filter-btn { padding: 6px 12px; font-size: 13px; }
+      .line-cards-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+      .line-card { padding: 10px 6px; }
+      .line-card-badge { width: 32px; height: 32px; font-size: 12px; }
+      .pagination { gap: 4px; }
+      .pagination-btn { padding: 8px 14px; font-size: 13px; }
+      .page-number { min-width: 36px; padding: 8px 10px; font-size: 13px; }
+    }
+  </style>
+  <!-- 防护脚本 -->
+  <script>
+    (function() {
+      document.addEventListener('contextmenu', function(e) {
+        if (e.target.tagName === 'IMG' || e.target.closest('.photo-card')) {
+          e.preventDefault(); return false;
+        }
+      });
+      document.addEventListener('dragstart', function(e) {
+        if (e.target.tagName === 'IMG') { e.preventDefault(); return false; }
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12') { e.preventDefault(); }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) { e.preventDefault(); }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) { e.preventDefault(); }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) { e.preventDefault(); }
+      });
+      let devToolsOpen = false;
+      function detectDevTools() {
+        const start = performance.now();
+        debugger;
+        const end = performance.now();
+        if (end - start > 100) {
+          if (!devToolsOpen) {
+            devToolsOpen = true;
+            document.body.innerHTML = '<div style="text-align:center; margin-top:20vh; font-size:20px;">开发者工具已禁用，请关闭后刷新页面。</div>';
+          }
+        } else { devToolsOpen = false; }
+      }
+      setInterval(detectDevTools, 2000);
+    })();
+  </script>
+</head>
+<body oncontextmenu="return false" ondragstart="return false">
+  <script src="navbar.js"></script>
+
+  <!-- 主内容区域 -->
+  <main class="container">
+    <!-- 标题行 -->
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <h1 class="page-title">照片</h1>
+      </div>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </div>
+
+    <p class="page-subtitle">记录深圳地铁的精彩瞬间</p>
+
+    <!-- 分类导航 -->
+    <div class="filter-bar" id="filterBar" style="justify-content: flex-start;"></div>
+    <div id="lineBackLinks" style="margin-bottom:16px;"></div>
+
+    <!-- 照片流 -->
+    <div class="photo-stream" id="photoStream"></div>
+
+    <!-- 分页 -->
+    <div class="pagination" id="pagination">
+      <button class="pagination-btn secondary" id="prevBtn" onclick="changePage(-1)">上一页</button>
+      <span class="pagination-info" id="pageInfo">第 1 页 / 共 1 页</span>
+      <button class="pagination-btn secondary" id="nextBtn" onclick="changePage(1)">下一页</button>
+      <div class="page-numbers" id="pageNumbers"></div>
+    </div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal(event)">
+    <button class="image-modal-close" onclick="closeModal(event)">&times;</button>
+    <div class="image-modal-content">
+      <img src="" alt="" id="modalImage">
+      <div class="image-modal-info">
+        <div class="image-modal-title" id="modalTitle"></div>
+        <div class="image-modal-desc" id="modalDesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== 硬编码照片数据（回退用）====================
+    const HARDCODED_PHOTOS = [
+      { filename: '1号线110车.jpeg', desc: '1号线110车' },
+      { filename: '1号线116车.jpeg', desc: '1号线116车' },
+      { filename: '1号线119车.jpeg', desc: '1号线119车' },
+      { filename: '1号线121车.jpeg', desc: '1号线121车' },
+      { filename: '1号线126车.jpeg', desc: '1号线126车' },
+      { filename: '1号线127车.jpeg', desc: '1号线127车' },
+      { filename: '1号线129车.jpeg', desc: '1号线129车' },
+      { filename: '1号线136车.jpeg', desc: '1号线136车' },
+      { filename: '1号线141车.jpeg', desc: '1号线141车' },
+      { filename: '1号线147车.jpeg', desc: '1号线147车' },
+      { filename: '1号线148车.jpeg', desc: '1号线148车' },
+      { filename: '1号线150车.jpeg', desc: '1号线150车' },
+      { filename: '1号线153车.jpeg', desc: '1号线153车' },
+      { filename: '1号线166车.jpeg', desc: '1号线166车' },
+      { filename: '1号线172车.jpeg', desc: '1号线172车' },
+      { filename: '1号线178车.jpeg', desc: '1号线178车' },
+      { filename: '1号线183车.jpeg', desc: '1号线183车' },
+      { filename: '1号线185车.jpeg', desc: '1号线185车' },
+      { filename: '1号线吊板线路图.jpeg', desc: '1号线吊板线路图' },
+      { filename: '1号线往机场东方向线路图.jpeg', desc: '1号线往机场东方向线路图' },
+      { filename: '1号线往罗湖吊板.jpeg', desc: '1号线往罗湖吊板' },
+      { filename: '1号线机场东方向吊板.jpeg', desc: '1号线机场东方向吊板' },
+      { filename: '1号线机场东方向站台屏幕.jpeg', desc: '1号线机场东方向站台屏幕' },
+      { filename: '1号线罗湖方向站台屏幕.jpeg', desc: '1号线罗湖方向站台屏幕' },
+      { filename: '1号线老街站方向指引（1）.jpeg', desc: '1号线老街站方向指引（1）' },
+      { filename: '1号线老街站方向指引（2）.jpeg', desc: '1号线老街站方向指引（2）' },
+      { filename: '1号线老街站旧站台.jpeg', desc: '1号线老街站旧站台' },
+      { filename: '1号线老街站特殊门灯.jpeg', desc: '1号线老街站特殊门灯' },
+      { filename: '1号线老街站立柱.jpeg', desc: '1号线老街站立柱' },
+      { filename: '1、2、5号线大剧院站平面示意图.jpg', desc: '1、2、5号线大剧院站平面示意图' },
+      { filename: '2号线211车.jpeg', desc: '2号线211车' },
+      { filename: '2号线211车车门上方制造商信息.jpeg', desc: '2号线211车车门上方制造商信息' },
+      { filename: '2号线226车.jpeg', desc: '2号线226车' },
+      { filename: '2号线228车.jpeg', desc: '2号线228车' },
+      { filename: '2号线240车.jpeg', desc: '2号线240车' },
+      { filename: '2号线244车.jpeg', desc: '2号线244车' },
+      { filename: '2号线244车.jpg', desc: '2号线244车' },
+      { filename: '2号线273双车号.jpg', desc: '2号线273双车号' },
+      { filename: '2号线元老201车.jpg', desc: '2号线元老201车' },
+      { filename: '2号线大剧院站吊板.jpeg', desc: '2号线大剧院站吊板' },
+      { filename: '2号线大剧院站站台牌匾.jpeg', desc: '2号线大剧院站站台牌匾' },
+      { filename: '2号线大剧院站艺术字立柱.jpeg', desc: '2号线大剧院站艺术字立柱' },
+      { filename: '2号线往赤湾吊板.jpeg', desc: '2号线往赤湾吊板' },
+      { filename: '2号线往赤湾方向吊板＋4编候车指引.jpg', desc: '2号线往赤湾方向吊板＋4编候车指引' },
+      { filename: '2号线往赤湾站台指引吊板.jpeg', desc: '2号线往赤湾站台指引吊板' },
+      { filename: '2号线266(8号线809)车.jpeg', desc: '2号线266(8号线809)车' },
+      { filename: '2号线268(8号线811)车.jpeg', desc: '2号线268(8号线811)车' },
+      { filename: '2号线271(8号线814)车.jpeg', desc: '2号线271(8号线814)车' },
+      { filename: '2号线278(8号线821)车.jpeg', desc: '2号线278(8号线821)车' },
+      { filename: '2&8号线往赤湾方向带编组提示PIDS.jpg', desc: '2&8号线往赤湾方向带编组提示PIDS' },
+      { filename: '3号线0312车.jpg', desc: '3号线0312车' },
+      { filename: '3号线0368车.jpg', desc: '3号线0368车' },
+      { filename: '3号线302车.jpeg', desc: '3号线302车' },
+      { filename: '3号线302车详细信息.jpeg', desc: '3号线302车详细信息' },
+      { filename: '3号线312车.jpg', desc: '3号线312车' },
+      { filename: '3号线318车.jpeg', desc: '3号线318车' },
+      { filename: '3号线343车.jpeg', desc: '3号线343车' },
+      { filename: '3号线四期增购车信息屏幕现存问题.jpg', desc: '3号线四期增购车信息屏幕现存问题' },
+      { filename: '3号线四期增购车全线线路图换乘站样式.jpg', desc: '3号线四期增购车全线线路图换乘站样式' },
+      { filename: '3号线塘坑站不上客站台.jpeg', desc: '3号线塘坑站不上客站台' },
+      { filename: '3号线塘坑站中间轨道停车同时开门.jpeg', desc: '3号线塘坑站中间轨道停车同时开门' },
+      { filename: '3号线塘坑终点站显示屏.jpeg', desc: '3号线塘坑终点站显示屏' },
+      { filename: '3号线增购388车.jpeg', desc: '3号线增购388车' },
+      { filename: '3号线新生站为五期线路做的预留假墙.jpg', desc: '3号线新生站为五期线路做的预留假墙' },
+      { filename: '3号线新生站吊板.jpg', desc: '3号线新生站吊板' },
+      { filename: '3号线新生站超窄端门.jpg', desc: '3号线新生站超窄端门' },
+      { filename: '3号线晒布大字壁.png', desc: '3号线晒布大字壁' },
+      { filename: '3号线爱联站没贴好的吊板.jpeg', desc: '3号线爱联站没贴好的吊板' },
+      { filename: '3号线田贝站艺术字壁.jpg', desc: '3号线田贝站艺术字壁' },
+      { filename: '3号线翠竹大字壁.png', desc: '3号线翠竹大字壁' },
+      { filename: '3号线翠竹站立柱艺术大字壁.jpeg', desc: '3号线翠竹站立柱艺术大字壁' },
+      { filename: '3号线老街站往坪地六联方向站台信息显示屏.jpeg', desc: '3号线老街站往坪地六联方向站台信息显示屏' },
+      { filename: '3号线田贝站艺术墙.jpg', desc: '田贝站艺术墙' },
+      { filename: '3号线4306长型车车内信息显示屏.jpeg', desc: '4306长型车车内信息显示屏' },
+      { filename: '3号线348车.JPG', desc: '3号线348车' },
+      { filename: '3号线375车1车4门漏液屏幕.JPG', desc: '3号线375车1车4门漏液屏幕' },
+      { filename: '3号线395车.JPG', desc: '3号线395车' },
+      { filename: '5号线504车.jpg', desc: '5号线504车' },
+      { filename: '5号线514车.jpg', desc: '5号线514车' },
+      { filename: '5号线520车.jpg', desc: '5号线520车' },
+      { filename: '5号线543车.jpeg', desc: '5号线543车' },
+      { filename: '5号线553车.jpg', desc: '5号线553车' },
+      { filename: '5号线559车.jpg', desc: '5号线559车' },
+      { filename: '5号线563车.jpeg', desc: '5号线563车' },
+      { filename: '5号线566增购车.jpg', desc: '5号线566增购车' },
+      { filename: '5号线578增购车.jpg', desc: '5号线578增购车' },
+      { filename: '5号线大剧院方向PIDS.jpg', desc: '5号线大剧院方向PIDS' },
+      { filename: '5号线大剧院方向吊板.jpg', desc: '5号线大剧院方向吊板' },
+      { filename: '5号线大剧院站台无障碍平面示意图.jpeg', desc: '5号线大剧院站台无障碍平面示意图' },
+      { filename: '5号线大剧院站往赤湾站台尽头端门.jpeg', desc: '5号线大剧院站往赤湾站台尽头端门' },
+      { filename: '5号线大剧院站站厅艺术装置.jpg', desc: '5号线大剧院站站厅艺术装置' },
+      { filename: '5号线布吉站吊板.jpg', desc: '5号线布吉站吊板' },
+      { filename: '5号线往大剧院方向吊板.jpg', desc: '5号线往大剧院方向吊板' },
+      { filename: '5号线立柱线路图.jpeg', desc: '5号线立柱线路图' },
+      { filename: '5号线终点站大剧院站吊板.jpg', desc: '5号线终点站大剧院站吊板' },
+      { filename: '5号线长岭陂站吊板.jpg', desc: '5号线长岭陂站吊板' },
+      { filename: '5号线长岭陂站方向吊板.jpg', desc: '5号线长岭陂站方向吊板' },
+      { filename: '5号线长岭陂站台站名板.jpg', desc: '长岭陂站台站名板' },
+      { filename: '6号线606车.JPG', desc: '6号线606车' },
+      { filename: '6号线606车详细信息.JPG', desc: '6号线606车详细信息' },
+      { filename: '6号线613车.JPG', desc: '6号线613车' },
+      { filename: '6号线625车.JPG', desc: '6号线625车' },
+      { filename: '6号线八卦岭站吊板.JPG', desc: '6号线八卦岭站吊板' },
+      { filename: '6号线八卦岭站换乘指引.JPG', desc: '6号线八卦岭站换乘指引' },
+      { filename: '6号线八卦岭站站台艺术大字壁.JPG', desc: '6号线八卦岭站站台艺术大字壁' },
+      { filename: '6号线八卦岭站站名立柱.JPG', desc: '6号线八卦岭站站名立柱' },
+      { filename: '6号线往松岗方向吊板.JPG', desc: '6号线往松岗方向吊板' },
+      { filename: '6号线往松岗站台指引吊板.JPG', desc: '6号线往松岗站台指引吊板' },
+      { filename: '6号线往科学馆方向吊板.JPG', desc: '6号线往科学馆方向吊板' },
+      { filename: '6号线往科学馆站台指引吊板.JPG', desc: '6号线往科学馆站台指引吊板' },
+      { filename: '6号线站台双向线路图立板.JPG', desc: '6号线站台双向线路图立板' },
+      { filename: '6号线线路图吊板.JPG', desc: '6号线线路图吊板' },
+      { filename: '6号线车内线路图给13号线打的补丁.JPG', desc: '6号线车内线路图给13号线打的补丁' },
+      { filename: '6支深理工英文改名补丁.jpg', desc: '6支深理工英文改名补丁' },
+      { filename: '7号线720车.jpg', desc: '7号线720车' },
+      { filename: '7号线往太安吊板.jpg', desc: '7号线往太安吊板' },
+      { filename: '7号线往深大丽湖方向吊板.jpg', desc: '7号线往深大丽湖方向吊板' },
+      { filename: '7号线田贝站吊板.jpg', desc: '7号线田贝站吊板' },
+      { filename: '7号线田贝站大字墙.jpg', desc: '7号线田贝站大字墙' },
+      { filename: '7号线站台信息屏.jpg', desc: '7号线站台信息屏' },
+      { filename: '7号线站台线路图展板.jpg', desc: '7号线站台线路图展板' },
+      { filename: '7号线红岭北站吊板.jpg', desc: '7号线红岭北站吊板' },
+      { filename: '7号线红岭北艺术字壁.jpg', desc: '7号线红岭北艺术字壁' },
+      { filename: '深圳地铁720车相关信息.jpg', desc: '深圳地铁720车相关信息' },
+      { filename: '深圳地铁7号线车内扁屏样式（下一站版）.jpg', desc: '深圳地铁7号线车内扁屏样式（下一站版）' },
+      { filename: '深圳地铁7号线车内扁屏样式（停靠站版）.jpg', desc: '深圳地铁7号线车内扁屏样式（停靠站版）' },
+      { filename: '7号线709车详细信息.JPG', desc: '7号线709车详细信息' },
+      { filename: '7号线709车车内信息显示屏.JPG', desc: '7号线709车车内信息显示屏' },
+      { filename: '7号线738车.JPG', desc: '7号线738车' },
+      { filename: '7号线八卦岭站站台艺术大字壁.JPG', desc: '7号线八卦岭站站台艺术大字壁' },
+      { filename: '7号线八卦岭站站名立柱.JPG', desc: '7号线八卦岭站站名立柱' },
+      { filename: '7号线站台双向线路图立板.JPG', desc: '7号线站台双向线路图立板' },
+      { filename: '8号线小梅沙站.jpg', desc: '8号线小梅沙站' },
+      { filename: '8号线往溪涌吊板.jpeg', desc: '8号线往溪涌吊板' },
+      { filename: '8号线溪涌站4编车站台指引.jpg', desc: '8号线溪涌站4编车站台指引' },
+      { filename: '8号线溪涌站C出口.jpg', desc: '8号线溪涌站C出口' },
+      { filename: '8号线溪涌站C出口相关信息.jpg', desc: '8号线溪涌站C出口相关信息' },
+      { filename: '8号线溪涌站站台艺术字.jpg', desc: '8号线溪涌站站台艺术字' },
+      { filename: '8号线溪涌车辆段牌匾.jpg', desc: '8号线溪涌车辆段牌匾' },
+      { filename: '8号线站台4编指引（窄版）.jpg', desc: '8号线站台4编指引（窄版）' },
+      { filename: '8号线鸿安围站4编指引.jpg', desc: '8号线鸿安围站4编指引' },
+      { filename: '8站台大梅沙站站台艺术字.jpg', desc: '8站台大梅沙站站台艺术字' },
+      { filename: '9号线915车.jpg', desc: '9号线915车' },
+      { filename: '9号线927车.jpg', desc: '9号线927车' },
+      { filename: '9号线往前湾吊板.jpg', desc: '9号线往前湾吊板' },
+      { filename: '9号线往前湾方向站台PIDS.jpg', desc: '9号线往前湾方向站台PIDS' },
+      { filename: '9号线往文锦吊板.jpg', desc: '9号线往文锦吊板' },
+      { filename: '9号线往文锦方向吊板.jpg', desc: '9号线往文锦方向吊板' },
+      { filename: '9号线站台线路图吊板.jpg', desc: '9号线站台线路图吊板' },
+      { filename: '9号线高新南站站台艺术墙.jpg', desc: '9号线高新南站站台艺术墙' },
+      { filename: '9号线935车.JPG', desc: '9号线935车' },
+      { filename: '9号线938车.JPG', desc: '9号线938车' },
+      { filename: '9号线951车.JPG', desc: '9号线951车' },
+      { filename: '9号线951车详细信息.JPG', desc: '9号线951车详细信息' },
+      { filename: '9号线951车车内显示屏.JPG', desc: '9号线951车车内显示屏' },
+      { filename: '9号线全线线路图吊板.JPG', desc: '9号线全线线路图吊板' },
+      { filename: '9号线往前湾方向吊板.JPG', desc: '9号线往前湾方向吊板' },
+      { filename: '9号线往前湾方向站台全线线路图板.JPG', desc: '9号线往前湾方向站台全线线路图板' },
+      { filename: '9号线往文锦方向站台全线线路图板.JPG', desc: '9号线往文锦方向站台全线线路图板' },
+      { filename: '9号线站台艺术立柱之M(a) Ling.JPG', desc: '9号线站台艺术立柱之M(a) Ling' },
+      { filename: '9号线银湖站站台被割断的线路图.JPG', desc: '9号线银湖站站台被割断的线路图' },
+      { filename: '9号线银湖站站名吊板.JPG', desc: '9号线银湖站站名吊板' },
+      { filename: '9号线银湖站通往6号线的换乘节点楼梯指引.JPG', desc: '9号线银湖站通往6号线的换乘节点楼梯指引' },
+      { filename: '10号线1013车.jpg', desc: '10号线1013车' },
+      { filename: '10号线五和站站台艺术字.jpg', desc: '10号线五和站站台艺术字' },
+      { filename: '10号线五和站艺术字吊板.jpg', desc: '10号线五和站艺术字吊板' },
+      { filename: '10号线岗厦北站吊板.jpg', desc: '10号线岗厦北站吊板' },
+      { filename: '10号线往双拥街吊板.jpg', desc: '10号线往双拥街吊板' },
+      { filename: '10号线往双拥街吊板（部分）.jpg', desc: '10号线往双拥街吊板（部分）' },
+      { filename: '10号线岗厦北换乘11-14岗厦北指引标识.jpg', desc: '10岗厦北换乘11-14岗厦北指引标识' },
+      { filename: '10号线1019车.JPG', desc: '10号线1019车' },
+      { filename: '10号线1022车.JPG', desc: '10号线1022车' },
+      { filename: '10号线1022车车内显示屏.JPG', desc: '10号线1022车车内显示屏' },
+      { filename: '10号线冬瓜岭站特殊站台.JPG', desc: '10号线冬瓜岭站特殊站台' },
+      { filename: '10号线孖岭站台换乘9号线指引吊板故障.JPG', desc: '10号线孖岭站台换乘9号线指引吊板故障' },
+      { filename: '10号线往双拥街方向站台全线线路图板.JPG', desc: '10号线往双拥街方向站台全线线路图板' },
+      { filename: '10号线往福田口岸吊板细节.JPG', desc: '10号线往福田口岸吊板细节' },
+      { filename: '10号线往福田口岸方向吊板.JPG', desc: '10号线往福田口岸方向吊板' },
+      { filename: '10号线往福田口岸方向站台全线线路图板.JPG', desc: '10号线往福田口岸方向站台全线线路图板' },
+      { filename: '10号线莲花村站换乘3号线节点通道.JPG', desc: '10号线莲花村站换乘3号线节点通道' },
+      { filename: '10号线车内信息显示屏经过"伪"五线换乘站岗厦北.JPG', desc: '10号线车内信息显示屏经过"伪"五线换乘站岗厦北' },
+      { filename: '10号线车内显示屏细节.JPG', desc: '10号线车内显示屏细节' },
+      { filename: '11号线1133车.jpg', desc: '11号线1133车' },
+      { filename: '11号线1150车.jpg', desc: '11号线1150车' },
+      { filename: '11号线元老1101车.jpg', desc: '11号线元老1101车' },
+      { filename: '11号线往红岭南补丁掉9号线.jpg', desc: '11号线往红岭南补丁掉9号线' },
+      { filename: '11号线站台PIDS.jpg', desc: '11号线站台PIDS' },
+      { filename: '11号线红岭南站E出口.jpg', desc: '11号线红岭南站E出口' },
+      { filename: '11号线红岭南站E出口补丁掉9号线.jpg', desc: '11号线红岭南站E出口补丁掉9号线' },
+      { filename: '11号线1113车.JPG', desc: '11号线1113车' },
+      { filename: '11号线1132车.JPG', desc: '11号线1132车' },
+      { filename: '11号线1138车.JPG', desc: '11号线1138车' },
+      { filename: '11号线1138车详细信息.JPG', desc: '11号线1138车详细信息' },
+      { filename: '11号线1138车车内特殊涂装.JPG', desc: '11号线1138车车内特殊涂装' },
+      { filename: '11号线1153车.JPG', desc: '11号线1153车' },
+      { filename: '11号线1159车.JPG', desc: '11号线1159车' },
+      { filename: '11号线五分钟间隔.JPG', desc: '11号线五分钟间隔' },
+      { filename: '11号线全线线路图吊板.JPG', desc: '11号线全线线路图吊板' },
+      { filename: '11号线岗厦北3分钟间隔站台信息显示屏.JPG', desc: '11号线岗厦北3分钟间隔站台信息显示屏' },
+      { filename: '11号线岗厦北站往碧头方向末端不对称屏蔽门.JPG', desc: '11号线岗厦北站往碧头方向末端不对称屏蔽门' },
+      { filename: '11号线往红岭南吊板.JPG', desc: '11号线往红岭南吊板' },
+      { filename: '11号线站台吊板撤下补丁未清理干净.JPG', desc: '11号线站台吊板撤下补丁未清理干净' },
+      { filename: '14号线1433车.jpg', desc: '14号线1433车' },
+      { filename: '14号线1433车信息.jpg', desc: '14号线1433车信息' },
+      { filename: '14号线1441车.JPG', desc: '14号线1441车' },
+      { filename: '14号线往沙田方向黄木岗站站台.JPG', desc: '14号线往沙田方向黄木岗站站台' },
+      { filename: '14号线车内门灯.JPG', desc: '14号线车内门灯' },
+      { filename: '11号线、14号线站台艺术字.jpg', desc: '11号线、14号线站台艺术字' },
+      { filename: '站台线路图13号线未开通补丁.jpg', desc: '站台线路图13号线未开通补丁' },
+      { filename: '岗厦北站"深圳之眼".jpg', desc: '岗厦北站"深圳之眼"' },
+      { filename: '2026-7-10深圳地铁线网客流量（不含4和13号线）.JPG', desc: '2026-7-10深圳地铁线网客流量（不含4和13号线）' },
+      { filename: '岗厦北站深圳之眼最佳拍摄视角.JPG', desc: '岗厦北站深圳之眼最佳拍摄视角' },
+      { filename: '深圳地铁官方app查询列车位置界面.PNG', desc: '深圳地铁官方app查询列车位置界面' },
+      { filename: '11号线1123车.JPG', desc: '11号线1123车' },
+      { filename: '11号线车公庙站艺术字.JPG', desc: '11号线车公庙站艺术字' },
+      { filename: '12号线1201车.JPG', desc: '12号线1201车' },
+      { filename: '12号线四海站站名吊板.JPG', desc: '12号线四海站站名吊板' },
+      { filename: '12号线往左炮台东方向吊板.JPG', desc: '12号线往左炮台东方向吊板' },
+      { filename: '20号线2003车详细信息.JPG', desc: '20号线2003车详细信息' },
+      { filename: '20号线2008车.JPG', desc: '20号线2008车' },
+      { filename: '20号线2009车.JPG', desc: '20号线2009车' },
+      { filename: '20号线吊板显示屏.JPG', desc: '20号线吊板显示屏' },
+      { filename: '20号线国展站艺术字立柱.png', desc: '20号线国展站艺术字立柱' },
+      { filename: '20号线往会展城吊板.JPG', desc: '20号线往会展城吊板' },
+      { filename: '20号线往会展城方向指引.JPG', desc: '20号线往会展城方向指引' },
+      { filename: '20号线往会展城方向竖版线路图.JPG', desc: '20号线往会展城方向竖版线路图' },
+      { filename: '20号线往机场北方向吊板.JPG', desc: '20号线往机场北方向吊板' },
+      { filename: '20号线往机场北方向指引.JPG', desc: '20号线往机场北方向指引' },
+      { filename: '20号线机场北站站名吊板.JPG', desc: '20号线机场北站站名吊板' },
+      { filename: '20号线线路图吊板.JPG', desc: '20号线线路图吊板' },
+      { filename: '20号线终点站吊板.JPG', desc: '20号线终点站吊板' },
+      { filename: '2号线230车详细信息.JPG', desc: '2号线230车详细信息' },
+      { filename: '2号线261(8号线804)车详细信息.JPG', desc: '2号线261(8号线804)车详细信息' },
+      { filename: '2号线晨曦特快信息提示.JPG', desc: '2号线晨曦特快信息提示' },
+      { filename: '3号线红岭站艺术字.JPG', desc: '3号线红岭站艺术字' },
+      { filename: '5号线525车详细信息.JPG', desc: '5号线525车详细信息' },
+      { filename: '5号线527车详细信息.JPG', desc: '5号线527车详细信息' },
+      { filename: '5号线临海站站名牌.JPG', desc: '5号线临海站站名牌' },
+      { filename: '5号线列车欢迎界面屏幕.png', desc: '5号线列车欢迎界面屏幕' },
+      { filename: '5号线桂湾站艺术字壁.JPG', desc: '5号线桂湾站艺术字壁' },
+      { filename: '6号线605车详细信息.JPG', desc: '6号线605车详细信息' },
+      { filename: '6号线光明站站名吊板.JPG', desc: '6号线光明站站名吊板' },
+      { filename: '6号线松岗站艺术字.JPG', desc: '6号线松岗站艺术字' },
+      { filename: '6支6Z02车.JPG', desc: '6支6Z02车' },
+      { filename: '6支6Z03车.JPG', desc: '6支6Z03车' },
+      { filename: '6支6Z03车详细信息.JPG', desc: '6支6Z03车详细信息' },
+      { filename: '6支6Z08车.JPG', desc: '6支6Z08车' },
+      { filename: '6支往光明城方向吊板.JPG', desc: '6支往光明城方向吊板' },
+      { filename: '6支往深理工方向吊板.JPG', desc: '6支往深理工方向吊板' },
+      { filename: '6支站台信息显示屏.JPG', desc: '6支站台信息显示屏' },
+      { filename: '6支红桥公园站站名吊板.JPG', desc: '6支红桥公园站站名吊板' },
+      { filename: '6支线路图吊板.JPG', desc: '6支线路图吊板' },
+      { filename: '6支虹桥公园站艺术字.JPG', desc: '6支虹桥公园站艺术字' },
+      { filename: '6支虹桥公园站艺术字柱.JPG', desc: '6支虹桥公园站艺术字柱' },
+      { filename: '6支车内屏幕完整线路图.JPG', desc: '6支车内屏幕完整线路图' },
+      { filename: '6支车内显示屏下一站信息.JPG', desc: '6支车内显示屏下一站信息' },
+      { filename: '8号线带编组信息的显示屏.JPG', desc: '8号线带编组信息的显示屏' },
+      { filename: '8号线海山站艺术字柱.JPG', desc: '8号线海山站艺术字柱' },
+      { filename: '8号线深外高中站艺术字.JPG', desc: '8号线深外高中站艺术字' },
+      { filename: '8号线盐田港西站艺术字.JPG', desc: '8号线盐田港西站艺术字' },
+      { filename: '8号线车内显示屏细节.JPG', desc: '8号线车内显示屏细节' }
+    ];
+
+    // 运行时照片数据（会被外部 JSON 覆盖）
+    let photos = HARDCODED_PHOTOS;
+
+    // ==================== 分类配置 ====================
+    const filters = [
+      { key: 'all', label: '全部' },
+      { key: '1', label: '1号线', lineClass: 'line-1' },
+      { key: '2&8', label: '2&8号线', lineClass: 'line-2' },
+      { key: '3', label: '3号线', lineClass: 'line-3' },
+      { key: '5', label: '5号线', lineClass: 'line-5' },
+      { key: '6', label: '6号线', lineClass: 'line-6' },
+      { key: '6z', label: '6号线支线', lineClass: 'line-6z' },
+      { key: '7', label: '7号线', lineClass: 'line-7' },
+      { key: '9', label: '9号线', lineClass: 'line-9' },
+      { key: '10', label: '10号线', lineClass: 'line-10' },
+      { key: '11', label: '11号线', lineClass: 'line-11' },
+      { key: '12', label: '12号线', lineClass: 'line-12' },
+      { key: '14', label: '14号线', lineClass: 'line-14' },
+      { key: '20', label: '20号线', lineClass: 'line-20' },
+      { key: 'other', label: '其他' }
+    ];
+
+    // ==================== 辅助函数 ====================
+    function getContrastColor(hex) {
+      if (!hex) return '#fff';
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+      return yiq >= 128 ? '#000' : '#fff';
+    }
+
+    function getLineParam() {
+      const params = new URLSearchParams(window.location.search);
+      let line = params.get('line') || '';
+      if (line === '2' || line === '8') line = '2&8';
+      return line;
+    }
+
+    function belongsToFilter(filename, filterKey) {
+      const fn = filename;
+      if (filterKey === 'all') return true;
+      if (filterKey === '1') return /^1[号线、]/.test(fn);
+      if (filterKey === '2&8') {
+        return /^2&8/.test(fn) || /^2[号线&、]/.test(fn) || /^8[号线站台]/.test(fn) || /^8站台/.test(fn);
+      }
+      if (filterKey === '3') return /^3[号线、]/.test(fn);
+      if (filterKey === '5') return /^5[号线、]/.test(fn);
+      if (filterKey === '6') return /^6[号线]/.test(fn);
+      if (filterKey === '6z') return /^6支/.test(fn);
+      if (filterKey === '7') return /^7[号线]/.test(fn) || /^深圳地铁7/.test(fn);
+      if (filterKey === '9') return /^9[号线]/.test(fn);
+      if (filterKey === '10') return /^10[号线]/.test(fn);
+      if (filterKey === '11') return /^11[号线、]/.test(fn);
+      if (filterKey === '12') return /^12[号线]/.test(fn);
+      if (filterKey === '14') return /^14[号线]/.test(fn);
+      if (filterKey === '20') return /^20[号线]/.test(fn);
+      if (filterKey === 'other') {
+        return !(/^1[号线、]/.test(fn) ||
+                 /^2&8/.test(fn) ||
+                 /^2[号线&、]/.test(fn) ||
+                 /^8[号线站台]/.test(fn) ||
+                 /^8站台/.test(fn) ||
+                 /^3[号线、]/.test(fn) ||
+                 /^5[号线、]/.test(fn) ||
+                 /^6[号线]/.test(fn) ||
+                 /^6支/.test(fn) ||
+                 /^7[号线]/.test(fn) ||
+                 /^深圳地铁7/.test(fn) ||
+                 /^9[号线]/.test(fn) ||
+                 /^10[号线]/.test(fn) ||
+                 /^11[号线、]/.test(fn) ||
+                 /^12[号线]/.test(fn) ||
+                 /^14[号线]/.test(fn) ||
+                 /^20[号线]/.test(fn));
+      }
+      return false;
+    }
+
+    // ==================== 线路返回按钮 ====================
+    function renderBackLinks() {
+      const container = document.getElementById('lineBackLinks');
+      if (!container) return;
+      if (currentFilter === 'all' || currentFilter === 'other') {
+        container.innerHTML = '';
+        return;
+      }
+
+      function isOperating(lineId) {
+        if (typeof ALL_LINES_ENHANCED === 'undefined' || !Array.isArray(ALL_LINES_ENHANCED)) return true;
+        const lineData = ALL_LINES_ENHANCED.find(l => l.id === lineId);
+        if (!lineData) return true;
+        return lineData.category === 'operating';
+      }
+
+      if (currentFilter === '2&8') {
+        const btn2 = isOperating('2')
+          ? '<a href="line 2" class="back-link">返回2号线百科</a>'
+          : '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回2号线百科</span>';
+        const btn8 = isOperating('8')
+          ? '<a href="line 8" class="back-link">返回8号线百科</a>'
+          : '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回8号线百科</span>';
+        container.innerHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap;">' + btn2 + btn8 + '</div>';
+      } else {
+        const lineId = currentFilter;
+        const displayName = lineId === '6z' ? '6号线支线' : lineId + '号线';
+        if (isOperating(lineId)) {
+          container.innerHTML = '<a href="line ' + lineId + '" class="back-link">返回' + displayName + '百科</a>';
+        } else {
+          container.innerHTML = '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回' + displayName + '百科（建设中）</span>';
+        }
+      }
+    }
+
+    // ==================== 懒加载 Observer ====================
+    const imgObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const ph = entry.target;
+          const src = ph.dataset.src;
+          const alt = ph.dataset.alt;
+          if (!src) { imgObserver.unobserve(ph); return; }
+          const img = new Image();
+          img.onload = function() {
+            if (ph.parentNode) {
+              const imgEl = document.createElement('img');
+              imgEl.src = src;
+              imgEl.alt = alt || '';
+              imgEl.loading = 'lazy';
+              ph.replaceWith(imgEl);
+            }
+          };
+          img.onerror = function() {
+            ph.style.background = '#f3f4f6';
+            ph.style.animation = 'none';
+            ph.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:14px;">加载失败</div>';
+          };
+          img.src = src;
+          imgObserver.unobserve(ph);
+        }
+      });
+    }, { rootMargin: '120px' });
+
+    // ==================== 状态 ====================
+    let currentFilter = 'all';
+    let currentPage = 1;
+    const photosPerPage = 15;
+
+    // ==================== 筛选与计数 ====================
+    function getFilteredPhotos() {
+      if (currentFilter === 'all') return photos;
+      return photos.filter(p => belongsToFilter(p.filename, currentFilter));
+    }
+
+    function getFilterCounts() {
+      const counts = {};
+      filters.forEach(f => {
+        counts[f.key] = photos.filter(p => belongsToFilter(p.filename, f.key)).length;
+      });
+      return counts;
+    }
+
+    // ==================== 线路卡片渲染 ====================
+    function renderLineCards() {
+      const section = document.getElementById('lineCardsSection');
+      const container = document.getElementById('lineCards');
+      if (!section || !container) return;
+
+      const counts = getFilterCounts();
+      const hasPhotoLines = filters.filter(f => f.key !== 'all' && f.key !== 'other' && counts[f.key] > 0);
+
+      if (hasPhotoLines.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+
+      container.innerHTML = hasPhotoLines.map(f => {
+        const lineId = f.key;
+        let isOperating = true;
+        let lineColor = '#999';
+        let hasLineData = false;
+
+        if (typeof ALL_LINES_ENHANCED !== 'undefined' && Array.isArray(ALL_LINES_ENHANCED)) {
+          const lineData = ALL_LINES_ENHANCED.find(l => l.id === lineId);
+          if (lineData) {
+            hasLineData = true;
+            isOperating = lineData.category === 'operating';
+            lineColor = lineData.color || '#999';
+          }
+        }
+
+        const displayName = lineId === '6z' ? '6号线支线' : (lineId === '2&8' ? '2&8号线' : lineId + '号线');
+        const count = counts[lineId] || 0;
+        const badgeText = lineId === '6z' ? '6Z' : (lineId === '2&8' ? '2&8' : lineId);
+        const textColor = getContrastColor(lineColor);
+
+        if (isOperating) {
+          return `<a href="dashboard?line=${lineId}" class="line-card" style="--lc:${lineColor}">
+            <div class="line-card-badge" style="background:${lineColor};color:${textColor}">${badgeText}</div>
+            <div class="line-card-name">${displayName}</div>
+            <div class="line-card-count">${count} 张照片</div>
+          </a>`;
+        } else {
+          return `<div class="line-card construction" style="--lc:${lineColor}">
+            <div class="line-card-badge" style="background:${lineColor};color:${textColor}">${badgeText}</div>
+            <div class="line-card-name">${displayName}</div>
+            <div class="line-card-count">${count} 张 · 建设中</div>
+          </div>`;
+        }
+      }).join('');
+    }
+
+    // ==================== 分类导航渲染 ====================
+    function renderFilters() {
+      const bar = document.getElementById('filterBar');
+      const counts = getFilterCounts();
+      bar.innerHTML = filters.map(f => {
+        const isActive = f.key === currentFilter;
+        const count = counts[f.key] || 0;
+        if (f.key !== 'all' && count === 0) return '';
+        const cls = f.lineClass ? f.lineClass + (isActive ? ' active' : '') : (isActive ? 'all active' : 'all');
+        return `<button class="filter-btn ${cls}" onclick="setFilter('${f.key}')">
+          ${f.label} <span class="count">${count}</span>
+        </button>`;
+      }).join('');
+    }
+
+    function setFilter(key) {
+      currentFilter = key;
+      currentPage = 1;
+      renderFilters();
+      renderBackLinks();
+      renderPhotos();
+      renderPagination();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==================== 照片流渲染（带懒加载）====================
+    function renderPhotos() {
+      const stream = document.getElementById('photoStream');
+      stream.innerHTML = '';
+
+      const filtered = getFilteredPhotos();
+      const start = (currentPage - 1) * photosPerPage;
+      const end = Math.min(start + photosPerPage, filtered.length);
+      const pagePhotos = filtered.slice(start, end);
+
+      if (pagePhotos.length === 0) {
+        stream.innerHTML = '<div style="text-align:center; padding: 60px 20px; color: #9ca3af; font-size: 16px;">暂无照片</div>';
+        return;
+      }
+
+      pagePhotos.forEach((photo) => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        card.onclick = () => openModal(photo);
+
+        const phId = 'ph-' + Math.random().toString(36).substr(2, 9);
+        card.innerHTML = `
+          <div class="img-placeholder" id="${phId}" data-src="${photo.filename}" data-alt="${photo.desc || photo.filename}"></div>
+          <div class="photo-info">
+            <div class="photo-filename">${photo.filename}</div>
+          </div>
+        `;
+        stream.appendChild(card);
+
+        // 注册到 Intersection Observer 进行懒加载
+        const ph = document.getElementById(phId);
+        if (ph) imgObserver.observe(ph);
+      });
+    }
+
+    // ==================== 分页渲染 ====================
+    function renderPagination() {
+      const filtered = getFilteredPhotos();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / photosPerPage));
+
+      document.getElementById('pageInfo').textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages;
+
+      const pageNumbersEl = document.getElementById('pageNumbers');
+      let numbersHtml = '';
+      for (let i = currentPage + 1; i <= totalPages; i++) {
+        numbersHtml += `<button class="page-number" onclick="goToPage(${i})">${i}</button>`;
+      }
+      pageNumbersEl.innerHTML = numbersHtml;
+    }
+
+    function goToPage(page) {
+      const filtered = getFilteredPhotos();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / photosPerPage));
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderPhotos();
+        renderPagination();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function changePage(delta) {
+      goToPage(currentPage + delta);
+    }
+
+    // ==================== 弹窗 ====================
+    function openModal(photo) {
+      document.getElementById('modalImage').src = photo.filename;
+      document.getElementById('modalTitle').textContent = photo.filename;
+      document.getElementById('modalDesc').textContent = photo.desc || '';
+      document.getElementById('imageModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(event) {
+      if (event.target.id === 'imageModal' || event.target.classList.contains('image-modal-close')) {
+        document.getElementById('imageModal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ==================== 实时时间 ====================
+    function updateTime() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${h}:${m}:${s}，${month}月${day}日，${weekDays[now.getDay()]}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // ==================== 移动端菜单 ====================
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    // ==================== 初始化 ====================
+    function doInit() {
+      // 解析 URL 参数
+      const urlLine = getLineParam();
+      if (urlLine) {
+        const validKeys = filters.map(f => f.key);
+        if (validKeys.includes(urlLine)) {
+          currentFilter = urlLine;
+        }
+      }
+      renderFilters();
+      renderBackLinks();
+      renderPhotos();
+      renderPagination();
+    }
+
+    // 优先尝试加载外部 photos.json
+    fetch('photos.json')
+      .then(r => { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          photos = data;
+        }
+        doInit();
+      })
+      .catch(() => doInit());
+  </script>
+</body>
+</html>

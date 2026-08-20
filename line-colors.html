@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线路色号 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 顶部导航栏 */
+    .header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
+    .logo img { width: 100%; height: 100%; object-fit: cover; }
+    .site-name { font-size: 16px; font-weight: 600; color: white; }
+    .current-time { font-size: 14px; color: #ffffff; font-weight: 500; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a {
+      padding: 8px 16px; border-radius: 8px;
+      text-decoration: none; font-size: 14px; font-weight: 500;
+      color: #d1d5db; transition: all 0.3s ease;
+    }
+    .nav-links a:hover { background-color: #374151; color: white; }
+    .nav-links a.active { background-color: #2563eb; color: white; }
+    .mobile-menu-btn { display: none; background: none; border: none; color: white; cursor: pointer; }
+
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* 页面标题行 */
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    /* 返回按钮 - 标题行内 */
+    /* 颜色网格 - 参考 photos 的瀑布流风格 */
+    .colors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* 颜色卡片 */
+    .color-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .color-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    }
+
+    /* 颜色展示窗口 - 长方形 */
+    .color-preview {
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 12px 12px 0 0;
+    }
+    .color-preview .line-name {
+      font-size: 22px;
+      font-weight: 800;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      letter-spacing: 1px;
+    }
+    .color-preview .line-name.dark {
+      color: #1f2937;
+      text-shadow: none;
+    }
+    .color-preview .line-name.light {
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* 颜色信息 */
+    .color-info {
+      padding: 16px 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .color-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .color-info-row:last-child { margin-bottom: 0; }
+    .color-label {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .color-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .color-code {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      font-family: 'SF Mono', Monaco, monospace;
+    }
+    .copy-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .copy-btn:hover {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+      color: #374151;
+    }
+    .copy-btn.copied {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    /* 提示框 */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #111827;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 60px; }
+      .nav-links { display: none; width: 100%; flex-direction: column; padding: 10px 0; background: #1f2937; position: absolute; top: 60px; left: 0; }
+      .nav-links.active { display: flex; }
+      .nav-links a { padding: 12px 20px; border-radius: 0; }
+      .mobile-menu-btn { display: block; }
+      .current-time { display: none; }
+      .container { margin-top: 20px; padding: 0 16px;
+    width: min(90%, 1200px);
+}
+      .colors-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .color-info { padding: 12px 14px; }
+      .color-code { font-size: 12px; }
+      .toast { white-space: normal; max-width: 90%; font-size: 13px; }
+    }
+    @media (max-width: 480px) {
+      .colors-grid { grid-template-columns: 1fr; }
+    }
+  
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+</style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+  <!-- 引入 all-lines-enhanced.js -->
+  <script src="all-lines-enhanced.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>线路色号</span>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </h1>
+    <p class="page-subtitle">深圳地铁各线路标准色 HEX / RGB 对照表</p>
+
+    <div class="colors-grid" id="colorsGrid">
+      <!-- 由JS动态生成 -->
+    </div>
+  </main>
+
+  <!-- 复制成功提示 -->
+  <div class="toast" id="toast">已复制到剪贴板</div>
+
+  <script>
+    (function() {
+      if (typeof ALL_LINES_ENHANCED === 'undefined') {
+        console.error('all-lines-enhanced.js 未加载');
+        return;
+      }
+
+      // 辅助函数：HEX转RGB（返回格式化字符串 "Rxxx Gxxx Bxxx"）
+      function hexToRgbFormatted(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!result) return null;
+        const r = parseInt(result[1], 16);
+        const g = parseInt(result[2], 16);
+        const b = parseInt(result[3], 16);
+        return `R${r} G${g} B${b}`;
+      }
+
+      // 构建线路颜色数据
+      const lineMap = new Map(); // id -> { lineName, hex, rgbFormatted }
+      
+      // 预处理：合并 2 和 8
+      let line2Color = null;
+
+      ALL_LINES_ENHANCED.forEach(item => {
+        const id = item.id;
+        const color = item.color;
+        const rgbFormatted = hexToRgbFormatted(color);
+        if (!rgbFormatted) return;
+
+        if (id === '2') {
+          line2Color = { hex: color, rgb: rgbFormatted };
+        } else if (id === '8') {
+          // 8号线与2号线相同，忽略
+        } else {
+          let lineName;
+          if (id === '6z') {
+            lineName = '6号线支线';
+          } else {
+            const match = item.name.match(/(\d+)号线/);
+            if (match) {
+              lineName = match[0];
+            } else {
+              lineName = id + '号线';
+            }
+          }
+          lineMap.set(id, { lineName, hex: color, rgb: rgbFormatted });
+        }
+      });
+
+      // 合并 2 和 8
+      if (line2Color) {
+        lineMap.set('2_8', { lineName: '2/8号线', hex: line2Color.hex, rgb: line2Color.rgb });
+      }
+
+      // 按照指定顺序排列
+      const order = ['1','2_8','3','4','5','6','6z','7','9','10','11','12','13','14','15','16','17','19','20','22','25','27','29','32'];
+      const lineColors = [];
+      order.forEach(id => {
+        if (lineMap.has(id)) {
+          lineColors.push(lineMap.get(id));
+        }
+      });
+      // 补充可能遗漏的
+      lineMap.forEach((value, key) => {
+        if (!order.includes(key)) {
+          lineColors.push(value);
+        }
+      });
+
+      // 渲染卡片
+      const grid = document.getElementById('colorsGrid');
+      
+      // 浅色颜色列表（用于文字颜色判断）
+      const lightColors = ['#00A9DF', '#01C4B7', '#F67599', '#A092B2', '#F6AD2D', '#F4CB67', '#86BE00', '#D2C0CD', '#87DBDF', '#F5E524', '#FDAD76', '#92D6AC'];
+
+      lineColors.forEach(item => {
+        const isLight = lightColors.includes(item.hex);
+        const textClass = isLight ? 'dark' : 'light';
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        card.innerHTML = `
+          <div class="color-preview" style="background: ${item.hex};">
+            <span class="line-name ${textClass}">${item.lineName}</span>
+          </div>
+          <div class="color-info">
+            <div class="color-info-row">
+              <span class="color-label">HEX</span>
+              <div class="color-value">
+                <span class="color-code">${item.hex}</span>
+                <button class="copy-btn" onclick="copyCode('${item.hex}', this, '${item.lineName}', 'HEX')">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                  </svg>
+                  复制
+                </button>
+              </div>
+            </div>
+            <div class="color-info-row">
+              <span class="color-label">RGB</span>
+              <div class="color-value">
+                <span class="color-code">${item.rgb}</span>
+                <button class="copy-btn" onclick="copyCode('${item.rgb}', this, '${item.lineName}', 'RGB')">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                  </svg>
+                  复制
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // 复制功能（全局）
+      window.copyCode = function(text, btn, lineName, type) {
+        const toast = document.getElementById('toast');
+        // 复制文本
+        navigator.clipboard.writeText(text).then(() => {
+          // 按钮反馈
+          const originalText = btn.innerHTML;
+          btn.classList.add('copied');
+          btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            已复制
+          `;
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = originalText;
+          }, 1500);
+
+          // 提示信息
+          toast.textContent = `已复制 ${lineName} 的 ${type} 值 ${text} 到剪贴板`;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2500);
+        }).catch(() => {
+          // 降级方案
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          toast.textContent = `已复制 ${lineName} 的 ${type} 值 ${text} 到剪贴板`;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2500);
+        });
+      };
+
+      // 实时时间
+      function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const weekDay = weekDays[now.getDay()];
+        const timeEl = document.getElementById('currentTime');
+        if (timeEl) {
+          timeEl.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+        }
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // 移动端菜单（若有）
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+          document.querySelector('.nav-links').classList.toggle('active');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

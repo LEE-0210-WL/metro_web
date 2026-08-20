@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>已遇到车辆 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 卡片样式（与 trains.html 一致） */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    .lines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .line-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .line-header {
+      padding: 16px 16px;
+      color: white;
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .line-content {
+      padding: 16px 20px;
+    }
+
+    .train-item {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 15px;
+      gap: 2px 6px;
+    }
+
+    .train-item:last-child {
+      border-bottom: none;
+    }
+
+    .train-index {
+      font-weight: 600;
+      color: #6b7280;
+      min-width: 32px;
+      flex-shrink: 0;
+    }
+
+    .train-model {
+      font-weight: 500;
+      color: #111827;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .train-divider {
+      color: #d1d5db;
+      flex-shrink: 0;
+    }
+
+    .train-manufacturer {
+      font-size: 14px;
+      color: #6b7280;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .train-range {
+      color: #6b7280;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* 已遇到车号组（含对勾和车号） */
+    .train-encountered-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 60px;
+      flex-wrap: wrap;
+    }
+
+    .train-check {
+      color: #10b981;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .train-encountered {
+      color: #374151;
+      font-weight: 500;
+      word-break: break-word;
+      line-height: 1.4;
+      flex: 1 1 auto;
+    }
+
+    /* 线路颜色 */
+    .line-1 { background: #01AF55; }
+    .line-2 { background: #B95800; }
+    .line-3 { background: #00A9DF; color: #000; }
+    .line-4 { background: #D42E0F; }
+    .line-5 { background: #9E4DAA; }
+    .line-6 { background: #01C4B7; color: #000; }
+    .line-6z { background: #027776; }
+    .line-7 { background: #0131AC; }
+    .line-8 { background: #B95800; }
+    .line-9 { background: #896B70; }
+    .line-10 { background: #F67599; color: #000; }
+    .line-11 { background: #672146; }
+    .line-12 { background: #A092B2; color: #000; }
+    .line-13 { background: #F6AD2D; color: #000; }
+    .line-14 { background: #F4CB67; color: #000; }
+    .line-15 { background: #86BE00; }
+    .line-16 { background: #181BA5; }
+    .line-17 { background: #D2C0CD; color: #000; }
+    .line-19 { background: #BA16A4; }
+    .line-20 { background: #87DBDF; color: #000; }
+    .line-22 { background: #F5E524; color: #000; }
+    .line-25 { background: #FDAD76; color: #000; }
+    .line-27 { background: #4E8D8E; }
+    .line-29 { background: #92D6AC; color: #000; }
+    .line-32 { background: #735128; }
+
+    /* 返回按钮 */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .back-link:hover {
+      background: #374151;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+    width: min(90%, 1200px);
+}
+      .page-title {
+        font-size: 22px;
+      }
+      .lines-grid {
+        grid-template-columns: 1fr;
+      }
+      .train-item {
+        gap: 2px 6px;
+      }
+      /* 手机端：已遇到车号组整体换行，且缩进对齐 */
+      .train-encountered-group {
+        flex-basis: 100%;
+        padding-left: 38px;
+      }
+      .train-manufacturer {
+        font-size: 13px;
+      }
+      .train-range {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>已遇到车辆记录（仅部分）</span>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </h1>
+    <p class="page-subtitle">记录本人实际乘坐/拍摄到的列车编号，每个车型最多只记录五个，持续更新中</p>
+    <p class="page-subtitle">最近一次更新：2026/7/13</p>
+
+    <div class="lines-grid" id="encounteredGrid"></div>
+  </main>
+
+  <script>
+    // 已遇到车辆数据（与 trains.html 顺序一致，补全所有非星号线路）
+    const encounteredData = [
+      {
+        line: '1号线（6A）',
+        lineClass: 'line-1',
+        trains: [
+          { model: '01A2206庞', range: '101-122', manufacturer: '庞巴迪', encounteredNumbers: '110、116、119、121' },
+          { model: '01A0406長', range: '123-126', manufacturer: '长春轨道客车', encounteredNumbers: '126' },
+          { model: '01A2606株', range: '127-152', manufacturer: '株洲电力机车', encounteredNumbers: '127、129、135、136、141' },
+          { model: '01A3306株', range: '153-185', manufacturer: '株洲电力机车', encounteredNumbers: '153、161、166、172、175' }
+        ]
+      },
+      {
+        line: '2号线+8号线（6A）',
+        lineClass: 'line-2',
+        trains: [
+          { model: '02A3506長', range: '201-235', manufacturer: '长春轨道客车', encounteredNumbers: '201、211、218、226、228' },
+          { model: '02A1606長', range: '236-251', manufacturer: '长春轨道客车', encounteredNumbers: '240、244' },
+          { model: '02A0606株', range: '252-257', manufacturer: '株洲电力机车', encounteredNumbers: '暂时没遇到哦' },
+          { model: '02A2406株/</br>08A2406株', range: '258/801-281/824', manufacturer: '株洲电力机车', encounteredNumbers: '266/809、268/811、271/814、273/816、278/821' },
+          { model: '02A0904株/</br>08A0904株', range: '282/825-290/833', manufacturer: '株洲电力机车', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '3号线（6B）',
+        lineClass: 'line-3',
+        trains: [
+          { model: '03B4306長', range: '301-343', manufacturer: '长春轨道客车', encounteredNumbers: '302、318、337、342、343' },
+          { model: '03B3306浦', range: '344-376', manufacturer: '浦镇车辆厂', encounteredNumbers: '342、351、360、367、375' },
+          { model: '03B2206浦', range: '377-398', manufacturer: '浦镇车辆厂', encounteredNumbers: '378、383、388、390、395' }
+        ]
+      },
+      {
+        line: '4号线（6A）',
+        lineClass: 'line-4',
+        trains: [
+          { model: '二期', range: '401-428', manufacturer: '制造商信息未提供', encounteredNumbers: '暂时没遇到哦' },
+          { model: '三期', range: '429-452', manufacturer: '制造商信息未提供', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '5号线（6A）',
+        lineClass: 'line-5',
+        trains: [
+          { model: '05A2206株', range: '501-522', manufacturer: '株洲电力机车', encounteredNumbers: '504、514、518、520、543' },
+          { model: '05A0806株', range: '523-530', manufacturer: '株洲电力机车', encounteredNumbers: '暂时没遇到哦' },
+          { model: '05A2106長', range: '531-551', manufacturer: '长春轨道客车', encounteredNumbers: '暂时没遇到哦' },
+          { model: '05A0706株', range: '552-558', manufacturer: '株洲电力机车', encounteredNumbers: '553' },
+          { model: '05A3906深', range: '559-597', manufacturer: '深圳中车', encounteredNumbers: '559、563、566、576、578' }
+        ]
+      },
+      {
+        line: '6号线（6A）',
+        lineClass: 'line-6',
+        trains: [
+          { model: '06A5106浦', range: '601-651', manufacturer: '浦镇车辆厂', encounteredNumbers: '606、613、625' }
+        ]
+      },
+      {
+        line: '6号线支线（6B）',
+        lineClass: 'line-6z',
+        trains: [
+          { model: '6ZB0906浦', range: '6Z01-6Z09', manufacturer: '浦镇车辆厂', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '7号线（6A）',
+        lineClass: 'line-7',
+        trains: [
+          { model: '07A4106長', range: '701-741', manufacturer: '长春轨道客车', encounteredNumbers: '706、710、711、720、735' },
+          { model: '07A0203長', range: '742-743', manufacturer: '长春轨道客车', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '9号线（6A）',
+        lineClass: 'line-9',
+        trains: [
+          { model: '09A2906長', range: '901-929', manufacturer: '长春轨道客车', encounteredNumbers: '915、927' },
+          { model: '09A2206長', range: '930-951', manufacturer: '长春轨道客车', encounteredNumbers: '935、948、951' }
+        ]
+      },
+      {
+        line: '10号线（8A）',
+        lineClass: 'line-10',
+        trains: [
+          { model: '10A3508長', range: '1001-1035', manufacturer: '长春轨道客车', encounteredNumbers: '1007、1013、1019、1021、1022' }
+        ]
+      },
+      {
+        line: '11号线（8A；2商务6普通）',
+        lineClass: 'line-11',
+        trains: [
+          { model: '11A3308株', range: '1101-1133', manufacturer: '株洲电力机车', encounteredNumbers: '1101、1113、1132、1133' },
+          { model: '11A4008長', range: '1134-1173', manufacturer: '长春轨道客车', encounteredNumbers: '1138、1145、1150、1153、1159' }
+        ]
+      },
+      {
+        line: '12号线（6A）',
+        lineClass: 'line-12',
+        trains: [
+          { model: '12A5606浦', range: '1201-1256', manufacturer: '浦镇车辆厂', encounteredNumbers: '暂时没遇到哦' },
+          { model: '12A2006浦', range: '1257-1276', manufacturer: '浦镇车辆厂', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '13号线（8A）',
+        lineClass: 'line-13',
+        trains: [
+          { model: '一期', range: '1301-1319', manufacturer: '制造商信息未提供', encounteredNumbers: '暂时没遇到哦' },
+          { model: '二期', range: '1320-1356', manufacturer: '制造商信息未提供', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      },
+      {
+        line: '14号线（8A）',
+        lineClass: 'line-14',
+        trains: [
+          { model: '14A4408長', range: '1401-1444', manufacturer: '长春轨道客车', encounteredNumbers: '1403、1406、1431、1433、1441' }
+        ]
+      },
+      {
+        line: '16号线（6A）',
+        lineClass: 'line-16',
+        trains: [
+          { model: '16A3206株', range: '1601-1632', manufacturer: '株洲电力机车', encounteredNumbers: '1601、1611、1614、1616、1620' },
+          { model: '16A1206株', range: '1633-1644', manufacturer: '株洲电力机车', encounteredNumbers: '1633、1634' }
+        ]
+      },
+      {
+        line: '20号线（一期8A，在建二期采用6A，建成后6/8A混跑）',
+        lineClass: 'line-20',
+        trains: [
+          { model: '20A0908長', range: '8A：2001-2009', manufacturer: '长春轨道客车', encounteredNumbers: '暂时没遇到哦' },
+          { model: '20Axxxx?', range: '6A：预计25列', manufacturer: '长春轨道客车', encounteredNumbers: '暂时没遇到哦' }
+        ]
+      }
+    ];
+
+    // 生成卡片
+    const grid = document.getElementById('encounteredGrid');
+    const numberedCircle = index => String.fromCharCode(0x2460 + index);
+
+    encounteredData.forEach(line => {
+      const card = document.createElement('div');
+      card.className = 'line-card';
+
+      const header = document.createElement('div');
+      header.className = `line-header ${line.lineClass}`;
+      header.textContent = line.line;
+      card.appendChild(header);
+
+      const content = document.createElement('div');
+      content.className = 'line-content';
+
+      line.trains.forEach((train, idx) => {
+        const item = document.createElement('div');
+        item.className = 'train-item';
+
+        // 序号
+        const idxSpan = document.createElement('span');
+        idxSpan.className = 'train-index';
+        idxSpan.textContent = numberedCircle(idx);
+
+        // 车型
+        const modelSpan = document.createElement('span');
+        modelSpan.className = 'train-model';
+        modelSpan.innerHTML = train.model;
+
+        // 分割线
+        const div1 = document.createElement('span');
+        div1.className = 'train-divider';
+        div1.textContent = '丨';
+
+        // 制造商
+        const manuSpan = document.createElement('span');
+        manuSpan.className = 'train-manufacturer';
+        manuSpan.textContent = train.manufacturer;
+
+        const div2 = document.createElement('span');
+        div2.className = 'train-divider';
+        div2.textContent = '丨';
+
+        // 范围
+        const rangeSpan = document.createElement('span');
+        rangeSpan.className = 'train-range';
+        rangeSpan.textContent = train.range;
+
+        const div3 = document.createElement('span');
+        div3.className = 'train-divider';
+        div3.textContent = '丨';
+
+        // 已遇到车号组（对勾 + 车号）
+        const encounteredGroup = document.createElement('span');
+        encounteredGroup.className = 'train-encountered-group';
+
+        const checkSpan = document.createElement('span');
+        checkSpan.className = 'train-check';
+        checkSpan.textContent = '✓';
+
+        const encounteredSpan = document.createElement('span');
+        encounteredSpan.className = 'train-encountered';
+        encounteredSpan.textContent = train.encounteredNumbers;
+
+        encounteredGroup.appendChild(checkSpan);
+        encounteredGroup.appendChild(encounteredSpan);
+
+        // 按顺序添加
+        item.appendChild(idxSpan);
+        item.appendChild(modelSpan);
+        item.appendChild(div1);
+        item.appendChild(manuSpan);
+        item.appendChild(div2);
+        item.appendChild(rangeSpan);
+        item.appendChild(div3);
+        item.appendChild(encounteredGroup);
+
+        content.appendChild(item);
+      });
+
+      card.appendChild(content);
+      grid.appendChild(card);
+    });
+
+    // 实时时间（由 navbar.js 统一处理）
+    function updateTime() {}
+    // 移动端菜单（由 navbar.js 统一处理）
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {});
+    }
+  </script>
+</body>
+</html>

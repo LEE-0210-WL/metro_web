@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>探站系列 · EP01：大运站 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    
+    .page-title > span {
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: var(--series-gradient);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .page-title > span {
+        flex-basis: 100%;
+      }
+      .back-link {
+        margin-left: auto;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>探站系列 · EP01：大运站——它陪我长大，我帮它卖房（bushi）</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">探站系列 · EP01</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.8.18
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+
+      <p>选择大运站作为开篇很简单，它承载了我太多的回忆，自然是没问题的，那么我们开始吧！</p>
+
+      <p>其实第一次，算不上去，只算经过。幼儿园的时候经常跟老爸一起坐3号线去市里的工厂，经过这个站，看到外面的一圈圈圆形的体育场。当时觉得高级。</p>
+
+      <p>那就是我和大运站的"第一眼"。算不上"去"，只是经过，但它就这样钻进了我的记忆里。外面还没啥建筑，一眼可以望很远。现在的站外，早已被城际工地和TOD抢去了空间。</p>
+
+      <p>大运站从龙岗大道上方走过，向两边延伸出四只脚落地，悬挂的站台吊板写着一站台龙岗线往益田，一切都是最初的样子。当时还在由独特的龙岗线公司运营，那个底色红色的"m"logo，虽然特征明显，但是我近年才忆起。后来那个公司被收编了，龙岗线改叫3号线，3号线运营公司改叫客三司，站台翻新了一遍又一遍。但我每次经过，还是会下意识去找那个红色logo曾经在的位置。找不到了。但你知道它曾经在那里。</p>
+
+      <p>2011年大运会，327/328大运号。当时这俩车还有大运号涂装的，前几年被狗屎深铁扒掉了。站厅侧墙中部的大运会logo历历在目，现在还矗立在那里，只是两边的墙给抠掉做了换乘大楼连接了。它的两边被拆过、被改造过，但它本身还在那里。像是故意留下来做一个"时间锚点"。从2011年大运会到新线路开通前，11年了，它没动过。</p>
+
+      <p>然后就是14和16双双开通。</p>
+
+      <p>沉寂许久的大运，迎来了新的两个侧式全高站台。中间老站台则是随着顶棚开启改造，一点点，被扒去老旧的地板、半高屏蔽门和特色灯箱，一点点融合进新站台的风格。新的湾区之舞顶棚逐渐盖起，为此3号线还截断了运行区间。一个老站被"切开"，再拼上新的部分，像一场器官移植手术。</p>
+
+      <p>新的天地换乘楼拔地而起，从地上2层，到地下3层或许是4层。这栋大楼承担了客流输送。进入换乘大楼，一道长长长的三层高扶梯横亘楼体，经过一个小的平台，再坐一个扶梯到达14和16的站厅。那个扶梯是真的长。站在底下往上看，真有点巨物恐惧症了（划掉）。</p>
+
+      <p>细细算来，现在距离在大运设站的城际开通没多久了。16一期停止于此，独特的6A对8A，在我初中那会算是常见，只不过还没那么多人。现在14到站16差半分钟，就能上演没那么夸张的岗厦北14对11换乘名场面，虽然也是抢座位就是了。</p>
+
+      <p>有些细节，只有经常来、经常等车的人才会发现。</p>
+
+      <p>大运新站台刚开的时候，站台吊板往双龙印的是坪地六联——当时距离开通好像时间还蛮久的。于是绿龟整了个色差巨大的"往双龙"贴上去。结果就是坪地六联开之前，撕掉顶上那层膏药，把底下的那层撕毁了。后来但凡新线路新区段贴纸印刷的终点，全部都做的是磁吸的膏药了。这种细节，不算什么大事。但如果你注意到了，会觉得很有趣——像是车站和你之间开的一个小玩笑。没有人会专门告诉你这件事，它就在那里，等着你哪天等车无聊抬头看吊板的时候，自己发现。</p>
+
+      <p>另一个事：3站台的新喇叭离站台太高了，很小声，基本列车啸声一来就听不见了。所以在大运等车，很多时候你是听到提示音，才听到啸声，然后车就咣当咣当来了（小声：其实听完广告就来车了）。声音和画面之间，永远差半拍。</p>
+
+      <p>初中第一次从换乘楼走上来换3回家时，弄反双方向了，坐过了才听报站反应过来——虽然我没认真看指引就是了。但说实话，每次想到两条新线路开通以它为枢纽换乘的时候，就会突然觉得：深圳真的变了好多。</p>
+
+      <p>幼儿园——小学——初中——高中——高考完毕业。它从"经过的一个站"，变成"陪我长大的一个地方"。我没有刻意选择它，但它一直在那里，像一条轨道上的参照物。大运大运，行大运嘛。</p>
+
+      <p>写到这里，必须交代一件事。</p>
+
+      <p>我现在的群昵称是：<br><strong>大运TOD巨作深铁阅云境（励志卖出114亿房）</strong></p>
+
+      <p>算是呼应深铁的TOD使劲卖都卖不出多少，那就我帮他卖吧，还是免费的（来历也很简单：我家在大运附近，那个站出站广告不是格伦菲尔口腔，就是"大运TOD巨作深铁阅云境"。看多了，就成了条件反射。深铁阅云境是深铁的房子，这你肯定知道啦。所以这篇文章如果深铁的人看到了，建议联系我。广告费可以打折，毕竟——我是免费帮你们卖的，但你们如果非要给，我也不拒绝。</p>
+
+      <p>大运站陪我长大，我帮大运站卖房。<br>公平交易，童叟无欺。</p>
+
+      <p style="color:#6b7280;font-size:14px;margin-top:32px;">图文by：走进新天地·Railway</p>
+
+      <p style="color:#6b7280;font-size:14px;">摄站系列，下一站待定。<br>如果你也有一个陪你长大的地铁站，欢迎告诉我。</p>
+
+    </article>
+
+    <!-- 文章导航 -->
+    <div class="article-nav" id="articleNav"></div>
+
+    <!-- 文章列表 -->
+    <div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>

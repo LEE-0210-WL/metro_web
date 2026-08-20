@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五期线路跟踪 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 顶部导航栏 */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+
+        .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-header-row     .page-title {
+      font-size: 28px; font-weight: 700; color: #111827;
+      margin-bottom: 8px;
+      display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    }
+
+    .page-header-row .page-notice {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: #fef3c7;
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+    }
+
+    /* ====== 筛选栏 ====== */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* ====== 自定义下拉（同 flow 页面） ====== */
+    .custom-select {
+      position: relative;
+      min-width: 140px;
+      user-select: none;
+    }
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      gap: 8px;
+      min-height: 40px;
+    }
+    .custom-select-trigger:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+    .custom-select-trigger.open {
+      border-color: #111827;
+      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+    }
+    .custom-select-value {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .custom-select-arrow {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      transition: transform 0.25s ease;
+      color: #6b7280;
+    }
+    .custom-select-trigger.open .custom-select-arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-select-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: max-height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+          opacity 0.25s ease,
+          transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .custom-select-dropdown.open {
+      max-height: 220px;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      overflow-y: auto;
+    }
+
+    .custom-select-dropdown::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-select-dropdown::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-select-dropdown::-webkit-scrollbar-thumb {
+      background: #c1c7cd;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+    .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+    .custom-select-dropdown {
+      scrollbar-width: thin;
+      scrollbar-color: #c1c7cd #f1f1f1;
+    }
+
+    .custom-select-option {
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .custom-select-option:last-child {
+      border-bottom: none;
+    }
+    .custom-select-option:hover {
+      background: #f3f4f6;
+    }
+    .custom-select-option.active {
+      background: #e5e7eb;
+      font-weight: 600;
+      color: #111827;
+    }
+    .custom-select-option.disabled {
+      color: #d1d5db;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* ====== 链接列表 ====== */
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ====== 分组标题 ====== */
+    .group-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 8px 0 4px 4px;
+      padding-left: 8px;
+      border-left: 3px solid #2563eb;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s ease;
+    }
+    .group-title.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ====== 卡片 ====== */
+    .link-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .link-card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    /* ====== 桌面端布局：Grid ====== */
+    .link-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
+      grid-template-areas:
+        "icon title date"
+        "icon source date"
+        "icon tag   date";
+      gap: 4px 12px;
+      align-items: start;
+    }
+
+    .link-icon {
+      grid-area: icon;
+      width: 40px;
+      height: 40px;
+      background: #2563eb;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .link-icon svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+
+    .link-title {
+      grid-area: title;
+      font-size: 17px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+    }
+
+    .link-source {
+      grid-area: source;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .link-tag {
+      grid-area: tag;
+      display: inline-block;
+      font-size: 12px;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      justify-self: start;
+    }
+
+    .link-date {
+      grid-area: date;
+      font-size: 13px;
+      color: #9ca3af;
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      align-self: start;
+      margin-top: 2px;
+    }
+
+    /* ====== 返回按钮 ====== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9ca3af;
+      font-size: 15px;
+    }
+
+    /* ====== 响应式：手机端 ====== */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .current-time {
+        display: none;
+      }
+
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
+      .filter-bar {
+        gap: 8px;
+      }
+      .custom-select {
+        min-width: 120px;
+        flex: 1;
+      }
+
+      /* ====== 手机端卡片布局 ====== */
+      .link-card {
+        padding: 16px;
+      }
+
+      .link-header {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas:
+          "icon title"
+          "source source"
+          "tag    tag"
+          "date   date";
+        gap: 6px 10px;
+      }
+
+      .link-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+      }
+      .link-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .link-title {
+        font-size: 15px;
+        align-self: center;
+      }
+
+      .link-source {
+        font-size: 12px;
+        padding-left: 46px; /* 36px icon + 10px gap */
+      }
+
+      .link-tag {
+        font-size: 11px;
+        padding: 1px 6px;
+        margin-left: 46px;
+      }
+
+      .link-date {
+        font-size: 12px;
+        padding: 3px 8px;
+        justify-self: end;
+        margin-top: 2px;
+      }
+    }
+  
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+</style>
+<base target="_blank">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <!-- 主内容区域 -->
+  <main class="container">
+    <h1 class="page-title">
+      <span>五期线路跟踪（可能不全）</span>
+      <a href="index" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回首页
+      </a>
+    </h1>
+    <p class="page-notice">不定期更新，可自行关注，信息也不一定是最新的</p>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <span class="filter-label">筛选：</span>
+      <div class="custom-select" id="categorySelectWrapper">
+        <div class="custom-select-trigger" id="categorySelectTrigger">
+          <span class="custom-select-value" id="categorySelectValue">全部进度</span>
+          <svg class="custom-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <div class="custom-select-dropdown" id="categorySelectDropdown"></div>
+      </div>
+    </div>
+
+    <div class="links-list" id="linksList"></div>
+  </main>
+
+<script>
+  /* ================================================================
+     数据
+     ================================================================ */
+  const progressData = [
+    {
+      url: "https://mp.weixin.qq.com/s/P2-z316HskaxBVnCXEYN1g",
+      title: "@通勤党，这条“续命线”又有新进展了（22号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.1.6",
+      category: "line",
+      tag: "22号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/QOcAyI-Yk80A7yOxBx9OOA",
+      title: "深圳地铁在建线路建设进度图【2025年12月】",
+      source: "来源：@Metro Bay 进度图 微信公众号",
+      date: "2026.1.20",
+      category: "overview",
+      tag: "综合进度"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/IFWTcGJAb-wdPreQwRVnCw",
+      title: "深圳首条环形地铁迎来最新进展！（15号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.1.30",
+      category: "line",
+      tag: "15号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/YbjXSAs-G7k1y7fc1f3Ssw",
+      title: "开工大吉！25号线最新进展！",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.2.24",
+      category: "line",
+      tag: "25号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/7oWSB3nwlRQkorSSD1D3YQ",
+      title: "2029年通车！深圳地铁20号线二期两站封顶！",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.6.5",
+      category: "line",
+      tag: "20号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/WQGn0zhJxFIDl7BTxT7AVA",
+      title: "通勤党狂喜！深圳超级枢纽迎来新进展！（西丽高铁站）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.6.12",
+      category: "hub",
+      tag: "西丽枢纽"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/Z6JhKnIuL9V5NX6FuL4DVg",
+      title: "狂飙！深圳地铁25号线再提速！",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.6.15",
+      category: "line",
+      tag: "25号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/IY81U2j43eRhhzFuRQ4Fig",
+      title: "直达大鹏！深圳又一看海专线建设提速！（32号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.6.18",
+      category: "line",
+      tag: "32号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/I2jdtZ2zN2V0746_ZJE06A",
+      title: "开创建造新模式！27号线新进展！",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.6.22",
+      category: "line",
+      tag: "27号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/iZN-y1hsO9a5QXfhedLu4A",
+      title: "前海⇄龙岗⇄惠州1小时！深惠城际迎来新进展",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.2",
+      category: "intercity",
+      tag: "深惠城际"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/XZ_Hxhvy3BLAz19IyPq71w",
+      title: "预计2028年通车！深圳交通新干线进度刷新！（20号线二期）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.13",
+      category: "line",
+      tag: "20号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/W1hOE-8npNYtDhNHsU2nzw",
+      title: "坐等开通！深圳地铁“换乘王”进度上新！（15号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.21",
+      category: "line",
+      tag: "15号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/-nON0HGnndS4gMA9vhRf-w",
+      title: "穗莞深城际新进展！",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.23",
+      category: "intercity",
+      tag: "穗莞深城际"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/WxWIGx-C5DTcRHeY810AnQ",
+      title: "深圳⇌深汕30分钟！深汕高铁进度刷新！（深汕高铁）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.24",
+      category: "intercity",
+      tag: "深汕高铁"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/MfVP4k1xQabLBqpcSKdaLw",
+      title: "深圳地铁狂飙！又一条线路提速！（22号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.27",
+      category: "line",
+      tag: "22号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/XRXCa7OXEgCatn_WN2w87Q",
+      title: "福田⇌观澜45分钟！通勤又快一步！（22号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.29",
+      category: "line",
+      tag: "22号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/wCkYWZFEs1N5-LUQlVB4Tg",
+      title: "“拼”出来的地铁站！（25号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.8.2",
+      category: "line",
+      tag: "25号线"
+    },
+    {
+      url: "https://mp.weixin.qq.com/s/m2_62yuudD0KfqkrhuG88Q",
+      title: "横跨三区！深圳又一地铁迎来新进展！（25号线）",
+      source: "来源：@深圳地铁 官微公众号",
+      date: "2026.7.4",
+      category: "line",
+      tag: "25号线"
+    }
+  ];
+
+  const categoryMap = {
+    all: { label: "全部进度", icon: "M4 6h16M4 12h16M4 18h16" },
+    line: { label: "各线进度", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+    intercity: { label: "城际进度", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
+    hub: { label: "枢纽进度", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
+    overview: { label: "综合进度", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" }
+  };
+
+  /* ================================================================
+     自定义下拉组件（同 flow 页面）
+     ================================================================ */
+  class CustomSelect {
+    constructor({ wrapperId, triggerId, valueId, dropdownId, placeholder, maxHeight = 200, onSelect }) {
+      this.wrapper = document.getElementById(wrapperId);
+      this.trigger = document.getElementById(triggerId);
+      this.valueEl = document.getElementById(valueId);
+      this.dropdown = document.getElementById(dropdownId);
+      this.placeholder = placeholder || '请选择';
+      this.maxHeight = maxHeight;
+      this.onSelect = onSelect || (() => {});
+      this.options = [];
+      this.selectedValue = null;
+      this.isOpen = false;
+
+      this.trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggle();
+      });
+
+      document.addEventListener('click', () => {
+        this.close();
+      });
+      this.dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      this.dropdown.style.maxHeight = '0px';
+    }
+
+    toggle() {
+      this.isOpen ? this.close() : this.open();
+    }
+
+    open() {
+      if (this.isOpen) return;
+      this.isOpen = true;
+      this.trigger.classList.add('open');
+      this.dropdown.classList.add('open');
+      const totalHeight = Math.min(this.dropdown.scrollHeight || 100, this.maxHeight);
+      this.dropdown.style.maxHeight = totalHeight + 'px';
+    }
+
+    close() {
+      if (!this.isOpen) return;
+      this.isOpen = false;
+      this.trigger.classList.remove('open');
+      this.dropdown.classList.remove('open');
+      this.dropdown.style.maxHeight = '0px';
+    }
+
+    setOptions(items) {
+      this.options = items;
+      this.dropdown.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'custom-select-option';
+        if (item.disabled) div.classList.add('disabled');
+        if (item.value === this.selectedValue) div.classList.add('active');
+        div.dataset.value = item.value;
+        div.textContent = item.label;
+        div.addEventListener('click', () => {
+          if (item.disabled) return;
+          this.selectValue(item.value);
+        });
+        this.dropdown.appendChild(div);
+      });
+      if (this.isOpen) {
+        const totalHeight = Math.min(this.dropdown.scrollHeight || 100, this.maxHeight);
+        this.dropdown.style.maxHeight = totalHeight + 'px';
+      }
+    }
+
+    selectValue(value) {
+      const item = this.options.find(o => o.value === value);
+      if (!item || item.disabled) return;
+      this.selectedValue = value;
+      this.valueEl.textContent = item.label;
+      this.dropdown.querySelectorAll('.custom-select-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.value === value);
+      });
+      this.close();
+      if (this.onSelect) this.onSelect(value, item);
+    }
+
+    setValue(value) {
+      const item = this.options.find(o => o.value === value);
+      if (item) {
+        this.selectedValue = value;
+        this.valueEl.textContent = item.label;
+        this.dropdown.querySelectorAll('.custom-select-option').forEach(el => {
+          el.classList.toggle('active', el.dataset.value === value);
+        });
+      } else {
+        this.selectedValue = null;
+        this.valueEl.textContent = this.placeholder;
+      }
+    }
+
+    getValue() {
+      return this.selectedValue;
+    }
+  }
+
+  /* ================================================================
+     渲染逻辑
+     ================================================================ */
+  let currentCategory = 'all';
+
+  function getIconPath(category) {
+    return categoryMap[category]?.icon || "M13 10V3L4 14h7v7l9-11h-7z";
+  }
+
+  function createCardHTML(item) {
+    const iconPath = getIconPath(item.category);
+    return `
+      <div class="link-header">
+        <div class="link-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}" />
+          </svg>
+        </div>
+        <div class="link-title">${item.title}</div>
+        <div class="link-source">${item.source}</div>
+        <span class="link-tag">${item.tag}</span>
+        <span class="link-date">${item.date}</span>
+      </div>
+    `;
+  }
+
+  function renderLinks() {
+    const container = document.getElementById('linksList');
+    container.innerHTML = '';
+
+    let filtered = progressData;
+    if (currentCategory !== 'all') {
+      filtered = progressData.filter(item => item.category === currentCategory);
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<div class="empty-state">该分类下暂无数据</div>';
+      return;
+    }
+
+    // 如果选的是"各线进度"，按线路分组
+    if (currentCategory === 'line') {
+      const groups = {};
+      filtered.forEach(item => {
+        if (!groups[item.tag]) groups[item.tag] = [];
+        groups[item.tag].push(item);
+      });
+
+      let seq = 0;
+      const stepDelay = 80; // 统一间隔 80ms
+
+      Object.keys(groups).forEach((tag) => {
+        // 分组标题
+        const groupTitle = document.createElement('div');
+        groupTitle.className = 'group-title';
+        groupTitle.textContent = tag;
+        container.appendChild(groupTitle);
+
+        requestAnimationFrame(() => {
+          setTimeout(() => groupTitle.classList.add('show'), seq * stepDelay);
+        });
+        seq++;
+
+        // 该分组下的卡片
+        groups[tag].forEach((item) => {
+          const card = document.createElement('a');
+          card.href = item.url;
+          card.target = "_blank";
+          card.className = 'link-card';
+          card.innerHTML = createCardHTML(item);
+          container.appendChild(card);
+
+          requestAnimationFrame(() => {
+            setTimeout(() => card.classList.add('show'), seq * stepDelay);
+          });
+          seq++;
+        });
+      });
+    } else {
+      filtered.forEach((item, index) => {
+        const card = document.createElement('a');
+        card.href = item.url;
+        card.target = "_blank";
+        card.className = 'link-card';
+        card.innerHTML = createCardHTML(item);
+        container.appendChild(card);
+
+        requestAnimationFrame(() => {
+          setTimeout(() => card.classList.add('show'), index * 80);
+        });
+      });
+    }
+  }
+
+  /* ================================================================
+     初始化
+     ================================================================ */
+  const categorySelect = new CustomSelect({
+    wrapperId: 'categorySelectWrapper',
+    triggerId: 'categorySelectTrigger',
+    valueId: 'categorySelectValue',
+    dropdownId: 'categorySelectDropdown',
+    placeholder: '全部进度',
+    maxHeight: 220,
+    onSelect: (value) => {
+      currentCategory = value;
+      renderLinks();
+    }
+  });
+
+  const categoryItems = [
+    { value: 'all', label: '全部进度' },
+    { value: 'line', label: '各线进度' },
+    { value: 'intercity', label: '城际进度' },
+    { value: 'hub', label: '枢纽进度' },
+    { value: 'overview', label: '综合进度' }
+  ];
+  categorySelect.setOptions(categoryItems);
+  categorySelect.setValue('all');
+
+  renderLinks();
+
+  // 实时时间
+  function updateTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    const weekDay = weekDays[now.getDay()];
+
+    const el = document.getElementById('currentTime');
+    if (el) {
+      el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+</script>
+</body>
+</html>

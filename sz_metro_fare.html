@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深圳地铁票价计算器（测试版）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 100vh;
+  }
+  @media (max-width: 900px) {
+    .container { flex-direction: column; }
+  }
+
+  .left-panel {
+    width: 380px;
+    min-width: 340px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+  }
+  @media (max-width: 900px) {
+    .left-panel { width: 100%; min-width: auto; position: static; }
+  }
+
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #00B140;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .station-group {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid #eee;
+  }
+  .station-group h3 {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .station-group h3 .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .station-group h3 .dot.start { background: #00B140; }
+  .station-group h3 .dot.end { background: #B94700; }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .form-row:last-child { margin-bottom: 0; }
+  .form-row label {
+    font-size: 13px;
+    color: #555;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .form-row select {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .form-row select:focus {
+    outline: none;
+    border-color: #00B140;
+  }
+
+  .btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .btn-swap {
+    background: #e8e8e8;
+    color: #555;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .btn-swap:hover { background: #ddd; }
+  .btn-query {
+    background: #00B140;
+    color: #fff;
+    font-size: 16px;
+    padding: 14px;
+  }
+  .btn-query:hover { background: #009938; }
+
+  .result-box {
+    background: #f0faf3;
+    border: 2px solid #00B140;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .result-fare {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FF6B00;
+    line-height: 1.2;
+  }
+  .result-fare span { font-size: 16px; font-weight: 500; }
+  .result-detail {
+    font-size: 13px;
+    color: #555;
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+  .result-info {
+    font-size: 13px;
+    color: #0066CC;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .path-section { margin-top: 4px; }
+  .path-section h4 {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .path-text {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.7;
+    max-height: 140px;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+
+  .right-panel {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 400px;
+    max-height: calc(100vh - 40px);
+  }
+  .map-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .map-canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    background: #fafafa;
+    min-height: 300px;
+  }
+  #mapCanvas { display: block; }
+  .map-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #aaa;
+    font-size: 16px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    padding: 10px 20px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    color: #666;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="left-panel">
+    <div class="title">票价查询（测试版，仅支持1/2/3号线）</div>
+
+    <div class="station-group">
+      <h3><span class="dot start"></span>起点站</h3>
+      <div class="form-row">
+        <label>线路</label>
+        <select id="startLine"></select>
+      </div>
+      <div class="form-row">
+        <label>站点</label>
+        <select id="startStation"></select>
+      </div>
+    </div>
+
+    <div class="station-group">
+      <h3><span class="dot end"></span>终点站</h3>
+      <div class="form-row">
+        <label>线路</label>
+        <select id="endLine"></select>
+      </div>
+      <div class="form-row">
+        <label>站点</label>
+        <select id="endStation"></select>
+      </div>
+    </div>
+
+    <button class="btn btn-swap" onclick="swapStations()">交换起终点</button>
+    <button class="btn btn-query" onclick="queryFare()">查询</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-fare" id="resultFare">请选择起点和终点站</div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="result-info" id="resultInfo"></div>
+    </div>
+
+    <div class="path-section">
+      <h4>途经站点：</h4>
+      <div class="path-text" id="pathText">点击查询后显示路径</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="map-header">线路示意图</div>
+    <div class="map-canvas-container" id="mapContainer">
+      <div class="map-placeholder" id="mapPlaceholder">请选择起点和终点站查询，并不代表实际走向</div>
+      <canvas id="mapCanvas" style="display:none;"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="border-color:#FF6600;background:#fff;"></span>换乘站</div>
+      <div class="legend-item"><span class="legend-dot" style="border-color:#ccc;background:#fff;"></span>普通站</div>
+      <div class="legend-item">— 实线：线路段</div>
+      <div class="legend-item">- - 虚线：换乘连接</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 地铁数据 ====================
+const METRO_DATA = {
+  "lines": {
+    "1号线": {
+      "color": "#00B140",
+      "direction": {"type": "NS", "downward_is_increasing": false, "description": "上行(南→北)"},
+      "stations": [
+        {"name": "罗湖", "distance": 0, "transfer": []},
+        {"name": "国贸", "distance": 0.86, "transfer": []},
+        {"name": "老街", "distance": 1.52, "transfer": ["3号线"]},
+        {"name": "大剧院", "distance": 2.46, "transfer": ["2号线"]},
+        {"name": "科学馆", "distance": 3.86, "transfer": ["6号线"]},
+        {"name": "华强路", "distance": 4.87, "transfer": []},
+        {"name": "岗厦", "distance": 6.87, "transfer": ["10号线"]},
+        {"name": "会展中心", "distance": 7.59, "transfer": ["4号线"]},
+        {"name": "购物公园", "distance": 8.26, "transfer": ["3号线"]},
+        {"name": "香蜜湖", "distance": 10.06, "transfer": []},
+        {"name": "车公庙", "distance": 11.46, "transfer": ["7号线", "9号线", "11号线"]},
+        {"name": "竹子林", "distance": 12.76, "transfer": []},
+        {"name": "侨城东", "distance": 14.56, "transfer": []},
+        {"name": "华侨城", "distance": 15.76, "transfer": []},
+        {"name": "世界之窗", "distance": 16.96, "transfer": ["2号线"]},
+        {"name": "白石洲", "distance": 17.75, "transfer": []},
+        {"name": "高新园", "distance": 19.15, "transfer": []},
+        {"name": "深大", "distance": 20.25, "transfer": []},
+        {"name": "桃园", "distance": 22.55, "transfer": ["12号线"]},
+        {"name": "大新", "distance": 23.55, "transfer": []},
+        {"name": "鲤鱼门", "distance": 24.75, "transfer": []},
+        {"name": "前海湾", "distance": 25.73, "transfer": ["5号线", "11号线"]},
+        {"name": "新安", "distance": 26.93, "transfer": []},
+        {"name": "宝安中心", "distance": 28.03, "transfer": ["5号线"]},
+        {"name": "宝体", "distance": 29.01, "transfer": []},
+        {"name": "坪洲", "distance": 30.41, "transfer": []},
+        {"name": "西乡", "distance": 31.41, "transfer": []},
+        {"name": "固戍", "distance": 34.91, "transfer": []},
+        {"name": "后瑞", "distance": 38.21, "transfer": []},
+        {"name": "机场东", "distance": 40.61, "transfer": ["12号线"]}
+      ]
+    },
+    "2号线": {
+      "color": "#B94700",
+      "direction": {"type": "EW", "downward_is_increasing": true, "description": "下行(西→东)"},
+      "stations": [
+        {"name": "赤湾", "distance": 0, "transfer": ["5号线"]},
+        {"name": "蛇口港", "distance": 1.8, "transfer": []},
+        {"name": "海上世界", "distance": 2.9, "transfer": ["12号线"]},
+        {"name": "水湾", "distance": 3.539, "transfer": []},
+        {"name": "东角头", "distance": 4.739, "transfer": []},
+        {"name": "湾厦", "distance": 6.239, "transfer": []},
+        {"name": "海月", "distance": 7.027, "transfer": []},
+        {"name": "登良", "distance": 7.993, "transfer": []},
+        {"name": "后海", "distance": 8.95, "transfer": ["11号线", "13号线"]},
+        {"name": "科苑", "distance": 10.35, "transfer": ["13号线"]},
+        {"name": "红树湾", "distance": 12.75, "transfer": []},
+        {"name": "世界之窗", "distance": 14.45, "transfer": ["1号线"]},
+        {"name": "侨城北", "distance": 16.45, "transfer": []},
+        {"name": "深康", "distance": 17.65, "transfer": []},
+        {"name": "安托山", "distance": 18.475, "transfer": ["7号线"]},
+        {"name": "侨香", "distance": 19.335, "transfer": []},
+        {"name": "香蜜", "distance": 20.435, "transfer": []},
+        {"name": "香梅北", "distance": 21.374, "transfer": []},
+        {"name": "景田", "distance": 22.574, "transfer": ["9号线"]},
+        {"name": "莲花西", "distance": 24.174, "transfer": []},
+        {"name": "福田", "distance": 25.274, "transfer": ["3号线", "11号线"]},
+        {"name": "市民中心", "distance": 26.107, "transfer": ["4号线"]},
+        {"name": "岗厦北", "distance": 26.874, "transfer": ["10号线", "11号线", "14号线"]},
+        {"name": "华强北", "distance": 28.674, "transfer": ["7号线"]},
+        {"name": "燕南", "distance": 29.403, "transfer": []},
+        {"name": "大剧院", "distance": 31.103, "transfer": ["1号线"]},
+        {"name": "湖贝", "distance": 32.048, "transfer": []},
+        {"name": "黄贝岭", "distance": 33.448, "transfer": ["5号线"]},
+        {"name": "新秀", "distance": 34.748, "transfer": []},
+        {"name": "莲塘口岸", "distance": 35.748, "transfer": []},
+        {"name": "仙湖路", "distance": 37.748, "transfer": []},
+        {"name": "莲塘", "distance": 38.565, "transfer": []},
+        {"name": "梧桐山南", "distance": 39.965, "transfer": []},
+        {"name": "沙头角", "distance": 44.265, "transfer": []},
+        {"name": "海山", "distance": 45.865, "transfer": []},
+        {"name": "盐田港西", "distance": 47.065, "transfer": []},
+        {"name": "深外高中", "distance": 49.765, "transfer": []},
+        {"name": "盐田路", "distance": 51.165, "transfer": []},
+        {"name": "鸿安围", "distance": 52.165, "transfer": []},
+        {"name": "北山道", "distance": 53.365, "transfer": []},
+        {"name": "盐田墟", "distance": 54.565, "transfer": []},
+        {"name": "大梅沙", "distance": 58.065, "transfer": []},
+        {"name": "小梅沙", "distance": 60.265, "transfer": []},
+        {"name": "溪涌", "distance": 63.965, "transfer": []}
+      ]
+    },
+    "3号线": {
+      "color": "#00A9E0",
+      "direction": {"type": "NS", "downward_is_increasing": true, "description": "下行(北→南)"},
+      "stations": [
+        {"name": "坪地六联", "distance": 0, "transfer": []},
+        {"name": "富坪", "distance": 1.40, "transfer": []},
+        {"name": "白石塘", "distance": 2.40, "transfer": []},
+        {"name": "低碳城", "distance": 3.90, "transfer": []},
+        {"name": "坪西", "distance": 5.00, "transfer": []},
+        {"name": "新生", "distance": 6.80, "transfer": []},
+        {"name": "梨园", "distance": 8.30, "transfer": []},
+        {"name": "双龙", "distance": 9.17, "transfer": ["16号线"]},
+        {"name": "南联", "distance": 10.57, "transfer": []},
+        {"name": "龙城广场", "distance": 11.87, "transfer": []},
+        {"name": "吉祥", "distance": 13.17, "transfer": []},
+        {"name": "爱联", "distance": 14.87, "transfer": []},
+        {"name": "大运", "distance": 16.37, "transfer": ["14号线", "16号线"]},
+        {"name": "荷坳", "distance": 17.77, "transfer": []},
+        {"name": "永湖", "distance": 19.47, "transfer": []},
+        {"name": "横岗", "distance": 20.97, "transfer": []},
+        {"name": "塘坑", "distance": 22.97, "transfer": []},
+        {"name": "六约", "distance": 24.37, "transfer": []},
+        {"name": "丹竹头", "distance": 28.27, "transfer": []},
+        {"name": "大芬", "distance": 29.47, "transfer": []},
+        {"name": "木棉湾", "distance": 30.67, "transfer": []},
+        {"name": "布吉", "distance": 31.87, "transfer": ["5号线", "14号线"]},
+        {"name": "草埔", "distance": 34.07, "transfer": []},
+        {"name": "水贝", "distance": 35.57, "transfer": []},
+        {"name": "田贝", "distance": 36.57, "transfer": ["7号线"]},
+        {"name": "翠竹", "distance": 37.97, "transfer": []},
+        {"name": "晒布", "distance": 39.07, "transfer": []},
+        {"name": "老街", "distance": 39.97, "transfer": ["1号线"]},
+        {"name": "红岭", "distance": 41.47, "transfer": ["9号线"]},
+        {"name": "通新岭", "distance": 42.30, "transfer": ["6号线"]},
+        {"name": "华新", "distance": 43.30, "transfer": ["7号线"]},
+        {"name": "莲花村", "distance": 45.30, "transfer": ["10号线"]},
+        {"name": "少年宫", "distance": 46.10, "transfer": ["4号线"]},
+        {"name": "福田", "distance": 47.60, "transfer": ["2号线", "11号线"]},
+        {"name": "购物公园", "distance": 48.50, "transfer": ["1号线"]},
+        {"name": "石厦", "distance": 49.40, "transfer": ["7号线"]},
+        {"name": "益田", "distance": 50.26, "transfer": []},
+        {"name": "福保", "distance": 51.76, "transfer": []}
+      ]
+    }
+  }
+};
+
+// ==================== 数据预处理 ====================
+class MetroData {
+  constructor(data) {
+    this.lines = data.lines;
+    this.stations = {};
+    this.transferStations = new Set();
+
+    for (const [lineName, lineData] of Object.entries(this.lines)) {
+      for (let idx = 0; idx < lineData.stations.length; idx++) {
+        const station = lineData.stations[idx];
+        const name = station.name;
+        if (!this.stations[name]) this.stations[name] = [];
+
+        this.stations[name].push({
+          line: lineName,
+          distance: station.distance,
+          transfer: station.transfer,
+          idx: idx
+        });
+
+        if (station.transfer.length > 0) {
+          this.transferStations.add(name);
+        }
+      }
+    }
+  }
+
+  getLineList() { return Object.keys(this.lines); }
+
+  getStationsByLine(lineName) {
+    if (this.lines[lineName]) {
+      return this.lines[lineName].stations.map(s => s.name);
+    }
+    return [];
+  }
+
+  calculateFare(distanceKm) {
+    if (distanceKm <= 0) return 0;
+    if (distanceKm <= 4) return 2;
+    if (distanceKm <= 12) return 2 + Math.floor((distanceKm - 1) / 4);
+    if (distanceKm <= 24) return 4 + Math.floor((distanceKm - 12) / 6);
+    const fare = 6 + Math.floor((distanceKm - 24) / 8);
+    return Math.min(fare, 14);
+  }
+
+  findRoute(start, end) {
+    if (!this.stations[start] || !this.stations[end]) {
+      return { route: null, distance: 0, fare: 0, info: "站点不存在" };
+    }
+    if (start === end) {
+      return { route: null, distance: 0, fare: 0, info: "起点和终点相同" };
+    }
+
+    const pq = new MinPriorityQueue();
+
+    for (const info of this.stations[start]) {
+      pq.enqueue({ 
+        dist: 0, 
+        station: start, 
+        line: info.line,
+        path: [{name: start, line: info.line, is_transfer: false}]
+      });
+    }
+
+    const visited = new Map();
+    let bestRoute = null;
+    let minDistance = Infinity;
+
+    while (!pq.isEmpty()) {
+      const { dist, station, line, path } = pq.dequeue();
+
+      if (station === end) {
+        if (dist < minDistance) {
+          minDistance = dist;
+          bestRoute = path;
+        }
+        continue;
+      }
+
+      const state = station + "|" + line;
+      if (visited.has(state) && visited.get(state) <= dist) continue;
+      visited.set(state, dist);
+
+      const info = this.stations[station].find(s => s.line === line);
+      if (!info) continue;
+
+      const idx = info.idx;
+      const lineStations = this.lines[line].stations;
+
+      // 沿当前线路移动
+      if (idx + 1 < lineStations.length) {
+        const nextSta = lineStations[idx + 1];
+        const segmentDist = Math.abs(nextSta.distance - info.distance);
+        const newPath = path.slice();
+        newPath.push({name: nextSta.name, line: line, is_transfer: false});
+        pq.enqueue({ 
+          dist: dist + segmentDist, 
+          station: nextSta.name, 
+          line: line,
+          path: newPath
+        });
+      }
+
+      if (idx - 1 >= 0) {
+        const prevSta = lineStations[idx - 1];
+        const segmentDist = Math.abs(prevSta.distance - info.distance);
+        const newPath = path.slice();
+        newPath.push({name: prevSta.name, line: line, is_transfer: false});
+        pq.enqueue({ 
+          dist: dist + segmentDist, 
+          station: prevSta.name, 
+          line: line,
+          path: newPath
+        });
+      }
+
+      // 换乘
+      for (const transferLine of info.transfer) {
+        if (transferLine === line) continue;
+        const targetInfo = this.stations[station].find(s => s.line === transferLine);
+        if (targetInfo) {
+          const newPath = path.slice();
+          newPath.push({name: station, line: transferLine, is_transfer: true});
+          pq.enqueue({ 
+            dist: dist, 
+            station: station, 
+            line: transferLine,
+            path: newPath
+          });
+        }
+      }
+    }
+
+    if (!bestRoute) {
+      return { route: null, distance: 0, fare: 0, info: "无法找到路径" };
+    }
+
+    const formattedRoute = [];
+    let transferCount = 0;
+    const linesUsed = [];
+    let currentLineForDisplay = null;
+
+    for (let i = 0; i < bestRoute.length; i++) {
+      const item = bestRoute[i];
+
+      if (item.is_transfer) transferCount++;
+
+      if (item.line && item.line !== currentLineForDisplay) {
+        if (linesUsed.length === 0) {
+          linesUsed.push(item.line);
+        } else {
+          linesUsed.push("→" + item.line);
+        }
+        currentLineForDisplay = item.line;
+      }
+
+      let stationInfo = null;
+      if (item.line && this.lines[item.line]) {
+        stationInfo = this.stations[item.name].find(s => s.line === item.line);
+      }
+
+      formattedRoute.push({
+        name: item.name,
+        line: item.line,
+        is_transfer: item.is_transfer,
+        idx: stationInfo ? stationInfo.idx : 0
+      });
+    }
+
+    const fare = this.calculateFare(minDistance);
+    const transferStr = transferCount > 0 ? `换乘${transferCount}次` : "无需换乘";
+    const linesStr = linesUsed.join("") || "未知";
+
+    return {
+      route: formattedRoute,
+      distance: minDistance,
+      fare: fare,
+      info: `${transferStr} | 线路: ${linesStr}`
+    };
+  }
+}
+
+class MinPriorityQueue {
+  constructor() { this.heap = []; }
+  enqueue(item) {
+    this.heap.push(item);
+    this._bubbleUp(this.heap.length - 1);
+  }
+  dequeue() {
+    if (this.heap.length === 0) return null;
+    if (this.heap.length === 1) return this.heap.pop();
+    const min = this.heap[0];
+    this.heap[0] = this.heap.pop();
+    this._bubbleDown(0);
+    return min;
+  }
+  isEmpty() { return this.heap.length === 0; }
+  _bubbleUp(index) {
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (this.heap[parent].dist <= this.heap[index].dist) break;
+      [this.heap[parent], this.heap[index]] = [this.heap[index], this.heap[parent]];
+      index = parent;
+    }
+  }
+  _bubbleDown(index) {
+    const len = this.heap.length;
+    while (true) {
+      let smallest = index;
+      const left = 2 * index + 1;
+      const right = 2 * index + 2;
+      if (left < len && this.heap[left].dist < this.heap[smallest].dist) smallest = left;
+      if (right < len && this.heap[right].dist < this.heap[smallest].dist) smallest = right;
+      if (smallest === index) break;
+      [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
+      index = smallest;
+    }
+  }
+}
+
+const metro = new MetroData(METRO_DATA);
+
+function initUI() {
+  const startLine = document.getElementById('startLine');
+  const endLine = document.getElementById('endLine');
+
+  metro.getLineList().forEach(line => {
+    startLine.add(new Option(line, line));
+    endLine.add(new Option(line, line));
+  });
+
+  startLine.addEventListener('change', () => updateStations('start'));
+  endLine.addEventListener('change', () => updateStations('end'));
+
+  updateStations('start');
+  updateStations('end');
+}
+
+function updateStations(type) {
+  const lineSelect = document.getElementById(type + 'Line');
+  const stationSelect = document.getElementById(type + 'Station');
+  const line = lineSelect.value;
+  const stations = metro.getStationsByLine(line);
+
+  stationSelect.innerHTML = '';
+  stations.forEach(s => {
+    stationSelect.add(new Option(s, s));
+  });
+}
+
+function swapStations() {
+  const startLine = document.getElementById('startLine');
+  const endLine = document.getElementById('endLine');
+  const startStation = document.getElementById('startStation');
+  const endStation = document.getElementById('endStation');
+
+  const tempLine = startLine.value;
+  startLine.value = endLine.value;
+  endLine.value = tempLine;
+
+  updateStations('start');
+  updateStations('end');
+
+  const tempStation = startStation.value;
+  startStation.value = endStation.value;
+  endStation.value = tempStation;
+}
+
+function queryFare() {
+  const startStation = document.getElementById('startStation').value;
+  const endStation = document.getElementById('endStation').value;
+
+  if (startStation === endStation) {
+    document.getElementById('resultFare').innerHTML = '<span style="font-size:18px;color:red;">起点和终点不能相同！</span>';
+    document.getElementById('resultDetail').textContent = '';
+    document.getElementById('resultInfo').textContent = '';
+    document.getElementById('pathText').textContent = '';
+    drawEmptyMap();
+    return;
+  }
+
+  const result = metro.findRoute(startStation, endStation);
+
+  if (!result.route) {
+    document.getElementById('resultFare').innerHTML = '<span style="font-size:18px;color:red;">查询失败：' + result.info + '</span>';
+    document.getElementById('resultDetail').textContent = '';
+    document.getElementById('resultInfo').textContent = '';
+    document.getElementById('pathText').textContent = '';
+    drawEmptyMap();
+    return;
+  }
+
+  const stationsCount = result.route.length;
+
+  document.getElementById('resultFare').innerHTML = result.fare + ' <span>元</span>';
+  document.getElementById('resultDetail').innerHTML = `里程：${result.distance.toFixed(2)} 公里 | 共${stationsCount}站`;
+  document.getElementById('resultInfo').textContent = result.info;
+
+  const pathStr = result.route.map(s => s.name).join(' → ');
+  document.getElementById('pathText').textContent = pathStr;
+
+  drawRouteMap(result.route);
+}
+
+function drawEmptyMap() {
+  const canvas = document.getElementById('mapCanvas');
+  const placeholder = document.getElementById('mapPlaceholder');
+  canvas.style.display = 'none';
+  placeholder.style.display = 'flex';
+}
+
+function drawRouteMap(route) {
+  const canvas = document.getElementById('mapCanvas');
+  const placeholder = document.getElementById('mapPlaceholder');
+  const container = document.getElementById('mapContainer');
+
+  if (route.length < 2) {
+    drawEmptyMap();
+    return;
+  }
+
+  const hasTransfer = route.some(s => s.is_transfer);
+
+  placeholder.style.display = 'none';
+  canvas.style.display = 'block';
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  if (!hasTransfer) {
+    drawSingleLineHorizontal(ctx, canvas, route, dpr, container);
+  } else {
+    drawTransferRouteHorizontal(ctx, canvas, route, dpr, container);
+  }
+}
+
+// ==================== 水平单线路（放大版） ====================
+function drawSingleLineHorizontal(ctx, canvas, route, dpr, container) {
+  const stationSpacing = 100;
+  const circleSize = 28;
+  const lineWidth = 10;
+  const fontSize = 24;
+
+  const lineName = route[0].line;
+  const lineData = metro.lines[lineName];
+  const color = lineData.color;
+
+  const totalStations = route.length;
+  const totalWidth = totalStations * stationSpacing + 120;
+  const viewHeight = container.clientHeight;
+  const centerY = Math.max(160, viewHeight / 2);
+  const sceneHeight = Math.max(centerY + 100, 320);
+
+  canvas.width = totalWidth * dpr;
+  canvas.height = sceneHeight * dpr;
+  canvas.style.width = totalWidth + 'px';
+  canvas.style.height = sceneHeight + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, totalWidth, sceneHeight);
+
+  const startX = 70;
+  const y = centerY;
+
+  // 绘制线路
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  for (let i = 0; i < route.length - 1; i++) {
+    const x1 = startX + i * stationSpacing;
+    const x2 = startX + (i + 1) * stationSpacing;
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2, y);
+  }
+  ctx.stroke();
+
+  // 绘制站点
+  for (let i = 0; i < route.length; i++) {
+    const x = startX + i * stationSpacing;
+    const isTransfer = route[i].is_transfer;
+
+    ctx.beginPath();
+    ctx.arc(x, y, circleSize / 2, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = isTransfer ? '#FF6600' : color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.font = (isTransfer ? 'bold ' : '') + fontSize + 'px "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    const textY = i % 2 === 0 ? y - 28 : y + 40;
+    ctx.fillText(route[i].name, x, textY);
+  }
+
+  // 线路标签
+  ctx.font = 'bold 15px "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  ctx.fillText(lineName, startX, y - 70);
+}
+
+// ==================== 水平换乘路线（放大+对齐修复） ====================
+function drawTransferRouteHorizontal(ctx, canvas, route, dpr, container) {
+  // 将路径分成段
+  const segments = [];
+  let currentLine = null;
+  let currentSegment = [];
+
+  for (let i = 0; i < route.length; i++) {
+    const station = route[i];
+    if (station.line !== currentLine) {
+      if (currentSegment.length > 0) {
+        segments.push([currentLine, currentSegment]);
+      }
+      currentLine = station.line;
+      currentSegment = [station];
+    } else {
+      currentSegment.push(station);
+    }
+  }
+  if (currentSegment.length > 0) {
+    segments.push([currentLine, currentSegment]);
+  }
+
+  if (segments.length === 2) {
+    drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container);
+  } else {
+    drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container);
+  }
+}
+
+function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
+  const stationSpacing = 100;
+  const circleSize = 28;
+  const lineWidth = 10;
+  const fontSize = 20;
+
+  const [line1Name, stations1] = segments[0];
+  const [line2Name, stations2] = segments[1];
+
+  if (!metro.lines[line1Name] || !metro.lines[line2Name]) {
+    drawEmptyMap();
+    return;
+  }
+
+  const color1 = metro.lines[line1Name].color;
+  const color2 = metro.lines[line2Name].color;
+
+  // 换乘站是 stations1 的最后一个站和 stations2 的第一个站
+  const transferStation = stations1[stations1.length - 1].name;
+
+  // 计算两段各自的宽度（从换乘站向两边）
+  const seg1LeftWidth = (stations1.length - 1) * stationSpacing;
+  const seg2RightWidth = (stations2.length - 1) * stationSpacing;
+
+  // 总宽度 = 左边距 + 第一段左宽 + 间距 + 第二段右宽 + 右边距
+  const margin = 80;
+  const gapBetween = 0; // 换乘站是同一个点，不需要额外间距
+  const totalWidth = margin + seg1LeftWidth + gapBetween + seg2RightWidth + margin;
+
+  const viewHeight = container.clientHeight;
+  const topY = 110;
+  const bottomY = Math.max(300, topY + 160);
+  const sceneHeight = Math.max(bottomY + 100, viewHeight - 20, 420);
+
+  canvas.width = totalWidth * dpr;
+  canvas.height = sceneHeight * dpr;
+  canvas.style.width = totalWidth + 'px';
+  canvas.style.height = sceneHeight + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, totalWidth, sceneHeight);
+
+  // 换乘站X坐标
+  const transferX = margin + seg1LeftWidth;
+
+  // 第一段起点X
+  const seg1StartX = transferX - (stations1.length - 1) * stationSpacing;
+
+  // 第二段起点X（换乘站就是起点）
+  const seg2StartX = transferX;
+
+  // ========== 绘制第一段（上方水平） ==========
+  ctx.strokeStyle = color1;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  for (let i = 0; i < stations1.length - 1; i++) {
+    const x1 = seg1StartX + i * stationSpacing;
+    const x2 = seg1StartX + (i + 1) * stationSpacing;
+    ctx.moveTo(x1, topY);
+    ctx.lineTo(x2, topY);
+  }
+  ctx.stroke();
+
+  for (let i = 0; i < stations1.length; i++) {
+    const x = seg1StartX + i * stationSpacing;
+    const isTransfer = (i === stations1.length - 1); // 最后一个是换乘站
+    const nameOnTop = (i % 2 === 0);
+    drawStationHorizontal(ctx, x, topY, stations1[i].name, color1, fontSize, circleSize, isTransfer, nameOnTop);
+  }
+
+  // ========== 绘制第二段（下方水平） ==========
+  ctx.strokeStyle = color2;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  for (let i = 0; i < stations2.length - 1; i++) {
+    const x1 = seg2StartX + i * stationSpacing;
+    const x2 = seg2StartX + (i + 1) * stationSpacing;
+    ctx.moveTo(x1, bottomY);
+    ctx.lineTo(x2, bottomY);
+  }
+  ctx.stroke();
+
+  for (let i = 0; i < stations2.length; i++) {
+    const x = seg2StartX + i * stationSpacing;
+    const isTransfer = (i === 0); // 第一个是换乘站
+    const nameOnTop = (i % 2 === 1);
+    drawStationHorizontal(ctx, x, bottomY, stations2[i].name, color2, fontSize, circleSize, isTransfer, nameOnTop);
+  }
+
+  // ========== 换乘连接线（垂直虚线，避开文字） ==========
+  // 虚线画在圆点之间，不要穿过文字区域
+  const lineTop = topY + circleSize/2 + 5;
+  const lineBottom = bottomY - circleSize/2 - 5;
+
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([10, 8]);
+  ctx.beginPath();
+  ctx.moveTo(transferX, lineTop);
+  ctx.lineTo(transferX, lineBottom);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 换乘文字（放在虚线右侧，不挡站名）
+  ctx.font = 'bold 22px "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = '#666';
+  ctx.textAlign = 'left';
+  ctx.fillText('换乘', transferX + 12, (lineTop + lineBottom) / 2 + 4);
+
+  // ========== 线路标签 ==========
+  ctx.font = 'bold 20px "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = color1;
+  ctx.textAlign = 'left';
+  ctx.fillText(line1Name, seg1StartX, topY - 60);
+
+  ctx.fillStyle = color2;
+  ctx.fillText(line2Name, seg2StartX, bottomY + 60);
+}
+
+function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
+  const stationSpacing = 100;
+  const circleSize = 28;
+  const lineWidth = 10;
+  const fontSize = 24;
+
+  let totalWidth = 100;
+  for (const [, stations] of segments) {
+    totalWidth += (stations.length - 1) * stationSpacing + 50;
+  }
+  totalWidth += 100;
+
+  const viewHeight = container.clientHeight;
+  const sceneHeight = Math.max(380, viewHeight - 20);
+  const centerY = sceneHeight / 2;
+
+  canvas.width = totalWidth * dpr;
+  canvas.height = sceneHeight * dpr;
+  canvas.style.width = totalWidth + 'px';
+  canvas.style.height = sceneHeight + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, totalWidth, sceneHeight);
+
+  let currentX = 80;
+
+  for (let segIdx = 0; segIdx < segments.length; segIdx++) {
+    const [lineName, stations] = segments[segIdx];
+    if (!metro.lines[lineName]) continue;
+
+    const color = metro.lines[lineName].color;
+    const y = centerY + (segIdx % 2 === 0 ? -40 : 40);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let i = 0; i < stations.length - 1; i++) {
+      const x1 = currentX + i * stationSpacing;
+      const x2 = currentX + (i + 1) * stationSpacing;
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+    }
+    ctx.stroke();
+
+    for (let i = 0; i < stations.length; i++) {
+      const x = currentX + i * stationSpacing;
+      const isTransfer = stations[i].is_transfer;
+      drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, true);
+    }
+
+    if (segIdx < segments.length - 1) {
+      const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -40 : 40);
+      const endX = currentX + (stations.length - 1) * stationSpacing;
+
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 5]);
+      ctx.beginPath();
+      ctx.moveTo(endX, y);
+      ctx.lineTo(endX + 35, y);
+      ctx.lineTo(endX + 35, nextY);
+      ctx.lineTo(endX + 50, nextY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = 'bold 24px "Microsoft YaHei", sans-serif';
+      ctx.fillStyle = '#FF6600';
+      ctx.fillText('换', endX + 18, (y + nextY) / 2 + 4);
+
+      currentX += (stations.length - 1) * stationSpacing + 50;
+    } else {
+      currentX += (stations.length - 1) * stationSpacing;
+    }
+  }
+}
+
+function drawStationHorizontal(ctx, x, y, name, color, fontSize, circleSize, isTransfer, nameOnTop) {
+  ctx.beginPath();
+  ctx.arc(x, y, circleSize / 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.strokeStyle = isTransfer ? '#FF6600' : color;
+  ctx.lineWidth = isTransfer ? 5 : 4; // 换乘站边框更粗
+  ctx.stroke();
+
+  ctx.font = (isTransfer ? 'bold ' : '') + fontSize + 'px "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = isTransfer ? '#FF6600' : '#333'; // 换乘站名字也变色
+  ctx.textAlign = 'center';
+  const textY = nameOnTop ? y - 28 : y + 40;
+  ctx.fillText(name, x, textY);
+}
+
+document.addEventListener('DOMContentLoaded', initUI);
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时钟 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    /* 基础重置 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      font-family: 'HarmonyOS Sans';
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @keyframes fadeInHint {
+      to { opacity: 1; }
+    }
+
+    /* ========== 手机布局（默认，竖向居中） ========== */
+    .clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 50px 50px;
+    }
+
+    /* 时钟嵌入区域 */
+    .clock-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 数字时间显示 */
+    .digital-time {
+      font-size: 60px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      color: #f1f5f9;
+    }
+
+    /* 日期显示 */
+    .date-display {
+      font-size: 30px;
+      color: #64748b;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 电脑布局（横向：模拟时钟左，时间信息右） ========== */
+    @media (min-width: 769px) {
+      .clock-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 80px;
+        padding: 50px;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      .clock-wrapper {
+        flex-shrink: 0;
+      }
+
+      /* 模拟时钟放大 */
+      .analogueclock-embed {
+        --ac-width: min(35vw, 400px) !important;
+        --ac-height: min(35vw, 400px) !important;
+      }
+
+      .time-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .digital-time {
+        font-size: clamp(60px, 10vw, 140px);
+        letter-spacing: 4px;
+      }
+
+      .date-display {
+        font-size: clamp(24px, 4vw, 56px);
+      }
+    }
+
+    /* ========== 手机响应式 ========== */
+    @media (max-width: 768px) {
+      .digital-time { font-size: 36px; }
+      .clock-title { font-size: 15px; letter-spacing: 2px; }
+      .date-display { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="clock-container">
+
+    <div class="clock-wrapper">
+      <div class="analogueclock-embed" 
+           data-face="roman" 
+           data-theme="auto" 
+           data-seconds="1" 
+           data-smooth="1" 
+           data-tz="China" 
+           data-width="250px" 
+           data-height="250px" 
+           data-attribution="0">
+      </div>
+    </div>
+
+    <div class="time-info">
+      <div class="digital-time" id="digitalTime">00:00:00</div>
+      <div class="date-display" id="dateDisplay">--</div>
+    </div>
+  </div>
+
+  <script async src="https://analogueclock.com/embed.js"></script>
+
+  <script>
+
+    // ========== 数字时间同步 ==========
+    function updateDigitalTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+
+      const timeEl = document.getElementById('digitalTime');
+      const dateEl = document.getElementById('dateDisplay');
+
+      if (timeEl) timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+      if (dateEl) dateEl.textContent = `${year}年${month}月${day}日 ${weekDay}`;
+    }
+    updateDigitalTime();
+    setInterval(updateDigitalTime, 1000);
+  </script>
+
+</body>
+</html>

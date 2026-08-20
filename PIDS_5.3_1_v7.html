@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深圳地铁 PIDS 5.3:1 模拟器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  .ctrl {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+  }
+  .ctrl select, .ctrl input, .ctrl button {
+    background: #0f3460;
+    border: 1px solid #2a4a6a;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+  }
+  .ctrl button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .ctrl button:hover { opacity: 0.9; }
+  .ctrl button.on { background: linear-gradient(135deg, #11998e, #38ef7d); }
+
+  .pids-wrap {
+    width: 100%;
+    max-width: 1400px;
+    aspect-ratio: 5.3 / 1;
+    background: #e8e8e8;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+    border: 3px solid #333;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .left-panel {
+    width: 34%;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 3px;
+    border-right: 1px solid #ccc;
+    position: relative;
+  }
+
+  /* 换乘提示区域 - 始终留位置 */
+  .transfer-area {
+    min-height: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 4px;
+  }
+  .transfer-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    color: #555;
+  }
+  .transfer-row .lbl { color: #777; white-space: nowrap; font-size: 8px; }
+  .t-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0px 3px;
+    border-radius: 2px;
+    font-size: 7px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+  }
+
+  /* 下一站区域 - 左下角 */
+  .next-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .next-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .next-label-small {
+    font-size: 8px;
+    font-weight: 700;
+    color: #222;
+    line-height: 1;
+  }
+  .station-big {
+    font-size: 18px;
+    font-weight: 900;
+    color: #111;
+    line-height: 1.1;
+  }
+  .station-en {
+    font-size: 8px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* 终点站行 - 黑色背景只延伸到右边缘，不包含左侧 */
+  .terminus-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 24px;
+    background: #2c3e50;
+    font-size: 8px;
+    margin-left: 0; /* 不延伸到左边 */
+  }
+  .term-badge {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 7px;
+    font-weight: 500;
+  }
+  .term-name {
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .track-wrap {
+    position: relative;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px; /* 左右留空 */
+  }
+
+  /* 矩形线路条 - 无圆角，不拉到最宽 */
+  .track-rect {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 16px;
+    z-index: 1;
+    border-radius: 0;
+  }
+
+  /* 箭头组 - z-index在站点下面 */
+  .chevron-group {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 0;
+    display: flex;
+    gap: 3px;
+    height: 16px;
+    align-items: center;
+  }
+  .chev {
+    width: 14px;
+    height: 16px;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chev svg { width: 100%; height: 100%; display: block; }
+  .chevron-group .chev {
+    animation: chev-loop 1.2s linear infinite;
+  }
+  .chev.c1 { animation-delay: 0s; }
+  .chev.c2 { animation-delay: -0.4s; }
+  .chev.c3 { animation-delay: -0.8s; }
+  @keyframes chev-loop {
+    0% { transform: translateX(-28px); }
+    100% { transform: translateX(28px); }
+  }
+
+  /* 站点行 */
+  .stations-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    height: 60px;
+  }
+  .st-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .st-dot-wrap {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* 统一大小圆圈 20px，线路色描边 */
+  .st-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  /* 当前站=黄色 + 缓慢放大缩小 */
+  .st-dot.current { 
+    background: #f1c40f; 
+    border-color: #f1c40f;
+    animation: pulse-yellow 3s ease-in-out infinite;
+  }
+  @keyframes pulse-yellow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+  /* 已过的站=灰色 */
+  .st-dot.passed { 
+    background: #bbb; 
+    border-color: #bbb;
+  }
+  /* 没到的站=绿色 */
+  .st-dot.future {
+    background: #2ecc71;
+    border-color: #2ecc71;
+  }
+
+  .st-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    margin-top: 3px;
+    position: absolute;
+    top: 50%;
+    padding-top: 14px;
+  }
+  .st-name {
+    font-size: 7px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .st-name.current { font-size: 8px; color: #111; font-weight: 700; }
+  .st-name.passed { font-size: 6px; color: #888; }
+  .st-name.future { font-size: 6px; color: #333; }
+  .st-name-en {
+    font-size: 5px;
+    text-align: center;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .st-name-en.current { font-size: 6px; color: #555; }
+  .st-name-en.passed { font-size: 4px; color: #aaa; }
+  .st-name-en.future { font-size: 4px; color: #777; }
+
+  .transfer-dots {
+    display: flex;
+    gap: 1px;
+    margin-top: 1px;
+  }
+  .tdot {
+    width: 8px;
+    height: 8px;
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tdot.grayed { background: #bbb !important; color: #fff !important; }
+
+  @keyframes doorPulse { 0%,100%{filter:drop-shadow(0 0 0 rgba(46,204,113,0.4))} 50%{filter:drop-shadow(0 0 20px rgba(46,204,113,0))} }
+  @keyframes doorSlide { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-8px)} }
+  @keyframes doorSlideR { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
+</style>
+</head>
+<body>
+<div class="ctrl">
+  <select id="lineSel" onchange="changeLine()">
+    <option value="1">1号线 (罗宝线)</option>
+    <option value="2">2号线 (蛇口线)</option>
+    <option value="3">3号线 (龙岗线)</option>
+    <option value="4">4号线 (龙华线)</option>
+    <option value="5" selected>5号线 (环中线)</option>
+    <option value="6">6号线 (光明线)</option>
+    <option value="7">7号线 (西丽线)</option>
+    <option value="8">8号线 (盐田线)</option>
+    <option value="9">9号线 (梅林线)</option>
+    <option value="10">10号线 (坂田线)</option>
+    <option value="11">11号线 (机场线)</option>
+    <option value="12">12号线 (南宝线)</option>
+    <option value="14">14号线 (东部快线)</option>
+  </select>
+  <select id="stSel" onchange="upd()"></select>
+  <select id="dirSel" onchange="upd()">
+    <option value="fwd">正向 → 终点站</option>
+    <option value="bwd">反向 → 起点站</option>
+  </select>
+  <button id="autoBtn" onclick="toggleAuto()">自动</button>
+  <button onclick="nextSt()">下一站</button>
+  <button onclick="prevSt()">上一站</button>
+  <button onclick="toggleDoor()">开关门</button>
+</div>
+
+<div class="pids-wrap" id="pids">
+  <div class="left-panel">
+    <div class="transfer-area" id="transferArea">
+      <div class="transfer-row" id="transferRow1"></div>
+      <div class="transfer-row" id="transferRow2"></div>
+    </div>
+    <div class="next-area">
+      <div class="next-row">
+        <span class="next-label-small">下一站</br>Next Station</span>
+      </div>
+      <div class="station-big" id="stName">深圳北站</div>
+      <div class="station-en" id="stNameEn">Shenzhen North Station</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="terminus-row">
+      <span class="term-badge">终点站 Terminus</span>
+      <span class="term-name" id="termName">长岭陂 Changlingpi</span>
+    </div>
+    <div class="track-wrap">
+      <div class="track-rect" id="trackRect"></div>
+      <div class="chevron-group" id="chevGroup">
+        <div class="chev c1"><svg viewBox="0 0 14 16" preserveAspectRatio="none"><path d="M1 2 L11 8 L1 14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="chev c2"><svg viewBox="0 0 14 16" preserveAspectRatio="none"><path d="M1 2 L11 8 L1 14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="chev c3"><svg viewBox="0 0 14 16" preserveAspectRatio="none"><path d="M1 2 L11 8 L1 14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="stations-row" id="stationsRow"></div>
+    </div>
+  </div>
+
+  <div id="doorOv" style="position:absolute;inset:0;background:rgba(0,0,0,0.82);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:100;">
+    <svg width="80" height="80" viewBox="0 0 80 80" style="animation:doorPulse 1s infinite;">
+      <rect x="4" y="4" width="72" height="72" rx="8" fill="none" stroke="#2ecc71" stroke-width="4"/>
+      <rect x="10" y="12" width="26" height="56" rx="2" fill="#2ecc71" style="animation:doorSlide 1.5s infinite;"/>
+      <rect x="44" y="12" width="26" height="56" rx="2" fill="#2ecc71" style="animation:doorSlideR 1.5s infinite;"/>
+    </svg>
+    <div style="color:#2ecc71;font-size:22px;font-weight:700;">车门开启</div>
+    <div style="color:#2ecc71;font-size:13px;">Doors Opening</div>
+  </div>
+</div>
+
+<script>
+const DATA={
+1:{c:'#00b050',n:'罗宝线',s:[{n:'罗湖',e:'Luohu',t:[]},{n:'国贸',e:'Guomao',t:[]},{n:'老街',e:'Laojie',t:[3]},{n:'大剧院',e:'Grand Theater',t:[2,8]},{n:'科学馆',e:'Science Museum',t:[6]},{n:'华强路',e:'Huaqiang Rd',t:[7]},{n:'岗厦',e:'Gangxia',t:[10]},{n:'会展中心',e:'Convention Center',t:[4]},{n:'购物公园',e:'Shopping Park',t:[3]},{n:'香蜜湖',e:'Xiangmihu',t:[]},{n:'车公庙',e:'Chegongmiao',t:[7,9,11]},{n:'竹子林',e:'Zhuzilin',t:[]},{n:'侨城东',e:'Qiaocheng E',t:[]},{n:'华侨城',e:'OCT',t:[]},{n:'世界之窗',e:'Window of World',t:[2]},{n:'白石洲',e:'Baishizhou',t:[]},{n:'高新园',e:'Hi-Tech Park',t:[]},{n:'深大',e:'Shenzhen Univ',t:[13]},{n:'桃园',e:'Taoyuan',t:[12]},{n:'大新',e:'Daxin',t:[]},{n:'鲤鱼门',e:'Liyumen',t:[]},{n:'前海湾',e:'Qianhaiwan',t:[5,11]},{n:'新安',e:"Xin'an",t:[]},{n:'宝安中心',e:"Bao'an Ctr",t:[5]},{n:'宝体',e:'Baoti',t:[]},{n:'坪洲',e:'Pingzhou',t:[]},{n:'西乡',e:'Xixiang',t:[]},{n:'固戍',e:'Gushu',t:[]},{n:'后瑞',e:'Hourui',t:[]},{n:'机场东',e:'Airport E',t:[12]}]},
+2:{c:'#e74c3c',n:'蛇口线',s:[{n:'赤湾',e:'Chiwan',t:[5,8]},{n:'蛇口港',e:'Shekou Port',t:[]},{n:'海上世界',e:'Sea World',t:[12]},{n:'水湾',e:'Shuiwan',t:[]},{n:'东角头',e:'Dongjiaotou',t:[13]},{n:'湾厦',e:'Wansha',t:[]},{n:'海月',e:'Haiyue',t:[]},{n:'登良',e:'Dengliang',t:[]},{n:'后海',e:'Houhai',t:[11]},{n:'科苑',e:'Keyuan',t:[13]},{n:'红树湾',e:'Hongshuwan',t:[]},{n:'世界之窗',e:'Window of World',t:[1]},{n:'侨城北',e:'Qiaocheng N',t:[]},{n:'深康',e:'Shenkang',t:[7]},{n:'安托山',e:'Antuo Hill',t:[7]},{n:'侨香',e:'Qiaoxiang',t:[]},{n:'香蜜',e:'Xiangmi',t:[]},{n:'香梅北',e:'Xiangmei N',t:[9]},{n:'景田',e:'Jingtian',t:[9]},{n:'莲花西',e:'Lianhua W',t:[3,11]},{n:'福田',e:'Futian',t:[3,11]},{n:'市民中心',e:'Civic Center',t:[4,10,11,14]},{n:'岗厦北',e:'Gangxia N',t:[10,11,14]},{n:'华强北',e:'Huaqiang N',t:[7]},{n:'燕南',e:'Yannan',t:[]},{n:'大剧院',e:'Grand Theater',t:[1,8]},{n:'湖贝',e:'Hubei',t:[5]},{n:'黄贝岭',e:'Huangbeiling',t:[5,8]},{n:'新秀',e:'Xinxiu',t:[9]},{n:'莲塘口岸',e:'Liantang CP',t:[8]},{n:'仙湖路',e:'Xianhu Rd',t:[]},{n:'莲塘',e:'Liantang',t:[8]}]},
+3:{c:'#3498db',n:'龙岗线',s:[{n:'福保',e:'Futian BA',t:[]},{n:'益田',e:'Yitian',t:[]},{n:'石厦',e:'Shixia',t:[7]},{n:'购物公园',e:'Shopping Park',t:[1]},{n:'福田',e:'Futian',t:[2,11]},{n:'少年宫',e:"Children's Pal",t:[4]},{n:'莲花村',e:'Lianhuacun',t:[10]},{n:'华新',e:'Huaxin',t:[7]},{n:'通新岭',e:'Tongxinling',t:[6]},{n:'红岭',e:'Hongling',t:[9]},{n:'老街',e:'Laojie',t:[1]},{n:'晒布',e:'Shaibu',t:[]},{n:'翠竹',e:'Cuizhu',t:[]},{n:'田贝',e:'Tianbei',t:[7]},{n:'水贝',e:'Shuibei',t:[]},{n:'草埔',e:'Caopu',t:[14]},{n:'布吉',e:'Buji',t:[5,14]},{n:'木棉湾',e:'Mumianwan',t:[]},{n:'大芬',e:'Dafen',t:[]},{n:'丹竹头',e:'Danzhutou',t:[]},{n:'六约',e:'Liuyue',t:[]},{n:'塘坑',e:'Tangkeng',t:[]},{n:'横岗',e:'Henggang',t:[]},{n:'永湖',e:'Yonghu',t:[]},{n:'荷坳',e:"He'ao",t:[]},{n:'大运',e:'Universiade',t:[14,16]},{n:'爱联',e:'Ailian',t:[]},{n:'吉祥',e:'Jixiang',t:[]},{n:'龙城广场',e:'Longcheng Sq',t:[]},{n:'南联',e:'Nanlian',t:[]},{n:'双龙',e:'Shuanglong',t:[16]}]},
+4:{c:'#e74c3c',n:'龙华线',s:[{n:'福田口岸',e:'Futian CP',t:[10]},{n:'福民',e:'Fumin',t:[7,10]},{n:'会展中心',e:'Convention Ctr',t:[1]},{n:'市民中心',e:'Civic Center',t:[2,10,11,14]},{n:'少年宫',e:"Children's Pal",t:[3]},{n:'莲花北',e:'Lianhua N',t:[]},{n:'上梅林',e:'Shangmeilin',t:[9]},{n:'民乐',e:'Minle',t:[6]},{n:'白石龙',e:'Bailong',t:[]},{n:'深圳北站',e:'Shenzhen N St',t:[5,6]},{n:'红山',e:'Hongshan',t:[6]},{n:'上塘',e:'Shangtang',t:[]},{n:'龙胜',e:'Longsheng',t:[]},{n:'龙华',e:'Longhua',t:[]},{n:'清湖',e:'Qinghu',t:[]},{n:'清湖北',e:'Qinghu N',t:[]},{n:'竹村',e:'Zhucun',t:[]},{n:'茜坑',e:'Xikeng',t:[]},{n:'长湖',e:'Changhu',t:[]},{n:'观澜',e:'Guanlan',t:[]},{n:'松元厦',e:'Songyuanxia',t:[22]},{n:'观澜湖',e:'Mission Hills',t:[]},{n:'牛湖',e:'Niuhu',t:[]}]},
+5:{c:'#9b59b6',n:'环中线',s:[{n:'赤湾',e:'Chiwan',t:[2,8]},{n:'荔湾',e:'Liwan',t:[]},{n:'铁路公园',e:'Railway Park',t:[15]},{n:'妈湾',e:'Mawan',t:[]},{n:'前湾公园',e:'Qianwan Park',t:[]},{n:'前湾',e:'Qianwan',t:[9]},{n:'桂湾',e:'Guiwan',t:[11]},{n:'前海湾',e:'Qianhaiwan',t:[1,11]},{n:'临海',e:'Linhai',t:[]},{n:'宝华',e:'Baohua',t:[]},{n:'宝安中心',e:"Bao'an Ctr",t:[1]},{n:'翻身',e:'Fanshen',t:[]},{n:'灵芝',e:'Lingzhi',t:[12]},{n:'洪浪北',e:'Honglang N',t:[]},{n:'兴东',e:'Xingdong',t:[]},{n:'留仙洞',e:'Liuxiandong',t:[7]},{n:'西丽',e:'Xili',t:[7]},{n:'大学城',e:'Univ Town',t:[]},{n:'塘朗',e:'Tanglang',t:[]},{n:'长岭陂',e:'Changlingpi',t:[6]},{n:'深圳北站',e:'Shenzhen N St',t:[4,6]},{n:'民治',e:'Minzhi',t:[]},{n:'五和',e:'Wuhe',t:[10]},{n:'坂田',e:'Bantian',t:[]},{n:'杨美',e:'Yangmei',t:[]},{n:'上水径',e:'Shangshuijing',t:[]},{n:'下水径',e:'Xiashuijing',t:[]},{n:'长龙',e:'Changlong',t:[]},{n:'布吉',e:'Buji',t:[3,14]},{n:'百鸽笼',e:'Baigelong',t:[17]},{n:'布心',e:'Buxin',t:[7]},{n:'太安',e:"Tai'an",t:[7]},{n:'怡景',e:'Yijing',t:[]},{n:'黄贝岭',e:'Huangbeiling',t:[2,8]}]},
+6:{c:'#1abc9c',n:'光明线',s:[{n:'科学馆',e:'Science Mus',t:[1]},{n:'通新岭',e:'Tongxinling',t:[3]},{n:'体育中心',e:'Sports Ctr',t:[]},{n:'八卦岭',e:'Bagualing',t:[7]},{n:'银湖',e:'Yinhu',t:[9]},{n:'翰岭',e:'Hanling',t:[]},{n:'梅林关',e:'Meilinguan',t:[]},{n:'深圳北站',e:'Shenzhen N St',t:[4,5]},{n:'红山',e:'Hongshan',t:[4]},{n:'上芬',e:'Shangfen',t:[]},{n:'元芬',e:'Yuanfen',t:[]},{n:'阳台山东',e:'Yangtai M E',t:[]},{n:'官田',e:'Guantian',t:[]},{n:'上屋',e:'Shangwu',t:[]},{n:'长圳',e:'Changzhen',t:[]},{n:'凤凰城',e:'Phoenix Town',t:[]},{n:'光明大街',e:'Guangming St',t:[]},{n:'光明',e:'Guangming',t:[]},{n:'科学公园',e:'Science Park',t:[]},{n:'楼村',e:'Loucun',t:[]},{n:'红花山',e:'Honghuashan',t:[]},{n:'公明广场',e:'Gongming Sq',t:[]},{n:'合水口',e:'Heshuikou',t:[]},{n:'薯田埔',e:'Shutianpu',t:[]},{n:'松岗公园',e:'Songgang Park',t:[]},{n:'溪头',e:'Xitou',t:[]},{n:'松岗',e:'Songgang',t:[11,12]}]},
+7:{c:'#3b82f6',n:'西丽线',s:[{n:'深大丽湖',e:'SZU Lihu',t:[]},{n:'北大',e:'PKU',t:[]},{n:'西丽湖',e:'Xili Lake',t:[]},{n:'西丽',e:'Xili',t:[5]},{n:'茶光',e:'Chaguang',t:[]},{n:'珠光',e:'Zhuguang',t:[]},{n:'龙井',e:'Longjing',t:[]},{n:'桃源村',e:'Taoyuancun',t:[]},{n:'深云',e:'Shenyun',t:[]},{n:'安托山',e:'Antuo Hill',t:[2,8]},{n:'农林',e:'Nonglin',t:[]},{n:'车公庙',e:'Chegongmiao',t:[1,9,11]},{n:'上沙',e:'Shangsha',t:[]},{n:'沙尾',e:'Shawei',t:[]},{n:'石厦',e:'Shixia',t:[3]},{n:'皇岗村',e:'Huanggangcun',t:[]},{n:'福民',e:'Fumin',t:[4,10]},{n:'皇岗口岸',e:'Huanggang CP',t:[]},{n:'赤尾',e:'Chiwei',t:[]},{n:'华强南',e:'Huaqiang S',t:[11]},{n:'华强北',e:'Huaqiang N',t:[2]},{n:'华新',e:'Huaxin',t:[3]},{n:'黄木岗',e:'Huangmugang',t:[14,24]},{n:'八卦岭',e:'Bagualing',t:[6]},{n:'红岭北',e:'Hongling N',t:[9]},{n:'笋岗',e:'Sungang',t:[17]},{n:'洪湖',e:'Honghu',t:[]},{n:'田贝',e:'Tianbei',t:[3]},{n:'太安',e:"Tai'an",t:[5]}]},
+8:{c:'#f39c12',n:'盐田线',s:[{n:'莲塘',e:'Liantang',t:[2]},{n:'梧桐山南',e:'Wutong M S',t:[]},{n:'沙头角',e:'Shatoujiao',t:[]},{n:'海山',e:'Haishan',t:[]},{n:'盐田港西',e:'Yantian Port W',t:[]},{n:'深外高中',e:'SZ Foreign Lang',t:[]},{n:'盐田路',e:'Yantian Rd',t:[18]},{n:'鸿安围',e:"Hong'anwei",t:[]},{n:'北山道',e:'Beishan Rd',t:[]},{n:'盐田食街',e:'Yantian Food St',t:[]},{n:'大梅沙',e:'Dameisha',t:[]},{n:'小梅沙',e:'Xiaomeisha',t:[]}]},
+9:{c:'#8e44ad',n:'梅林线',s:[{n:'前湾',e:'Qianwan',t:[5]},{n:'梦海',e:'Menghai',t:[]},{n:'怡海',e:'Yihai',t:[]},{n:'荔林',e:'Lilin',t:[]},{n:'南油西',e:'Nanyou W',t:[]},{n:'南油',e:'Nanyou',t:[12]},{n:'南山书城',e:'Nanshan Books',t:[]},{n:'深大南',e:'SZU South',t:[]},{n:'粤海门',e:'Yuehaimen',t:[13]},{n:'高新南',e:'Hi-Tech S',t:[]},{n:'红树湾南',e:'Hongshuwan S',t:[11]},{n:'深湾',e:'Shenwan',t:[]},{n:'深圳湾公园',e:'Shenzhen Bay Pk',t:[]},{n:'下沙',e:'Xiasha',t:[]},{n:'车公庙',e:'Chegongmiao',t:[1,7,11]},{n:'香梅',e:'Xiangmei',t:[]},{n:'景田',e:'Jingtian',t:[2]},{n:'梅景',e:'Meijing',t:[]},{n:'下梅林',e:'Xiameilin',t:[]},{n:'梅村',e:'Meicun',t:[]},{n:'上梅林',e:'Shangmeilin',t:[4]},{n:'孖岭',e:'Maling',t:[10]},{n:'银湖',e:'Yinhu',t:[6]},{n:'泥岗',e:'Nigang',t:[]},{n:'红岭北',e:'Hongling N',t:[7]},{n:'园岭',e:'Yuanling',t:[]},{n:'红岭',e:'Hongling',t:[3]},{n:'鹿丹村',e:'Ludancun',t:[]},{n:'人民南',e:'Renmin S',t:[]},{n:'向西村',e:'Xiangxicun',t:[]},{n:'文锦',e:'Wenjin',t:[]},{n:'新秀',e:'Xinxiu',t:[2]}]},
+10:{c:'#e91e63',n:'坂田线',s:[{n:'福田口岸',e:'Futian CP',t:[4]},{n:'福民',e:'Fumin',t:[4,7]},{n:'岗厦',e:'Gangxia',t:[1]},{n:'岗厦北',e:'Gangxia N',t:[2,11,14]},{n:'莲花村',e:'Lianhuacun',t:[3]},{n:'冬瓜岭',e:'Donggualing',t:[]},{n:'孖岭',e:'Maling',t:[9]},{n:'雅宝',e:'Yabao',t:[]},{n:'南坑',e:'Nankeng',t:[]},{n:'光雅园',e:'Guangyayuan',t:[]},{n:'五和',e:'Wuhe',t:[5]},{n:'坂田北',e:'Bantian N',t:[]},{n:'贝尔路',e:"Bei'er Rd",t:[]},{n:'华为',e:'Huawei',t:[]},{n:'岗头',e:'Gangtou',t:[]},{n:'雪象',e:'Xuexiang',t:[]},{n:'甘坑',e:'Gankeng',t:[]},{n:'凉帽山',e:'Liangmaoshan',t:[]},{n:'上李朗',e:'Shanglilang',t:[]},{n:'木古',e:'Mugu',t:[]},{n:'华南城',e:'S China City',t:[]},{n:'禾花',e:'Hehua',t:[]},{n:'平湖',e:'Pinghu',t:[18]},{n:'双拥街',e:'Shuangyong St',t:[]}]},
+11:{c:'#795548',n:'机场线',s:[{n:'碧头',e:'Bitou',t:[]},{n:'松岗',e:'Songgang',t:[6,12]},{n:'后亭',e:'Houting',t:[]},{n:'沙井',e:'Shajing',t:[]},{n:'马安山',e:"Ma'anshan",t:[]},{n:'塘尾',e:'Tangwei',t:[]},{n:'桥头',e:'Qiaotou',t:[]},{n:'福永',e:'Fuyong',t:[12]},{n:'机场北',e:'Airport N',t:[20]},{n:'机场',e:'Airport',t:[]},{n:'碧海湾',e:'Bihaiwan',t:[]},{n:'宝安',e:"Bao'an",t:[]},{n:'前海湾',e:'Qianhaiwan',t:[1,5]},{n:'南山',e:'Nanshan',t:[12]},{n:'后海',e:'Houhai',t:[2]},{n:'红树湾南',e:'Hongshuwan S',t:[9]},{n:'车公庙',e:'Chegongmiao',t:[1,7,9]},{n:'福田',e:'Futian',t:[2,3]},{n:'岗厦北',e:'Gangxia N',t:[2,10,14]},{n:'福星',e:'Fuxing',t:[]},{n:'华强南',e:'Huaqiang S',t:[7]},{n:'红岭南',e:'Hongling S',t:[1,2]},{n:'中大八院',e:'SYSU 8th Hosp',t:[]}]},
+12:{c:'#607d8b',n:'南宝线',s:[{n:'左炮台东',e:'Zuopaotai E',t:[]},{n:'太子湾',e:'Taiziwan',t:[]},{n:'海上世界',e:'Sea World',t:[2]},{n:'花果山',e:'Huaguoshan',t:[]},{n:'四海',e:'Sihai',t:[]},{n:'南油',e:'Nanyou',t:[9]},{n:'南光',e:'Nanguang',t:[]},{n:'南山',e:'Nanshan',t:[11]},{n:'桃园',e:'Taoyuan',t:[1]},{n:'南头古城',e:'Nantou Ancient',t:[20]},{n:'中山公园',e:'Zhongshan Park',t:[21]},{n:'同乐南',e:'Tongle S',t:[]},{n:'新安公园',e:"Xin'an Park",t:[]},{n:'灵芝',e:'Lingzhi',t:[5]},{n:'上川',e:'Shangchuan',t:[]},{n:'流塘',e:'Liutang',t:[15]},{n:'宝安客运站',e:"Bao'an Coach",t:[]},{n:'宝田一路',e:'Baotian 1st',t:[]},{n:'平峦山',e:'Pingluanshan',t:[]},{n:'西乡桃源',e:'Xixiang Taoyuan',t:[]},{n:'钟屋南',e:'Zhongwu S',t:[]},{n:'黄田',e:'Huangtian',t:[]},{n:'兴围',e:'Xingwei',t:[]},{n:'机场东',e:'Airport E',t:[1]},{n:'福围',e:'Fuwei',t:[]},{n:'怀德',e:'Huaide',t:[]},{n:'福永',e:'Fuyong',t:[11]},{n:'桥头西',e:'Qiaotou W',t:[]},{n:'福海西',e:'Fuhai W',t:[]},{n:'国展',e:'Shenzhen World',t:[20]},{n:'国展北',e:'SZ World N',t:[20]},{n:'海上田园南',e:'Waterlands S',t:[]},{n:'海上田园东',e:'Waterlands E',t:[]},{n:'蚝乡',e:'Haoxiang',t:[]},{n:'沙蚝',e:'Shahao',t:[]},{n:'沙井古墟',e:'Shajing Mkt',t:[]},{n:'步涌',e:'Buchong',t:[]},{n:'松岗',e:'Songgang',t:[6,11]}]},
+13:{c:'#ff9800',n:'石岩线',s:[{n:'深圳湾口岸',e:'Shenzhen Bay CP',t:[]},{n:'人才公园',e:'Talent Park',t:[]},{n:'后海',e:'Houhai',t:[2]},{n:'科苑',e:'Keyuan',t:[2]},{n:'粤海门',e:'Yuehaimen',t:[9]},{n:'深大',e:'Shenzhen Univ',t:[1]},{n:'高新中',e:'Hi-Tech Ctr',t:[]},{n:'高新北',e:'Hi-Tech N',t:[]},{n:'西丽高铁',e:'Xili HSR',t:[15,27,29]},{n:'石鼓',e:'Shigu',t:[]},{n:'留仙洞',e:'Liuxiandong',t:[5]},{n:'百旺港大',e:'Baiwang HKU',t:[]},{n:'应人石',e:'Yingrenshi',t:[]},{n:'罗租',e:'Luzu',t:[]},{n:'石岩',e:'Shiyan',t:[25]},{n:'上屋',e:'Shangwu',t:[6]},{n:'红坳公园',e:"Hong'ao Park",t:[]},{n:'光明城',e:'Guangmingcheng',t:[6,18]},{n:'德雅路',e:'Deya Rd',t:[]},{n:'凤凰城',e:'Phoenix Town',t:[6]},{n:'月亮路',e:'Yueliang Rd',t:[]},{n:'将围',e:'Jiangwei',t:[]},{n:'新围',e:'Xinwei',t:[]},{n:'公明广场',e:'Gongming Sq',t:[6]},{n:'上村',e:'Shangcun',t:[]},{n:'下村',e:'Xiacun',t:[]},{n:'李松蓢',e:'Lisonglang',t:[]}]},
+14:{c:'#ffeb3b',n:'东部快线',s:[{n:'岗厦北',e:'Gangxia N',t:[2,10,11]},{n:'黄木岗',e:'Huangmugang',t:[7,24]},{n:'罗湖北',e:'Luohu N',t:[17,25]},{n:'布吉',e:'Buji',t:[3,5]},{n:'石芽岭',e:'Shiyaling',t:[17]},{n:'六约北',e:'Liuyue N',t:[]},{n:'龙城南',e:'Longcheng S',t:[]},{n:'嶂背',e:'Zhangbei',t:[]},{n:'大运',e:'Universiade',t:[3,16]},{n:'南约',e:'Nanyue',t:[]},{n:'宝龙',e:'Baolong',t:[]},{n:'锦龙',e:'Jinlong',t:[]},{n:'坪山围',e:'Pingshanwei',t:[16]},{n:'坪山广场',e:'Pingshan Sq',t:[]},{n:'六和',e:'Liuhe',t:[]},{n:'东纵纪念馆',e:'Dongjiang Mem',t:[]},{n:'沙壆',e:'Shabo',t:[]},{n:'坪山中心',e:'Pingshan Ctr',t:[19]},{n:'坑梓',e:'Kengzi',t:[]},{n:'沙田',e:'Shatian',t:[]}]}
+};
+
+const LC={1:'#00b050',2:'#e74c3c',3:'#3498db',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#3b82f6',8:'#f39c12',9:'#8e44ad',10:'#e91e63',11:'#795548',12:'#607d8b',13:'#ff9800',14:'#ffeb3b'};
+
+let L=5, SI=20, DIR='fwd', AUTO=false, AUTOI=null, DOOR=false;
+
+function init(){popSt();upd();}
+function popSt(){const s=document.getElementById('stSel');s.innerHTML='';DATA[L].s.forEach((st,i)=>{const o=document.createElement('option');o.value=i;o.textContent=st.n;if(i===SI)o.selected=true;s.appendChild(o)});}
+function changeLine(){L=parseInt(document.getElementById('lineSel').value);SI=0;popSt();upd();}
+
+function upd(){
+  const line=DATA[L], sts=line.s;
+  SI=parseInt(document.getElementById('stSel').value);
+  DIR=document.getElementById('dirSel').value;
+  const F=DIR==='fwd';
+  const lineColor=line.c;
+
+  let NI=F?SI+1:SI-1;
+  if(NI<0)NI=0;
+  if(NI>=sts.length)NI=sts.length-1;
+  const NS=sts[NI];
+  if(!NS)return;
+
+  // 左侧：换乘提示（始终留位置，Transfer to单独一行）
+  const tr1=document.getElementById('transferRow1');
+  const tr2=document.getElementById('transferRow2');
+  const ta=document.getElementById('transferArea');
+  if(NS.t&&NS.t.length>0){
+    tr1.innerHTML='<span class="lbl">可换乘</span>';
+    let h2='<span class="lbl">Transfer to</span>';
+    NS.t.forEach(tl=>{const tc=LC[tl]||'#999';h2+=`<span class="t-badge" style="background:${tc}">${tl}号线</span>`});
+    tr2.innerHTML=h2;
+    tr1.style.display='flex';
+    tr2.style.display='flex';
+    ta.style.minHeight='32px';
+  } else {
+    tr1.innerHTML='';tr1.style.display='flex';
+    tr2.innerHTML='';tr2.style.display='flex';
+    ta.style.minHeight='32px';
+  }
+
+  // 左侧：下一站信息（加上 Next Station）
+  document.getElementById('stName').textContent=NS.n;
+  document.getElementById('stNameEn').textContent=NS.e;
+
+  // 终点站
+  const TN=F?sts[sts.length-1].n:sts[0].n;
+  const TE=F?sts[sts.length-1].e:sts[0].e;
+  document.getElementById('termName').textContent=`${TN} ${TE}`;
+
+  // 矩形线路条 - 无圆角，左右留空不拉到最宽
+  const trRect=document.getElementById('trackRect');
+  trRect.style.background=lineColor;
+  trRect.style.height='16px';
+  trRect.style.left='24px';
+  trRect.style.right='24px';
+
+  // 箭头位置：固定在黄色(当前站)和第一个绿色(未来站)之间
+  const cg=document.getElementById('chevGroup');
+
+  // 站点显示 - 反向时列表倒序
+  const sr=document.getElementById('stationsRow');sr.innerHTML='';
+
+  let displaySts = [];
+  const R=2;
+  let sIdx=Math.max(0,NI-R), eIdx=Math.min(sts.length-1,NI+R);
+  if(eIdx-sIdx<4){
+    if(sIdx===0)eIdx=Math.min(4,sts.length-1);
+    else sIdx=Math.max(0,eIdx-4);
+  }
+
+  for(let i=sIdx;i<=eIdx;i++){
+    displaySts.push({st:sts[i],idx:i});
+  }
+
+  // 反向时倒序显示
+  if(!F){
+    displaySts.reverse();
+  }
+
+  // 计算箭头位置：在黄色和第一个绿色之间
+  let yellowIdx = -1;
+  let firstGreenIdx = -1;
+
+  displaySts.forEach((item, pos) => {
+    const i=item.idx;
+    const isPassed = F ? i<NI : i>NI;
+    const isNext = i===NI;
+
+    if(isNext) yellowIdx = pos;
+    if(!isPassed && !isNext && firstGreenIdx===-1) firstGreenIdx = pos;
+  });
+
+  // 设置箭头位置
+  if(yellowIdx!==-1 && firstGreenIdx!==-1){
+    const total = displaySts.length;
+    const pct = ((yellowIdx + firstGreenIdx) / 2 / (total - 1)) * 100;
+    cg.style.left = pct + '%';
+    cg.style.right = 'auto';
+    cg.style.transform = 'translate(-50%, -50%)';
+  } else if(yellowIdx!==-1){
+    cg.style.left = '70%';
+    cg.style.right = 'auto';
+    cg.style.transform = 'translate(-50%, -50%)';
+  }
+
+  // 渲染站点
+  displaySts.forEach((item) => {
+    const st=item.st;
+    const i=item.idx;
+    const d=document.createElement('div');
+    d.className='st-item';
+
+    const isPassed = F ? i<NI : i>NI;
+    const isNext = i===NI;
+    const isCur = i===SI;
+
+    let dc='st-dot', nc='st-name', ec='st-name-en';
+
+    if(isNext){
+      dc='st-dot current';
+      nc='st-name current';
+      ec='st-name-en current';
+    } else if(isPassed || isCur){
+      dc='st-dot passed';
+      nc='st-name passed';
+      ec='st-name-en passed';
+    } else {
+      dc='st-dot future';
+      nc='st-name future';
+      ec='st-name-en future';
+    }
+
+    const borderColor = lineColor;
+
+    let td='';
+    if(st.t&&st.t.length>0){
+      td='<div class="transfer-dots">';
+      st.t.forEach(tl=>{
+        const tc=LC[tl]||'#999';
+        const grayed=(isPassed||isCur)?'grayed':'';
+        td+=`<span class="tdot ${grayed}" style="background:${tc}">${tl}</span>`;
+      });
+      td+='</div>';
+    }
+
+    d.innerHTML = `
+      <div class="st-dot-wrap">
+        <div class="${dc}" style="border-color:${borderColor};"></div>
+      </div>
+      <div class="st-text">
+        <div class="${nc}">${st.n}</div>
+        <div class="${ec}">${st.e}</div>
+        ${td}
+      </div>
+    `;
+    sr.appendChild(d);
+  });
+}
+
+function nextSt(){
+  const sts=DATA[L].s;
+  const F=DIR==='fwd';
+  if(F){
+    if(SI<sts.length-1)SI++;
+    else{DIR='bwd';document.getElementById('dirSel').value='bwd';}
+  } else {
+    if(SI>0)SI--;
+    else{DIR='fwd';document.getElementById('dirSel').value='fwd';}
+  }
+  document.getElementById('stSel').value=SI;
+  upd();
+}
+function prevSt(){
+  const sts=DATA[L].s;
+  const F=DIR==='fwd';
+  if(F){if(SI>0)SI--;}
+  else{if(SI<sts.length-1)SI++;}
+  document.getElementById('stSel').value=SI;
+  upd();
+}
+function toggleAuto(){
+  AUTO=!AUTO;
+  const b=document.getElementById('autoBtn');
+  if(AUTO){b.textContent='⏸ 停止';b.classList.add('on');AUTOI=setInterval(nextSt,3000);}
+  else{b.textContent='▶ 自动';b.classList.remove('on');clearInterval(AUTOI);}
+}
+function toggleDoor(){
+  DOOR=!DOOR;
+  document.getElementById('doorOv').style.display=DOOR?'flex':'none';
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSt();}
+  else if(e.key==='ArrowLeft'){e.preventDefault();prevSt();}
+  else if(e.key==='d'||e.key==='D'){toggleDoor();}
+  else if(e.key==='a'||e.key==='A'){toggleAuto();}
+});
+init();
+</script>
+</body>
+</html>

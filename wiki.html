@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深圳地铁Wiki - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* 顶部导航栏 - 黑色 */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    
+    /* 导航链接 */
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    /* 移动端菜单 */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+    
+    /* ===== 标题行布局 ===== */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 20px 0 0 0;
+      gap: 16px;
+    }
+    
+    .page-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .page-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      color: #2563eb;
+    }
+    
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    
+    .page-subtitle-wrapper {
+      margin-top: 0;
+      margin-bottom: 32px;
+    }
+    
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+    
+    /* 统计信息 */
+    .stats-bar {
+      justify-content: space-around;
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .stat-item {
+      flex: 1; 
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    
+    /* 线路网格 */
+    .lines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .line-card {
+      border-radius: 12px;
+      padding: 20px 20px 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .line-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .line-card.active {
+      transform: scale(1.02);
+      z-index: 10;
+    }
+    
+    .line-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .line-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      box-shadow: none;
+      flex-shrink: 0;
+    }
+    
+    .line-title {
+      flex: 1;
+    }
+    
+    .line-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .line-alias {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    
+    .line-info {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+      padding-top: 0;
+    }
+    
+    .line-card.active .line-info {
+      max-height: 260px;
+      opacity: 1;
+      margin-top: 12px;
+      padding-top: 12px;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    
+    .info-label {
+      opacity: 0.8;
+    }
+    
+    .info-value {
+      font-weight: 500;
+    }
+    
+    .info-value a {
+      color: inherit;
+      text-decoration: underline;
+      opacity: 0.9;
+    }
+    .info-value a:hover {
+      opacity: 1;
+    }
+    
+    .transfers {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+    
+    .transfers-label {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    /* 分区标题 */
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #2563eb;
+    }
+    
+    .section-intro {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 20px;
+      margin-top: -12px;
+    }
+    
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      
+      .nav-links.active {
+        display: flex;
+      }
+      
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .current-time {
+        display: none;
+      }
+      
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      
+      .page-header {
+        flex-wrap: wrap;
+      }
+      
+      .page-title {
+        font-size: 22px;
+      }
+      
+      .stats-bar {
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      
+      .stat-item {
+        flex: 1;
+        min-width: 80px;
+      }
+      
+      .lines-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+  <script src="all-lines-enhanced.js"></script>
+
+  <main class="container">
+    <div class="page-header">
+      <div class="page-title-wrap">
+        <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <h1 class="page-title">深圳地铁Wiki</h1>
+      </div>
+      <a href="index" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回首页
+      </a>
+    </div>
+
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">深圳轨道交通网络 - 已开通17条线路，五期8条线路</p>
+    </div>
+
+    <!-- 统计信息（硬编码不变） -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value">17</div>
+        <div class="stat-label">已开通线路</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">8</div>
+        <div class="stat-label">五期线路</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">452</div>
+        <div class="stat-label">运营车站</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">653.7</div>
+        <div class="stat-label">运营里程(km)</div>
+      </div>
+    </div>
+    
+    <h2 class="section-title">已开通线路</h2>
+    <div class="lines-grid" id="openedLinesGrid"></div>
+    
+    <h2 class="section-title">五期线路（数据仅供参考）</h2>
+    <p class="section-intro">资料来源于百度百科</p>
+    <div class="lines-grid" id="phase5LinesGrid"></div>
+  </main>
+
+  <script>
+    (function() {
+      if (typeof ALL_LINES_ENHANCED === 'undefined') {
+        console.error('all-lines-enhanced.js 未加载');
+        return;
+      }
+
+      // 百度百科链接映射（硬编码）
+      const baikeUrls = {
+        '15': 'https://baike.baidu.com/item/深圳地铁15号线/10338997',
+        '17': 'https://baike.baidu.com/item/深圳地铁17号线/3052734',
+        '19': 'https://baike.baidu.com/item/深圳地铁19号线/19719997',
+        '22': 'https://baike.baidu.com/item/深圳地铁22号线/24673251',
+        '25': 'https://baike.baidu.com/item/深圳地铁25号线/59727614',
+        '27': 'https://baike.baidu.com/item/深圳地铁27号线/59441972',
+        '29': 'https://baike.baidu.com/item/深圳地铁29号线/60650685',
+        '32': 'https://baike.baidu.com/item/深圳地铁32号线/62591670'
+      };
+
+      // 辅助函数：根据背景色判断文字颜色（用于卡片标题文字）
+      function getTextColor(hex) {
+        let r, g, b;
+        if (hex.startsWith('#')) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          if (result) {
+            r = parseInt(result[1], 16);
+            g = parseInt(result[2], 16);
+            b = parseInt(result[3], 16);
+          } else {
+            const resultShort = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+            if (resultShort) {
+              r = parseInt(resultShort[1] + resultShort[1], 16);
+              g = parseInt(resultShort[2] + resultShort[2], 16);
+              b = parseInt(resultShort[3] + resultShort[3], 16);
+            }
+          }
+        }
+        if (r === undefined) return 'black';
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        return brightness > 130 ? 'black' : 'white';
+      }
+
+      // 格式化开通时间
+      function formatOpenDate(raw) {
+        if (!raw) return '';
+        const parts = raw.split('；');
+        const formatted = parts.map(part => {
+          let s = part.trim();
+          s = s.replace(/年/g, '-').replace(/月/g, '-').replace(/日/g, '');
+          s = s.replace(/\s+/g, '');
+          return s;
+        });
+        return formatted.join('</br>');
+      }
+
+      // 格式化换乘信息
+      function formatTransfers(transfersObj) {
+        if (!transfersObj || typeof transfersObj !== 'object') return '';
+        const entries = Object.entries(transfersObj);
+        if (entries.length === 0) return '';
+        const parts = entries.map(([station, lineIds]) => {
+          const ids = lineIds.map(id => {
+            if (id === '6z') return '6Z';
+            return id;
+          }).join('/');
+          return `${station}(${ids})`;
+        });
+        return parts.join('、');
+      }
+
+      // 分类与排序
+      const operatingLines = ALL_LINES_ENHANCED.filter(l => l.category === 'operating');
+      const constructionLines = ALL_LINES_ENHANCED.filter(l => l.category === 'construction');
+
+      function sortLines(lines) {
+        return lines.sort((a, b) => {
+          const idA = a.id.toString();
+          const idB = b.id.toString();
+          const numA = parseInt(idA);
+          const numB = parseInt(idB);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          if (!isNaN(numA)) return -1;
+          if (!isNaN(numB)) return 1;
+          return idA.localeCompare(idB);
+        });
+      }
+
+      const sortedOperating = sortLines(operatingLines);
+      const sortedConstruction = sortLines(constructionLines);
+
+      // 渲染函数
+      function renderCards(lines, containerId, isConstruction = false) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        lines.forEach(line => {
+          let displayId = line.id;
+          if (displayId === '6z') displayId = '6Z';
+
+          let lineName = line.name;
+          let alias = line.alias || '';
+          if (!alias) {
+            const match = line.name.match(/（(.+?)）/);
+            if (match) alias = match[1];
+          }
+
+          const transfersStr = formatTransfers(line.transfers);
+          const transferStationCount = line.transfers ? Object.keys(line.transfers).length : 0;
+          const openDateFormatted = formatOpenDate(line.openDate);
+          const lengthDisplay = line.lengthKm ? line.lengthKm + ' km' : (line.lengthDesc || '');
+          const stationCount = line.stationCount || 0;
+
+          let openInfo = '';
+          if (isConstruction) {
+            openInfo = line.openDate || '预计2028年';
+          }
+
+          const textColor = getTextColor(line.color);       // 卡片标题文字颜色
+          const numberColor = getTextColor(line.color) === 'black' ? 'black' : line.color;
+
+          let cardHTML = `
+            <div class="line-card" style="background-color: ${line.color}; color: ${textColor};">
+              <div class="line-header">
+                <div class="line-number" style="color: ${numberColor};">${displayId}</div>
+                <div class="line-title" style="color: ${textColor};">
+                  <div class="line-name" style="color: ${textColor};">${lineName}</div>
+                  <div class="line-alias" style="color: ${textColor};">${alias}</div>
+                </div>
+              </div>
+              <div class="line-info" style="color: ${textColor};">
+          `;
+
+          if (isConstruction) {
+            cardHTML += `
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">线路长度</span>
+                  <span class="info-value" style="color: ${textColor};">${lengthDisplay}</span>
+                </div>
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">站点数量</span>
+                  <span class="info-value" style="color: ${textColor};">${stationCount}座</span>
+                </div>
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">预计开通</span>
+                  <span class="info-value" style="color: ${textColor};">${openInfo}</span>
+                </div>
+            `;
+            const url = baikeUrls[line.id];
+            if (url) {
+              cardHTML += `
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">百科链接</span>
+                  <span class="info-value" style="color: ${textColor};"><a href="${url}" target="_blank" style="color: ${textColor};">查看百度百科</a></span>
+                </div>
+              `;
+            }
+            if (transfersStr) {
+              cardHTML += `
+                <div class="transfers" style="color: ${textColor};">
+                  <div class="transfers-label" style="color: ${textColor};">换乘（规划）</div>
+                  <div style="color: ${textColor};">${transfersStr}</div>
+                </div>
+              `;
+            }
+          } else {
+            cardHTML += `
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">开通时间</span>
+                  <span class="info-value" style="color: ${textColor};">${openDateFormatted}</span>
+                </div>
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">线路长度</span>
+                  <span class="info-value" style="color: ${textColor};">${lengthDisplay}</span>
+                </div>
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">站点数量</span>
+                  <span class="info-value" style="color: ${textColor};">${stationCount}站</span>
+                </div>
+                <div class="info-row" style="color: ${textColor};">
+                  <span class="info-label" style="color: ${textColor};">换乘站点</span>
+                  <span class="info-value" style="color: ${textColor};">${transferStationCount}个</span>
+                </div>
+            `;
+            if (transfersStr) {
+              cardHTML += `
+                <div class="transfers" style="color: ${textColor};">
+                  <div class="transfers-label" style="color: ${textColor};">主要换乘站</div>
+                  <div style="color: ${textColor};">${transfersStr}</div>
+                </div>
+              `;
+            }
+          }
+
+          cardHTML += `
+              </div>
+            </div>
+          `;
+
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = cardHTML;
+          const cardElement = tempDiv.firstElementChild;
+
+          cardElement.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') return;
+            document.querySelectorAll(`#${containerId} .line-card`).forEach(c => {
+              if (c !== this) c.classList.remove('active');
+            });
+            this.classList.toggle('active');
+          });
+
+          container.appendChild(cardElement);
+        });
+      }
+
+      renderCards(sortedOperating, 'openedLinesGrid', false);
+      renderCards(sortedConstruction, 'phase5LinesGrid', true);
+    })();
+
+    // 实时时间
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      document.getElementById('currentTime').textContent = 
+        `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {});
+  </script>
+</body>
+</html>

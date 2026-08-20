@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轨道交通配线图 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===== 页面标题行 ===== */
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    /* ===== 主内容区域 ===== */
+    .container {
+      max-width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* ===== 提示信息 ===== */
+    .hint-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #fef3c7;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #92400e;
+    }
+    .hint-bar svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ===== 文件卡片网格 ===== */
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .file-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fafafa;
+      gap: 16px;
+    }
+
+    .file-card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pdf-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pdf-icon-red { background: #fee2e2; color: #dc2626; }
+    .pdf-icon-blue { background: #dbeafe; color: #1e40af; }
+
+    .pdf-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .file-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      word-break: break-all;
+      line-height: 1.3;
+    }
+
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: #6b7280;
+      flex-wrap: wrap;
+    }
+
+    .file-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .file-meta-item svg {
+      width: 14px;
+      height: 14px;
+      color: #9ca3af;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .download-btn-red { background: #dc2626; }
+    .download-btn-red:hover { background: #b91c1c; }
+    .download-btn-blue { background: #2563eb; }
+    .download-btn-blue:hover { background: #1d4ed8; }
+
+    .download-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* 说明区域 */
+    .file-description {
+      padding: 20px 28px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .description-section {
+      font-size: 14px;
+    }
+
+    .description-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .description-title svg {
+      width: 16px;
+      height: 16px;
+      color: #6b7280;
+    }
+
+    .description-text {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.7;
+    }
+    .description-text strong { color: #374151; }
+
+    /* ===== 响应式设计 ===== */
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+
+      .page-title {
+        font-size: 20px;
+      }
+
+      .file-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .file-card-header {
+        flex-wrap: wrap;
+        padding: 18px 20px;
+      }
+
+      .file-card-header-left {
+        width: 100%;
+      }
+
+      .download-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+
+      .file-description {
+        padding: 16px 20px 20px;
+      }
+
+      .file-name {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .file-meta {
+        gap: 10px;
+        font-size: 11px;
+      }
+    }
+  
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+</style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <!-- ===== 标题行 ===== -->
+    <h1 class="page-title">
+      <span>轨道交通配线图</span>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </h1>
+    <p class="page-subtitle">大湾区及深圳轨道交通配线资料</p>
+
+    <!-- ===== 提示 ===== -->
+    <div class="hint-bar">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <span>PDF 文件体积较大，建议下载后使用本地阅读器预览，以获得最佳体验。</span>
+    </div>
+
+    <!-- ===== 文件卡片网格 ===== -->
+    <div class="file-grid">
+
+      <!-- ===== 卡片1：大湾区配线图 ===== -->
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-card-header-left">
+            <div class="pdf-icon pdf-icon-red">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M7 18H4V8h3v10zm6 0h-3V2h3v16zm6 0h-3v-6h3v6zm1 4H2V6h1.5v15.5H20V20zM20 4h-1.5v14.5H6V20h14V4z"/>
+                <path d="M14 2v6h6l-6-6z"/>
+              </svg>
+            </div>
+            <div class="file-info">
+              <div class="file-name">粤港澳大湾区地铁城际配线图 v2.0.6</div>
+              <div class="file-meta">
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                  </svg>
+                  PDF
+                </span>
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  2026.7
+                </span>
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  下载后预览
+                </span>
+              </div>
+            </div>
+          </div>
+          <a href="粤港澳大湾区地铁城际配线图v2.0.6_by Gaciu.pdf" download class="download-btn download-btn-red">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            下载
+          </a>
+        </div>
+        <div class="file-description">
+          <div class="description-section">
+            <div class="description-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              关于
+            </div>
+            <p class="description-text">
+              由 <strong>Gaciu</strong> 绘制，涵盖大湾区范围内地铁及城际铁路的线路配线信息。
+            </p>
+          </div>
+          <div class="description-section">
+            <div class="description-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              来源
+            </div>
+            <p class="description-text">
+              本站仅为转载整理，版权归原作者所有。如需获取最新版，可关注原作者的发布渠道。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 卡片2：深圳配线图 ===== -->
+      <div class="file-card">
+        <div class="file-card-header">
+          <div class="file-card-header-left">
+            <div class="pdf-icon pdf-icon-blue">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M7 18H4V8h3v10zm6 0h-3V2h3v16zm6 0h-3v-6h3v6zm1 4H2V6h1.5v15.5H20V20zM20 4h-1.5v14.5H6V20h14V4z"/>
+                <path d="M14 2v6h6l-6-6z"/>
+              </svg>
+            </div>
+            <div class="file-info">
+              <div class="file-name">[B1] 深圳市轨道交通配线图</div>
+              <div class="file-meta">
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                  </svg>
+                  PDF
+                </span>
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  2026.7
+                </span>
+                <span class="file-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  下载后预览
+                </span>
+              </div>
+            </div>
+          </div>
+          <a href="[B1]深圳市轨道交通配线图.pdf" download class="download-btn download-btn-blue">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            下载
+          </a>
+        </div>
+        <div class="file-description">
+          <div class="description-section">
+            <div class="description-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              关于
+            </div>
+            <p class="description-text">
+              由 <strong>B1</strong> 绘制的深圳市轨道交通配线图，涵盖深圳地铁及城际铁路的线路配线信息。
+            </p>
+          </div>
+          <div class="description-section">
+            <div class="description-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              来源
+            </div>
+            <p class="description-text">
+              本站仅为转载整理，版权归原作者所有。如需获取最新版，可关注原作者的发布渠道。
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // ===== 实时时间 =====
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+
+      const timeEl = document.getElementById('currentTime');
+      if (timeEl) {
+        timeEl.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+      }
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // ===== 移动端菜单（由 navbar.js 统一处理） =====
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {});
+    }
+  </script>
+</body>
+</html>

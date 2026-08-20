@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>惊喜</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      overflow: hidden;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    #videoContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      z-index: 1;
+    }
+    video {
+      width: 100%; height: 100%;
+      object-fit: contain;   /* 自适应比例，留黑边 */
+      background: #000;
+      opacity: 0;            /* 初始完全透明，10秒后变为1 */
+      transition: opacity 0.01s; /* 瞬间切换，无渐变 */
+    }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 9999;
+      background: transparent;
+      /* 鼠标指针可见，但不显示任何文字 */
+    }
+    /* 所有提示完全隐藏，永不显示 */
+    #tapHint, #statusMsg {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="videoContainer">
+    <video id="prankVideo" autoplay playsinline muted preload="auto" webkit-playsinline x5-playsinline x5-video-player-type="h5">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div id="overlay"></div>
+  <div id="tapHint"></div>
+  <div id="statusMsg"></div>
+
+  <script>
+    (function() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+      const isWeChat = /micromessenger/.test(ua);
+
+      // referer 检查（跳转到 index.html）
+      const referer = document.referrer || '';
+      const fromFonts = referer.includes('fonts') || referer.includes('/fonts') || referer.includes(window.location.hostname);
+      if (!fromFonts && !sessionStorage.getItem('fromFonts')) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      const video = document.getElementById('prankVideo');
+      let hasClicked = false;        // 是否已点击
+      let playAttempts = 0;
+      let timerId = null;
+
+      // ===== 强制开启声音并设为最大音量 =====
+      function forceUnmuteAndMaxVolume() {
+        video.removeAttribute('muted');
+        video.muted = false;
+        video.volume = 1.0;
+        console.log('🔊 音量最大，当前 volume:', video.volume);
+      }
+
+      // ===== 真正播放（带重试） =====
+      function startPlay() {
+        if (playAttempts > 8) {
+          // 重试次数过多，不再尝试（静默失败）
+          console.warn('播放失败次数过多，放弃');
+          return;
+        }
+        playAttempts++;
+        forceUnmuteAndMaxVolume();
+        // 重置到开头
+        video.currentTime = 0;
+        video.play().then(() => {
+          console.log('✅ 播放成功');
+          // 播放后再次确认音量
+          forceUnmuteAndMaxVolume();
+        }).catch(err => {
+          console.warn('播放被阻止:', err.name);
+          // 如果被阻止，尝试重试（但不再依赖点击，因为已经点击过了）
+          // 但可能因为用户手势授权问题，我们只能等待下次机会，但这里我们递归重试（但间隔）
+          setTimeout(() => {
+            startPlay();
+          }, 500);
+        });
+      }
+
+      // ===== 10秒倒计时到期执行 =====
+      function onTimerEnd() {
+        // 显示视频（瞬间出现）
+        video.style.opacity = '1';
+        // 尝试全屏
+        if (!isIOS) {
+          const elem = document.documentElement;
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(() => {});
+          } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+          }
+        } else {
+          // iOS 尝试进入系统全屏
+          if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen();
+          }
+        }
+        // 微信内横屏
+        if (isWeChat && screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+        // 开始播放
+        startPlay();
+      }
+
+      // ===== 用户点击 =====
+      function onInteract(e) {
+        if (hasClicked) return;
+        hasClicked = true;
+        console.log('🖱️ 用户点击，开始10秒倒计时');
+        // 启动10秒定时器
+        timerId = setTimeout(onTimerEnd, 10000);
+        // 移除点击监听，防止重复触发
+        document.removeEventListener('click', onInteract);
+        document.removeEventListener('touchstart', onInteract);
+      }
+
+      // 监听点击和触摸
+      document.addEventListener('click', onInteract);
+      document.addEventListener('touchstart', onInteract, { passive: true });
+
+      // ===== 视频事件（用于预加载） =====
+      video.addEventListener('loadedmetadata', function() {
+        console.log('📦 元数据已加载');
+      });
+      video.addEventListener('loadeddata', function() {
+        console.log('✅ 数据已加载');
+      });
+      video.addEventListener('canplay', function() {
+        console.log('🎬 可以播放');
+      });
+
+      // 错误处理（静默）
+      video.addEventListener('error', function(e) {
+        console.warn('视频错误:', video.error);
+      });
+
+      // ===== 播放结束自动跳转 =====
+      video.addEventListener('ended', function() {
+        console.log('🏁 播放结束，跳转到 fonts.html');
+        sessionStorage.setItem('fromFonts', '1');
+        window.location.href = 'fonts';
+      });
+
+      // ===== 可见性变化（如果已经播放，后台切回来恢复播放） =====
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && hasClicked && timerId === null) {
+          // 如果已经点击且定时器已执行（即已经开始播放），则尝试恢复播放
+          // 但不要重置定时器，因为已经播放了
+          // 简单判断：如果视频已经播放或者暂停，尝试播放
+          if (video.paused && !video.ended) {
+            startPlay();
+          }
+        }
+      });
+
+      // ===== 键盘屏蔽（保留生路） =====
+      document.addEventListener('keydown', function(e) {
+        const allowed = ['F5', 'F11', 'Escape', 'Esc'];
+        if (allowed.includes(e.key)) return;
+
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+          e.preventDefault();
+        }
+        if (e.key === 'F12' || e.key === 'ContextMenu') {
+          e.preventDefault();
+        }
+        if (e.ctrlKey && e.key === 'u') {
+          e.preventDefault();
+        }
+      }, true);
+
+      document.addEventListener('contextmenu', e => e.preventDefault(), true);
+      document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false, capture: true });
+
+      let lastTouch = 0;
+      document.addEventListener('touchend', e => {
+        const now = Date.now();
+        if (now - lastTouch < 300) e.preventDefault();
+        lastTouch = now;
+      }, { passive: false });
+
+      // ===== 调试信息（仅控制台） =====
+      console.log('🔍 已加载，等待用户点击...');
+      window.__videoDebug = {
+        video,
+        isIOS,
+        hasClicked,
+        readyState: video.readyState,
+        error: video.error,
+        src: video.currentSrc || '无'
+      };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卫生间位置查询 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===== 主内容区 - 避让固定导航栏 ===== */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* 标题行 */
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+    /* ===== 搜索框 ===== */
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    .search-input-wrap {
+      position: relative;
+      max-width: 480px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      background: white;
+      color: #374151;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .search-input::placeholder { color: #9ca3af; }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    /* ===== 图例栏 ===== */
+    .legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 14px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+    .legend-icon {
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .legend-icon.inside { background: #22c55e; color: white; }
+    .legend-icon.outside { background: #0ea5e9; color: white; }
+
+    /* ===== 线路筛选栏（参考 photos.html filter-bar） ===== */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      justify-content: flex-start;
+    }
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .filter-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .filter-btn.active {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+    .filter-btn .count {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+    .filter-btn.all {
+      background: #111827;
+      color: white;
+    }
+    .filter-btn.all .count { color: #9ca3af; }
+
+    /* 线路颜色 */
+    .line-1 { background: #01AF55; color: white; }
+    .line-2 { background: #B95800; color: white; }
+    .line-3 { background: #00A9DF; color: #000; }
+    .line-4 { background: #D42E0F; color: white; }
+    .line-5 { background: #9E4DAA; color: white; }
+    .line-6 { background: #01C4B7; color: #000; }
+    .line-6z { background: #027776; color: white; }
+    .line-7 { background: #0131AC; color: white; }
+    .line-8 { background: #B95800; color: white; }
+    .line-9 { background: #896B70; color: white; }
+    .line-10 { background: #F67599; color: #000; }
+    .line-11 { background: #672146; color: white; }
+    .line-12 { background: #A092B2; color: #000; }
+    .line-13 { background: #F6AD2D; color: #000; }
+    .line-14 { background: #F4CB67; color: #000; }
+    .line-15 { background: #86BE00; color: white; }
+    .line-16 { background: #181BA5; color: white; }
+    .line-17 { background: #D2C0CD; color: #000; }
+    .line-19 { background: #BA16A4; color: white; }
+    .line-20 { background: #87DBDF; color: #000; }
+    .line-22 { background: #F5E524; color: #000; }
+    .line-25 { background: #FDAD76; color: #000; }
+    .line-27 { background: #4E8D8E; color: white; }
+    .line-29 { background: #92D6AC; color: #000; }
+    .line-32 { background: #735128; color: white; }
+
+    /* ===== 站点卡片网格（自适应） ===== */
+    .stations-grid {
+      column-count: 2;
+      column-gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .stations-grid { column-count: 1; }
+    }
+
+    /* 站点卡片 */
+    .station-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      break-inside: avoid;
+      margin-bottom: 16px;
+    }
+    .station-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .station-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .station-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .line-badges {
+      display: flex;
+      gap: 4px;
+    }
+    .line-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* 卫生间列表 */
+    .toilet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toilet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .toilet-item.inside { background: #f0fdf4; }
+    .toilet-item.outside { background: #f0f9ff; }
+    .toilet-item.none { background: #f3f4f6; padding-left: 14px; }
+    .toilet-icon {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .toilet-icon.inside { background: #22c55e; color: white; }
+    .toilet-icon.outside { background: #0ea5e9; color: white; }
+    .toilet-text { flex: 1; }
+    .toilet-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .toilet-label.inside { background: #dcfce7; color: #166534; }
+    .toilet-label.outside { background: #e0f2fe; color: #075985; }
+    .toilet-num {
+      font-weight: 700;
+      color: #6b7280;
+      margin-right: 4px;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: #9ca3af;
+      font-size: 16px;
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+      .container { margin-top: 20px; padding: 0 16px; }
+      .page-title { font-size: 22px; }
+      .station-card { padding: 16px 18px; }
+      .station-name { font-size: 16px; }
+      .search-input-wrap { max-width: 100%; }
+      .filter-bar { gap: 6px; }
+      .filter-btn { padding: 6px 12px; font-size: 13px; }
+    }
+  
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+
+    /* 搜索框+按钮居中 */
+    .search-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search-input-wrap { flex: 1; }
+    .search-btn {
+      padding: 12px 24px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: #374151; }
+
+    /* 搜索结果 filter 按钮 */
+    .filter-btn.search-result {
+      background: #111827 !important;
+      color: white !important;
+    }
+    .filter-btn.search-result .count { color: #9ca3af; }
+    .filter-btn.search-result.active {
+      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.3);
+    }
+</style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+  <script src="all-lines-enhanced.js"></script>
+  <script src="toilet-data.js"></script>
+
+  <main class="container">
+    <!-- 标题行 -->
+    <h1 class="page-title">
+      <span>卫生间位置查询</span>
+      <a href="tools" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回工具页
+      </a>
+    </h1>
+    <p class="page-subtitle">深圳地铁各站点卫生间分布，数据仅供参考，请以现场实际指引为准</p>
+
+  <!-- 搜索框 -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <div class="search-input-wrap">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索站点名称..." oninput="handleSearch()" onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <button class="search-btn" onclick="doSearch()">搜索</button>
+    </div>
+  </div>
+
+    <!-- 图例 -->
+    <div class="legend-bar">
+      <div class="legend-item">
+        <span class="legend-icon inside">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3h3v3h-3z"></path><path d="M14 6h5v15h-5z"></path>
+            <path d="M5 6h5v15h-5z"></path><path d="M8 3h3v3h-3z"></path>
+          </svg>
+        </span>
+        <span>闸机内卫生间</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon outside">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3h3v3h-3z"></path><path d="M14 6h5v15h-5z"></path>
+            <path d="M5 6h5v15h-5z"></path><path d="M8 3h3v3h-3z"></path>
+          </svg>
+        </span>
+        <span>闸机外卫生间</span>
+      </div>
+    </div>
+
+    <!-- 线路筛选 -->
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="lineBackLinks" style="margin-bottom:16px;"></div>
+
+    <!-- 站点卡片网格 -->
+    <div class="stations-grid" id="stationsGrid"></div>
+  </main>
+
+  <script>
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let searchMatched = [];
+    let prevFilter = 'all';
+
+    function getLineParam() {
+      const params = new URLSearchParams(window.location.search);
+      let line = params.get('line') || '';
+      if (line === '2' || line === '8') line = '2&8';
+      return line;
+    }
+
+    function renderBackLinks() {
+      const container = document.getElementById('lineBackLinks');
+      if (!container) return;
+      if (currentFilter === 'all' || currentFilter === 'other' || currentFilter === 'search') {
+        container.innerHTML = '';
+        return;
+      }
+      function isOperating(lineId) {
+        if (typeof ALL_LINES_ENHANCED === 'undefined' || !Array.isArray(ALL_LINES_ENHANCED)) return true;
+        const lineData = ALL_LINES_ENHANCED.find(l => l.id === lineId);
+        if (!lineData) return true;
+        return lineData.category === 'operating';
+      }
+      if (currentFilter === '2&8') {
+        const btn2 = isOperating('2')
+          ? '<a href="line 2" class="back-link">返回2号线百科</a>'
+          : '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回2号线百科</span>';
+        const btn8 = isOperating('8')
+          ? '<a href="line 8" class="back-link">返回8号线百科</a>'
+          : '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回8号线百科</span>';
+        container.innerHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap;">' + btn2 + btn8 + '</div>';
+      } else {
+        const lineId = currentFilter;
+        const displayName = lineId === '6z' ? '6号线支线' : lineId + '号线';
+        if (isOperating(lineId)) {
+          container.innerHTML = '<a href="line ' + lineId + '" class="back-link">返回' + displayName + '百科</a>';
+        } else {
+          container.innerHTML = '<span class="back-link" style="opacity:0.5;cursor:not-allowed;">返回' + displayName + '百科</span>';
+        }
+      }
+    }
+
+    // 计算各线路站点数量
+    function getFilterCounts() {
+      const counts = {};
+      filters.forEach(f => {
+        counts[f.key] = stations.filter(s => {
+          if (f.key === 'all') return true;
+          if (f.key === '2&8') return s.lines.includes('2') || s.lines.includes('8');
+          return s.lines.includes(f.key);
+        }).length;
+      });
+      return counts;
+    }
+
+    // 渲染筛选按钮
+    function renderFilters() {
+      const bar = document.getElementById('filterBar');
+      const counts = getFilterCounts();
+
+      let html = filters.map(f => {
+        const isActive = f.key === currentFilter;
+        const count = counts[f.key] || 0;
+        if (f.key !== 'all' && count === 0) return '';
+        const cls = f.key === 'all' ? 'all' : f.lineClass;
+        return `<button class="filter-btn ${cls}${isActive ? ' active' : ''}" onclick="setFilter('${f.key}')">
+          ${f.label} <span class="count">${count}</span>
+        </button>`;
+      }).join('');
+
+      // 插入搜索结果按钮
+      if (currentFilter === 'search') {
+        const searchCount = searchMatched.length;
+        const searchHtml = `<button class="filter-btn search-result active" onclick="clearSearch()">
+          搜索结果 <span class="count">${searchCount}</span>
+        </button>`;
+        html = searchHtml + html;
+      }
+
+      bar.innerHTML = html;
+    }
+
+    // 设置筛选
+    // 设置筛选
+    function setFilter(key) {
+      if (key !== 'search') {
+        prevFilter = key;
+        searchQuery = '';
+        document.getElementById('searchInput').value = '';
+        searchMatched = [];
+      }
+      currentFilter = key;
+      renderFilters();
+      renderBackLinks();
+      renderStations();
+    }
+
+    // 搜索处理（生成搜索结果 filter）
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      searchQuery = query;
+
+      if (!query) {
+        if (currentFilter === 'search') {
+          currentFilter = prevFilter;
+          searchMatched = [];
+        }
+        renderFilters();
+        renderBackLinks();
+        renderStations();
+        return;
+      }
+
+      // 在全站中搜索
+      searchMatched = stations.filter(s => s.name.toLowerCase().includes(query));
+      currentFilter = 'search';
+      renderFilters();
+      renderBackLinks();
+      renderStations();
+    }
+
+    function doSearch() {
+      handleSearch();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      searchQuery = '';
+      searchMatched = [];
+      currentFilter = prevFilter;
+      renderFilters();
+      renderBackLinks();
+      renderStations();
+    }
+
+    // 获取过滤后的站点
+    function getFilteredStations() {
+      if (currentFilter === 'search') {
+        return searchMatched;
+      }
+      return stations.filter(s => {
+        if (currentFilter !== 'all') {
+          if (currentFilter === '2&8') {
+            if (!s.lines.includes('2') && !s.lines.includes('8')) return false;
+          } else if (!s.lines.includes(currentFilter)) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    // 渲染站点卡片
+    function renderStations() {
+      const grid = document.getElementById('stationsGrid');
+      grid.innerHTML = '';
+
+      let filtered = getFilteredStations();
+
+      // 合并同名站点（线路+卫生间去重）
+      const mergedMap = {};
+      filtered.forEach(s => {
+        if (mergedMap[s.name]) {
+          s.lines.forEach(l => {
+            if (!mergedMap[s.name].lines.includes(l)) mergedMap[s.name].lines.push(l);
+          });
+          s.toilets.forEach(t => {
+            const dup = mergedMap[s.name].toilets.some(tt =>
+              tt.type === t.type && tt.text === t.text && tt.num === t.num
+            );
+            if (!dup) mergedMap[s.name].toilets.push(t);
+          });
+        } else {
+          mergedMap[s.name] = JSON.parse(JSON.stringify(s));
+        }
+      });
+      filtered = Object.values(mergedMap);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-state">未找到匹配的站点</div>';
+        return;
+      }
+
+      filtered.forEach(station => {
+        const card = document.createElement('div');
+        card.className = 'station-card';
+
+        const badgesHtml = station.lines.map(l => {
+          const color = lineColors[l] || '#6b7280';
+          return `<span class="line-badge" style="background:${color};">${l}</span>`;
+        }).join('');
+
+        const toiletsHtml = station.toilets.map(t => {
+          if (t.type === 'none') {
+            return `
+              <div class="toilet-item none">
+                <span class="toilet-text" style="color: #9ca3af;">${t.text}</span>
+              </div>
+            `;
+          }
+          const cls = t.type;
+          const label = t.type === 'inside' ? '闸机内' : '闸机外';
+          const num = t.num ? `<span class="toilet-num">${t.num}</span>` : '';
+          const note = t.note ? `<span style="color: #dc2626; font-size: 13px; margin-left: 4px;">${t.note}</span>` : '';
+          return `
+            <div class="toilet-item ${cls}">
+              <span class="toilet-icon ${cls}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 3h3v3h-3z"></path><path d="M14 6h5v15h-5z"></path>
+                  <path d="M5 6h5v15h-5z"></path><path d="M8 3h3v3h-3z"></path>
+                </svg>
+              </span>
+              <div class="toilet-text">
+                <span class="toilet-label ${cls}">${label}</span>
+                ${num}${t.text}${note}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="station-header">
+            <span class="station-name">${station.name}</span>
+            <div class="line-badges">${badgesHtml}</div>
+          </div>
+          <div class="toilet-list">${toiletsHtml}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 初始化
+    const urlLine = getLineParam();
+    if (urlLine) {
+      const validKeys = filters.map(f => f.key);
+      if (validKeys.includes(urlLine)) {
+        currentFilter = urlLine;
+      }
+    }
+    prevFilter = currentFilter;
+    renderFilters();
+    renderBackLinks();
+    renderStations();
+  </script>
+</body>
+</html>

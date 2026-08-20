@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深圳地铁客流 - 走进新天地·Railway</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: min(90%, 1200px);
+  margin: 20px auto 40px;
+  padding: 0 20px;
+}
+
+.page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+
+.page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+
+.total-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.total-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.total-label {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.total-value {
+  font-size: 42px;
+  font-weight: 700;
+  color: #01AF55;
+  letter-spacing: -1px;
+}
+
+.total-unit {
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.total-date {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.custom-select {
+  position: relative;
+  min-width: 120px;
+  user-select: none;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.custom-select-trigger:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.custom-select-trigger.open {
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.custom-select-value {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-select-arrow {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  transition: transform .25s ease;
+  color: #6b7280;
+}
+
+.custom-select-trigger.open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: max-height .3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity .25s ease,
+              transform .3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.custom-select-dropdown.open {
+  max-height: 220px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  overflow-y: auto;
+}
+
+.custom-select-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-select-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-select-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c7cd;
+  border-radius: 10px;
+}
+
+.custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.custom-select-dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c7cd #f1f1f1;
+}
+
+.custom-select-option {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: background .15s ease;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.custom-select-option:last-child {
+  border-bottom: none;
+}
+
+.custom-select-option:hover {
+  background: #f3f4f6;
+}
+
+.custom-select-option.active {
+  background: #e5e7eb;
+  font-weight: 600;
+  color: #111827;
+}
+
+.custom-select-option.disabled {
+  color: #d1d5db;
+  cursor: default;
+  pointer-events: none;
+}
+
+.custom-select-option .option-suffix {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-left: 6px;
+}
+
+@media (max-width: 480px) {
+  .custom-select {
+    min-width: 90px;
+    flex: 1;
+  }
+  .custom-select-trigger {
+    font-size: 13px;
+    padding: 6px 12px;
+    min-height: 36px;
+  }
+  .custom-select-option {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.date-nav-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #111827;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.date-nav-btn:hover {
+  background: #374151;
+}
+
+.date-nav-btn:active {
+  background: #1f2937;
+}
+
+.date-nav-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.date-nav-btn.disabled {
+  background: transparent;
+  color: #9ca3af;
+  border: 1px solid #d1d5db;
+  cursor: default;
+  pointer-events: none;
+}
+
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.sort-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.sort-btn.active {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.chart-svg-wrapper {
+  padding: 24px;
+  position: relative;
+}
+
+#flowChart {
+  width: 100%;
+  display: block;
+}
+
+.chart-footer {
+  padding: 12px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #fafafa;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.hint-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #eff6ff;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+/* === 线路专属视图 === */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-top: 3px solid var(--line-color, #01AF55);
+  transition: transform .2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-unit {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.trend-tooltip {
+  position: absolute;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  display: none;
+  pointer-events: none;
+  z-index: 100;
+  border: 1px solid #e5e7eb;
+  min-width: 140px;
+}
+
+.trend-tooltip-date {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+.trend-tooltip-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.trend-tooltip-unit {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.data-table-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.data-table thead {
+  display: none;
+}
+
+.data-table tbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.data-table tr {
+  display: flex;
+  flex-direction: column;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  gap: 6px;
+  min-height: 100px;
+  justify-content: center;
+}
+
+.data-table td {
+  padding: 0;
+  border: none;
+}
+
+.data-table td:first-child {
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+.data-table td:nth-child(2) {
+  display: none;
+}
+
+.data-table td:nth-child(3) {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--line-color, #01AF55);
+  line-height: 1.2;
+}
+
+.data-table td:nth-child(4) {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (max-width: 639px) {
+  .data-table tbody {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 6px;
+    gap: 4px
+  }
+  .data-table tr {
+    padding: 7px 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .data-table tbody {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 5px;
+    gap: 4px;
+  }
+  .data-table tr {
+    padding: 7px 5px;
+  }
+}
+
+.data-table .up {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.data-table .down {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.data-table .flat {
+  color: #9ca3af;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #111827;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  transition: background .3s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.back-link:hover {
+  background: #374151;
+}
+
+.no-data-box {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.no-data-box .emoji {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.no-data-box .title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.no-data-box .desc {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-top: 20px;
+    padding: 0 16px;
+  }
+  .page-title {
+    font-size: 22px;
+  }
+  .total-value {
+    font-size: 32px;
+  }
+  .controls-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .date-nav {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .data-table {
+    font-size: 13px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+  }
+}
+
+rect, text {
+  transform-origin: bottom center;
+  will-change: transform;
+}
+</style>
+</head>
+<body>
+<script src="navbar.js"></script>
+<main class="container">
+<h1 class="page-title">
+<span id="pageTitleText">深圳地铁客流</span>
+<span style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+<a href="passenger-flow" class="back-link" id="viewAllLinesBtn" style="display:none;">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+<span>查看全线路对比</span>
+</a>
+<a href="materials" class="back-link" id="backLink">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+<span id="backLinkText">返回资料页</span>
+</a>
+</span>
+</h1>
+<p class="page-subtitle" id="pageSubtitle">各线路每日客流量统计（不含港铁4号线、13号线）</p>
+
+<!-- ===== 线路专属视图 ===== -->
+<div id="lineView" style="display:none;">
+<div class="stats-grid" id="statsGrid">
+<div class="stat-card"><div class="stat-label">数据天数</div><div class="stat-value"><span id="statDays">0</span><span class="stat-unit">天</span></div></div>
+<div class="stat-card"><div class="stat-label">日均客流</div><div class="stat-value"><span id="statAvg">0</span><span class="stat-unit">万</span></div></div>
+<div class="stat-card"><div class="stat-label">最高客流</div><div class="stat-value"><span id="statMax">0</span><span class="stat-unit">万</span></div></div>
+<div class="stat-card"><div class="stat-label">最低客流</div><div class="stat-value"><span id="statMin">0</span><span class="stat-unit">万</span></div></div>
+<div class="stat-card"><div class="stat-label">近7天平均</div><div class="stat-value"><span id="statAvg7">0</span><span class="stat-unit">万</span></div></div>
+<div class="stat-card"><div class="stat-label">近30天平均</div><div class="stat-value"><span id="statAvg30">0</span><span class="stat-unit">万</span></div></div>
+</div>
+<div class="chart-container">
+<div class="chart-header"><div class="chart-title" id="trendChartTitle">客流趋势</div></div>
+<div class="chart-svg-wrapper">
+<svg id="trendChart" viewBox="0 0 900 420" preserveAspectRatio="xMidYMid meet">
+<defs>
+<linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--line-color)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--line-color)" stop-opacity="0.02"/></linearGradient>
+<filter id="trendShadow" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.06"/></filter>
+</defs>
+<g id="trendGrid"></g>
+<path id="trendArea" fill="url(#trendGradient)"></path>
+<path id="trendLine" fill="none" stroke="var(--line-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+<g id="trendPoints"></g>
+<g id="trendLabels"></g>
+</svg>
+<div id="trendTooltip" class="trend-tooltip"></div>
+</div>
+</div>
+<div class="data-table-container">
+<table class="data-table">
+<thead><tr><th>日期</th><th>客流量（万人次）</th><th>较上日</th></tr></thead>
+<tbody id="dataTableBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- ===== 全线路通用视图 ===== -->
+<div id="allLinesView">
+<div class="hint-bar" id="hintBar">
+<span>在下方选择日期，条形图形式清晰展示各线路数据。</span>
+</div>
+<div class="date-selector" id="dateSelector">
+<div class="custom-select" id="monthSelectWrapper">
+<div class="custom-select-trigger" id="monthSelectTrigger">
+<span class="custom-select-value" id="monthSelectValue">选择月份</span>
+<svg class="custom-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+</div>
+<div class="custom-select-dropdown" id="monthSelectDropdown"></div>
+</div>
+<div class="custom-select" id="daySelectWrapper">
+<div class="custom-select-trigger" id="daySelectTrigger">
+<span class="custom-select-value" id="daySelectValue">选择日期</span>
+<svg class="custom-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+</div>
+<div class="custom-select-dropdown" id="daySelectDropdown"></div>
+</div>
+<div class="date-nav">
+<a class="date-nav-btn" id="prevDayBtn" title="前一天">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+前一天
+</a>
+<a class="date-nav-btn" id="nextDayBtn" title="后一天">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+后一天
+</a>
+</div>
+</div>
+<div class="total-card">
+<div class="total-left">
+<span class="total-label">总客流</span>
+<span class="total-value" id="totalValue">0</span>
+<span class="total-unit">万人次</span>
+</div>
+<div class="total-date" id="totalDate">-</div>
+</div>
+<div class="controls-bar">
+<div class="sort-group">
+<span class="sort-label">排序方式：</span>
+<button class="sort-btn active" id="sortByLine" onclick="setSort('line')">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+按线路
+</button>
+<button class="sort-btn" id="sortByFlowDesc" onclick="setSort('flowDesc')">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+客流高→低
+</button>
+<button class="sort-btn" id="sortByFlowAsc" onclick="setSort('flowAsc')">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+客流低→高
+</button>
+</div>
+</div>
+<div class="chart-container">
+<div class="chart-header">
+<div class="chart-title" id="chartTitle">各线路客流量</div>
+<div class="chart-legend">
+<div class="legend-item"><div class="legend-dot" style="background:#01AF55"></div>深圳地铁</div>
+<div class="legend-item"><div class="legend-dot" style="background:#D42E0F"></div>港铁(未收录)</div>
+</div>
+</div>
+<div class="chart-svg-wrapper">
+<svg id="flowChart" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
+<defs>
+<filter id="barShadow" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/></filter>
+</defs>
+<g id="gridLines"></g>
+<g id="barsGroup"></g>
+<g id="labelsGroup"></g>
+<g id="valuesGroup"></g>
+</svg>
+</div>
+<div class="chart-footer">数据来源：深圳地铁官方微博 · 不含4号线、13号线（港铁运营）数据</div>
+</div>
+</div>
+</main>
+<script src="passenger-data.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // 检查数据是否加载成功
+  if (typeof passengerData === 'undefined' || !passengerData || Object.keys(passengerData).length === 0) {
+    document.querySelector('.container').innerHTML = 
+      '<div class="no-data-box"><div class="emoji">📭</div><div class="title">暂无客流数据</div><div class="desc">请确保 passenger-data.js 已正确加载并包含有效数据。</div></div>';
+    return;
+  }
+
+  // 将数据挂载到 window 确保安全
+  if (typeof window.passengerData === 'undefined') {
+    window.passengerData = passengerData;
+    window.lineColors = lineColors;
+    window.lineOrder = lineOrder;
+  }
+
+  const chartConfig = {
+    width: 900,
+    height: 480,
+    margin: { top: 30, right: 40, bottom: 70, left: 50 },
+    barWidth: 40,
+    barFillRatio: 0.75,
+    fontSize: { yAxis: 11, lineName: 14, value: 15 },
+    animDuration: 600,
+    staggerDelay: 25,
+    barRadius: 4,
+    yMaxPadding: 1.15,
+    gridSteps: 5
+  };
+
+  let currentSort = 'line';
+  let currentDate = '';
+  let isFirstRender = true;
+  let allDates = [];
+  let prevDayData = null;
+  let monthSelect = null;
+  let daySelect = null;
+
+  // ----- 工具函数 -----
+  function getDefaultDate() {
+    const dates = Object.keys(passengerData).sort();
+    if (dates.length === 0) return '';
+    const today = new Date();
+    const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    const idx = dates.indexOf(todayStr);
+    if (idx > 0) return dates[idx - 1];
+    if (idx === 0) return dates[0];
+    return dates[dates.length - 1];
+  }
+
+  // ----- 自定义下拉组件 -----
+  class CustomSelect {
+    constructor({ wrapperId, triggerId, valueId, dropdownId, placeholder, maxHeight, onSelect }) {
+      this.wrapper = document.getElementById(wrapperId);
+      this.trigger = document.getElementById(triggerId);
+      this.valueEl = document.getElementById(valueId);
+      this.dropdown = document.getElementById(dropdownId);
+      this.placeholder = placeholder || '请选择';
+      this.maxHeight = maxHeight || 200;
+      this.onSelect = onSelect || (() => {});
+      this.options = [];
+      this.selectedValue = null;
+      this.isOpen = false;
+
+      this.trigger.addEventListener('click', (e) => { e.stopPropagation(); this.toggle(); });
+      document.addEventListener('click', () => this.close());
+      this.dropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    toggle() { this.isOpen ? this.close() : this.open(); }
+    open() {
+      if (this.isOpen) return;
+      this.isOpen = true;
+      this.trigger.classList.add('open');
+      this.dropdown.classList.add('open');
+      const h = Math.min(this.dropdown.scrollHeight || 100, this.maxHeight);
+      this.dropdown.style.maxHeight = h + 'px';
+    }
+    close() {
+      if (!this.isOpen) return;
+      this.isOpen = false;
+      this.trigger.classList.remove('open');
+      this.dropdown.classList.remove('open');
+      this.dropdown.style.maxHeight = '0px';
+    }
+
+    setOptions(items) {
+      this.options = items;
+      this.dropdown.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'custom-select-option';
+        if (item.disabled) div.classList.add('disabled');
+        if (item.value === this.selectedValue) div.classList.add('active');
+        div.dataset.value = item.value;
+        div.innerHTML = item.label + (item.suffix ? '<span class="option-suffix">' + item.suffix + '</span>' : '');
+        div.addEventListener('click', () => {
+          if (item.disabled) return;
+          this.selectValue(item.value);
+        });
+        this.dropdown.appendChild(div);
+      });
+      if (this.isOpen) {
+        const h = Math.min(this.dropdown.scrollHeight || 100, this.maxHeight);
+        this.dropdown.style.maxHeight = h + 'px';
+      }
+    }
+
+    selectValue(value) {
+      const item = this.options.find(o => o.value === value);
+      if (!item || item.disabled) return;
+      this.selectedValue = value;
+      this.valueEl.textContent = item.label;
+      this.dropdown.querySelectorAll('.custom-select-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.value === value);
+      });
+      this.close();
+      if (this.onSelect) this.onSelect(value, item);
+    }
+
+    setValue(value) {
+      const item = this.options.find(o => o.value === value);
+      if (item) {
+        this.selectedValue = value;
+        this.valueEl.textContent = item.label;
+        this.dropdown.querySelectorAll('.custom-select-option').forEach(el => {
+          el.classList.toggle('active', el.dataset.value === value);
+        });
+      } else {
+        this.selectedValue = null;
+        this.valueEl.textContent = this.placeholder;
+      }
+    }
+
+    getValue() { return this.selectedValue; }
+  }
+
+  // ----- 日期选择器初始化 -----
+  function initDateSelector() {
+    const dates = Object.keys(passengerData).sort();
+    allDates = dates;
+    if (dates.length === 0) return;
+
+    const months = [...new Set(dates.map(d => d.slice(5, 7)))].sort();
+
+    monthSelect = new CustomSelect({
+      wrapperId: 'monthSelectWrapper',
+      triggerId: 'monthSelectTrigger',
+      valueId: 'monthSelectValue',
+      dropdownId: 'monthSelectDropdown',
+      placeholder: '选择月份',
+      maxHeight: 160,
+      onSelect: (value) => {
+        updateDayOptions(value);
+        const first = daySelect.options.find(o => !o.disabled);
+        if (first) {
+          daySelect.selectValue(first.value);
+          setDate(first.value);
+        }
+      }
+    });
+    monthSelect.setOptions(months.map(m => ({ value: m, label: parseInt(m, 10) + '月' })));
+
+    daySelect = new CustomSelect({
+      wrapperId: 'daySelectWrapper',
+      triggerId: 'daySelectTrigger',
+      valueId: 'daySelectValue',
+      dropdownId: 'daySelectDropdown',
+      placeholder: '选择日期',
+      maxHeight: 200,
+      onSelect: (value) => setDate(value)
+    });
+
+    const defaultMonth = currentDate.slice(5, 7);
+    if (defaultMonth && months.includes(defaultMonth)) {
+      monthSelect.selectValue(defaultMonth);
+      updateDayOptions(defaultMonth);
+      const dayItem = daySelect.options.find(o => o.value === currentDate);
+      if (dayItem) {
+        daySelect.selectValue(currentDate);
+      } else {
+        const first = daySelect.options.find(o => !o.disabled);
+        if (first) {
+          daySelect.selectValue(first.value);
+          setDate(first.value);
+        }
+      }
+    } else {
+      // fallback: 选第一个月份
+      if (months.length > 0) {
+        const firstMonth = months[0];
+        monthSelect.selectValue(firstMonth);
+        updateDayOptions(firstMonth);
+        const firstDay = daySelect.options.find(o => !o.disabled);
+        if (firstDay) {
+          daySelect.selectValue(firstDay.value);
+          setDate(firstDay.value);
+        }
+      }
+    }
+
+    // 导航按钮
+    document.getElementById('prevDayBtn').addEventListener('click', () => {
+      const idx = allDates.indexOf(currentDate);
+      if (idx > 0) {
+        const prev = allDates[idx - 1];
+        const m = prev.slice(5, 7);
+        monthSelect.selectValue(m);
+        updateDayOptions(m);
+        daySelect.selectValue(prev);
+        setDate(prev);
+        updateNavButtons();
+      }
+    });
+    document.getElementById('nextDayBtn').addEventListener('click', () => {
+      const idx = allDates.indexOf(currentDate);
+      if (idx < allDates.length - 1) {
+        const next = allDates[idx + 1];
+        const m = next.slice(5, 7);
+        monthSelect.selectValue(m);
+        updateDayOptions(m);
+        daySelect.selectValue(next);
+        setDate(next);
+        updateNavButtons();
+      }
+    });
+    updateNavButtons();
+  }
+
+  function updateDayOptions(month) {
+    if (!daySelect) return;
+    const dates = Object.keys(passengerData).sort();
+    const monthDates = dates.filter(d => d.slice(5, 7) === month);
+    const items = monthDates.map(date => ({
+      value: date,
+      label: parseInt(date.slice(8), 10) + '号',
+      suffix: passengerData[date].weekday || '',
+      disabled: false
+    }));
+    daySelect.setOptions(items);
+    if (items.length > 0) {
+      const cv = daySelect.getValue();
+      if (!items.some(o => o.value === cv)) {
+        daySelect.selectValue(items[0].value);
+        setDate(items[0].value);
+      }
+    }
+  }
+
+  function updateNavButtons() {
+    const idx = allDates.indexOf(currentDate);
+    const prevBtn = document.getElementById('prevDayBtn');
+    const nextBtn = document.getElementById('nextDayBtn');
+    prevBtn.classList.toggle('disabled', idx <= 0);
+    nextBtn.classList.toggle('disabled', idx >= allDates.length - 1);
+  }
+
+  // ----- 排序 -----
+  function getSortedData() {
+    const data = passengerData[currentDate];
+    if (!data) return null;
+    let lines = [...data.lines];
+    if (currentSort === 'line') {
+      lines.sort((a, b) => lineOrder.indexOf(a.key) - lineOrder.indexOf(b.key));
+    } else if (currentSort === 'flowDesc') {
+      lines.sort((a, b) => b.passengers - a.passengers);
+    } else {
+      lines.sort((a, b) => a.passengers - b.passengers);
+    }
+    return { ...data, lines };
+  }
+
+  function setSort(mode) {
+    if (currentSort === mode) return;
+    currentSort = mode;
+    document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('sortByLine').classList.toggle('active', mode === 'line');
+    document.getElementById('sortByFlowDesc').classList.toggle('active', mode === 'flowDesc');
+    document.getElementById('sortByFlowAsc').classList.toggle('active', mode === 'flowAsc');
+    renderChart(true);
+  }
+  window.setSort = setSort; // 供 onclick 调用
+
+  // ----- 数字动画 -----
+  function startNumberAnimation(el, from, to, duration) {
+    if (el._rafId) { cancelAnimationFrame(el._rafId); el._rafId = null; }
+    const startTime = performance.now();
+    function update(time) {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 1.5);
+      const current = from + (to - from) * eased;
+      el.textContent = current.toFixed(2);
+      el.setAttribute('data-current-value', current);
+      if (progress < 1) {
+        el._rafId = requestAnimationFrame(update);
+      } else {
+        el.textContent = to.toFixed(2);
+        el.setAttribute('data-current-value', to);
+        el._rafId = null;
+      }
+    }
+    el._rafId = requestAnimationFrame(update);
+  }
+
+  // ----- 条形动画 -----
+  function animateBar(element, fromX, fromY, fromHeight, toX, toY, toHeight, duration) {
+    if (fromX === toX && fromY === toY && fromHeight === toHeight) return;
+    const dx = fromX - toX;
+    const dy = fromY - toY;
+    element.style.transition = 'none';
+    element.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    element.style.transformOrigin = 'bottom center';
+    void element.offsetHeight;
+    const opt = { duration: duration, easing: 'ease-out', fill: 'forwards' };
+    const ha = element.animate([{ height: fromHeight + 'px' }, { height: toHeight + 'px' }], opt);
+    const ta = element.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'translate(0,0)' }], opt);
+    let fc = 0;
+    const cf = () => { fc++; if (fc === 2) { element.style.transition = ''; element.style.transform = ''; element.style.transformOrigin = ''; } };
+    ha.onfinish = cf;
+    ta.onfinish = cf;
+  }
+
+  function animateText(element, fromX, fromY, toX, toY, duration) {
+    if (fromX === toX && fromY === toY) return;
+    const dx = fromX - toX;
+    const dy = fromY - toY;
+    element.style.transition = 'none';
+    element.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    void element.offsetHeight;
+    const anim = element.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'translate(0,0)' }], {
+      duration: duration,
+      easing: 'ease-out',
+      fill: 'forwards'
+    });
+    anim.onfinish = () => { element.style.transition = ''; element.style.transform = ''; };
+  }
+
+  // ----- 主渲染函数 -----
+  function renderChart(animate) {
+    const data = getSortedData();
+    if (!data) {
+      document.getElementById('totalValue').textContent = '0';
+      document.getElementById('totalDate').textContent = '无数据';
+      document.getElementById('chartTitle').textContent = '无数据';
+      return;
+    }
+
+    const { width, height, margin, barWidth, barFillRatio, fontSize, animDuration, staggerDelay, barRadius, yMaxPadding, gridSteps } = chartConfig;
+    const chartW = width - margin.left - margin.right;
+    const chartH = height - margin.top - margin.bottom;
+    const n = data.lines.length;
+    const slotW = chartW / n;
+    const bw = Math.min(barWidth, slotW * barFillRatio);
+    const gap = slotW - bw;
+    const maxFlow = Math.max(...data.lines.map(l => l.passengers), 1);
+    const scaleY = chartH / (maxFlow * yMaxPadding);
+    const baseY = height - margin.bottom;
+
+    document.getElementById('totalValue').textContent = data.total.toFixed(2);
+    document.getElementById('totalDate').textContent = data.date + ' ' + data.weekday;
+    document.getElementById('chartTitle').textContent = data.date + ' 各线路客流量';
+
+    const gridG = document.getElementById('gridLines');
+    const barsG = document.getElementById('barsGroup');
+    const labelsG = document.getElementById('labelsGroup');
+    const valuesG = document.getElementById('valuesGroup');
+
+    // 记录旧位置（用于动画）
+    const oldPositions = new Map();
+    if (!isFirstRender) {
+      data.lines.forEach(line => {
+        const bar = document.getElementById('bar-' + line.key);
+        const val = document.getElementById('val-' + line.key);
+        if (bar) {
+          const x = parseFloat(bar.getAttribute('x')) || 0;
+          const y = parseFloat(bar.getAttribute('y')) || 0;
+          const h = parseFloat(bar.getAttribute('height')) || 0;
+          let valX = 0, valY = 0;
+          if (val) { valX = parseFloat(val.getAttribute('x')) || 0; valY = parseFloat(val.getAttribute('y')) || 0; }
+          oldPositions.set(line.key, { barX: x, barY: y, barHeight: h, valX, valY });
+        }
+      });
+    }
+
+    // 网格线
+    gridG.innerHTML = '';
+    for (let i = 0; i <= gridSteps; i++) {
+      const val = (maxFlow * yMaxPadding / gridSteps) * i;
+      const y = baseY - val * scaleY;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', margin.left);
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width - margin.right);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#e5e7eb');
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('stroke-dasharray', i === 0 ? '' : '4,4');
+      gridG.appendChild(line);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', margin.left - 8);
+      text.setAttribute('y', y + 4);
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', '#9ca3af');
+      text.setAttribute('font-size', fontSize.yAxis);
+      text.setAttribute('font-weight', '500');
+      text.textContent = val.toFixed(1);
+      gridG.appendChild(text);
+    }
+
+    // 创建/更新条形
+    data.lines.forEach((line, i) => {
+      const x = margin.left + i * slotW + gap / 2;
+      const barH = line.passengers * scaleY;
+      const y = baseY - barH;
+      const color = lineColors[line.key] || '#666';
+      const bid = 'bar-' + line.key;
+      const lid = 'lab-' + line.key;
+      const vid = 'val-' + line.key;
+
+      let exBar = document.getElementById(bid);
+      let exLab = document.getElementById(lid);
+      let exVal = document.getElementById(vid);
+
+      if (exBar) {
+        exBar.setAttribute('x', x);
+        exBar.setAttribute('y', y);
+        exBar.setAttribute('height', barH);
+        exBar.setAttribute('fill', color);
+        if (exLab) {
+          exLab.setAttribute('x', x + bw / 2);
+          exLab.textContent = line.name;
+        }
+        if (exVal) {
+          const valY = y - 6;
+          exVal.setAttribute('x', x + bw / 2);
+          exVal.setAttribute('y', valY);
+          exVal.setAttribute('opacity', '1');
+          let oldVal = 0;
+          if (prevDayData && prevDayData[line.key] !== undefined) {
+            oldVal = prevDayData[line.key];
+          } else {
+            oldVal = parseFloat(exVal.getAttribute('data-current-value'));
+            if (isNaN(oldVal)) oldVal = parseFloat(exVal.textContent);
+            if (isNaN(oldVal)) oldVal = 0;
+          }
+          const newVal = line.passengers;
+          if (Math.abs(oldVal - newVal) > 0.0001) {
+            startNumberAnimation(exVal, oldVal, newVal, animDuration);
+          } else {
+            exVal.textContent = newVal.toFixed(2);
+            exVal.setAttribute('data-current-value', newVal);
+          }
+        }
+      } else {
+        const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bar.setAttribute('id', bid);
+        bar.setAttribute('x', x);
+        bar.setAttribute('y', baseY);
+        bar.setAttribute('width', bw);
+        bar.setAttribute('height', 0);
+        bar.setAttribute('rx', barRadius);
+        bar.setAttribute('fill', color);
+        bar.setAttribute('filter', 'url(#barShadow)');
+        barsG.appendChild(bar);
+
+        const lab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lab.setAttribute('id', lid);
+        lab.setAttribute('x', x + bw / 2);
+        lab.setAttribute('y', baseY + 22);
+        lab.setAttribute('text-anchor', 'middle');
+        lab.setAttribute('fill', '#374151');
+        lab.setAttribute('font-size', fontSize.lineName);
+        lab.setAttribute('font-weight', '600');
+        lab.textContent = line.name;
+        labelsG.appendChild(lab);
+
+        const val = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        val.setAttribute('id', vid);
+        val.setAttribute('x', x + bw / 2);
+        val.setAttribute('y', baseY - 6);
+        val.setAttribute('text-anchor', 'middle');
+        val.setAttribute('fill', '#374151');
+        val.setAttribute('font-size', fontSize.value);
+        val.setAttribute('font-weight', '600');
+        val.setAttribute('opacity', '1');
+        val.textContent = '0.00';
+        val.setAttribute('data-current-value', '0');
+        valuesG.appendChild(val);
+      }
+    });
+
+    // 动画
+    if (isFirstRender) {
+      data.lines.forEach((line, i) => {
+        const bid = 'bar-' + line.key;
+        const vid = 'val-' + line.key;
+        const bar = document.getElementById(bid);
+        const val = document.getElementById(vid);
+        if (!bar || !val) return;
+        const x = margin.left + i * slotW + gap / 2;
+        const barH = line.passengers * scaleY;
+        const y = baseY - barH;
+        const startY = baseY;
+        const startH = 0;
+        bar.setAttribute('y', y);
+        bar.setAttribute('height', barH);
+        animateBar(bar, x, startY, startH, x, y, barH, animDuration);
+        const valY = y - 6;
+        val.setAttribute('y', valY);
+        animateText(val, x, baseY - 6, x, valY, animDuration);
+        startNumberAnimation(val, 0, line.passengers, animDuration);
+      });
+      isFirstRender = false;
+    } else if (oldPositions.size > 0) {
+      data.lines.forEach(line => {
+        const bid = 'bar-' + line.key;
+        const vid = 'val-' + line.key;
+        const bar = document.getElementById(bid);
+        const old = oldPositions.get(line.key);
+        if (bar && old) {
+          const newX = parseFloat(bar.getAttribute('x'));
+          const newY = parseFloat(bar.getAttribute('y'));
+          const newH = parseFloat(bar.getAttribute('height'));
+          if (old.barX !== newX || old.barY !== newY || old.barHeight !== newH) {
+            animateBar(bar, old.barX, old.barY, old.barHeight, newX, newY, newH, animDuration);
+          }
+          const val = document.getElementById(vid);
+          if (val) {
+            const newValX = parseFloat(val.getAttribute('x')) || 0;
+            const newValY = parseFloat(val.getAttribute('y')) || 0;
+            if (old.valX !== newValX || old.valY !== newValY) {
+              animateText(val, old.valX, old.valY, newValX, newValY, animDuration);
+            }
+          }
+        }
+      });
+    }
+
+    // 清理多余元素
+    const curKeys = new Set(data.lines.map(l => l.key));
+    barsG.querySelectorAll('rect').forEach(el => {
+      if (!curKeys.has(el.id.replace('bar-', ''))) el.remove();
+    });
+    labelsG.querySelectorAll('text').forEach(el => {
+      if (!curKeys.has(el.id.replace('lab-', ''))) el.remove();
+    });
+    valuesG.querySelectorAll('text').forEach(el => {
+      if (!curKeys.has(el.id.replace('val-', ''))) el.remove();
+    });
+
+    prevDayData = null;
+  }
+
+  // ----- 设置日期 -----
+  function setDate(date) {
+    if (date === currentDate) return;
+    const oldData = getSortedData();
+    if (oldData) {
+      prevDayData = {};
+      oldData.lines.forEach(l => { prevDayData[l.key] = l.passengers; });
+    } else {
+      prevDayData = null;
+    }
+    currentDate = date;
+    renderChart(true);
+    updateNavButtons();
+  }
+
+  // ----- 线路专属模式 -----
+  function initLineView(lineKey, color) {
+    const history = getLineHistory(lineKey);
+    const container = document.getElementById('lineView');
+    if (history.length === 0) {
+      container.innerHTML = '<div class="no-data-box"><div class="emoji">📭</div><div class="title">暂无该线路的客流数据</div><div class="desc">该线路由港铁运营，暂无客流数据收录。</div></div><div class="view-switch" style="margin-top:20px;"><a href="passenger-flow" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>查看全线路对比</a></div>';
+      return;
+    }
+    const stats = calcStats(history);
+    document.getElementById('statDays').textContent = stats.days;
+    document.getElementById('statAvg').textContent = stats.avg.toFixed(2);
+    document.getElementById('statMax').textContent = stats.max.toFixed(2);
+    document.getElementById('statMin').textContent = stats.min.toFixed(2);
+    document.getElementById('statAvg7').textContent = stats.avg7.toFixed(2);
+    document.getElementById('statAvg30').textContent = stats.avg30.toFixed(2);
+    renderTrendChart(history, color);
+    renderDataTable(history, color);
+  }
+
+  function getLineHistory(lineKey) {
+    const dates = Object.keys(passengerData).sort();
+    return dates.map(date => {
+      const dayData = passengerData[date];
+      const lineData = dayData.lines.find(l => l.key === lineKey);
+      return { date, weekday: dayData.weekday, passengers: lineData ? lineData.passengers : 0 };
+    }).filter(d => d.passengers > 0);
+  }
+
+  function calcStats(history) {
+    const values = history.map(h => h.passengers);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    const max = Math.max(...values);
+    const min = Math.min(...values);
+    const last7 = values.slice(-7);
+    const avg7 = last7.length ? last7.reduce((a, b) => a + b, 0) / last7.length : 0;
+    const last30 = values.slice(-30);
+    const avg30 = last30.length ? last30.reduce((a, b) => a + b, 0) / last30.length : 0;
+    return { avg, max, min, avg7, avg30, days: values.length };
+  }
+
+  function renderTrendChart(history, color) {
+    const svg = document.getElementById('trendChart');
+    const gridG = document.getElementById('trendGrid');
+    const areaPath = document.getElementById('trendArea');
+    const linePath = document.getElementById('trendLine');
+    const pointsG = document.getElementById('trendPoints');
+    const labelsG = document.getElementById('trendLabels');
+    const width = 900, height = 420;
+    const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+    const chartW = width - margin.left - margin.right;
+    const chartH = height - margin.top - margin.bottom;
+    const n = history.length;
+    if (n < 2) return;
+    const maxVal = Math.max(...history.map(h => h.passengers)) * 1.12 || 1;
+    const minVal = 0;
+    const getX = i => margin.left + (n === 1 ? chartW / 2 : (i / (n - 1)) * chartW);
+    const getY = v => margin.top + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
+
+    gridG.innerHTML = '';
+    const gridSteps = 5;
+    for (let i = 0; i <= gridSteps; i++) {
+      const val = (maxVal / gridSteps) * i;
+      const y = getY(val);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', margin.left);
+      line.setAttribute('y1', y);
+      line.setAttribute('x2', width - margin.right);
+      line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#e5e7eb');
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('stroke-dasharray', i === 0 ? '' : '4,4');
+      gridG.appendChild(line);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', margin.left - 10);
+      text.setAttribute('y', y + 4);
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', '#9ca3af');
+      text.setAttribute('font-size', '11');
+      text.setAttribute('font-weight', '500');
+      text.textContent = val.toFixed(1);
+      gridG.appendChild(text);
+    }
+
+    labelsG.innerHTML = '';
+    const labelStep = n > 20 ? Math.ceil(n / 10) : (n > 12 ? Math.ceil(n / 8) : 1);
+    for (let i = 0; i < n; i += labelStep) {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', getX(i));
+      text.setAttribute('y', height - margin.bottom + 20);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', '#9ca3af');
+      text.setAttribute('font-size', '11');
+      text.textContent = history[i].date.slice(5);
+      labelsG.appendChild(text);
+    }
+
+    const pts = history.map((h, i) => ({ x: getX(i), y: getY(h.passengers) }));
+    let d = 'M ' + pts[0].x + ' ' + pts[0].y;
+    for (let i = 1; i < pts.length; i++) d += ' L ' + pts[i].x + ' ' + pts[i].y;
+    let areaD = 'M ' + pts[0].x + ' ' + getY(0) + ' L ' + pts[0].x + ' ' + pts[0].y;
+    for (let i = 1; i < pts.length; i++) areaD += ' L ' + pts[i].x + ' ' + pts[i].y;
+    areaD += ' L ' + pts[pts.length - 1].x + ' ' + getY(0) + ' Z';
+    linePath.setAttribute('d', d);
+    linePath.setAttribute('stroke', color);
+    areaPath.setAttribute('d', areaD);
+
+    pointsG.innerHTML = '';
+    const tooltip = document.getElementById('trendTooltip');
+    const wrapper = document.querySelector('#lineView .chart-svg-wrapper');
+    history.forEach((h, i) => {
+      const cx = getX(i), cy = getY(h.passengers);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', 4);
+      c.setAttribute('fill', color);
+      c.setAttribute('stroke', 'white');
+      c.setAttribute('stroke-width', 2);
+      c.setAttribute('style', 'cursor:pointer;');
+      c.addEventListener('mouseenter', (e) => {
+        c.setAttribute('r', 6);
+        tooltip.innerHTML = '<div class="trend-tooltip-date">' + h.date + ' ' + h.weekday + '</div><div class="trend-tooltip-value" style="color:' + color + '">' + h.passengers.toFixed(2) + ' <span class="trend-tooltip-unit">万人次</span></div>';
+        tooltip.style.display = 'block';
+        const rect = wrapper.getBoundingClientRect();
+        const ptX = cx / 900 * rect.width;
+        const ptY = cy / 420 * rect.height;
+        let left = ptX - tooltip.offsetWidth / 2;
+        let top = ptY - tooltip.offsetHeight - 12;
+        if (left < 4) left = 4;
+        if (left + tooltip.offsetWidth > rect.width - 4) left = rect.width - tooltip.offsetWidth - 4;
+        if (top < 4) top = ptY + 16;
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+      });
+      c.addEventListener('mouseleave', () => {
+        c.setAttribute('r', 4);
+        tooltip.style.display = 'none';
+      });
+      pointsG.appendChild(c);
+    });
+  }
+
+  function renderDataTable(history, color) {
+    const tbody = document.getElementById('dataTableBody');
+    const reversed = [...history].reverse();
+    tbody.innerHTML = reversed.map((item, idx) => {
+      let changeHtml = '<span class="flat">-</span>';
+      if (idx < reversed.length - 1) {
+        const prev = reversed[idx + 1];
+        const diff = item.passengers - prev.passengers;
+        const pct = (diff / prev.passengers * 100).toFixed(1);
+        if (diff > 0.001) changeHtml = '<span class="up">↑ ' + diff.toFixed(2) + ' (+' + pct + '%)</span>';
+        else if (diff < -0.001) changeHtml = '<span class="down">↓ ' + Math.abs(diff).toFixed(2) + ' (' + pct + '%)</span>';
+      }
+      return '<tr><td>' + item.date + '<br><span style="font-size:11px;color:#9ca3af;">' + item.weekday + '</span></td><td></td><td>' + item.passengers.toFixed(2) + '<span style="font-size:12px;color:#9ca3af;font-weight:400;margin-left:2px;">万</span></td><td>' + changeHtml + '</td></tr>';
+    }).join('');
+  }
+
+  // ----- 启动 -----
+  const urlParams = new URLSearchParams(window.location.search);
+  const lineParam = urlParams.get('line');
+  const isLineMode = lineParam && lineColors[lineParam];
+
+  if (isLineMode) {
+    const color = lineColors[lineParam];
+    document.documentElement.style.setProperty('--line-color', color);
+    document.getElementById('allLinesView').style.display = 'none';
+    document.getElementById('lineView').style.display = 'block';
+    const lineName = lineParam === '6z' ? '6号线支线' : lineParam + '号线';
+    document.getElementById('pageTitleText').textContent = lineName + ' 客流数据';
+    document.getElementById('pageSubtitle').textContent = '历史客流趋势与统计分析';
+    document.getElementById('backLink').href = 'line ' + lineParam + '.html';
+    document.getElementById('backLinkText').textContent = '返回线路百科';
+    document.getElementById('viewAllLinesBtn').style.display = 'inline-flex';
+    initLineView(lineParam, color);
+  } else {
+    currentDate = getDefaultDate();
+    if (!currentDate) {
+      // 无数据则显示提示
+      document.querySelector('.container').innerHTML = 
+        '<div class="no-data-box"><div class="emoji">📭</div><div class="title">暂无客流数据</div><div class="desc">请检查数据文件是否包含有效日期。</div></div>';
+    } else {
+      initDateSelector();
+      renderChart(true);
+    }
+  }
+
+})();
+</script>
+</body>
+</html>

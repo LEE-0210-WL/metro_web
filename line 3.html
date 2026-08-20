@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3号线百科 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <script src="all-lines-enhanced.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* 加载动画样式 - 水平进度条 */
+    .line-loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: white;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .line-loading-container {
+      width: 80%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .line-loading-progress-wrapper {
+      width: 100%;
+      height: 60px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .line-loading-progress {
+      height: 100%;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .line-loading-percent {
+      font-size: 48px;
+      font-weight: bold;
+      margin-top: 20px;
+      line-height: 1;
+    }
+
+    .line-loading-final {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: expandWidth 0.5s ease forwards;
+    }
+
+    @keyframes expandWidth {
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+
+    .line-loading-number {
+      font-size: 80px;
+      font-weight: bold;
+      color: #FFFFFF;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease 0.3s forwards;
+    }
+
+    .line-loading-title {
+      font-size: 48px;
+      font-weight: bold;
+      color: #FFFFFF;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease 0.5s forwards;
+      text-align: center;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    body.loading-complete .line-loading-overlay {
+      display: none;
+    }
+
+    /* 顶部导航栏 - 黑色 */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* 导航链接 */
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    /* 移动端菜单 */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* 主内容区域 */
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+
+    /* 线路标题栏 - 圆圈和文字并排 */
+    .line-header {
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      color: white;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .line-number {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .line-info {
+      flex: 1;
+    }
+
+    .line-name {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .line-alias {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    /* 百科内容样式 */
+    .wiki-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .wiki-content h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--line-color, #00B140);
+    }
+
+    .wiki-content h2:first-child {
+      margin-top: 0;
+    }
+
+    .wiki-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+
+    .wiki-content p {
+      font-size: 16px;
+      color: #374151;
+      margin-bottom: 16px;
+      line-height: 1.8;
+      text-align: justify;
+    }
+
+    .wiki-content ul {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    .wiki-content li {
+      font-size: 15px;
+      color: #374151;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .wiki-content strong {
+      color: #111827;
+    }
+
+    /* 动态数据区块 */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .data-card {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px 20px;
+      border-left: 4px solid var(--line-color, #00B140);
+    }
+
+    .data-card-label {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .data-card-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* 站点列表 */
+    .station-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .station-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #f3f4f6;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #374151;
+      transition: all 0.2s ease;
+    }
+
+    .station-tag:hover {
+      background: var(--line-color, #00B140);
+      color: white;
+    }
+
+    .station-tag.transfer::after {
+      content: "⇄";
+      font-size: 12px;
+      color: #ef4444;
+      font-weight: bold;
+    }
+
+    .station-tag.transfer:hover::after {
+      color: white;
+    }
+
+    /* 换乘信息 - 宽屏两列卡片式 */
+    .transfer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .transfer-card {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--line-color, #00B140);
+    }
+
+    .transfer-card:hover {
+      background: #f3f4f6;
+      transform: translateX(4px);
+    }
+
+    .transfer-station {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .transfer-lines {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .line-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      margin-right: 4px;
+    }
+
+    /* 车辆信息卡片 */
+    .train-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .train-card {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 20px;
+      border-top: 4px solid var(--line-color, #00B140);
+    }
+
+    .train-card-model {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .train-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #4b5563;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .train-card-row:last-child {
+      border-bottom: none;
+    }
+
+    .train-card-label {
+      color: #6b7280;
+    }
+
+    .train-encountered {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .train-no-encounter {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    /* 返回按钮 */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      margin-bottom: 20px;
+      padding: 12px 24px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+      align-self: flex-end;
+    }
+
+    .back-link:hover {
+      background: #374151;
+    }
+
+    /* 相关链接区块 */
+    .related-links {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .related-links h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--line-color, #00B140);
+    }
+
+    .related-links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .related-link-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .related-link-item:hover {
+      background: var(--line-color, #00B140);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .current-time {
+        display: none;
+      }
+
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+
+      .line-header {
+        padding: 20px;
+        gap: 16px;
+      }
+
+      .line-number {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+      }
+
+      .line-name {
+        font-size: 24px;
+      }
+
+      .line-alias {
+        font-size: 14px;
+      }
+
+      .wiki-content {
+        padding: 20px;
+      }
+
+      .wiki-content h2 {
+        font-size: 20px;
+      }
+
+      .site-name {
+        font-size: 14px;
+      }
+
+      .logo {
+        width: 32px;
+        height: 32px;
+      }
+
+      .line-loading-container {
+        width: 90%;
+      }
+
+      .line-loading-progress-wrapper {
+        height: 40px;
+      }
+
+      .line-loading-percent {
+        font-size: 32px;
+      }
+
+      .data-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .train-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .related-links-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .transfer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ========== 线路走向图占位 ========== */
+    .route-map-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .route-map-container {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    .route-map-image {
+      display: block;
+      width: 100%;
+      min-width: 900px;
+      height: auto;
+      -webkit-user-drag: none;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+
+    .route-map-caption {
+      text-align: center;
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .route-map-section {
+        padding: 16px;
+      }
+      .route-map-image {
+        min-width: 700px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <!-- 加载动画 -->
+  <div class="line-loading-overlay" id="loadingOverlay">
+    <div class="line-loading-container" id="loadingContainer">
+      <div class="line-loading-progress-wrapper" id="progressWrapper">
+        <div class="line-loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="line-loading-percent" id="loadingPercent">0%</div>
+    </div>
+  </div>
+
+  <!-- 主内容区域 -->
+  <main class="container">
+    <!-- 线路标题（动态渲染） -->
+    <div class="line-header" id="lineHeader">
+      <div class="line-number" id="lineNumber">1</div>
+      <div class="line-info">
+        <div class="line-name" id="lineName">加载中...</div>
+        <div class="line-alias" id="lineAlias"></div>
+      </div>
+    </div>
+
+    <a href="index" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      返回首页
+    </a>
+
+    <!-- 线路走向图 -->
+    <div class="route-map-section" id="routeMapSection" style="display:none;">
+      <div class="route-map-container">
+        <img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false">
+      </div>
+      <div class="route-map-caption" id="routeMapCaption"></div>
+    </div>
+
+    <!-- 百科内容 -->
+    <article class="wiki-content">
+      <h2>文字资料摘自百度百科，由于本人精力有限，无法一一查证是否属实，基本情况是否正确，如有错误，请在"建议"子页面发送邮件进行问题反馈，感谢配合！</h2>
+      <p><strong>最新一次更新：v2.2---2026/7/19  12:30</strong></p>
+      <p><strong>更新说明</strong>：v2.2---信息纠错。</p>
+      <p><strong>历史更新</strong>：</p>
+      <p><strong>v2.1</strong>---2026/6/23  12:15</p>
+      <p><strong>v2.0</strong>---2026/6/15  12:00</p>
+      <p><strong>v1.5</strong>---2026/6/14  14:40</p>
+      <p><strong>v1.0</strong>---2026/3/11  22:30</p>
+
+      <h2>基本信息</h2>
+      <div class="data-grid" id="basicInfoGrid">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>线路走向与站点设置（摘自百度）</h2>
+      <p id="lineRouteDesc">加载中...</p>
+
+      <h2>站点列表（<span id="stationCount">0</span>站）</h2>
+      <div class="station-list" id="stationList">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>换乘信息（<span id="transferCount">0</span>座换乘站）</h2>
+      <div class="transfer-grid" id="transferContainer">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>车辆信息</h2>
+      <div class="train-grid" id="trainGrid">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>历史沿革（摘自百度百科）</h2>
+      <h3>前期规划</h3>
+      <p><strong>2001年12月</strong>，深圳市城市规划委员会审议通过《深圳市近中期轨道网基本方案》，其中包括深圳地铁3号线连接罗湖中心、布吉、横岗镇和龙岗次中心的线路，<strong>长30.8千米</strong>，预计投资<strong>约94.3亿元。</strong></p>
+      <p><strong>2002年6月</strong>，《深圳市城市轨道交通近期发展规划》提出深圳地铁3号线<strong>从老街站至龙岗中心城</strong>，全长<strong>约30.8千米</strong>，设车站18座；</br><strong>9月5日</strong>，深圳市政府常务会议纪要原则同意将深圳地铁3号线（老街站至塘坑站）等作为近期优先发展线路，并进一步论证延长至龙岗新城的可行性；</br><strong>11月</strong>，深圳地铁3号线规划方案调整为从罗湖区东门老街至龙岗中心城。</p>
+      <p><strong>2003年年初</strong>，深圳地铁3号线规划方案再次调整，延伸至龙岗区龙岗镇；</br><strong>5月</strong>，《深圳市城市轨道交通二期3号线工程预可行性研究报告》提出深圳地铁3号线规划起点为购物公园站，初期建设范围自红岭中路站（现红岭站）至龙岗街道，<strong>全长32.7千米</strong>；</br><strong>6月</strong>，深圳地铁3号线龙岗区筹建领导小组成立。</p>
+      <p><strong>2004年5月</strong>，深圳地铁3号线投资有限公司成立，组建项目管理团队并开展前期工作。</p>
+      <p><strong>2005年1月</strong>，《深圳市城市轨道交通二期3号线工程环境影响报告书》及批复明确深圳地铁3号线起于罗湖区红岭南路，止于龙岗镇的龙岗街道，全长32.8千米；</br><strong>2月</strong>，《深圳市城市轨道交通二期3号线工程可行性研究报告》提出<strong>初期正线全长32.9千米，设车站21座</strong>；</br><strong>3月7日</strong>，中华人民共和国国家发展和改革委员会批复《深圳市城市轨道交通第二期建设规划（2005～2010年）》，其中包括深圳地铁3号线一期工程；</br><strong>3月17日</strong>，深圳市龙岗区召开深圳地铁3号线工程总体设计、总体策划方案汇报会；</br><strong>9月</strong>，深圳地铁3号线确定初步设计方案。</p>
+      <p><strong>2006年3月</strong>，中华人民共和国国家发展和改革委员会批复《关于地铁3号线一期工程可行性研究的批复》（发改投资〔2006〕572号），同意深圳市轨道交通3号线一期工程自红岭中路站（红岭站）至龙岗街站，全长32.9千米，设车站21座；</br><strong>3月13日</strong>，深圳市轨道交通建设指挥部第二次工作会议纪要原则，同意增设3号线奥体新城站，纳入深圳地铁3号线线统一建设；</br><strong>4月</strong>，中华人民共和国国家发展和改革委员会批复《深圳地铁3号线一期工程可行性研究报告》；</br><strong>9月</strong>，深圳地铁3号线工程完成修改初步设计，增设奥体新城站；</br><strong>10月19日</strong>，经深圳市人民政府批准，深圳地铁3号线一期工程站点命名公布；</br><strong>12月</strong>，深圳地铁3号线开工建设。</p>
+      <p><strong>2007年8月</strong>，深圳市发展和改革委员会、深圳市规划和自然资源局完成《深圳市轨道交通建设规划调整（2005—2011年）》，提出3号线西延段从红岭站至益田村，长约8.7千米，全地下线，设车站8座。</p>
+      <p><strong>2008年3月5日</strong>，中华人民共和国国家发展和改革委员会下发《国家发展改革委关于深圳市城市快速轨道交通建设规划（2005—2011年）调整方案的批复》（发改投资〔2008〕2678号），原则同意提前实施深圳地铁3号线西延段工程；</br><strong>4月23日</strong>，深圳市发展和改革委员会下发《关于地铁3号线一期工程总概算的批复》（深发改〔2008〕743号），核定一期工程总概算为113.1799亿元（不含老街站），<strong>线路长32.849千米</strong>；</br><strong>10月</strong>，《深圳市地铁3号线西延段工程可行性研究报告》完成，线路长约8.7千米，全地下线，设车站8座，在中心公园设停车场1处。</p>
+      <p><strong>2009年3月25日</strong>，中华人民共和国国家发展和改革委员会下发《国家发展改革委关于深圳市地铁3号线西延段工程可行性研究报告的批复》（发改基础〔2009〕1340号），同意建设西延段工程，全长8.7千米，全部地下线，设车站8座，总投资57.87亿元。</p>
+
+      <h3>建设运营</h3>
+      <p>2007年7月，深圳地铁3号线一期工程（双龙站至红岭站）动工兴建。</p>
+      <p>2008年5月，深圳地铁3号线二期工程（益田站至红岭站）动工兴建。</p>
+      <p>2009年8月，深圳地铁3号线高架段（双龙站至草埔站）全区段土建结构贯通。9月，深圳地铁3号线一期工程（双龙站至红岭站）全区段轨通。</p>
+      <p>2010年3月，深圳地铁3号线一期工程（双龙站至红岭站）全区段电通；</br>8月10日，深圳地铁3号线一期工程（双龙站至红岭站）全线贯通；</br>12月28日，深圳地铁3号线一期工程（双龙站至红岭站）开通试运营，于木棉湾站举行开通试运营仪式。</p>
+      <p>2018年11月18日，深圳地铁3号线三期工程（益田站至福保站）福保站至益田站区间"深圳Ⅰ号"盾构机始发。</p>
+      <p>2019年7月13日，深圳地铁3号线福保站主体结构封顶 ；</br>9月29日，深圳地铁3号线三期工程（益田站至福保站）福保站至益田站区间左线贯通；</br>10月17日，深圳地铁3号线三期工程（益田站至福保站）福保站至益田站区间右线贯通；</br>10月24日，深圳地铁3号线三期工程（益田站至福保站）福保站至益田站区间左线盾构机平移出洞，标志着全线贯通。</p>
+      <p>2020年6月18日，深圳地铁3号线三期工程（益田站至福保站）热滑测试成功；</br>8月18日，深圳地铁3号线四期工程（双龙站至坪地六联站）开工建设；</br>10月28日，深圳地铁3号线三期工程（益田站至福保站）开通试运营。</p>
+      <p>2022年3月，深圳地铁3号线四期工程（双龙站至坪地六联站）坪西站至低碳城站区间盾构机始发；</br>4月，深圳地铁3号线四期工程（双龙站至坪地六联站）坪西站至低碳城站区间盾构机始发；</br>5月，深圳地铁3号线四期工程（双龙站至坪地六联站）低碳城站主体结构封顶；</br>6月15日，深圳地铁3号线四期工程坪西站完成第5环构件拼装；</br>6月29日，深圳地铁3号线四期工程（双龙站至坪地六联站）富坪站至坪地六联站区间右线贯通；</br>7月27日，深圳地铁3号线四期工程（双龙站至坪地六联站）富坪站至坪地六联站盾构区间左线贯通；</br>9月23日，深圳地铁3号线四期工程（双龙站至坪地六联站）坪西站完成全部拼装；</br>11月20日，深圳地铁3号线四期工程（双龙站至坪地六联站）坪西站至低碳城站区间右线贯通；</br>12月，深圳地铁3号线四期工程（双龙站至坪地六联站）白石塘站至富坪站盾构区间左线贯通。</br>同月，深圳地铁3号线坪地六联站主体结构封顶。</p>
+      <p>2023年3月27日，深圳地铁3号线四期工程（双龙站至坪地六联站）停车场首批次承台完成；</br>5月23日，深圳地铁3号线四期工程（双龙站至坪地六联站）低碳城站至白石塘站区间左线贯通；</br>7月，深圳地铁3号线四期工程（双龙站至坪地六联站）低碳城站至白石塘站区间右线贯通；</br>8月14日，深圳地铁3号线四期工程（双龙站至坪地六联站）全线铺轨施工开启。同月，深圳地铁3号线四期工程（双龙站至坪地六联站）双龙站至梨园站高架区间悬浇梁合龙；</br>9月24日，深圳地铁3号线四期工程（双龙站至坪地六联站）梨园站至新生站区间V型刚构悬浇梁中跨合龙；</br>11月，深圳地铁3号线四期工程（双龙站至坪地六联站）新生站至坪西站右线盾构接收，标志着深圳地铁3号线四期工程全线贯通；</br>12月，深圳地铁3号线四期工程（双龙站至坪地六联站）富坪站至坪地六联站区间左线第一对钢轨头完成无缝焊接；</br>12月16日，深圳地铁3号线四期工程（双龙站至坪地六联站）坪地六联站最后一块顶板完成浇筑 。</p>
+      <p>2024年2月，深圳地铁3号线四期工程（双龙站至坪地六联站）坪地六联站至坪西站（不含）、双龙站（不含）至新生站（不含）两个区间实现短轨通；</br>3月12日，深圳地铁3号线四期工程（双龙站至坪地六联站）新生站公共区装修样板段完成验收；</br>4月23日，深圳地铁3号线四期工程（双龙站至坪地六联站）梨园站至新生站区间全线长轨通；</br>5月7日，深圳地铁3号线四期工程（双龙站至坪地六联站）通过正线轨道工程CPⅢ布设、道床和坪地停车场及出入线轨道工程线路基标、道床四个分部验收；</br>5月12日，深圳地铁3号线四期工程（双龙站至坪地六联站）35千伏全线电通；</br>5月15日，深圳地铁3号线四期工程（双龙站至坪地六联站）400伏全线送电；</br>6月，深圳地铁3号线四期工程（双龙站至坪地六联站）接触轨冷滑试验完成；</br>6月6日，深圳地铁3号线四期工程（双龙站至坪地六联站）全线热滑试验成功；</br>8月26日，深圳地铁3号线四期工程（双龙站至坪地六联站）通过项目工程验收；</br>9月24日，深圳地铁3号线四期工程（双龙站至坪地六联站）通过消防验收；</br>11月29日，深圳地铁3号线四期工程（双龙站至坪地六联站）通过竣工验收；</br>12月2日至5日，深圳地铁3号线四期工程（双龙站至坪地六联站）通过初期运营前安全评估；</br>12月24日，深圳地铁3号线四期工程（双龙站至坪地六联站）完成三权移交；</br>12月28日，深圳地铁3号线四期工程（双龙站至坪地六联站）开通试运营。</p>
+
+      <h2>车辆技术参数</h2>
+      <p>3号线采用6节编组B型地铁列车，由中车长春轨道客车股份有限公司制造。早期列车为初代车型，后期两批增购列车为增购车型，在内饰、座椅等方面有所升级。</p>
+      <p>列车采用直流1500V接触网供电，设计最高时速100公里/小时。</p>
+
+      <h2>特色与亮点</h2>
+      <p><strong>高架与地下结合：</strong>3号线是深圳地铁中少有的高架与地下段并存的线路，草埔至双龙段为高架段，可欣赏龙岗大道沿线风光。</p>
+      <p><strong>东延段高架站：</strong>2024年开通的东延段中，梨园站采用高架设计，是深圳地铁近年来少有的新建高架车站，具有独特的建筑美学。</p>
+      <p><strong>龙岗大动脉：</strong>3号线是龙岗区连接市中心区的重要交通干线，日均客流量超过80万人次，是深圳地铁网络中客流较大的线路之一。</p>
+
+      <h2>未来规划</h2>
+      <p>根据深圳市轨道交通规划，3号线未来可能继续向东延伸至惠州，成为深惠城际轨道交通的重要组成部分，进一步加强深圳与周边城市的联系。</p>
+    </article>
+
+    <!-- 相关链接 -->
+    <div class="related-links">
+      <h3>相关链接</h3>
+      <div class="related-links-grid" id="relatedLinks">
+        <!-- JS动态填充 -->
+      </div>
+    </div>
+  </main>
+
+
+  <script>
+    // ==================== 配置：只需改这两行就能复用到其他线路 ====================
+    const LINE_ID = "3";
+    const ROUTE_MAP_IMAGE = "3号线线路图.jpg"; // 线路走向图文件名，如 "3号线线路图.jpg"，留空则隐藏
+    // =========================================================================
+
+    // 获取线路数据
+    const lineData = getEnhancedLineData(LINE_ID);
+    if (!lineData) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#666">线路数据加载失败，请检查 all-lines-enhanced.js 是否正确加载</div>';
+      throw new Error("Line data not found for ID: " + LINE_ID);
+    }
+
+    const COLOR = lineData.color || "#00B140";
+    const DARK_COLOR = adjustColor(COLOR, -30);
+
+    // 设置 CSS 变量
+    document.documentElement.style.setProperty('--line-color', COLOR);
+
+    // 设置 body data 属性（供加载动画使用）
+    document.body.dataset.lineName = lineData.id;
+    document.body.dataset.lineColor = COLOR;
+
+    // 辅助函数：调整颜色亮度
+    function adjustColor(hex, amount) {
+      const num = parseInt(hex.replace("#", ""), 16);
+      const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+      const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+      const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+      return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+    }
+
+    // 辅助函数：获取其他线路颜色
+    function getOtherLineColor(lineId) {
+      const line = ALL_LINES_ENHANCED.find(l => l.id === lineId);
+      if (!line) return "#9CA3AF";
+      if (line.category === "construction") return "#9CA3AF";
+      return line.color;
+    }
+
+    // ==================== 1. 加载动画 ====================
+    (function() {
+      const overlay = document.getElementById('loadingOverlay');
+      const container = document.getElementById('loadingContainer');
+      const progressBar = document.getElementById('loadingProgress');
+      const percentText = document.getElementById('loadingPercent');
+
+      // 设置颜色
+      if (progressBar) progressBar.style.background = COLOR;
+      if (percentText) percentText.style.color = COLOR;
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        const increment = Math.random() * 2.5 + 0.5;
+        progress = Math.min(progress + increment, 100);
+
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (percentText) percentText.textContent = Math.floor(progress) + '%';
+
+        if (progress >= 100) {
+          clearInterval(interval);
+
+          setTimeout(() => {
+            if (percentText) {
+              percentText.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+              percentText.style.transform = 'translateY(50px)';
+              percentText.style.opacity = '0';
+            }
+          }, 100);
+
+          setTimeout(() => {
+            if (container) {
+              container.innerHTML = `
+                <div class="line-loading-final" style="background: ${COLOR}">
+                  <div class="line-loading-number">${lineData.id}号线</div>
+                  <div class="line-loading-title">百科</div>
+                </div>
+              `;
+            }
+          }, 500);
+
+          setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              document.body.classList.add('loading-complete');
+            }, 500);
+          }, 2500);
+        }
+      }, 40);
+    })();
+
+    // ==================== 2. 渲染线路标题栏 ====================
+    (function() {
+      const header = document.getElementById('lineHeader');
+      const number = document.getElementById('lineNumber');
+      const name = document.getElementById('lineName');
+      const alias = document.getElementById('lineAlias');
+
+      if (header) {
+        header.style.background = `linear-gradient(135deg, ${COLOR}, ${DARK_COLOR})`;
+        header.style.boxShadow = `0 4px 20px ${COLOR}4D`;
+      }
+      if (number) {
+        number.textContent = lineData.id;
+        number.style.color = COLOR;
+      }
+      if (name) name.textContent = lineData.alias ? lineData.name.split('（')[0].replace('深圳地铁', '') : lineData.name;
+      if (alias) alias.textContent = lineData.alias || '';
+    })();
+
+    // ==================== 3. 渲染基本信息 ====================
+    (function() {
+      const grid = document.getElementById('basicInfoGrid');
+      if (!grid) return;
+
+      const items = [
+        { label: "线路全称", value: lineData.name },
+        { label: "开通日期", value: lineData.openDate },
+        { label: "运营公司", value: lineData.operator },
+        { label: "线路长度", value: lineData.lengthDesc || (lineData.lengthKm ? "约 " + lineData.lengthKm + " 公里" : "-") },
+        { label: "车站数量", value: lineData.stationsDesc || (lineData.stationCount ? lineData.stationCount + "座" : "-") },
+        { label: "车辆编组", value: lineData.formationDesc || lineData.formationCode || "-" },
+        { label: "设计时速", value: lineData.maxSpeedDesc || (lineData.maxSpeedKmh ? lineData.maxSpeedKmh + "公里/小时" : "-") },
+        { label: "历史最大客流", value: lineData.maxPassengerFlow || "暂无数据" },
+        { label: "线路状态", value: lineData.category === "operating" ? "🟢 已开通" : "🟡 建设中" }
+      ];
+
+      grid.innerHTML = items.map(item => `
+        <div class="data-card">
+          <div class="data-card-label">${item.label}</div>
+          <div class="data-card-value">${item.value}</div>
+        </div>
+      `).join('');
+    })();
+
+    // ==================== 4. 渲染站点列表 ====================
+    (function() {
+      const list = document.getElementById('stationList');
+      const count = document.getElementById('stationCount');
+      if (!list || !lineData.stationList) return;
+
+      count.textContent = lineData.stationList.length;
+
+      const transferStations = new Set(Object.keys(lineData.transfers || {}));
+
+      list.innerHTML = lineData.stationList.map(station => {
+        const isTransfer = transferStations.has(station);
+        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}</span>`;
+      }).join('');
+    })();
+
+    // ==================== 5. 渲染换乘信息 ====================
+    (function() {
+      const container = document.getElementById('transferContainer');
+      const count = document.getElementById('transferCount');
+      if (!container || !lineData.transfers) return;
+
+      const entries = Object.entries(lineData.transfers);
+      count.textContent = entries.length;
+
+      container.innerHTML = entries.map(([station, lines]) => {
+        const badges = lines.map(lid => {
+          const lc = getOtherLineColor(lid);
+          return `<span class="line-badge" style="background:${lc}">${lid}号线</span>`;
+        }).join('');
+        return `
+          <div class="transfer-card">
+            <span class="transfer-station">${station}站</span>
+            <div class="transfer-lines">${badges}</div>
+          </div>
+        `;
+      }).join('');
+    })();
+
+    // ==================== 6. 渲染车辆信息 ====================
+    (function() {
+      const grid = document.getElementById('trainGrid');
+      if (!grid || !lineData.trains || lineData.trains.length === 0) {
+        if (grid) grid.innerHTML = '<p style="color:#9ca3af">暂无车辆信息</p>';
+        return;
+      }
+
+      grid.innerHTML = lineData.trains.map(train => {
+        const enc = train.encountered;
+        const encHtml = enc
+          ? `<span class="train-encountered">✓ 已遇到：${enc}</span>`
+          : `<span class="train-no-encounter">暂未遇到</span>`;
+        const note = train.note ? `<div style="font-size:12px;color:#9ca3af;margin-top:4px">${train.note}</div>` : '';
+
+        return `
+          <div class="train-card">
+            <div class="train-card-model">${train.model}</div>
+            <div class="train-card-row"><span class="train-card-label">编号范围</span><span>${train.numberRange}</span></div>
+            <div class="train-card-row"><span class="train-card-label">制造商</span><span>${train.manufacturer}</span></div>
+            <div class="train-card-row"><span class="train-card-label">记录</span>${encHtml}</div>
+            ${note}
+          </div>
+        `;
+      }).join('');
+    })();
+
+    // ==================== 7. 线路走向描述（静态，可后续扩展） ====================
+    (function() {
+      const desc = document.getElementById('lineRouteDesc');
+      if (desc && lineData.stationList) {
+        const first = lineData.stationList[0];
+        const last = lineData.stationList[lineData.stationList.length - 1];
+        desc.textContent = `东起${first}站，西至${last}站，共${lineData.stationList.length}座车站。`;
+      }
+    })();
+
+    // ==================== 8. 车辆技术参数（静态，保留原有内容） ====================
+    (function() {
+      const tech = document.getElementById('trainTechDesc');
+      if (tech) {
+        tech.innerHTML = `深圳地铁${lineData.id}号线采用<strong>${lineData.formationDesc || lineData.formationCode || 'A型地铁列车'}</strong>，构造速度<strong>${lineData.maxSpeedDesc || (lineData.maxSpeedKmh + '千米/小时')}</strong>。具体技术参数请参阅车辆制造商资料。`;
+      }
+    })();
+
+    // ==================== 9. 相关链接 ====================
+    (function() {
+      const container = document.getElementById('relatedLinks');
+      if (!container) return;
+
+      const links = [
+        { icon: "📋", text: "线路仪表盘", url: `dashboard?line=${LINE_ID}` },
+        // { icon: "📰", text: "进度跟踪", url: `progress-tracking` },
+        { icon: "📊", text: "客流查询", url: `passenger-flow?line=${LINE_ID}` },
+        { icon: "🚇", text: "车辆信息", url: `trains` },
+        // { icon: "🏗️", text: "建设历程", url: `history` },
+        { icon: "🚻", text: "卫生间查询", url: `toilet?line=${LINE_ID}` },
+        { icon: "🎨", text: "线路色号", url: `line-colors` },
+        { icon: "📷", text: "照片", url: `photos?line=${LINE_ID}` },
+      ];
+
+      container.innerHTML = links.map(l => `
+        <a href="${l.url}" class="related-link-item">${l.icon} ${l.text}</a>
+      `).join('');
+    })();
+
+
+    // ==================== 线路走向图显示控制 ====================
+    (function() {
+      if (ROUTE_MAP_IMAGE) {
+        const section = document.getElementById('routeMapSection');
+        const img = document.getElementById('routeMapImage');
+        const caption = document.getElementById('routeMapCaption');
+        if (section && img) {
+          img.src = ROUTE_MAP_IMAGE;
+          img.alt = '深圳地铁' + lineData.id + '号线线路走向图';
+          if (caption) caption.textContent = '深圳地铁' + lineData.id + '号线线路走向图';
+          section.style.display = 'block';
+        }
+      }
+    })();
+
+    // ==================== 10. 实时时间 ====================
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // ==================== 11. 移动端菜单 ====================
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+  </script>
+</body>
+</html>

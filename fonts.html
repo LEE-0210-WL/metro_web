@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线网吊板字体收集 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <!-- 预加载所有字体，避免懒加载导致首次预览不显示 -->
+  <link rel="preload" href="黑体.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="汉仪颜楷.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="方正舒体.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="方正古隶体.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="华文隶书.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="汉仪魏碑.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="思源宋体.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="汉仪行楷.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face { font-family: '黑体'; src: url('黑体.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '汉仪颜楷'; src: url('汉仪颜楷.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '方正舒体'; src: url('方正舒体.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '方正古隶体'; src: url('方正古隶体.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '华文隶书'; src: url('华文隶书.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '汉仪魏碑'; src: url('汉仪魏碑.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '思源宋体'; src: url('思源宋体.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: '汉仪行楷'; src: url('汉仪行楷.woff2') format('woff2'); font-display: swap; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding-top: 60px;
+    }
+
+    .header {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 60px;
+      background-color: #111827;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
+    .logo img { width: 100%; height: 100%; object-fit: cover; }
+    .site-name { font-size: 16px; font-weight: 600; color: white; }
+    .current-time { font-size: 14px; color: #ffffff; font-weight: 500; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a {
+      padding: 8px 16px; border-radius: 8px; text-decoration: none;
+      font-size: 14px; font-weight: 500; color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    .nav-links a:hover { background-color: #374151; color: white; }
+    .nav-links a.active { background-color: #2563eb; color: white; }
+    .mobile-menu-btn { display: none; background: none; border: none; color: white; cursor: pointer; }
+
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+    }
+
+    .page-notice {
+      font-size: 13px;
+      color: #92400e;
+      background: #fef3c7;
+      padding: 10px 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .page-notice svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .download-btn:hover {
+      background: #1d4ed8;
+    }
+    .download-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .font-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .font-download:hover {
+      color: #1d4ed8;
+    }
+    .font-download svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .page-title {  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;}
+    .page-subtitle {  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;}
+
+    .fonts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .font-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    .font-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .font-header {
+      padding: 14px 16px;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .font-content { padding: 16px 20px; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .font-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .font-input:focus { border-color: #2563eb; }
+
+    .refresh-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 10px 16px;
+      background: #111827; color: white;
+      border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .refresh-btn:hover { background: #374151; }
+    .refresh-btn svg { width: 16px; height: 16px; }
+
+    .preview-area {
+      min-height: 160px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px dashed #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .preview-text {
+      font-size: 48px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+    .preview-text .zh-char {
+      font-size: 48px;
+    }
+    .preview-text .en-char {
+      font-size: 22px;
+      color: #6b7280;
+    }
+    .preview-placeholder { color: #9ca3af; font-size: 14px; }
+
+    .font-info {
+      margin-top: 10px;
+      font-size: 12px; color: #9ca3af;
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .font-info span {
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px;
+      background: #111827; color: white;
+      text-decoration: none; border-radius: 6px;
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+
+    .line-all { background: #01AF55; }
+    .line-3-8-20 { background: #00A9DF; color: #000; }
+    .line-16 { background: #181BA5; }
+    .line-6z-13 { background: #027776; }
+    .line-14 { background: #F4CB67; color: #000; }
+    .line-12 { background: #A092B2; color: #000; }
+    .line-5 { background: #9E4DAA; }
+    .line-11 { background: #672146; }
+
+    @media (max-width: 768px) {
+      .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 60px; }
+      .nav-links { display: none; width: 100%; flex-direction: column; padding: 10px 0; background: #1f2937; position: absolute; top: 60px; left: 0; }
+      .nav-links.active { display: flex; }
+      .nav-links a { padding: 12px 20px; border-radius: 0; }
+      .mobile-menu-btn { display: block; }
+      .current-time { display: none; }
+      .container { margin-top: 16px; padding: 0 16px; }
+      .fonts-grid { grid-template-columns: 1fr; gap: 16px; }
+      .page-title { font-size: 20px; gap: 12px; }
+      .back-link { padding: 5px 10px; font-size: 12px; }
+      .preview-text { font-size: 32px; }
+      .preview-text .zh-char { font-size: 32px; }
+      .preview-text .en-char { font-size: 18px; }
+      .input-row { flex-direction: column !important; gap: 8px; }
+      .font-input { width: 100%; min-width: 0; font-size: 16px; }
+      .refresh-btn { width: 100%; justify-content: center; white-space: normal; padding: 10px; }
+      .font-header { font-size: 14px; padding: 12px 14px; }
+      .font-content { padding: 14px 16px; }
+    }
+  </style>
+  <script src="stations.js"></script>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>线网吊板字体收集</span>
+      <a href="materials" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回资料页
+      </a>
+    </h1>
+    <p class="page-subtitle">深圳地铁各线路站名吊板/大字壁字体汇总<br>（英文字体一般为 Arial，由于全网英文字体多且复杂，故只整理一般情况）</p>
+    <p class="page-notice">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      字体已采用 WOFF2 格式并做子集化处理，加载速度大幅提升。<br>每个字体卡片仅支持输入对应线路的实际站点名进行预览，输入其他字符将显示为默认字体（Arial）。<br>所有字体仅作资源分享，其中方正舒体为商业字体（使用须付费授权），本页面仅作个人学习/研究展示，请勿随意商用。其余字体请遵守各自授权协议。
+    </p>
+    <div style="margin-bottom: 24px;">
+      <a href="https://1827324044.share.123pan.cn/123pan/PPp0jv-FFs9h" target="_blank" class="download-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        打包下载全部字体（原始格式）
+      </a>
+    </div>
+
+    <div class="fonts-grid" id="fontsGrid"></div>
+  </main>
+
+  <script>
+    const fontData = [
+      { title: '全线网通用站名', headerClass: 'line-all', zhFont: '黑体', enFont: 'Arial', fontFile: '黑体.ttf', defaultText: "太安 Tai'an", lines: '全线网通用' },
+      { title: '3号线 / 2号线三期 / 8号线 / 20号线一期', headerClass: 'line-3-8-20', zhFont: '汉仪颜楷', enFont: 'Arial', fontFile: '汉仪颜楷.ttf', defaultText: '梨园 Liyuan', lines: '3/2三期/8/20一期' },
+      { title: '16号线', headerClass: 'line-16', zhFont: '方正舒体', enFont: 'Arial', fontFile: '方正舒体（使用须授权）.TTF', defaultText: '龙城公园 Longcheng Park', lines: '16号线' },
+      { title: '6号线支线 / 13号线', headerClass: 'line-6z-13', zhFont: '方正古隶体', enFont: 'Arial', fontFile: '方正古隶简体.otf', defaultText: '虹桥公园 Hongqiao Park', lines: '6支/13号线' },
+      { title: '14号线', headerClass: 'line-14', zhFont: '华文隶书', enFont: 'Arial', fontFile: '华文隶书.TTF', defaultText: '嶂背 Zhangbei', lines: '14号线' },
+      { title: '12号线', headerClass: 'line-12', zhFont: '汉仪魏碑', enFont: 'Arial', fontFile: '汉仪魏碑简.ttf', defaultText: '海上世界 Sea World', lines: '12号线' },
+      { title: '5号线二期', headerClass: 'line-5', zhFont: '思源宋体', enFont: 'Arial', fontFile: '思源宋体.otf', defaultText: '桂湾 Guiwan', lines: '5号线二期' },
+      { title: '11号线高架站&二期 / 2号线二期 / 5号线西延段 / 7号线二期 / 9号线二期', headerClass: 'line-11', zhFont: '汉仪行楷', enFont: 'Arial', fontFile: '汉仪行楷.ttf', defaultText: '沙井 Shajing', lines: '11高架&二期/2二期/5西延/7二期/9二期' }
+    ];
+
+    function isChinese(char) {
+      return /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/.test(char);
+    }
+
+    function renderMixedText(text, zhFont, enFont) {
+      let html = '';
+      let currentZh = '';
+      let currentEn = '';
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (isChinese(char)) {
+          if (currentEn) {
+            html += `<span class="en-char" style="font-family: '${enFont}', sans-serif;">${currentEn}</span>`;
+            currentEn = '';
+          }
+          currentZh += char;
+        } else {
+          if (currentZh) {
+            html += `<span class="zh-char" style="font-family: '${zhFont}', sans-serif;">${currentZh}</span>`;
+            currentZh = '';
+          }
+          currentEn += char;
+        }
+      }
+      if (currentZh) {
+        html += `<span class="zh-char" style="font-family: '${zhFont}', sans-serif;">${currentZh}</span>`;
+      }
+      if (currentEn) {
+        html += `<span class="en-char" style="font-family: '${enFont}', sans-serif;">${currentEn}</span>`;
+      }
+      return html;
+    }
+
+    // 字体加载完成后自动刷新所有预览
+    document.fonts.ready.then(() => {
+      fontData.forEach((item, index) => {
+        const preview = document.getElementById('preview-' + index);
+        if (preview) {
+          preview.innerHTML = '<span class="preview-text">' + renderMixedText(item.defaultText, item.zhFont, item.enFont) + '</span>';
+        }
+      });
+    });
+
+    // 强制预加载所有字体，避免首次预览不显示
+    fontData.forEach(item => {
+      document.fonts.load(`48px '${item.zhFont}'`, item.defaultText);
+    });
+
+    const grid = document.getElementById('fontsGrid');
+    fontData.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'font-card';
+      card.innerHTML = `
+        <div class="font-header ${item.headerClass}">${item.title}</div>
+        <div class="font-content">
+          <div class="input-row">
+            <input type="text" class="font-input" id="input-${index}"
+              value="${item.defaultText}"
+              placeholder="输入站名预览...">
+            <button class="refresh-btn" onclick="refreshPreview(${index})">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              刷新
+            </button>
+          </div>
+          <div class="preview-area" id="preview-${index}">
+            <span class="preview-text">${renderMixedText(item.defaultText, item.zhFont, item.enFont)}</span>
+          </div>
+          <div class="font-info">
+            <span>中文字体：${item.zhFont}</span>
+            <span>英文字体：${item.enFont}</span>
+            <span>适用：${item.lines}</span>
+            <a href="${item.fontFile}" download class="font-download" title="下载 ${item.fontFile}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              下载字体
+            </a>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    function refreshPreview(index) {
+      const input = document.getElementById(`input-${index}`);
+      const preview = document.getElementById(`preview-${index}`);
+      const text = input.value.trim();
+      const item = fontData[index];
+      if (text) {
+        preview.innerHTML = `<span class="preview-text">${renderMixedText(text, item.zhFont, item.enFont)}</span>`;
+      } else {
+        preview.innerHTML = `<span class="preview-placeholder">请输入文字后点击刷新</span>`;
+      }
+    }
+
+    document.querySelectorAll('.font-input').forEach((input, index) => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') refreshPreview(index);
+      });
+    });
+
+    // ========== 非法字符检测（基于 stations.js 站名数据） ==========
+
+// 检测函数
+function checkAndRedirect(text) {
+  if (containsIllegalChars(text)) {
+    sessionStorage.setItem('fromFonts', '1');
+    window.location.href = 'shit';
+    return true;
+  }
+  return false;
+}
+
+// input 事件（实时检测）
+document.addEventListener('input', function(e) {
+  if (e.target.classList.contains('font-input')) {
+    checkAndRedirect(e.target.value);
+  }
+});
+
+// keyup 事件（兼容中文输入法完成输入后）
+document.addEventListener('keyup', function(e) {
+  if (e.target.classList.contains('font-input')) {
+    checkAndRedirect(e.target.value);
+  }
+});
+
+// compositionend 事件（中文输入法输入完成）
+document.addEventListener('compositionend', function(e) {
+  if (e.target.classList.contains('font-input')) {
+    checkAndRedirect(e.target.value);
+  }
+});
+
+// 粘贴事件
+document.addEventListener('paste', function(e) {
+  if (e.target.classList.contains('font-input')) {
+    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    if (checkAndRedirect(pastedText)) {
+      e.preventDefault();
+    }
+  }
+});
+</script>
+</body>
+</html>

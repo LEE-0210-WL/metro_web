@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>技术解密 · EP01 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+   
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+ 
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>技术解密 · EP01 - 资产编号小秘密</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <div class="article-header">
+      <span class="article-series">技术探究 · EP01</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.8.7
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <article class="article-content">
+
+      <p>距离上次更新图文大概也有小半年了吧，我都差点忘记我有这个东西了，那么好，今天，来个图文板块的复活，新系列“技术探究”EP01和大家见面啦！那么长话短说，我们开始吧！</p>
+
+      <p>在深圳地铁的庞大网络中，每一列电客车都有其独一无二的“身份编码”。这些看似晦涩的数字与字母组合，实则是这座超大城市轨道交通系统高效运转的底层逻辑。</p>
+      
+      <p>在上一期的探站系列里，我们沉浸于大剧院站的空间体验。而今天，我们不妨将视野拉远，从“个体”走向“系统”，试图破译深圳地铁的“资产”——列车资产编号背后的故事。</p>
+      
+      <h2>一、线路编号：从“罗宝”到“32”，时代的快速发展</h2>
+      <p>如果你坐过十年以上的深圳地铁，大概会记得一个充满江湖气息的名字——“罗宝线”。没错，那就是今天的1号线。当年还有 “蛇口线”（现2号线）、“龙岗线”（现3号线）……每一条线都像是一条被冠以地名的“城市经脉”，听起来很接地气，但问题是——地名一多，新来的朋友、外地游客，甚至老深圳人自己都可能晕菜：“罗宝”？那...“蛇口”？</p>
+      <p>于是在2013年，深圳地铁干了一件“狠事”：把所有线路名字统统改为数字编号，干净利落，不留情面。从此，1、2、3、4、5…… 成为深圳人出行的“新符号”。</p>
+      <p>数字并非随机排列，它们基本按照建设时序与规划愿景交织演进：</br>1、2、3、4、5、11号线 —— 这是深圳地铁的“开国元勋”，撑起了最早的骨架，从罗湖到宝安，从蛇口到龙岗，从市中心到机场把深圳的“心脏”和“四肢”连了起来。</br>6、7、8、9、10号线 —— 这是“补网大军”，它们除了进最核心的老区，也填补了各片区大面积的空白，让地铁像毛细血管一样渗透进城市的每个角落。</br>12、14、16号线 —— 这是深圳的“急先锋”。12号线串起南山宝安，被官方冠以“西部换乘王”称号，14号线更是以“东部快线”之名，把坪山、龙岗拉进了市中心半小时生活圈，让3号线过于拥堵的客流得到一部分缓解，16号线串联起中心城和坪山片区，在东北方向进一步拓宽地铁服务区域。</p>
+      <p>而最让人期待的的，是那一串“未来的成员”：15、17、19、20、22、25、27、29、32号线。这些属于 “五期建设蓝图” ，大多以加密线或外围快线的身份登场，比如15号线是深圳第一条真正意义上的环线，22号线将串联起观澜与福田中心。而至于为什么没有18号线、21号线、23号线？有规划空缺，也有预留变更，诸多其他因素无可避免，这些东西就像城市给未来的“留白”，懂的人自然懂。不过，这些五期线路一大部分已经获批且正在如火如荼地建设当中，</p>
+      
+      <h2>二、色彩代码：线路的“视觉名片”</h2>
+      <p>如果数字是线路的名字，那颜色就是它的面孔。深圳地铁各线路拥有严格的色号标准（HEX）：</p>
+      <ul style="margin-bottom:20px;padding-left:20px;color:#374151;font-size:16px;list-style-type:disc;">
+        <li style="margin-bottom:6px;"><strong style="color:#01AF55;">1号线 #01AF55</strong> —— 贯穿东西的大动脉</li>
+        <li style="margin-bottom:6px;"><strong style="color:#B95800;">2号线 #B95800</strong> —— 蛇口线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#00A9E0;">3号线 #00A9E0</strong> —— 龙岗进城的生命线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#D42E0F;">4号线 #D42E0F</strong> —— 港铁运营的南北干线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#9E4DAA;">5号线 #9E4DAA</strong> —— 环中线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#01C4B7;">6号线 #01C4B7</strong> —— 光明线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#027776;">6号线支线 #027776</strong> —— 光明支线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#0131AC;">7号线 #0131AC</strong> —— 西丽线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#B95800;">8号线 #B95800</strong> —— 盐田线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#896B70;">9号线 #896B70</strong> —— 梅林线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#F67599;">10号线 #F67599</strong> —— 坂田线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#672146;">11号线 #672146</strong> —— 机场线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#A092B2;">12号线 #A092B2</strong> —— 南宝线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#F6AD2D;">13号线 #F6AD2D</strong> —— 石岩线的独特标识</li>
+        <li style="margin-bottom:6px;"><strong style="color:#F4CB67;">14号线 #F4CB67</strong> —— 东部快线的速度感</li>
+        <li style="margin-bottom:6px;"><strong style="color:#181BA5;">16号线 #181BA5</strong> —— 龙坪线</li>
+        <li style="margin-bottom:6px;"><strong style="color:#87DBDF;">20号线 #87DBDF</strong> —— 会展线</li>
+      </ul>
+      <p>这些颜色不仅用于线路图，更贯穿于站内吊板、屏蔽门盖板、列车色带，形成了乘客无意识中信赖的导航符号。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文2-2.jpg')">
+            <img src="图文2-2.jpg" alt="车辆编号示例">
+            <div class="gallery-caption">图文2-2：车辆编号示例</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>三、列车编号：列车身份证的秘密</h2>
+      <p>以3号线实际列车编号 <strong>03B3306 浦 0344</strong> 为例，我们可以将其拆解为六个部分：</p>
+      <ul style="margin-bottom:20px;padding-left:20px;color:#374151;font-size:16px;list-style-type:decimal;">
+        <li><strong>03</strong> —— 线路号，代表该列车配属于3号线；</li>
+        <li><strong>B</strong> —— 车型代码，表示B型车（深圳地铁常见车型有A、B等，A型车宽3米，B型车宽2.8米）；</li>
+        <li><strong>33</strong> —— 该批次采购的列车总数，即这一批次共有33列车；</li>
+        <li><strong>06</strong> —— 编组数，表示6节车厢编组（深圳多数线路为6节或8节编组）；</li>
+        <li><strong>浦</strong> —— 制造商缩写，代表中车浦镇车辆厂（深圳地铁主要供应商包括长客、浦镇）；</li>
+        <li><strong>0344</strong> —— 序列号，表示该列车是该线全部配车中的第44辆车（通常按采购顺序累计编号）。</li>
+      </ul>
+      <p>这套编码体系让运营人员能快速识别列车所属线路、车型、编组及制造商信息，极大提升了调度与检修效率。同时，乘客也可以通过车号了解所乘列车的“身世”——它来自哪个厂家、属于哪个批次、在第几节编组。</p>
+
+      <h2>四、为何关注“资产编号”？</h2>
+      <p>对于普通乘客，这些数字是陌生的，可能只在会面时为了快速获取彼此位置使用：对于地铁爱好者，它们中有些特殊的编号能让彼此会心一笑（都是狗椅干的，bushi）；但对于地铁人，它们是沟通的语言。理解这套编码，我们才能真正读懂一座城市轨道交通网络的规划意图，也看穿那些埋在地下、写在车头的城市雄心。</p>
+      
+      <p>下期预告：我们或许将拿起听音器，聊聊深圳地铁的“报站体系”变迁。敬请期待。</p>
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>
