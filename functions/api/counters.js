@@ -1,13 +1,22 @@
 export async function onRequestGet(context) {
   const corsHeaders = {
+    "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json"
+    "Access-Control-Allow-Headers": "Content-Type"
   };
   
   try {
-    const kv = context.env.COUNTER_KV;
+    // Pages Functions 用 context.env 或 globalThis.COUNTER_KV
+    const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
+    
+    if (!kv) {
+      return new Response(JSON.stringify({ error: "KV not bound" }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+    
     const remaining = parseFloat(await kv.get("remaining") || "11300000000");
     const sold = parseFloat(await kv.get("sold") || "50000000");
     const blast = parseFloat(await kv.get("blast") || "5.0");
@@ -16,7 +25,7 @@ export async function onRequestGet(context) {
       headers: corsHeaders
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e.message, stack: e.stack }), {
       status: 500,
       headers: corsHeaders
     });
@@ -25,15 +34,23 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   const corsHeaders = {
+    "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json"
+    "Access-Control-Allow-Headers": "Content-Type"
   };
   
   try {
-    const request = context.request;
-    const body = await request.json();
+    const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
+    
+    if (!kv) {
+      return new Response(JSON.stringify({ error: "KV not bound" }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
+    
+    const body = await context.request.json();
     const id = body.id;
     const delta = parseFloat(body.delta);
     
@@ -44,7 +61,6 @@ export async function onRequestPost(context) {
       });
     }
     
-    const kv = context.env.COUNTER_KV;
     let remaining = parseFloat(await kv.get("remaining") || "11300000000");
     let sold = parseFloat(await kv.get("sold") || "50000000");
     let blast = parseFloat(await kv.get("blast") || "5.0");
@@ -75,7 +91,7 @@ export async function onRequestPost(context) {
       headers: corsHeaders
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e.message, stack: e.stack }), {
       status: 500,
       headers: corsHeaders
     });
