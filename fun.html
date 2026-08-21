@@ -315,7 +315,6 @@ var kvReadsToday=0;
 var kvWritesToday=0;
 var KV_READ_LIMIT=100000;
 var KV_WRITE_LIMIT=1000;
-var pendingOps=[];
 var isSyncing=false;
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
 function fmtBlast(n){return n.toFixed(2)}
@@ -399,8 +398,6 @@ async function apiGet(){
   try{
     var r=await fetch(API_BASE+"/api/counters");
     if(!r.ok)throw new Error("http"+r.status);
-    kvReadsToday++;
-    updateKvBar();
     return await r.json();
   }catch(e){console.error("sync-get",e);return null}
 }
@@ -415,9 +412,6 @@ async function apiPost(id,delta){
       var err=await r.json().catch(function(){return{error:"unknown"}});
       throw new Error(err.error||("http"+r.status));
     }
-    kvReadsToday++;
-    kvWritesToday++;
-    updateKvBar();
     return await r.json();
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
 }
@@ -556,6 +550,8 @@ async function doEstate(n){
   if(res&&res.ok){
     remaining=res.remaining;
     sold=res.sold;
+    if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
+    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
     renderEstate();
   }else{
     rollbackEstate(oldR,oldS);
@@ -573,6 +569,8 @@ async function doXifu(n){
   if(res&&res.ok){
     xifuRemaining=res.xifuRemaining;
     xifuSold=res.xifuSold;
+    if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
+    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
     renderXifu();
   }else{
     rollbackXifu(oldR,oldS);
@@ -589,6 +587,8 @@ async function doBlast(n){
   var res=await apiPost("blast",n);
   if(res&&res.ok){
     blast=res.blast;
+    if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
+    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
     renderBlast();
   }else{
     rollbackBlast(oldB);
@@ -605,6 +605,8 @@ async function doBomb(n){
   var res=await apiPost("bombardier",n);
   if(res&&res.ok){
     bombProgress=res.bombProgress;
+    if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
+    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
     renderBomb();
   }else{
     rollbackBomb(oldB);
@@ -622,6 +624,8 @@ async function doDog(n){
   if(res&&res.ok){
     dogProgress=res.dogProgress;
     dogDecimals=res.dogDecimals||2;
+    if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
+    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
     renderDog();
   }else{
     rollbackDog(oldD,oldDec);
@@ -639,6 +643,8 @@ async function syncFromServer(){
   var data=await apiGet();
   if(!data){syncFailCount++;isSyncing=false;return;}
   syncFailCount=0;
+  if(data._kvReads!==undefined){kvReadsToday=data._kvReads;updateKvBar();}
+  if(data._kvWrites!==undefined)kvWritesToday=data._kvWrites;
   if(data.remaining!==undefined)remaining=data.remaining;
   if(data.sold!==undefined)sold=data.sold;
   if(data.blast!==undefined)blast=data.blast;
