@@ -201,7 +201,7 @@ export async function onRequestPost(context) {
     } else if (id === "blast") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
-          error: "单次爆破步长必须在 0.01 ~ 0.5 之间"
+          error: "单次爆破步长必须在 0.01 ~ 1.5 之间"
         }, stats)), {
           status: 400,
           headers: corsHeaders
@@ -245,7 +245,7 @@ export async function onRequestPost(context) {
       });
 
     } else if (id === "bombardier") {
-      if (delta < 0.01 || delta > 0.5) {
+      if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
           error: "单次翻新步长必须在 0.01 ~ 0.5 之间"
         }, stats)), {
