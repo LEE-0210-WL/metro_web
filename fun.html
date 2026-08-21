@@ -69,7 +69,7 @@ body{
 .kv-status-bar .kv-label{font-weight:600}
 .kv-status-bar .kv-barwrap{
   flex:1;
-  min-width:120px;
+  min-width:80px;
   height:6px;
   background:rgba(255,255,255,0.5);
   border-radius:3px;
@@ -81,7 +81,8 @@ body{
   background:#f59e0b;
   transition:width 0.5s ease;
 }
-.kv-status-bar .kv-pct{font-weight:700;min-width:40px;text-align:right}
+.kv-status-bar .kv-pct{font-weight:700;min-width:80px;text-align:right;font-size:12px}
+.kv-status-bar .kv-timer{font-weight:600;color:#92400e;min-width:120px;text-align:right;font-size:12px}
 .kv-status-bar.kv-warn{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#f87171;color:#b91c1c}
 .kv-status-bar.kv-warn .kv-bar{background:#ef4444}
 .kv-status-bar.kv-safe{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#34d399;color:#065f46}
@@ -281,6 +282,7 @@ body{
   #fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{font-size:22px}
   .page-title{font-size:22px}
   .kv-status-bar{font-size:12px;padding:8px 12px}
+  .kv-status-bar .kv-timer{min-width:80px}
 }
 </style>
 </head>
@@ -289,9 +291,10 @@ body{
 <h1 class="page-title">楼盘进度计数器</h1>
 <p class="page-subtitle">实时进度，速度受Workers KV影响</p>
 <div class="kv-status-bar" id="kv-bar">
-  <span class="kv-label">KV今日读取</span>
+  <span class="kv-label">📝 KV写入已用</span>
   <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
   <span class="kv-pct" id="kv-pct">计算中...</span>
+  <span class="kv-timer" id="kv-timer">⏳ 距重置: --:--:--</span>
 </div>
 <div id="funcounter-wrap"></div>
 
@@ -299,7 +302,6 @@ body{
 (function(){
 "use strict";
 var API_BASE="";
-var POLL_INTERVAL=30000;
 var remaining=11300000000;
 var sold=50000000;
 var blast=0.0;
@@ -316,6 +318,9 @@ var kvWritesToday=0;
 var KV_READ_LIMIT=100000;
 var KV_WRITE_LIMIT=1000;
 var isSyncing=false;
+var currentPollInterval = 30000; // 动态间隔
+var timerInterval = null;
+
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
 function fmtBlast(n){return n.toFixed(2)}
 function fmtBomb(n){return n.toFixed(2)}
@@ -323,6 +328,8 @@ function fmtDog(n){
   var dec=Math.max(2,dogDecimals);
   return n.toFixed(dec);
 }
+
+// ---------- 彩蛋消息 ----------
 var eggMessages={
   estate:{
     1:["又卖了一套！深铁阅云境火爆热销中","恭喜业主喜提新房！","+1套，开发商笑开花"],
@@ -394,6 +401,8 @@ function showEgg(type,amount){
     setTimeout(function(){div.remove()},400);
   },2200);
 }
+
+// ---------- API ----------
 async function apiGet(){
   try{
     var r=await fetch(API_BASE+"/api/counters");
@@ -415,18 +424,43 @@ async function apiPost(id,delta){
     return await r.json();
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
 }
+
+// ---------- 顶部状态条（写入进度 + 倒计时） ----------
 function updateKvBar(){
   var bar=document.getElementById("kv-bar");
   var inner=document.getElementById("kv-bar-inner");
   var pctEl=document.getElementById("kv-pct");
-  if(!bar||!inner||!pctEl)return;
-  var pct=Math.min((kvReadsToday/KV_READ_LIMIT)*100,100);
+  var timerEl=document.getElementById("kv-timer");
+  if(!bar||!inner||!pctEl||!timerEl)return;
+  
+  // 写入进度
+  var pct=Math.min((kvWritesToday/KV_WRITE_LIMIT)*100,100);
   inner.style.width=pct+"%";
-  pctEl.textContent=kvReadsToday.toLocaleString("zh-CN")+"次 ("+pct.toFixed(1)+"%)";
+  pctEl.textContent=kvWritesToday.toLocaleString("zh-CN")+" / "+KV_WRITE_LIMIT+" ("+pct.toFixed(1)+"%)";
+  
   bar.classList.remove("kv-warn","kv-safe");
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
+  
+  // 倒计时：UTC 0点重置 = 北京时间8点
+  var now=new Date();
+  var reset=new Date(now);
+  reset.setUTCHours(0,0,0,0);
+  if(now>=reset) reset.setUTCDate(reset.getUTCDate()+1); // 下一个0点
+  var diff=Math.max(0,Math.floor((reset-now)/1000));
+  var h=Math.floor(diff/3600);
+  var m=Math.floor((diff%3600)/60);
+  var s=diff%60;
+  timerEl.textContent="⏳ 距重置: "+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 }
+
+// 倒计时每秒更新
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(updateKvBar,1000);
+}
+
+// ---------- 渲染各模块 ----------
 function renderEstate(){
   var el=document.getElementById("fc-estate-num");
   var sl=document.getElementById("fc-sold-num");
@@ -475,6 +509,8 @@ function showBlastDone(){
     setTimeout(function(){div.remove()},400);
   };
 }
+
+// ---------- 绑定按钮 ----------
 function bindEstate(){
   document.getElementById("fc-btn-e1").onclick=function(){doEstate(1)};
   document.getElementById("fc-btn-e5").onclick=function(){doEstate(5)};
@@ -501,8 +537,8 @@ function bindBlast(){
   document.getElementById("fc-btn-b1").onclick=function(){doBlast(0.05)};
   document.getElementById("fc-btn-bc").onclick=function(){
     var v=parseFloat(document.getElementById("fc-inp-b").value);
-    if(v>=0.01&&v<=0.05){doBlast(v)}
-    else{alert("请输入0.01-0.05之间的数字")}
+    if(v>=0.01&&v<=1.5){doBlast(v)}
+    else{alert("请输入0.01-1.5之间的数字")}
   };
 }
 function bindBomb(){
@@ -511,8 +547,8 @@ function bindBomb(){
   document.getElementById("fc-btn-m1").onclick=function(){doBomb(0.05)};
   document.getElementById("fc-btn-mc").onclick=function(){
     var v=parseFloat(document.getElementById("fc-inp-m").value);
-    if(v>=0.01&&v<=0.05){doBomb(v)}
-    else{alert("请输入0.01-0.05之间的数字")}
+    if(v>=0.01&&v<=1.5){doBomb(v)}
+    else{alert("请输入0.01-1.5之间的数字")}
   };
 }
 function bindDog(){
@@ -521,37 +557,40 @@ function bindDog(){
   document.getElementById("fc-btn-d1").onclick=function(){doDog(0.05)};
   document.getElementById("fc-btn-dc").onclick=function(){
     var v=parseFloat(document.getElementById("fc-inp-d").value);
-    if(v>=0.01&&v<=0.05){doDog(v)}
-    else{alert("请输入0.01-0.05之间的数字")}
+    if(v>=0.01&&v<=1.5){doDog(v)}
+    else{alert("请输入0.01-1.5之间的数字")}
   };
 }
-function rollbackEstate(oldR,oldS){
-  remaining=oldR;sold=oldS;renderEstate();
+
+// ---------- 回滚 ----------
+function rollbackEstate(oldR,oldS){remaining=oldR;sold=oldS;renderEstate();}
+function rollbackXifu(oldR,oldS){xifuRemaining=oldR;xifuSold=oldS;renderXifu();}
+function rollbackBlast(oldB){blast=oldB;renderBlast();}
+function rollbackBomb(oldB){bombProgress=oldB;renderBomb();}
+function rollbackDog(oldD,oldDec){dogProgress=oldD;dogDecimals=oldDec;renderDog();}
+
+// 点击后重置轮询间隔为30秒，并立即同步一次
+function resetPollInterval(){
+  currentPollInterval=30000;
+  if(pollTimer){
+    clearInterval(pollTimer);
+    pollTimer=setInterval(syncFromServer,currentPollInterval);
+  }
 }
-function rollbackXifu(oldR,oldS){
-  xifuRemaining=oldR;xifuSold=oldS;renderXifu();
-}
-function rollbackBlast(oldB){
-  blast=oldB;renderBlast();
-}
-function rollbackBomb(oldB){
-  bombProgress=oldB;renderBomb();
-}
-function rollbackDog(oldD,oldDec){
-  dogProgress=oldD;dogDecimals=oldDec;renderDog();
-}
+
+// ---------- 操作函数（乐观更新） ----------
 async function doEstate(n){
   if(remaining<n){alert("剩余楼盘不足！");return}
   var oldR=remaining,oldS=sold;
   remaining-=n;sold+=n;
   renderEstate();
   showEgg("estate",n);
+  resetPollInterval(); // 点击后加速轮询
   var res=await apiPost("estate",n);
   if(res&&res.ok){
-    remaining=res.remaining;
-    sold=res.sold;
+    remaining=res.remaining;sold=res.sold;
     if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
-    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
+    if(res._kvWrites!==undefined){kvWritesToday=res._kvWrites;updateKvBar();}
     renderEstate();
   }else{
     rollbackEstate(oldR,oldS);
@@ -565,12 +604,12 @@ async function doXifu(n){
   xifuRemaining-=n;xifuSold+=n;
   renderXifu();
   showEgg("xifu",n);
+  resetPollInterval();
   var res=await apiPost("xifu",n);
   if(res&&res.ok){
-    xifuRemaining=res.xifuRemaining;
-    xifuSold=res.xifuSold;
+    xifuRemaining=res.xifuRemaining;xifuSold=res.xifuSold;
     if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
-    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
+    if(res._kvWrites!==undefined){kvWritesToday=res._kvWrites;updateKvBar();}
     renderXifu();
   }else{
     rollbackXifu(oldR,oldS);
@@ -584,11 +623,12 @@ async function doBlast(n){
   blast=Math.min(blast+n,100);
   renderBlast();
   showEgg("blast",n);
+  resetPollInterval();
   var res=await apiPost("blast",n);
   if(res&&res.ok){
     blast=res.blast;
     if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
-    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
+    if(res._kvWrites!==undefined){kvWritesToday=res._kvWrites;updateKvBar();}
     renderBlast();
   }else{
     rollbackBlast(oldB);
@@ -602,11 +642,12 @@ async function doBomb(n){
   bombProgress=Math.min(bombProgress+n,100);
   renderBomb();
   showEgg("bombardier",n);
+  resetPollInterval();
   var res=await apiPost("bombardier",n);
   if(res&&res.ok){
     bombProgress=res.bombProgress;
     if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
-    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
+    if(res._kvWrites!==undefined){kvWritesToday=res._kvWrites;updateKvBar();}
     renderBomb();
   }else{
     rollbackBomb(oldB);
@@ -620,12 +661,12 @@ async function doDog(n){
   dogProgress=Math.min(dogProgress+n,99.9999999999);
   renderDog();
   showEgg("dogchair",n);
+  resetPollInterval();
   var res=await apiPost("dogchair",n);
   if(res&&res.ok){
-    dogProgress=res.dogProgress;
-    dogDecimals=res.dogDecimals||2;
+    dogProgress=res.dogProgress;dogDecimals=res.dogDecimals||2;
     if(res._kvReads!==undefined){kvReadsToday=res._kvReads;updateKvBar();}
-    if(res._kvWrites!==undefined)kvWritesToday=res._kvWrites;
+    if(res._kvWrites!==undefined){kvWritesToday=res._kvWrites;updateKvBar();}
     renderDog();
   }else{
     rollbackDog(oldD,oldDec);
@@ -633,18 +674,21 @@ async function doDog(n){
     else{alert("同步失败，已回滚");}
   }
 }
+
+// ---------- 同步与自适应轮询 ----------
 async function syncFromServer(){
   if(isSyncing)return;
   isSyncing=true;
   var now=Date.now();
-  var minInterval=Math.min(POLL_INTERVAL,5000*Math.pow(2,Math.min(syncFailCount,6)));
+  var minInterval=Math.min(currentPollInterval,5000*Math.pow(2,Math.min(syncFailCount,6)));
   if(now-lastSync<minInterval){isSyncing=false;return;}
   lastSync=now;
   var data=await apiGet();
   if(!data){syncFailCount++;isSyncing=false;return;}
   syncFailCount=0;
+  
   if(data._kvReads!==undefined){kvReadsToday=data._kvReads;updateKvBar();}
-  if(data._kvWrites!==undefined)kvWritesToday=data._kvWrites;
+  if(data._kvWrites!==undefined){kvWritesToday=data._kvWrites;updateKvBar();}
   if(data.remaining!==undefined)remaining=data.remaining;
   if(data.sold!==undefined)sold=data.sold;
   if(data.blast!==undefined)blast=data.blast;
@@ -653,17 +697,23 @@ async function syncFromServer(){
   if(data.bombProgress!==undefined)bombProgress=data.bombProgress;
   if(data.dogProgress!==undefined)dogProgress=data.dogProgress;
   if(data.dogDecimals!==undefined)dogDecimals=data.dogDecimals;
-  renderEstate();
-  renderXifu();
-  renderBlast();
-  renderBomb();
-  renderDog();
+  
+  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
   isSyncing=false;
+  
+  // 自适应延长间隔（最大10分钟）
+  currentPollInterval=Math.min(600000, currentPollInterval*1.5);
+  if(pollTimer){
+    clearInterval(pollTimer);
+    pollTimer=setInterval(syncFromServer,currentPollInterval);
+  }
 }
+
 function startPolling(){
   if(pollTimer)clearInterval(pollTimer);
+  currentPollInterval=30000;
   syncFromServer();
-  pollTimer=setInterval(syncFromServer,POLL_INTERVAL);
+  pollTimer=setInterval(syncFromServer,currentPollInterval);
 }
 function stopPolling(){
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
@@ -675,6 +725,8 @@ document.addEventListener("visibilitychange",function(){
     startPolling();
   }
 });
+
+// ---------- 初始化 ----------
 function init(){
   var wrap=document.getElementById("funcounter-wrap");
   if(!wrap)return;
@@ -727,7 +779,7 @@ function init(){
           '<button class="fc-btn" id="fc-btn-b05">+0.02</button>'+
           '<button class="fc-btn" id="fc-btn-b1">+0.05</button>'+
           '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-b" placeholder="自定义" min="0.01" max="0.05" step="0.01">'+
+            '<input type="number" id="fc-inp-b" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
             '<button class="fc-btn" id="fc-btn-bc">确定</button>'+
           '</div>'+
         '</div>'+
@@ -745,7 +797,7 @@ function init(){
           '<button class="fc-btn" id="fc-btn-m05">+0.02</button>'+
           '<button class="fc-btn" id="fc-btn-m1">+0.05</button>'+
           '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-m" placeholder="自定义" min="0.01" max="0.05" step="0.01">'+
+            '<input type="number" id="fc-inp-m" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
             '<button class="fc-btn" id="fc-btn-mc">确定</button>'+
           '</div>'+
         '</div>'+
@@ -763,22 +815,16 @@ function init(){
           '<button class="fc-btn" id="fc-btn-d05">+0.02</button>'+
           '<button class="fc-btn" id="fc-btn-d1">+0.05</button>'+
           '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-d" placeholder="自定义" min="0.01" max="0.05" step="0.01">'+
+            '<input type="number" id="fc-inp-d" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
             '<button class="fc-btn" id="fc-btn-dc">确定</button>'+
           '</div>'+
         '</div>'+
       '</div>'+
     '</div>';
-  bindEstate();
-  bindXifu();
-  bindBlast();
-  bindBomb();
-  bindDog();
-  renderEstate();
-  renderXifu();
-  renderBlast();
-  renderBomb();
-  renderDog();
+  bindEstate();bindXifu();bindBlast();bindBomb();bindDog();
+  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
+  updateKvBar();
+  startTimer();
   startPolling();
 }
 if(document.readyState==="loading"){
