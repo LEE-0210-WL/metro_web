@@ -1,15 +1,37 @@
 const STATS_KEY = "_kv_stats";
+let cachedStats = null;
+let writeCounter = 0;
+const WRITE_BATCH = 5;
 
 async function loadStats(kv) {
+  // 如果有缓存且未过期（同一天），直接返回缓存，不读 KV
+  if (cachedStats) {
+    const now = new Date();
+    const last = new Date(cachedStats.lastReset);
+    if (now.getUTCDate() === last.getUTCDate()) {
+      return cachedStats;
+    }
+  }
+  // 否则从 KV 读取
   try {
     const data = await kv.get(STATS_KEY);
-    if (data) return JSON.parse(data);
+    if (data) {
+      cachedStats = JSON.parse(data);
+      return cachedStats;
+    }
   } catch (e) {}
-  return { reads: 0, writes: 0, lastReset: Date.now() };
+  cachedStats = { reads: 0, writes: 0, lastReset: Date.now() };
+  return cachedStats;
 }
 
-async function saveStats(kv, stats) {
-  await kv.put(STATS_KEY, JSON.stringify(stats));
+async function saveStats(kv, stats, force = false) {
+  cachedStats = stats;
+  writeCounter++;
+  // 每 5 次请求才真正写一次 KV，或者强制写入
+  if (writeCounter >= WRITE_BATCH || force) {
+    await kv.put(STATS_KEY, JSON.stringify(stats));
+    writeCounter = 0;
+  }
 }
 
 function resetIfNeeded(stats) {
@@ -24,7 +46,8 @@ function resetIfNeeded(stats) {
 function injectStats(obj, stats) {
   obj._kvReads = stats.reads;
   obj._kvWrites = stats.writes;
-  obj._readLimit = 100000;
+  obj._readLimit = 100000;   // 读取上限（仅展示用）
+  obj._writeLimit = 1000;    // 写入上限（进度条用这个）
   return obj;
 }
 
@@ -38,7 +61,6 @@ export async function onRequestGet(context) {
 
   try {
     const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
-
     if (!kv) {
       return new Response(JSON.stringify(injectStats({ error: "KV not bound" }, { reads: 0, writes: 0 })), {
         status: 500,
@@ -55,8 +77,9 @@ export async function onRequestGet(context) {
     const bombProgress = parseFloat(await kv.get("bombProgress") || "0");
     const dogProgress = parseFloat(await kv.get("dogProgress") || "0");
     const dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
+    
     stats.reads++;
-    await saveStats(kv, stats);
+    await saveStats(kv, stats); // 仅计数，不一定写KV
 
     return new Response(JSON.stringify(injectStats({
       remaining, sold, blast, xifuRemaining, xifuSold, bombProgress, dogProgress, dogDecimals
@@ -81,7 +104,6 @@ export async function onRequestPost(context) {
 
   try {
     const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
-
     if (!kv) {
       return new Response(JSON.stringify(injectStats({ error: "KV not bound" }, { reads: 0, writes: 0 })), {
         status: 500,
@@ -106,41 +128,41 @@ export async function onRequestPost(context) {
     if (id === "estate") {
       const dailyKey = "estate_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 500;
+      const maxDaily = 500; // 大运TOD每日限额
 
       if (dailySold + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
           error: "今日大运TOD买房额度已用完，明天再来！",
-          dailySold: dailySold,
-          maxDaily: maxDaily
+          dailySold, maxDaily
         }, stats)), {
           status: 429,
           headers: corsHeaders
         });
       }
 
-      const cost = delta;
       let remaining = parseFloat(await kv.get("remaining") || "11300000000");
       let sold = parseFloat(await kv.get("sold") || "50000000");
 
-      if (remaining < cost) {
+      if (remaining < delta) {
         return new Response(JSON.stringify(injectStats({ error: "not enough remaining" }, stats)), {
           status: 400,
           headers: corsHeaders
         });
       }
 
-      remaining -= cost;
-      sold += cost;
+      remaining -= delta;
+      sold += delta;
       await kv.put("remaining", remaining.toString());
       await kv.put("sold", sold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
+      
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
 
       return new Response(JSON.stringify(injectStats({
-        ok: true, remaining, sold, blast: parseFloat(await kv.get("blast") || "0"),
+        ok: true, remaining, sold,
+        blast: parseFloat(await kv.get("blast") || "0"),
         xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
         xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
         bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
@@ -153,35 +175,34 @@ export async function onRequestPost(context) {
     } else if (id === "xifu") {
       const dailyKey = "xifu_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1000;
+      const maxDaily = 1000; // 深铁熙府每日限额
 
       if (dailySold + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
           error: "今日深铁熙府买房额度已用完，明天再来！",
-          dailySold: dailySold,
-          maxDaily: maxDaily
+          dailySold, maxDaily
         }, stats)), {
           status: 429,
           headers: corsHeaders
         });
       }
 
-      const cost = delta;
       let xifuRemaining = parseFloat(await kv.get("xifuRemaining") || "20000");
       let xifuSold = parseFloat(await kv.get("xifuSold") || "0");
 
-      if (xifuRemaining < cost) {
+      if (xifuRemaining < delta) {
         return new Response(JSON.stringify(injectStats({ error: "not enough xifu remaining" }, stats)), {
           status: 400,
           headers: corsHeaders
         });
       }
 
-      xifuRemaining -= cost;
-      xifuSold += cost;
+      xifuRemaining -= delta;
+      xifuSold += delta;
       await kv.put("xifuRemaining", xifuRemaining.toString());
       await kv.put("xifuSold", xifuSold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
+      
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -215,8 +236,7 @@ export async function onRequestPost(context) {
       if (dailyBlast + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
           error: "今日爆破额度已用完，明天再来！",
-          dailyBlast: dailyBlast,
-          maxDaily: maxDaily
+          dailyBlast, maxDaily
         }, stats)), {
           status: 429,
           headers: corsHeaders
@@ -227,6 +247,7 @@ export async function onRequestPost(context) {
       blast = Math.min(blast + delta, 100);
       await kv.put("blast", blast.toString());
       await kv.put(dailyKey, (dailyBlast + delta).toString());
+      
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -247,7 +268,7 @@ export async function onRequestPost(context) {
     } else if (id === "bombardier") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
-          error: "单次翻新步长必须在 0.01 ~ 0.5 之间"
+          error: "单次翻新步长必须在 0.01 ~ 1.5 之间"
         }, stats)), {
           status: 400,
           headers: corsHeaders
@@ -261,8 +282,7 @@ export async function onRequestPost(context) {
       if (dailyBomb + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
           error: "今日翻新额度已用完，明天再来！",
-          dailyBomb: dailyBomb,
-          maxDaily: maxDaily
+          dailyBomb, maxDaily
         }, stats)), {
           status: 429,
           headers: corsHeaders
@@ -273,6 +293,7 @@ export async function onRequestPost(context) {
       bombProgress = Math.min(bombProgress + delta, 100);
       await kv.put("bombProgress", bombProgress.toString());
       await kv.put(dailyKey, (dailyBomb + delta).toString());
+      
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -307,8 +328,7 @@ export async function onRequestPost(context) {
       if (dailyDog + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
           error: "今日倒闭额度已用完，明天再来！",
-          dailyDog: dailyDog,
-          maxDaily: maxDaily
+          dailyDog, maxDaily
         }, stats)), {
           status: 429,
           headers: corsHeaders
@@ -318,7 +338,6 @@ export async function onRequestPost(context) {
       let dogProgress = parseFloat(await kv.get("dogProgress") || "0");
       let dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
 
-      // 拼多多模式：到99.9后每次多加一位小数
       if (dogProgress >= 99.9 && dogProgress < 99.9999999999) {
         dogDecimals++;
       }
@@ -327,6 +346,7 @@ export async function onRequestPost(context) {
       await kv.put("dogProgress", dogProgress.toString());
       await kv.put("dogDecimals", dogDecimals.toString());
       await kv.put(dailyKey, (dailyDog + delta).toString());
+      
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
