@@ -242,7 +242,7 @@ export async function onRequestPost(context) {
         dogDecimals: parseInt(await kv.get("dogDecimals") || "2")
       }, stats)), {
         headers: corsHeaders
-      };
+      });
 
     } else if (id === "bombardier") {
       if (delta < 0.01 || delta > 0.5) {
