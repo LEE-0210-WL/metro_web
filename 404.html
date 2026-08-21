@@ -134,7 +134,8 @@
       document.getElementById('sec').textContent = sec;
       if (sec <= 0) {
         clearInterval(timer);
-        location.href = 'index';
+        // 关键修改：改为绝对路径根目录
+        location.href = '/';
       }
     }, 1000);
 
