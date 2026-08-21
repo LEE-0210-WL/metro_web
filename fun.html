@@ -332,7 +332,7 @@ var KV_WRITE_LIMIT=1000;
 var isSyncing=false;
 var currentPollInterval=30000;
 var timerInterval=null;
-var lastValidStats = { writes: 0, writeLimit: 1000 }; // 缓存上次有效数据
+var lastValidStats = { writes: 0, writeLimit: 1000 };
 
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
 function fmtBlast(n){return n.toFixed(2)}
@@ -439,25 +439,23 @@ async function apiPost(id,delta){
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
 }
 
-// ---------- 从 KV 统计 Worker 拉取写入数（无超时限制） ----------
+// ---------- 从代理接口获取 KV 统计（同域，无跨域） ----------
 async function fetchKVStats() {
   try {
-    // 不设置超时，浏览器会一直等待（但若网络断开会失败）
-    const res = await fetch('https://kv-stats-worker.3582099572.workers.dev/');
+    const res = await fetch('/api/kv-stats');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data && typeof data.writes === 'number') {
-      lastValidStats = data; // 更新缓存
+      lastValidStats = data;
       return data;
     }
     throw new Error('Invalid data');
   } catch (e) {
     console.warn('KV stats fetch failed, using cached value', e);
-    return null; // 返回 null 表示本次未获取到新数据
+    return null;
   }
 }
 
-// ---------- 更新进度条（使用最新或缓存数据） ----------
 async function updateStatsBar() {
   const stats = await fetchKVStats();
   if (stats) {
@@ -465,21 +463,14 @@ async function updateStatsBar() {
     KV_WRITE_LIMIT = stats.writeLimit || 1000;
     updateKvBar();
   } else {
-    // 如果获取失败，但之前有缓存数据，可以显示缓存值并加个标识
-    // 这里我们不更新 kvWritesToday，保留旧值，但可以在界面上显示一个提示
-    var pctEl = document.getElementById('kv-pct');
-    if (pctEl && !pctEl.textContent.includes('⚠️')) {
-      // 不强制修改，保持显示旧数据，因为 updateKvBar 会使用当前 kvWritesToday
-    }
-    // 为了提示用户，可增加一个类或文本，但这里为了简洁，仅保留旧值
+    // 保持旧值，页面仍显示上次有效数据
   }
-  // 无论成功失败，都再次调用 updateKvBar 刷新倒计时等
-  updateKvBar();
+  updateKvBar(); // 刷新倒计时
 }
 
 function startKVStatsPolling() {
-  updateStatsBar(); // 立即尝试
-  setInterval(updateStatsBar, 60000); // 每60秒重试
+  updateStatsBar();
+  setInterval(updateStatsBar, 60000);
 }
 
 // ---------- 顶部状态条 ----------
@@ -490,7 +481,6 @@ function updateKvBar(){
   var timerEl=document.getElementById("kv-timer");
   if(!bar||!inner||!pctEl||!timerEl)return;
   
-  // 写入进度
   var pct=Math.min((kvWritesToday/KV_WRITE_LIMIT)*100,100);
   inner.style.width=pct+"%";
   pctEl.textContent=kvWritesToday.toLocaleString("zh-CN")+" / "+KV_WRITE_LIMIT+" ("+pct.toFixed(1)+"%)";
@@ -499,7 +489,6 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
-  // 倒计时：UTC 0点重置 = 北京时间 8点
   var now=new Date();
   var reset=new Date(now);
   reset.setUTCHours(0,0,0,0);
@@ -634,7 +623,7 @@ function resetPollInterval(){
   }
 }
 
-// ---------- 操作函数（乐观更新） ----------
+// ---------- 操作函数 ----------
 async function doEstate(n){
   if(remaining<n){alert("剩余楼盘不足！");return}
   var oldR=remaining,oldS=sold;
@@ -716,7 +705,7 @@ async function doDog(n){
   }
 }
 
-// ---------- 轮询同步（业务数据） ----------
+// ---------- 轮询 ----------
 async function syncFromServer(){
   if(isSyncing)return;
   isSyncing=true;
@@ -728,7 +717,6 @@ async function syncFromServer(){
   if(!data){syncFailCount++;isSyncing=false;return;}
   syncFailCount=0;
   
-  // 仅更新业务数据
   if(data.remaining!==undefined)remaining=data.remaining;
   if(data.sold!==undefined)sold=data.sold;
   if(data.blast!==undefined)blast=data.blast;
@@ -861,7 +849,7 @@ function init(){
   renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
   updateKvBar();
   startTimer();
-  startKVStatsPolling();  // 启动 KV 统计独立轮询
+  startKVStatsPolling();
   startPolling();
 }
 
