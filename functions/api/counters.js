@@ -1,22 +1,34 @@
-let dailyStats = { reads: 0, writes: 0, lastReset: Date.now() };
+const STATS_KEY = "_kv_stats";
 
-function resetIfNeeded() {
-  const now = new Date();
-  const last = new Date(dailyStats.lastReset);
-  if (now.getUTCDate() !== last.getUTCDate()) {
-    dailyStats = { reads: 0, writes: 0, lastReset: Date.now() };
-  }
+async function loadStats(kv) {
+  try {
+    const data = await kv.get(STATS_KEY);
+    if (data) return JSON.parse(data);
+  } catch (e) {}
+  return { reads: 0, writes: 0, lastReset: Date.now() };
 }
 
-function injectStats(obj) {
-  obj._kvReads = dailyStats.reads;
-  obj._kvWrites = dailyStats.writes;
+async function saveStats(kv, stats) {
+  await kv.put(STATS_KEY, JSON.stringify(stats));
+}
+
+function resetIfNeeded(stats) {
+  const now = new Date();
+  const last = new Date(stats.lastReset);
+  if (now.getUTCDate() !== last.getUTCDate()) {
+    return { reads: 0, writes: 0, lastReset: Date.now() };
+  }
+  return stats;
+}
+
+function injectStats(obj, stats) {
+  obj._kvReads = stats.reads;
+  obj._kvWrites = stats.writes;
   obj._readLimit = 100000;
   return obj;
 }
 
 export async function onRequestGet(context) {
-  resetIfNeeded();
   const corsHeaders = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -28,12 +40,13 @@ export async function onRequestGet(context) {
     const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
 
     if (!kv) {
-      return new Response(JSON.stringify(injectStats({ error: "KV not bound" })), {
+      return new Response(JSON.stringify(injectStats({ error: "KV not bound" }, { reads: 0, writes: 0 })), {
         status: 500,
         headers: corsHeaders
       });
     }
 
+    let stats = resetIfNeeded(await loadStats(kv));
     const remaining = parseFloat(await kv.get("remaining") || "11300000000");
     const sold = parseFloat(await kv.get("sold") || "50000000");
     const blast = parseFloat(await kv.get("blast") || "0");
@@ -42,15 +55,16 @@ export async function onRequestGet(context) {
     const bombProgress = parseFloat(await kv.get("bombProgress") || "0");
     const dogProgress = parseFloat(await kv.get("dogProgress") || "0");
     const dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
-    dailyStats.reads++;
+    stats.reads++;
+    await saveStats(kv, stats);
 
-    return new Response(JSON.stringify(injectStats({ 
-      remaining, sold, blast, xifuRemaining, xifuSold, bombProgress, dogProgress, dogDecimals 
-    })), {
+    return new Response(JSON.stringify(injectStats({
+      remaining, sold, blast, xifuRemaining, xifuSold, bombProgress, dogProgress, dogDecimals
+    }, stats)), {
       headers: corsHeaders
     });
   } catch (e) {
-    return new Response(JSON.stringify(injectStats({ error: e.message })), {
+    return new Response(JSON.stringify(injectStats({ error: e.message }, { reads: 0, writes: 0 })), {
       status: 500,
       headers: corsHeaders
     });
@@ -58,7 +72,6 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
-  resetIfNeeded();
   const corsHeaders = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -70,18 +83,19 @@ export async function onRequestPost(context) {
     const kv = context.env.COUNTER_KV || globalThis.COUNTER_KV;
 
     if (!kv) {
-      return new Response(JSON.stringify(injectStats({ error: "KV not bound" })), {
+      return new Response(JSON.stringify(injectStats({ error: "KV not bound" }, { reads: 0, writes: 0 })), {
         status: 500,
         headers: corsHeaders
       });
     }
 
+    let stats = resetIfNeeded(await loadStats(kv));
     const body = await context.request.json();
     const id = body.id;
     const delta = parseFloat(body.delta);
 
     if (!id || isNaN(delta)) {
-      return new Response(JSON.stringify(injectStats({ error: "invalid params" })), {
+      return new Response(JSON.stringify(injectStats({ error: "invalid params" }, stats)), {
         status: 400,
         headers: corsHeaders
       });
@@ -95,11 +109,11 @@ export async function onRequestPost(context) {
       const maxDaily = 100;
 
       if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify(injectStats({ 
+        return new Response(JSON.stringify(injectStats({
           error: "今日买房额度已用完，明天再来！",
           dailySold: dailySold,
           maxDaily: maxDaily
-        })), {
+        }, stats)), {
           status: 429,
           headers: corsHeaders
         });
@@ -110,7 +124,7 @@ export async function onRequestPost(context) {
       let sold = parseFloat(await kv.get("sold") || "50000000");
 
       if (remaining < cost) {
-        return new Response(JSON.stringify(injectStats({ error: "not enough remaining" })), {
+        return new Response(JSON.stringify(injectStats({ error: "not enough remaining" }, stats)), {
           status: 400,
           headers: corsHeaders
         });
@@ -121,17 +135,18 @@ export async function onRequestPost(context) {
       await kv.put("remaining", remaining.toString());
       await kv.put("sold", sold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
-      dailyStats.reads++;
-      dailyStats.writes++;
+      stats.reads++;
+      stats.writes++;
+      await saveStats(kv, stats);
 
-      return new Response(JSON.stringify(injectStats({ 
+      return new Response(JSON.stringify(injectStats({
         ok: true, remaining, sold, blast: parseFloat(await kv.get("blast") || "0"),
         xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
         xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
         bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
         dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
         dogDecimals: parseInt(await kv.get("dogDecimals") || "2")
-      })), {
+      }, stats)), {
         headers: corsHeaders
       });
 
@@ -141,11 +156,11 @@ export async function onRequestPost(context) {
       const maxDaily = 500;
 
       if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify(injectStats({ 
+        return new Response(JSON.stringify(injectStats({
           error: "今日深铁熙府买房额度已用完，明天再来！",
           dailySold: dailySold,
           maxDaily: maxDaily
-        })), {
+        }, stats)), {
           status: 429,
           headers: corsHeaders
         });
@@ -156,7 +171,7 @@ export async function onRequestPost(context) {
       let xifuSold = parseFloat(await kv.get("xifuSold") || "0");
 
       if (xifuRemaining < cost) {
-        return new Response(JSON.stringify(injectStats({ error: "not enough xifu remaining" })), {
+        return new Response(JSON.stringify(injectStats({ error: "not enough xifu remaining" }, stats)), {
           status: 400,
           headers: corsHeaders
         });
@@ -167,10 +182,11 @@ export async function onRequestPost(context) {
       await kv.put("xifuRemaining", xifuRemaining.toString());
       await kv.put("xifuSold", xifuSold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
-      dailyStats.reads++;
-      dailyStats.writes++;
+      stats.reads++;
+      stats.writes++;
+      await saveStats(kv, stats);
 
-      return new Response(JSON.stringify(injectStats({ 
+      return new Response(JSON.stringify(injectStats({
         ok: true, xifuRemaining, xifuSold,
         remaining: parseFloat(await kv.get("remaining") || "11300000000"),
         sold: parseFloat(await kv.get("sold") || "50000000"),
@@ -178,15 +194,15 @@ export async function onRequestPost(context) {
         bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
         dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
         dogDecimals: parseInt(await kv.get("dogDecimals") || "2")
-      })), {
+      }, stats)), {
         headers: corsHeaders
       });
 
     } else if (id === "blast") {
       if (delta < 0.01 || delta > 0.5) {
-        return new Response(JSON.stringify(injectStats({ 
-          error: "单次爆破步长必须在 0.01 ~ 0.5 之间" 
-        })), {
+        return new Response(JSON.stringify(injectStats({
+          error: "单次爆破步长必须在 0.01 ~ 0.5 之间"
+        }, stats)), {
           status: 400,
           headers: corsHeaders
         });
@@ -197,11 +213,11 @@ export async function onRequestPost(context) {
       const maxDaily = 0.5;
 
       if (dailyBlast + delta > maxDaily) {
-        return new Response(JSON.stringify(injectStats({ 
+        return new Response(JSON.stringify(injectStats({
           error: "今日爆破额度已用完，明天再来！",
           dailyBlast: dailyBlast,
           maxDaily: maxDaily
-        })), {
+        }, stats)), {
           status: 429,
           headers: corsHeaders
         });
@@ -211,10 +227,11 @@ export async function onRequestPost(context) {
       blast = Math.min(blast + delta, 100);
       await kv.put("blast", blast.toString());
       await kv.put(dailyKey, (dailyBlast + delta).toString());
-      dailyStats.reads++;
-      dailyStats.writes++;
+      stats.reads++;
+      stats.writes++;
+      await saveStats(kv, stats);
 
-      return new Response(JSON.stringify(injectStats({ 
+      return new Response(JSON.stringify(injectStats({
         ok: true, blast,
         remaining: parseFloat(await kv.get("remaining") || "11300000000"),
         sold: parseFloat(await kv.get("sold") || "50000000"),
@@ -223,15 +240,15 @@ export async function onRequestPost(context) {
         bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
         dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
         dogDecimals: parseInt(await kv.get("dogDecimals") || "2")
-      })), {
+      }, stats)), {
         headers: corsHeaders
-      });
+      };
 
     } else if (id === "bombardier") {
       if (delta < 0.01 || delta > 0.5) {
-        return new Response(JSON.stringify(injectStats({ 
-          error: "单次翻新步长必须在 0.01 ~ 0.5 之间" 
-        })), {
+        return new Response(JSON.stringify(injectStats({
+          error: "单次翻新步长必须在 0.01 ~ 0.5 之间"
+        }, stats)), {
           status: 400,
           headers: corsHeaders
         });
@@ -242,11 +259,11 @@ export async function onRequestPost(context) {
       const maxDaily = 0.5;
 
       if (dailyBomb + delta > maxDaily) {
-        return new Response(JSON.stringify(injectStats({ 
+        return new Response(JSON.stringify(injectStats({
           error: "今日翻新额度已用完，明天再来！",
           dailyBomb: dailyBomb,
           maxDaily: maxDaily
-        })), {
+        }, stats)), {
           status: 429,
           headers: corsHeaders
         });
@@ -256,10 +273,11 @@ export async function onRequestPost(context) {
       bombProgress = Math.min(bombProgress + delta, 100);
       await kv.put("bombProgress", bombProgress.toString());
       await kv.put(dailyKey, (dailyBomb + delta).toString());
-      dailyStats.reads++;
-      dailyStats.writes++;
+      stats.reads++;
+      stats.writes++;
+      await saveStats(kv, stats);
 
-      return new Response(JSON.stringify(injectStats({ 
+      return new Response(JSON.stringify(injectStats({
         ok: true, bombProgress,
         remaining: parseFloat(await kv.get("remaining") || "11300000000"),
         sold: parseFloat(await kv.get("sold") || "50000000"),
@@ -268,15 +286,15 @@ export async function onRequestPost(context) {
         xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
         dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
         dogDecimals: parseInt(await kv.get("dogDecimals") || "2")
-      })), {
+      }, stats)), {
         headers: corsHeaders
       });
 
     } else if (id === "dogchair") {
       if (delta < 0.01 || delta > 0.5) {
-        return new Response(JSON.stringify(injectStats({ 
-          error: "单次倒闭步长必须在 0.01 ~ 0.5 之间" 
-        })), {
+        return new Response(JSON.stringify(injectStats({
+          error: "单次倒闭步长必须在 0.01 ~ 0.5 之间"
+        }, stats)), {
           status: 400,
           headers: corsHeaders
         });
@@ -287,11 +305,11 @@ export async function onRequestPost(context) {
       const maxDaily = 0.5;
 
       if (dailyDog + delta > maxDaily) {
-        return new Response(JSON.stringify(injectStats({ 
+        return new Response(JSON.stringify(injectStats({
           error: "今日倒闭额度已用完，明天再来！",
           dailyDog: dailyDog,
           maxDaily: maxDaily
-        })), {
+        }, stats)), {
           status: 429,
           headers: corsHeaders
         });
@@ -309,10 +327,11 @@ export async function onRequestPost(context) {
       await kv.put("dogProgress", dogProgress.toString());
       await kv.put("dogDecimals", dogDecimals.toString());
       await kv.put(dailyKey, (dailyDog + delta).toString());
-      dailyStats.reads++;
-      dailyStats.writes++;
+      stats.reads++;
+      stats.writes++;
+      await saveStats(kv, stats);
 
-      return new Response(JSON.stringify(injectStats({ 
+      return new Response(JSON.stringify(injectStats({
         ok: true, dogProgress, dogDecimals,
         remaining: parseFloat(await kv.get("remaining") || "11300000000"),
         sold: parseFloat(await kv.get("sold") || "50000000"),
@@ -320,18 +339,18 @@ export async function onRequestPost(context) {
         xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
         xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
         bombProgress: parseFloat(await kv.get("bombProgress") || "0")
-      })), {
+      }, stats)), {
         headers: corsHeaders
       });
 
     } else {
-      return new Response(JSON.stringify(injectStats({ error: "unknown id" })), {
+      return new Response(JSON.stringify(injectStats({ error: "unknown id" }, stats)), {
         status: 400,
         headers: corsHeaders
       });
     }
   } catch (e) {
-    return new Response(JSON.stringify(injectStats({ error: e.message })), {
+    return new Response(JSON.stringify(injectStats({ error: e.message }, { reads: 0, writes: 0 })), {
       status: 500,
       headers: corsHeaders
     });
