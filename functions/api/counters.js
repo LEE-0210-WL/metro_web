@@ -138,7 +138,7 @@ export async function onRequestPost(context) {
     } else if (id === "xifu") {
       const dailyKey = "xifu_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
+      const maxDaily = 10000;
 
       if (dailySold + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({ 
@@ -183,7 +183,7 @@ export async function onRequestPost(context) {
       });
 
     } else if (id === "blast") {
-      if (delta < 0.01 || delta > 0.05) {
+      if (delta < 0.01 || delta > 0.5) {
         return new Response(JSON.stringify(injectStats({ 
           error: "单次爆破步长必须在 0.01 ~ 0.05 之间" 
         })), {
@@ -194,7 +194,7 @@ export async function onRequestPost(context) {
 
       const dailyKey = "blast_daily_" + today;
       const dailyBlast = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 0.05;
+      const maxDaily = 0.5;
 
       if (dailyBlast + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({ 
@@ -228,9 +228,9 @@ export async function onRequestPost(context) {
       });
 
     } else if (id === "bombardier") {
-      if (delta < 0.01 || delta > 0.05) {
+      if (delta < 0.01 || delta > 0.5) {
         return new Response(JSON.stringify(injectStats({ 
-          error: "单次翻新步长必须在 0.01 ~ 0.05 之间" 
+          error: "单次翻新步长必须在 0.01 ~ 0.5 之间" 
         })), {
           status: 400,
           headers: corsHeaders
@@ -239,7 +239,7 @@ export async function onRequestPost(context) {
 
       const dailyKey = "bomb_daily_" + today;
       const dailyBomb = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 0.05;
+      const maxDaily = 0.5;
 
       if (dailyBomb + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({ 
@@ -273,7 +273,7 @@ export async function onRequestPost(context) {
       });
 
     } else if (id === "dogchair") {
-      if (delta < 0.01 || delta > 0.05) {
+      if (delta < 0.01 || delta > 0.5) {
         return new Response(JSON.stringify(injectStats({ 
           error: "单次倒闭步长必须在 0.01 ~ 0.05 之间" 
         })), {
@@ -284,7 +284,7 @@ export async function onRequestPost(context) {
 
       const dailyKey = "dog_daily_" + today;
       const dailyDog = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 0.05;
+      const maxDaily = 0.5;
 
       if (dailyDog + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({ 
