@@ -327,8 +327,8 @@ var syncFailCount=0;
 var pollTimer=null;
 var kvReadsToday=0;
 var kvWritesToday=0;
-var KV_READ_LIMIT=100000;  // 保留读取上限（仅展示）
-var KV_WRITE_LIMIT=1000;   // 写入上限（进度条用这个）
+var KV_READ_LIMIT=100000;
+var KV_WRITE_LIMIT=1000;
 var isSyncing=false;
 var currentPollInterval=30000;
 var timerInterval=null;
@@ -438,16 +438,50 @@ async function apiPost(id,delta){
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
 }
 
-// ---------- 从 KV 统计 Worker 拉取写入数 ----------
+// ---------- 从 KV 统计 Worker 拉取写入数（带超时和降级） ----------
+let lastValidStats = { writes: 0, writeLimit: 1000 };
+
 async function fetchKVStats() {
   try {
-    const res = await fetch('https://kv-stats-worker.3582099572.workers.dev/');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 秒超时
+
+    const res = await fetch('https://kv-stats-worker.3582099572.workers.dev/', {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.json();
+    const data = await res.json();
+    if (data && typeof data.writes === 'number') {
+      lastValidStats = data;
+      return data;
+    }
+    throw new Error('Invalid data');
   } catch (e) {
-    console.warn('KV stats fetch failed', e);
+    console.warn('KV stats fetch failed, using cached value', e);
     return null;
   }
+}
+
+async function updateStatsBar() {
+  const stats = await fetchKVStats();
+  if (stats) {
+    kvWritesToday = stats.writes;
+    KV_WRITE_LIMIT = stats.writeLimit || 1000;
+    updateKvBar();
+  } else {
+    // 显示“暂不可用”但保留旧值
+    const pctEl = document.getElementById('kv-pct');
+    if (pctEl && kvWritesToday === 0) {
+      pctEl.textContent = '⏳ 加载中...';
+    }
+  }
+}
+
+function startKVStatsPolling() {
+  updateStatsBar(); // 立即尝试
+  setInterval(updateStatsBar, 60000); // 每 60 秒重试
 }
 
 // ---------- 顶部状态条 ----------
@@ -458,7 +492,6 @@ function updateKvBar(){
   var timerEl=document.getElementById("kv-timer");
   if(!bar||!inner||!pctEl||!timerEl)return;
   
-  // 写入进度（使用从 kv-stats-worker 获取的数据）
   var pct=Math.min((kvWritesToday/KV_WRITE_LIMIT)*100,100);
   inner.style.width=pct+"%";
   pctEl.textContent=kvWritesToday.toLocaleString("zh-CN")+" / "+KV_WRITE_LIMIT+" ("+pct.toFixed(1)+"%)";
@@ -467,7 +500,7 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
-  // 倒计时：UTC 0点重置 = 北京时间 8点
+  // 倒计时
   var now=new Date();
   var reset=new Date(now);
   reset.setUTCHours(0,0,0,0);
@@ -479,21 +512,9 @@ function updateKvBar(){
   timerEl.textContent="⏳ 距重置: "+h+"时"+m+"分"+s+"秒";
 }
 
-// ---------- 定时更新 KV 统计 ----------
-async function updateStatsBar() {
-  const stats = await fetchKVStats();
-  if (stats) {
-    kvWritesToday = stats.writes;
-    KV_WRITE_LIMIT = stats.writeLimit || 1000;
-    updateKvBar();
-  }
-}
-
-function startKVStatsPolling() {
-  // 首次立即更新
-  updateStatsBar();
-  // 每 60 秒更新一次（避免频繁调用 GraphQL）
-  setInterval(updateStatsBar, 60000);
+function startTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(updateKvBar,1000);
 }
 
 // ---------- 渲染 ----------
@@ -625,7 +646,6 @@ async function doEstate(n){
   var res=await apiPost("estate",n);
   if(res&&res.ok){
     remaining=res.remaining;sold=res.sold;
-    // 不再依赖 res._kvWrites，由独立定时器更新
     renderEstate();
   }else{
     rollbackEstate(oldR,oldS);
@@ -709,7 +729,6 @@ async function syncFromServer(){
   if(!data){syncFailCount++;isSyncing=false;return;}
   syncFailCount=0;
   
-  // 仅更新业务数据，不再更新 _kvWrites（由独立定时器负责）
   if(data.remaining!==undefined)remaining=data.remaining;
   if(data.sold!==undefined)sold=data.sold;
   if(data.blast!==undefined)blast=data.blast;
@@ -844,12 +863,6 @@ function init(){
   startTimer();
   startKVStatsPolling();  // 启动 KV 统计独立轮询
   startPolling();
-}
-
-// ---------- 倒计时定时器 ----------
-function startTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval=setInterval(updateKvBar,1000);
 }
 
 if(document.readyState==="loading"){
