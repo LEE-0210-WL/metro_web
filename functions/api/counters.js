@@ -115,7 +115,7 @@ export async function onRequestPost(context) {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // ===== estate 分支 =====
+    // ---------------- estate ----------------
     if (id === "estate") {
       const dailyKey = "estate_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
@@ -164,7 +164,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ===== xifu 分支 =====
+    // ---------------- xifu ----------------
     else if (id === "xifu") {
       const dailyKey = "xifu_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
@@ -213,7 +213,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ===== blast 分支 =====
+    // ---------------- blast ----------------
     else if (id === "blast") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
@@ -261,7 +261,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ===== bombardier 分支 =====
+    // ---------------- bombardier ----------------
     else if (id === "bombardier") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
@@ -309,7 +309,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ===== dogchair 分支 =====
+    // ---------------- dogchair ----------------
     else if (id === "dogchair") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
