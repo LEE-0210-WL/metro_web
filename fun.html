@@ -40,16 +40,52 @@ body{
   font-size:28px;
   font-weight:700;
   color:#1e3a8a;
-  margin-bottom:8px;
+  margin-bottom:4px;
   text-align:center;
   margin-top:60px;
 }
 .page-subtitle{
   font-size:14px;
   color:#6b7280;
-  margin-bottom:24px;
+  margin-bottom:8px;
   text-align:center;
 }
+.kv-status-bar{
+  max-width:1200px;
+  width:calc(100% - 40px);
+  margin-bottom:16px;
+  padding:10px 16px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:1px solid #fbbf24;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  font-size:13px;
+  color:#92400e;
+}
+.kv-status-bar .kv-label{font-weight:600}
+.kv-status-bar .kv-barwrap{
+  flex:1;
+  min-width:120px;
+  height:6px;
+  background:rgba(255,255,255,0.5);
+  border-radius:3px;
+  overflow:hidden;
+}
+.kv-status-bar .kv-bar{
+  height:100%;
+  border-radius:3px;
+  background:#f59e0b;
+  transition:width 0.5s ease;
+}
+.kv-status-bar .kv-pct{font-weight:700;min-width:40px;text-align:right}
+.kv-status-bar.kv-warn{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#f87171;color:#b91c1c}
+.kv-status-bar.kv-warn .kv-bar{background:#ef4444}
+.kv-status-bar.kv-safe{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#34d399;color:#065f46}
+.kv-status-bar.kv-safe .kv-bar{background:#10b981}
 #funcounter-wrap{
   max-width:1200px;
   width:100%;
@@ -244,6 +280,7 @@ body{
   .fc-title{font-size:18px}
   #fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{font-size:22px}
   .page-title{font-size:22px}
+  .kv-status-bar{font-size:12px;padding:8px 12px}
 }
 </style>
 </head>
@@ -251,13 +288,18 @@ body{
 <a href="/" class="back-link">返回首页</a>
 <h1 class="page-title">楼盘进度计数器</h1>
 <p class="page-subtitle">实时进度，速度受Workers KV影响</p>
+<div class="kv-status-bar" id="kv-bar">
+  <span class="kv-label">KV今日读取</span>
+  <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
+  <span class="kv-pct" id="kv-pct">计算中...</span>
+</div>
 <div id="funcounter-wrap"></div>
 
 <script>
 (function(){
 "use strict";
 var API_BASE="";
-var POLL_INTERVAL=3000;
+var POLL_INTERVAL=30000;
 var remaining=11300000000;
 var sold=50000000;
 var blast=0.0;
@@ -267,6 +309,14 @@ var bombProgress=0.0;
 var dogProgress=0.0;
 var dogDecimals=2;
 var lastSync=0;
+var syncFailCount=0;
+var pollTimer=null;
+var kvReadsToday=0;
+var kvWritesToday=0;
+var KV_READ_LIMIT=100000;
+var KV_WRITE_LIMIT=1000;
+var pendingOps=[];
+var isSyncing=false;
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
 function fmtBlast(n){return n.toFixed(2)}
 function fmtBomb(n){return n.toFixed(2)}
@@ -349,6 +399,8 @@ async function apiGet(){
   try{
     var r=await fetch(API_BASE+"/api/counters");
     if(!r.ok)throw new Error("http"+r.status);
+    kvReadsToday++;
+    updateKvBar();
     return await r.json();
   }catch(e){console.error("sync-get",e);return null}
 }
@@ -363,8 +415,23 @@ async function apiPost(id,delta){
       var err=await r.json().catch(function(){return{error:"unknown"}});
       throw new Error(err.error||("http"+r.status));
     }
+    kvReadsToday++;
+    kvWritesToday++;
+    updateKvBar();
     return await r.json();
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
+}
+function updateKvBar(){
+  var bar=document.getElementById("kv-bar");
+  var inner=document.getElementById("kv-bar-inner");
+  var pctEl=document.getElementById("kv-pct");
+  if(!bar||!inner||!pctEl)return;
+  var pct=Math.min((kvReadsToday/KV_READ_LIMIT)*100,100);
+  inner.style.width=pct+"%";
+  pctEl.textContent=kvReadsToday.toLocaleString("zh-CN")+"次 ("+pct.toFixed(1)+"%)";
+  bar.classList.remove("kv-warn","kv-safe");
+  if(pct>=80)bar.classList.add("kv-warn");
+  else if(pct<=30)bar.classList.add("kv-safe");
 }
 function renderEstate(){
   var el=document.getElementById("fc-estate-num");
@@ -464,60 +531,114 @@ function bindDog(){
     else{alert("请输入0.01-0.05之间的数字")}
   };
 }
+function rollbackEstate(oldR,oldS){
+  remaining=oldR;sold=oldS;renderEstate();
+}
+function rollbackXifu(oldR,oldS){
+  xifuRemaining=oldR;xifuSold=oldS;renderXifu();
+}
+function rollbackBlast(oldB){
+  blast=oldB;renderBlast();
+}
+function rollbackBomb(oldB){
+  bombProgress=oldB;renderBomb();
+}
+function rollbackDog(oldD,oldDec){
+  dogProgress=oldD;dogDecimals=oldDec;renderDog();
+}
 async function doEstate(n){
   if(remaining<n){alert("剩余楼盘不足！");return}
+  var oldR=remaining,oldS=sold;
+  remaining-=n;sold+=n;
+  renderEstate();
+  showEgg("estate",n);
   var res=await apiPost("estate",n);
   if(res&&res.ok){
     remaining=res.remaining;
     sold=res.sold;
     renderEstate();
-    showEgg("estate",n);
+  }else{
+    rollbackEstate(oldR,oldS);
+    if(res===null){}
+    else{alert("同步失败，已回滚");}
   }
 }
 async function doXifu(n){
   if(xifuRemaining<n){alert("剩余楼盘不足！");return}
+  var oldR=xifuRemaining,oldS=xifuSold;
+  xifuRemaining-=n;xifuSold+=n;
+  renderXifu();
+  showEgg("xifu",n);
   var res=await apiPost("xifu",n);
   if(res&&res.ok){
     xifuRemaining=res.xifuRemaining;
     xifuSold=res.xifuSold;
     renderXifu();
-    showEgg("xifu",n);
+  }else{
+    rollbackXifu(oldR,oldS);
+    if(res===null){}
+    else{alert("同步失败，已回滚");}
   }
 }
 async function doBlast(n){
   if(blast>=100){alert("大楼已完全爆破！");return}
+  var oldB=blast;
+  blast=Math.min(blast+n,100);
+  renderBlast();
+  showEgg("blast",n);
   var res=await apiPost("blast",n);
   if(res&&res.ok){
     blast=res.blast;
     renderBlast();
-    showEgg("blast",n);
+  }else{
+    rollbackBlast(oldB);
+    if(res===null){}
+    else{alert("同步失败，已回滚");}
   }
 }
 async function doBomb(n){
   if(bombProgress>=100){alert("庞巴迪已完全翻新！");return}
+  var oldB=bombProgress;
+  bombProgress=Math.min(bombProgress+n,100);
+  renderBomb();
+  showEgg("bombardier",n);
   var res=await apiPost("bombardier",n);
   if(res&&res.ok){
     bombProgress=res.bombProgress;
     renderBomb();
-    showEgg("bombardier",n);
+  }else{
+    rollbackBomb(oldB);
+    if(res===null){}
+    else{alert("同步失败，已回滚");}
   }
 }
 async function doDog(n){
   if(dogProgress>=99.9999999999){alert("狗椅已完全倒闭！");return}
+  var oldD=dogProgress,oldDec=dogDecimals;
+  dogProgress=Math.min(dogProgress+n,99.9999999999);
+  renderDog();
+  showEgg("dogchair",n);
   var res=await apiPost("dogchair",n);
   if(res&&res.ok){
     dogProgress=res.dogProgress;
     dogDecimals=res.dogDecimals||2;
     renderDog();
-    showEgg("dogchair",n);
+  }else{
+    rollbackDog(oldD,oldDec);
+    if(res===null){}
+    else{alert("同步失败，已回滚");}
   }
 }
 async function syncFromServer(){
+  if(isSyncing)return;
+  isSyncing=true;
   var now=Date.now();
-  if(now-lastSync<2000)return;
+  var minInterval=Math.min(POLL_INTERVAL,5000*Math.pow(2,Math.min(syncFailCount,6)));
+  if(now-lastSync<minInterval){isSyncing=false;return;}
   lastSync=now;
   var data=await apiGet();
-  if(!data)return;
+  if(!data){syncFailCount++;isSyncing=false;return;}
+  syncFailCount=0;
   if(data.remaining!==undefined)remaining=data.remaining;
   if(data.sold!==undefined)sold=data.sold;
   if(data.blast!==undefined)blast=data.blast;
@@ -531,7 +652,23 @@ async function syncFromServer(){
   renderBlast();
   renderBomb();
   renderDog();
+  isSyncing=false;
 }
+function startPolling(){
+  if(pollTimer)clearInterval(pollTimer);
+  syncFromServer();
+  pollTimer=setInterval(syncFromServer,POLL_INTERVAL);
+}
+function stopPolling(){
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+}
+document.addEventListener("visibilitychange",function(){
+  if(document.hidden){
+    stopPolling();
+  }else{
+    startPolling();
+  }
+});
 function init(){
   var wrap=document.getElementById("funcounter-wrap");
   if(!wrap)return;
@@ -636,8 +773,7 @@ function init(){
   renderBlast();
   renderBomb();
   renderDog();
-  syncFromServer();
-  setInterval(syncFromServer,POLL_INTERVAL);
+  startPolling();
 }
 if(document.readyState==="loading"){
   document.addEventListener("DOMContentLoaded",init);
