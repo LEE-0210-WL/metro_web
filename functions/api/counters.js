@@ -4,15 +4,6 @@ let writeCounter = 0;
 const WRITE_BATCH = 5;
 
 async function loadStats(kv) {
-  // 如果有缓存且未过期（同一天），直接返回缓存，不读 KV
-  if (cachedStats) {
-    const now = new Date();
-    const last = new Date(cachedStats.lastReset);
-    if (now.getUTCDate() === last.getUTCDate()) {
-      return cachedStats;
-    }
-  }
-  // 否则从 KV 读取
   try {
     const data = await kv.get(STATS_KEY);
     if (data) {
@@ -27,7 +18,6 @@ async function loadStats(kv) {
 async function saveStats(kv, stats, force = false) {
   cachedStats = stats;
   writeCounter++;
-  // 每 5 次请求才真正写一次 KV，或者强制写入
   if (writeCounter >= WRITE_BATCH || force) {
     await kv.put(STATS_KEY, JSON.stringify(stats));
     writeCounter = 0;
@@ -46,8 +36,8 @@ function resetIfNeeded(stats) {
 function injectStats(obj, stats) {
   obj._kvReads = stats.reads;
   obj._kvWrites = stats.writes;
-  obj._readLimit = 100000;   // 读取上限（仅展示用）
-  obj._writeLimit = 1000;    // 写入上限（进度条用这个）
+  obj._readLimit = 100000;
+  obj._writeLimit = 1000;
   return obj;
 }
 
@@ -77,9 +67,9 @@ export async function onRequestGet(context) {
     const bombProgress = parseFloat(await kv.get("bombProgress") || "0");
     const dogProgress = parseFloat(await kv.get("dogProgress") || "0");
     const dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
-    
+
     stats.reads++;
-    await saveStats(kv, stats); // 仅计数，不一定写KV
+    await saveStats(kv, stats);
 
     return new Response(JSON.stringify(injectStats({
       remaining, sold, blast, xifuRemaining, xifuSold, bombProgress, dogProgress, dogDecimals
@@ -125,10 +115,11 @@ export async function onRequestPost(context) {
 
     const today = new Date().toISOString().split('T')[0];
 
+    // ===== estate 分支 =====
     if (id === "estate") {
       const dailyKey = "estate_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 500; // 大运TOD每日限额
+      const maxDaily = 500;
 
       if (dailySold + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
@@ -155,7 +146,7 @@ export async function onRequestPost(context) {
       await kv.put("remaining", remaining.toString());
       await kv.put("sold", sold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
-      
+
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -171,11 +162,13 @@ export async function onRequestPost(context) {
       }, stats)), {
         headers: corsHeaders
       });
+    }
 
-    } else if (id === "xifu") {
+    // ===== xifu 分支 =====
+    else if (id === "xifu") {
       const dailyKey = "xifu_daily_" + today;
       const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1000; // 深铁熙府每日限额
+      const maxDaily = 1000;
 
       if (dailySold + delta > maxDaily) {
         return new Response(JSON.stringify(injectStats({
@@ -202,7 +195,7 @@ export async function onRequestPost(context) {
       await kv.put("xifuRemaining", xifuRemaining.toString());
       await kv.put("xifuSold", xifuSold.toString());
       await kv.put(dailyKey, (dailySold + delta).toString());
-      
+
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -218,8 +211,10 @@ export async function onRequestPost(context) {
       }, stats)), {
         headers: corsHeaders
       });
+    }
 
-    } else if (id === "blast") {
+    // ===== blast 分支 =====
+    else if (id === "blast") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
           error: "单次爆破步长必须在 0.01 ~ 1.5 之间"
@@ -247,7 +242,7 @@ export async function onRequestPost(context) {
       blast = Math.min(blast + delta, 100);
       await kv.put("blast", blast.toString());
       await kv.put(dailyKey, (dailyBlast + delta).toString());
-      
+
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -264,8 +259,10 @@ export async function onRequestPost(context) {
       }, stats)), {
         headers: corsHeaders
       });
+    }
 
-    } else if (id === "bombardier") {
+    // ===== bombardier 分支 =====
+    else if (id === "bombardier") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
           error: "单次翻新步长必须在 0.01 ~ 1.5 之间"
@@ -293,7 +290,7 @@ export async function onRequestPost(context) {
       bombProgress = Math.min(bombProgress + delta, 100);
       await kv.put("bombProgress", bombProgress.toString());
       await kv.put(dailyKey, (dailyBomb + delta).toString());
-      
+
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -310,8 +307,10 @@ export async function onRequestPost(context) {
       }, stats)), {
         headers: corsHeaders
       });
+    }
 
-    } else if (id === "dogchair") {
+    // ===== dogchair 分支 =====
+    else if (id === "dogchair") {
       if (delta < 0.01 || delta > 1.5) {
         return new Response(JSON.stringify(injectStats({
           error: "单次倒闭步长必须在 0.01 ~ 1.5 之间"
@@ -346,7 +345,7 @@ export async function onRequestPost(context) {
       await kv.put("dogProgress", dogProgress.toString());
       await kv.put("dogDecimals", dogDecimals.toString());
       await kv.put(dailyKey, (dailyDog + delta).toString());
-      
+
       stats.reads++;
       stats.writes++;
       await saveStats(kv, stats);
@@ -362,8 +361,9 @@ export async function onRequestPost(context) {
       }, stats)), {
         headers: corsHeaders
       });
+    }
 
-    } else {
+    else {
       return new Response(JSON.stringify(injectStats({ error: "unknown id" }, stats)), {
         status: 400,
         headers: corsHeaders
