@@ -94,10 +94,22 @@ body{
   text-align:right;
   font-size:15px;
 }
+.kv-status-bar .kv-lock{
+  color:#dc2626;
+  font-weight:700;
+  font-size:15px;
+  display:none;
+}
 .kv-status-bar.kv-warn{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#f87171;color:#b91c1c}
 .kv-status-bar.kv-warn .kv-bar{background:#ef4444}
 .kv-status-bar.kv-safe{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#34d399;color:#065f46}
 .kv-status-bar.kv-safe .kv-bar{background:#10b981}
+.fc-btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  transform:none !important;
+  box-shadow:none !important;
+}
 #funcounter-wrap{
   max-width:1200px;
   width:100%;
@@ -307,6 +319,7 @@ body{
   <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
   <span class="kv-pct" id="kv-pct">计算中...</span>
   <span class="kv-timer" id="kv-timer">⏳ 距重置: --时--分--秒</span>
+  <span class="kv-lock" id="kv-lock">🔒 写入已锁定</span>
 </div>
 <div id="funcounter-wrap"></div>
 
@@ -333,6 +346,7 @@ var isSyncing=false;
 var currentPollInterval=30000;
 var timerInterval=null;
 var lastValidStats = { writes: 0, writeLimit: 1000 };
+var isWriteLocked = false;
 
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
 function fmtBlast(n){return n.toFixed(2)}
@@ -439,7 +453,7 @@ async function apiPost(id,delta){
   }catch(e){console.error("sync-post",e);alert(e.message);return null}
 }
 
-// ---------- 从代理接口获取 KV 统计（同域，无跨域） ----------
+// ---------- 从代理接口获取 KV 统计 ----------
 async function fetchKVStats() {
   try {
     const res = await fetch('/api/kv-stats');
@@ -463,7 +477,7 @@ async function updateStatsBar() {
     KV_WRITE_LIMIT = stats.writeLimit || 1000;
     updateKvBar();
   } else {
-    // 保持旧值，页面仍显示上次有效数据
+    // 保持旧值
   }
   updateKvBar(); // 刷新倒计时
 }
@@ -471,6 +485,18 @@ async function updateStatsBar() {
 function startKVStatsPolling() {
   updateStatsBar();
   setInterval(updateStatsBar, 60000);
+}
+
+// ---------- 按钮锁定 ----------
+function updateButtons() {
+  var btns = document.querySelectorAll('.fc-btn');
+  btns.forEach(function(btn) {
+    btn.disabled = isWriteLocked;
+  });
+  var lockEl = document.getElementById('kv-lock');
+  if (lockEl) {
+    lockEl.style.display = isWriteLocked ? 'inline' : 'none';
+  }
 }
 
 // ---------- 顶部状态条 ----------
@@ -489,6 +515,14 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
+  // 锁定逻辑：超过95%锁定
+  if (pct >= 95) {
+    isWriteLocked = true;
+  } else {
+    isWriteLocked = false;
+  }
+  updateButtons(); // 更新按钮状态
+
   var now=new Date();
   var reset=new Date(now);
   reset.setUTCHours(0,0,0,0);
@@ -625,6 +659,10 @@ function resetPollInterval(){
 
 // ---------- 操作函数 ----------
 async function doEstate(n){
+  if (isWriteLocked) {
+    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
+    return;
+  }
   if(remaining<n){alert("剩余楼盘不足！");return}
   var oldR=remaining,oldS=sold;
   remaining-=n;sold+=n;
@@ -641,6 +679,10 @@ async function doEstate(n){
   }
 }
 async function doXifu(n){
+  if (isWriteLocked) {
+    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
+    return;
+  }
   if(xifuRemaining<n){alert("剩余楼盘不足！");return}
   var oldR=xifuRemaining,oldS=xifuSold;
   xifuRemaining-=n;xifuSold+=n;
@@ -657,6 +699,10 @@ async function doXifu(n){
   }
 }
 async function doBlast(n){
+  if (isWriteLocked) {
+    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
+    return;
+  }
   if(blast>=100){alert("大楼已完全爆破！");return}
   var oldB=blast;
   blast=Math.min(blast+n,100);
@@ -673,6 +719,10 @@ async function doBlast(n){
   }
 }
 async function doBomb(n){
+  if (isWriteLocked) {
+    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
+    return;
+  }
   if(bombProgress>=100){alert("庞巴迪已完全翻新！");return}
   var oldB=bombProgress;
   bombProgress=Math.min(bombProgress+n,100);
@@ -689,6 +739,10 @@ async function doBomb(n){
   }
 }
 async function doDog(n){
+  if (isWriteLocked) {
+    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
+    return;
+  }
   if(dogProgress>=99.9999999999){alert("狗椅已完全倒闭！");return}
   var oldD=dogProgress,oldDec=dogDecimals;
   dogProgress=Math.min(dogProgress+n,99.9999999999);
@@ -851,6 +905,7 @@ function init(){
   startTimer();
   startKVStatsPolling();
   startPolling();
+  updateButtons(); // 初始锁定状态
 }
 
 if(document.readyState==="loading"){
