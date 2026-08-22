@@ -94,7 +94,7 @@ export async function onRequestPost(context) {
 
     // ---------- 各业务分支处理 ----------
     let result = { ok: true };
-    let success = false; // 标记是否真正写入了数据
+    let success = false;
 
     if (id === "estate") {
       const dailyKey = "estate_daily_" + today;
@@ -122,7 +122,6 @@ export async function onRequestPost(context) {
         });
       }
 
-      // 执行写入
       remaining -= delta;
       sold += delta;
       await kv.put("remaining", remaining.toString());
@@ -264,15 +263,12 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ---------- 写入成功，更新计数器 ----------
     if (success) {
       writeCount++;
-      await kv.put(writeCountKey, writeCount.toString()); // 自动过期由 TTL 控制
-      // 可选：设置过期时间为 2 天，保证跨天安全
-      // await kv.put(writeCountKey, writeCount.toString(), { expirationTtl: 86400 * 2 });
+      await kv.put(writeCountKey, writeCount.toString());
     }
 
-    // 返回完整数据（包含最新的 writeCount）
+    // 重新获取最新业务数据
     const remaining = parseFloat(await kv.get("remaining") || "11300000000");
     const sold = parseFloat(await kv.get("sold") || "50000000");
     const blast = parseFloat(await kv.get("blast") || "0");
