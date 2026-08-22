@@ -333,11 +333,11 @@ body{
 <h1 class="page-title">楼盘进度计数器</h1>
 <p class="page-subtitle">实时进度，速度受Workers KV影响</p>
 <div class="kv-status-bar" id="kv-bar">
-  <span class="kv-label">📝 KV写入已用</span>
+  <span class="kv-label">KV写入已用</span>
   <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
   <span class="kv-pct" id="kv-pct">计算中...</span>
-  <span class="kv-timer" id="kv-timer">⏳ 距重置: --时--分--秒</span>
-  <span class="kv-lock" id="kv-lock">🔒 写入已锁定</span>
+  <span class="kv-timer" id="kv-timer">距重置: --时--分--秒</span>
+  <span class="kv-lock" id="kv-lock">写入已锁定</span>
 </div>
 <div id="funcounter-wrap"></div>
 
@@ -490,7 +490,7 @@ async function apiPost(id,delta){
       if (r.status === 429) {
         isWriteLocked = true;
         updateButtons();
-        showToast('⚠️ 今日 KV 写入额度已用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置。', 4000);
+        showToast('今日 KV 写入额度已用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置。', 4000);
         throw new Error('KV_LOCKED');
       }
       throw new Error(errObj.error || ("http"+r.status));
@@ -509,33 +509,40 @@ async function apiPost(id,delta){
 // ---------- 获取 KV 统计（带时间戳绕过缓存） ----------
 async function fetchKVStats() {
   try {
+    console.log('[KV统计] 开始请求 /api/kv-stats?t=' + Date.now());
     const res = await fetch('/api/kv-stats?t=' + Date.now());
+    console.log('[KV统计] 响应状态:', res.status);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    console.log('[KV统计] 返回数据:', data);
     if (data && typeof data.writes === 'number') {
       lastValidStats = data;
+      console.log('[KV统计] 写入数更新为:', data.writes);
       return data;
     }
     throw new Error('Invalid data');
   } catch (e) {
-    console.warn('KV stats fetch failed, using cached value', e);
+    console.warn('[KV统计] 获取失败:', e);
     return null;
   }
 }
 
 async function updateStatsBar(showLoadingToast) {
   if (showLoadingToast) {
-    showToast('🔄 正在同步KV用量...', 1500);
+    showToast('正在同步KV用量...', 1500);
   }
+  console.log('[KV统计] updateStatsBar 执行, 当前 kvWritesToday:', kvWritesToday);
   const stats = await fetchKVStats();
   if (stats) {
+    console.log('[KV统计] 更新前 kvWritesToday:', kvWritesToday, '更新后:', stats.writes);
     kvWritesToday = stats.writes;
     KV_WRITE_LIMIT = stats.writeLimit || 1000;
     updateKvBar();
+    console.log('[KV统计] 界面已刷新');
   } else {
-    // 保持旧值
+    console.warn('[KV统计] 无有效数据，保持旧值');
   }
-  updateKvBar(); // 刷新倒计时
+  updateKvBar();
 }
 
 function startKVStatsPolling() {
@@ -586,7 +593,7 @@ function updateKvBar(){
   var h=Math.floor(diff/3600);
   var m=Math.floor((diff%3600)/60);
   var s=diff%60;
-  timerEl.textContent="⏳ 距重置: "+h+"时"+m+"分"+s+"秒";
+  timerEl.textContent="距重置: "+h+"时"+m+"分"+s+"秒";
 }
 
 function startTimer(){
@@ -714,15 +721,15 @@ function resetPollInterval(){
 
 // ---------- 操作函数 ----------
 async function doEstate(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(remaining < n){ alert("剩余楼盘不足！"); return; }
   
   var oldR=remaining, oldS=sold;
   remaining -= n; sold += n;
   renderEstate();
   showEgg("estate", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
+  showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
   
   isProcessing = true;
@@ -735,10 +742,10 @@ async function doEstate(n){
       remaining = res.remaining; sold = res.sold;
       renderEstate();
       await updateStatsBar(true);
-      showToast('✅ 同步完成！', 1000);
+      showToast('同步完成', 1000);
     } else {
       rollbackEstate(oldR, oldS);
-      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+      if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
     isProcessing = false;
@@ -753,15 +760,15 @@ async function doEstate(n){
 }
 
 async function doXifu(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(xifuRemaining < n){ alert("剩余楼盘不足！"); return; }
   
   var oldR=xifuRemaining, oldS=xifuSold;
   xifuRemaining -= n; xifuSold += n;
   renderXifu();
   showEgg("xifu", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
+  showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
   
   isProcessing = true;
@@ -774,10 +781,10 @@ async function doXifu(n){
       xifuRemaining = res.xifuRemaining; xifuSold = res.xifuSold;
       renderXifu();
       await updateStatsBar(true);
-      showToast('✅ 同步完成！', 1000);
+      showToast('同步完成', 1000);
     } else {
       rollbackXifu(oldR, oldS);
-      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+      if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
     isProcessing = false;
@@ -792,15 +799,15 @@ async function doXifu(n){
 }
 
 async function doBlast(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(blast >= 100){ alert("大楼已完全爆破！"); return; }
   
   var oldB = blast;
   blast = Math.min(blast + n, 100);
   renderBlast();
   showEgg("blast", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
+  showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
   
   isProcessing = true;
@@ -813,10 +820,10 @@ async function doBlast(n){
       blast = res.blast;
       renderBlast();
       await updateStatsBar(true);
-      showToast('✅ 同步完成！', 1000);
+      showToast('同步完成', 1000);
     } else {
       rollbackBlast(oldB);
-      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+      if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
     isProcessing = false;
@@ -831,15 +838,15 @@ async function doBlast(n){
 }
 
 async function doBomb(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(bombProgress >= 100){ alert("庞巴迪已完全翻新！"); return; }
   
   var oldB = bombProgress;
   bombProgress = Math.min(bombProgress + n, 100);
   renderBomb();
   showEgg("bombardier", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
+  showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
   
   isProcessing = true;
@@ -852,10 +859,10 @@ async function doBomb(n){
       bombProgress = res.bombProgress;
       renderBomb();
       await updateStatsBar(true);
-      showToast('✅ 同步完成！', 1000);
+      showToast('同步完成', 1000);
     } else {
       rollbackBomb(oldB);
-      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+      if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
     isProcessing = false;
@@ -870,15 +877,15 @@ async function doBomb(n){
 }
 
 async function doDog(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(dogProgress >= 99.9999999999){ alert("狗椅已完全倒闭！"); return; }
   
   var oldD = dogProgress, oldDec = dogDecimals;
   dogProgress = Math.min(dogProgress + n, 99.9999999999);
   renderDog();
   showEgg("dogchair", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
+  showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
   
   isProcessing = true;
@@ -891,10 +898,10 @@ async function doDog(n){
       dogProgress = res.dogProgress; dogDecimals = res.dogDecimals || 2;
       renderDog();
       await updateStatsBar(true);
-      showToast('✅ 同步完成！', 1000);
+      showToast('同步完成', 1000);
     } else {
       rollbackDog(oldD, oldDec);
-      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+      if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
     isProcessing = false;
@@ -948,11 +955,13 @@ function startPolling(){
 function stopPolling(){
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
 }
-document.addEventListener("visibilitychange",function(){
+
+document.addEventListener("visibilitychange", function(){
+  console.log('[可见性] 状态变化:', document.hidden ? '隐藏' : '可见');
   if(document.hidden) {
     stopPolling();
   } else {
-    // 回到前台立即刷新 KV 统计
+    console.log('[可见性] 回到前台，强制刷新 KV 统计');
     updateStatsBar(true);
     startPolling();
   }
