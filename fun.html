@@ -366,7 +366,7 @@ var timerInterval=null;
 var lastValidStats = { writes: 0, writeLimit: 1000 };
 var isWriteLocked = false;
 var isProcessing = false;
-var LOCK_THRESHOLD = 90;
+var LOCK_THRESHOLD = 85; // 降低阈值，预留余量
 
 // ---------- Toast 提示 ----------
 var toastTimer = null;
@@ -488,10 +488,9 @@ async function apiPost(id,delta){
       var errObj;
       try { errObj = JSON.parse(errText); } catch(e) { errObj = {error: errText}; }
       if (r.status === 429) {
-        isWriteLocked = true;
-        updateButtons();
-        showToast('今日 KV 写入额度已用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置。', 4000);
-        throw new Error('KV_LOCKED');
+        // 不设置全局锁定，只提示用户操作频率过高
+        // 将错误重新抛出，让上层决定如何处理
+        throw new Error('RATE_LIMIT');
       }
       throw new Error(errObj.error || ("http"+r.status));
     }
@@ -578,6 +577,7 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
+  // 仅当达到阈值时才锁定
   if (pct >= LOCK_THRESHOLD) {
     isWriteLocked = true;
   } else {
@@ -750,7 +750,12 @@ async function doEstate(n){
   } catch (e) {
     isProcessing = false;
     updateButtons();
-    if (e.message === 'KV_LOCKED') {
+    if (e.message === 'RATE_LIMIT') {
+      showToast('操作频率过高，请稍候再试', 2000);
+      rollbackEstate(oldR, oldS);
+    } else if (e.message === 'KV_LOCKED') {
+      // 不再使用 KV_LOCKED，但保留以防万一
+      showToast('写入已锁定，请明天再试', 2500);
       rollbackEstate(oldR, oldS);
     } else {
       rollbackEstate(oldR, oldS);
@@ -789,7 +794,8 @@ async function doXifu(n){
   } catch (e) {
     isProcessing = false;
     updateButtons();
-    if (e.message === 'KV_LOCKED') {
+    if (e.message === 'RATE_LIMIT') {
+      showToast('操作频率过高，请稍候再试', 2000);
       rollbackXifu(oldR, oldS);
     } else {
       rollbackXifu(oldR, oldS);
@@ -828,7 +834,8 @@ async function doBlast(n){
   } catch (e) {
     isProcessing = false;
     updateButtons();
-    if (e.message === 'KV_LOCKED') {
+    if (e.message === 'RATE_LIMIT') {
+      showToast('操作频率过高，请稍候再试', 2000);
       rollbackBlast(oldB);
     } else {
       rollbackBlast(oldB);
@@ -867,7 +874,8 @@ async function doBomb(n){
   } catch (e) {
     isProcessing = false;
     updateButtons();
-    if (e.message === 'KV_LOCKED') {
+    if (e.message === 'RATE_LIMIT') {
+      showToast('操作频率过高，请稍候再试', 2000);
       rollbackBomb(oldB);
     } else {
       rollbackBomb(oldB);
@@ -906,7 +914,8 @@ async function doDog(n){
   } catch (e) {
     isProcessing = false;
     updateButtons();
-    if (e.message === 'KV_LOCKED') {
+    if (e.message === 'RATE_LIMIT') {
+      showToast('操作频率过高，请稍候再试', 2000);
       rollbackDog(oldD, oldDec);
     } else {
       rollbackDog(oldD, oldDec);
