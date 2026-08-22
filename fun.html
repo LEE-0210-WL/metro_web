@@ -366,6 +366,7 @@ var timerInterval=null;
 var lastValidStats = { writes: 0, writeLimit: 1000 };
 var isWriteLocked = false;
 var isProcessing = false;
+var LOCK_THRESHOLD = 90;
 
 // ---------- Toast 提示 ----------
 var toastTimer = null;
@@ -483,17 +484,32 @@ async function apiPost(id,delta){
       body:JSON.stringify({id:id,delta:delta})
     });
     if(!r.ok){
-      var err=await r.json().catch(function(){return{error:"unknown"}});
-      throw new Error(err.error||("http"+r.status));
+      var errText = await r.text();
+      var errObj;
+      try { errObj = JSON.parse(errText); } catch(e) { errObj = {error: errText}; }
+      if (r.status === 429) {
+        isWriteLocked = true;
+        updateButtons();
+        showToast('⚠️ 今日 KV 写入额度已用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置。', 4000);
+        throw new Error('KV_LOCKED');
+      }
+      throw new Error(errObj.error || ("http"+r.status));
     }
     return await r.json();
-  }catch(e){console.error("sync-post",e);alert(e.message);return null}
+  }catch(e){
+    console.error("sync-post",e);
+    if (e.message && e.message.includes('额度已用完')) {
+      alert(e.message);
+      return null;
+    }
+    throw e;
+  }
 }
 
-// ---------- 获取 KV 统计（代理接口） ----------
+// ---------- 获取 KV 统计（带时间戳绕过缓存） ----------
 async function fetchKVStats() {
   try {
-    const res = await fetch('/api/kv-stats');
+    const res = await fetch('/api/kv-stats?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data && typeof data.writes === 'number') {
@@ -555,979 +571,12 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
-  if (pct >= 95) {
+  if (pct >= LOCK_THRESHOLD) {
     isWriteLocked = true;
   } else {
     isWriteLocked = false;
   }
   updateButtons();
-
-  var now=new Date();
-  var reset=new Date(now);
-  reset.setUTCHours(0,0,0,0);
-  if(now>=reset) reset.setUTCDate(reset.getUTCDate()+1);
-  var diff=Math.max(0,Math.floor((reset-now)/1000));
-  var h=Math.floor(diff/3600);
-  var m=Math.floor((diff%3600)/60);
-  var s=diff%60;
-  timerEl.textContent="⏳ 距重置: "+h+"时"+m+"分"+s+"秒";
-}
-
-function startTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval=setInterval(updateKvBar,1000);
-}
-
-// ---------- 渲染 ----------
-function renderEstate(){
-  var el=document.getElementById("fc-estate-num");
-  var sl=document.getElementById("fc-sold-num");
-  if(el)el.textContent=fmtMoney(remaining);
-  if(sl)sl.textContent=fmtMoney(sold);
-}
-function renderXifu(){
-  var el=document.getElementById("fc-xifu-num");
-  var sl=document.getElementById("fc-xifu-sold");
-  if(el)el.textContent=fmtMoney(xifuRemaining);
-  if(sl)sl.textContent=fmtMoney(xifuSold);
-}
-function renderBlast(){
-  var el=document.getElementById("fc-blast-num");
-  var bar=document.getElementById("fc-blast-bar");
-  if(el)el.textContent=fmtBlast(blast)+"/100.00";
-  if(bar)bar.style.setProperty("--blast-pct",Math.min(blast,100)+"%");
-  if(blast>=100){
-    var wrap=document.getElementById("fc-blast-wrap");
-    if(wrap&&!wrap.classList.contains("done")){
-      wrap.classList.add("done");
-      showBlastDone();
-    }
-  }
-}
-function renderBomb(){
-  var el=document.getElementById("fc-bomb-num");
-  var bar=document.getElementById("fc-bomb-bar");
-  if(el)el.textContent=fmtBomb(bombProgress)+"/100.00";
-  if(bar)bar.style.setProperty("--bomb-pct",Math.min(bombProgress,100)+"%");
-}
-function renderDog(){
-  var el=document.getElementById("fc-dog-num");
-  var bar=document.getElementById("fc-dog-bar");
-  if(el)el.textContent=fmtDog(dogProgress)+"/99.9999999999";
-  if(bar)bar.style.setProperty("--dog-pct",Math.min(dogProgress*100/99.9999999999,100)+"%");
-}
-
-function showBlastDone(){
-  var div=document.createElement("div");
-  div.className="funcounter-blastdone";
-  div.innerHTML='<div class="bbd-inner"><h2>大楼已完全爆破！</h2><p>吵吵吵楼已成为历史</p><button id="bbd-close">我知道了</button></div>';
-  document.body.appendChild(div);
-  requestAnimationFrame(function(){div.classList.add("show")});
-  div.querySelector("#bbd-close").onclick=function(){
-    div.classList.remove("show");
-    setTimeout(function(){div.remove()},400);
-  };
-}
-
-// ---------- 绑定按钮 ----------
-function bindEstate(){
-  document.getElementById("fc-btn-e1").onclick=function(){doEstate(1)};
-  document.getElementById("fc-btn-e5").onclick=function(){doEstate(5)};
-  document.getElementById("fc-btn-e10").onclick=function(){doEstate(10)};
-  document.getElementById("fc-btn-ec").onclick=function(){
-    var v=parseInt(document.getElementById("fc-inp-e").value,10);
-    if(v>0&&v<=100){doEstate(v)}
-    else{alert("请输入1-100之间的整数")}
-  };
-}
-function bindXifu(){
-  document.getElementById("fc-btn-x1").onclick=function(){doXifu(1)};
-  document.getElementById("fc-btn-x5").onclick=function(){doXifu(5)};
-  document.getElementById("fc-btn-x10").onclick=function(){doXifu(10)};
-  document.getElementById("fc-btn-xc").onclick=function(){
-    var v=parseInt(document.getElementById("fc-inp-x").value,10);
-    if(v>0&&v<=100){doXifu(v)}
-    else{alert("请输入1-100之间的整数")}
-  };
-}
-function bindBlast(){
-  document.getElementById("fc-btn-b01").onclick=function(){doBlast(0.01)};
-  document.getElementById("fc-btn-b05").onclick=function(){doBlast(0.02)};
-  document.getElementById("fc-btn-b1").onclick=function(){doBlast(0.05)};
-  document.getElementById("fc-btn-bc").onclick=function(){
-    var v=parseFloat(document.getElementById("fc-inp-b").value);
-    if(v>=0.01&&v<=1.5){doBlast(v)}
-    else{alert("请输入0.01-1.5之间的数字")}
-  };
-}
-function bindBomb(){
-  document.getElementById("fc-btn-m01").onclick=function(){doBomb(0.01)};
-  document.getElementById("fc-btn-m05").onclick=function(){doBomb(0.02)};
-  document.getElementById("fc-btn-m1").onclick=function(){doBomb(0.05)};
-  document.getElementById("fc-btn-mc").onclick=function(){
-    var v=parseFloat(document.getElementById("fc-inp-m").value);
-    if(v>=0.01&&v<=1.5){doBomb(v)}
-    else{alert("请输入0.01-1.5之间的数字")}
-  };
-}
-function bindDog(){
-  document.getElementById("fc-btn-d01").onclick=function(){doDog(0.01)};
-  document.getElementById("fc-btn-d05").onclick=function(){doDog(0.02)};
-  document.getElementById("fc-btn-d1").onclick=function(){doDog(0.05)};
-  document.getElementById("fc-btn-dc").onclick=function(){
-    var v=parseFloat(document.getElementById("fc-inp-d").value);
-    if(v>=0.01&&v<=1.5){doDog(v)}
-    else{alert("请输入0.01-1.5之间的数字")}
-  };
-}
-
-// ---------- 回滚 ----------
-function rollbackEstate(oldR,oldS){remaining=oldR;sold=oldS;renderEstate();}
-function rollbackXifu(oldR,oldS){xifuRemaining=oldR;xifuSold=oldS;renderXifu();}
-function rollbackBlast(oldB){blast=oldB;renderBlast();}
-function rollbackBomb(oldB){bombProgress=oldB;renderBomb();}
-function rollbackDog(oldD,oldDec){dogProgress=oldD;dogDecimals=oldDec;renderDog();}
-
-function resetPollInterval(){
-  currentPollInterval=30000;
-  if(pollTimer){
-    clearInterval(pollTimer);
-    pollTimer=setInterval(syncFromServer,currentPollInterval);
-  }
-}
-
-// ---------- 操作函数（含防连点、立即刷新KV） ----------
-async function doEstate(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { alert('⚠️ 写入已锁定'); return; }
-  if(remaining < n){ alert("剩余楼盘不足！"); return; }
-  
-  var oldR=remaining, oldS=sold;
-  remaining -= n; sold += n;
-  renderEstate();
-  showEgg("estate", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
-  resetPollInterval();
-  
-  isProcessing = true;
-  updateButtons();
-  var res = await apiPost("estate", n);
-  isProcessing = false;
-  updateButtons();
-  
-  if(res && res.ok){
-    remaining = res.remaining; sold = res.sold;
-    renderEstate();
-    await updateStatsBar(true);
-    showToast('✅ 同步完成！', 1000);
-  }else{
-    rollbackEstate(oldR, oldS);
-    if(res === null) showToast('⚠️ 网络异常，已回滚', 2000);
-    else alert("同步失败，已回滚");
-  }
-}
-
-async function doXifu(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { alert('⚠️ 写入已锁定'); return; }
-  if(xifuRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
-  var oldR=xifuRemaining, oldS=xifuSold;
-  xifuRemaining -= n; xifuSold += n;
-  renderXifu();
-  showEgg("xifu", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
-  resetPollInterval();
-  
-  isProcessing = true;
-  updateButtons();
-  var res = await apiPost("xifu", n);
-  isProcessing = false;
-  updateButtons();
-  
-  if(res && res.ok){
-    xifuRemaining = res.xifuRemaining; xifuSold = res.xifuSold;
-    renderXifu();
-    await updateStatsBar(true);
-    showToast('✅ 同步完成！', 1000);
-  }else{
-    rollbackXifu(oldR, oldS);
-    if(res === null) showToast('⚠️ 网络异常，已回滚', 2000);
-    else alert("同步失败，已回滚");
-  }
-}
-
-async function doBlast(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { alert('⚠️ 写入已锁定'); return; }
-  if(blast >= 100){ alert("大楼已完全爆破！"); return; }
-  
-  var oldB = blast;
-  blast = Math.min(blast + n, 100);
-  renderBlast();
-  showEgg("blast", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
-  resetPollInterval();
-  
-  isProcessing = true;
-  updateButtons();
-  var res = await apiPost("blast", n);
-  isProcessing = false;
-  updateButtons();
-  
-  if(res && res.ok){
-    blast = res.blast;
-    renderBlast();
-    await updateStatsBar(true);
-    showToast('✅ 同步完成！', 1000);
-  }else{
-    rollbackBlast(oldB);
-    if(res === null) showToast('⚠️ 网络异常，已回滚', 2000);
-    else alert("同步失败，已回滚");
-  }
-}
-
-async function doBomb(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { alert('⚠️ 写入已锁定'); return; }
-  if(bombProgress >= 100){ alert("庞巴迪已完全翻新！"); return; }
-  
-  var oldB = bombProgress;
-  bombProgress = Math.min(bombProgress + n, 100);
-  renderBomb();
-  showEgg("bombardier", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
-  resetPollInterval();
-  
-  isProcessing = true;
-  updateButtons();
-  var res = await apiPost("bombardier", n);
-  isProcessing = false;
-  updateButtons();
-  
-  if(res && res.ok){
-    bombProgress = res.bombProgress;
-    renderBomb();
-    await updateStatsBar(true);
-    showToast('✅ 同步完成！', 1000);
-  }else{
-    rollbackBomb(oldB);
-    if(res === null) showToast('⚠️ 网络异常，已回滚', 2000);
-    else alert("同步失败，已回滚");
-  }
-}
-
-async function doDog(n){
-  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
-  if (isWriteLocked) { alert('⚠️ 写入已锁定'); return; }
-  if(dogProgress >= 99.9999999999){ alert("狗椅已完全倒闭！"); return; }
-  
-  var oldD = dogProgress, oldDec = dogDecimals;
-  dogProgress = Math.min(dogProgress + n, 99.9999999999);
-  renderDog();
-  showEgg("dogchair", n);
-  showToast('✅ 已操作，正在同步云端...', 1500);
-  resetPollInterval();
-  
-  isProcessing = true;
-  updateButtons();
-  var res = await apiPost("dogchair", n);
-  isProcessing = false;
-  updateButtons();
-  
-  if(res && res.ok){
-    dogProgress = res.dogProgress; dogDecimals = res.dogDecimals || 2;
-    renderDog();
-    await updateStatsBar(true);
-    showToast('✅ 同步完成！', 1000);
-  }else{
-    rollbackDog(oldD, oldDec);
-    if(res === null) showToast('⚠️ 网络异常，已回滚', 2000);
-    else alert("同步失败，已回滚");
-  }
-}
-
-// ---------- 轮询 ----------
-async function syncFromServer(){
-  if(isSyncing)return;
-  isSyncing=true;
-  var now=Date.now();
-  var minInterval=Math.min(currentPollInterval,5000*Math.pow(2,Math.min(syncFailCount,6)));
-  if(now-lastSync<minInterval){isSyncing=false;return;}
-  lastSync=now;
-  var data=await apiGet();
-  if(!data){syncFailCount++;isSyncing=false;return;}
-  syncFailCount=0;
-  
-  if(data.remaining!==undefined)remaining=data.remaining;
-  if(data.sold!==undefined)sold=data.sold;
-  if(data.blast!==undefined)blast=data.blast;
-  if(data.xifuRemaining!==undefined)xifuRemaining=data.xifuRemaining;
-  if(data.xifuSold!==undefined)xifuSold=data.xifuSold;
-  if(data.bombProgress!==undefined)bombProgress=data.bombProgress;
-  if(data.dogProgress!==undefined)dogProgress=data.dogProgress;
-  if(data.dogDecimals!==undefined)dogDecimals=data.dogDecimals;
-  
-  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
-  isSyncing=false;
-  
-  currentPollInterval=Math.min(600000, currentPollInterval*1.5);
-  if(pollTimer){
-    clearInterval(pollTimer);
-    pollTimer=setInterval(syncFromServer,currentPollInterval);
-  }
-}
-
-function startPolling(){
-  if(pollTimer)clearInterval(pollTimer);
-  currentPollInterval=30000;
-  syncFromServer();
-  pollTimer=setInterval(syncFromServer,currentPollInterval);
-}
-function stopPolling(){
-  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-}
-document.addEventListener("visibilitychange",function(){
-  if(document.hidden) stopPolling();
-  else startPolling();
-});
-
-// ---------- 初始化 ----------
-function init(){
-  var wrap=document.getElementById("funcounter-wrap");
-  if(!wrap)return;
-  wrap.innerHTML=
-    '<div class="fc-row fc-estate">'+
-      '<div class="fc-left">'+
-        '<div class="fc-title">大运TOD巨作深铁阅云境</div>'+
-        '<div class="fc-sub">还剩楼盘 <span id="fc-estate-num">'+fmtMoney(remaining)+'</span></div>'+
-        '<div class="fc-sold">已卖楼盘 <span id="fc-sold-num">'+fmtMoney(sold)+'</span></div>'+
-      '</div>'+
-      '<div class="fc-right">'+
-        '<div class="fc-btns">'+
-          '<button class="fc-btn" id="fc-btn-e1">-1套</button>'+
-          '<button class="fc-btn" id="fc-btn-e5">-5套</button>'+
-          '<button class="fc-btn" id="fc-btn-e10">-10套</button>'+
-          '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-e" placeholder="自定义" min="1" max="100">'+
-            '<button class="fc-btn" id="fc-btn-ec">确定</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="fc-row fc-xifu">'+
-      '<div class="fc-left">'+
-        '<div class="fc-title">深铁熙府</div>'+
-        '<div class="fc-sub">还剩楼盘 <span id="fc-xifu-num">'+fmtMoney(xifuRemaining)+'</span></div>'+
-        '<div class="fc-sold">已卖楼盘 <span id="fc-xifu-sold">'+fmtMoney(xifuSold)+'</span></div>'+
-      '</div>'+
-      '<div class="fc-right">'+
-        '<div class="fc-btns">'+
-          '<button class="fc-btn" id="fc-btn-x1">-1套</button>'+
-          '<button class="fc-btn" id="fc-btn-x5">-5套</button>'+
-          '<button class="fc-btn" id="fc-btn-x10">-10套</button>'+
-          '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-x" placeholder="自定义" min="1" max="100">'+
-            '<button class="fc-btn" id="fc-btn-xc">确定</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="fc-row fc-blast" id="fc-blast-wrap">'+
-      '<div class="fc-left">'+
-        '<div class="fc-title">吵吵吵楼</div>'+
-        '<div class="fc-sub">爆破进度 <span id="fc-blast-num">'+fmtBlast(blast)+'/100.00</span></div>'+
-        '<div class="fc-barwrap"><div class="fc-bar" id="fc-blast-bar"></div></div>'+
-      '</div>'+
-      '<div class="fc-right">'+
-        '<div class="fc-btns">'+
-          '<button class="fc-btn" id="fc-btn-b01">+0.01</button>'+
-          '<button class="fc-btn" id="fc-btn-b05">+0.02</button>'+
-          '<button class="fc-btn" id="fc-btn-b1">+0.05</button>'+
-          '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-b" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
-            '<button class="fc-btn" id="fc-btn-bc">确定</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="fc-row fc-bombardier">'+
-      '<div class="fc-left">'+
-        '<div class="fc-title">庞巴迪翻新进度</div>'+
-        '<div class="fc-sub">翻新进度 <span id="fc-bomb-num">'+fmtBomb(bombProgress)+'/100.00</span></div>'+
-        '<div class="fc-barwrap"><div class="fc-bar" id="fc-bomb-bar"></div></div>'+
-      '</div>'+
-      '<div class="fc-right">'+
-        '<div class="fc-btns">'+
-          '<button class="fc-btn" id="fc-btn-m01">+0.01</button>'+
-          '<button class="fc-btn" id="fc-btn-m05">+0.02</button>'+
-          '<button class="fc-btn" id="fc-btn-m1">+0.05</button>'+
-          '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-m" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
-            '<button class="fc-btn" id="fc-btn-mc">确定</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="fc-row fc-dogchair">'+
-      '<div class="fc-left">'+
-        '<div class="fc-title">狗椅倒闭进度</div>'+
-        '<div class="fc-sub">倒闭进度 <span id="fc-dog-num">'+fmtDog(dogProgress)+'/99.9999999999</span></div>'+
-        '<div class="fc-barwrap"><div class="fc-bar" id="fc-dog-bar"></div></div>'+
-      '</div>'+
-      '<div class="fc-right">'+
-        '<div class="fc-btns">'+
-          '<button class="fc-btn" id="fc-btn-d01">+0.01</button>'+
-          '<button class="fc-btn" id="fc-btn-d05">+0.02</button>'+
-          '<button class="fc-btn" id="fc-btn-d1">+0.05</button>'+
-          '<div class="fc-custom">'+
-            '<input type="number" id="fc-inp-d" placeholder="自定义" min="0.01" max="1.5" step="0.01">'+
-            '<button class="fc-btn" id="fc-btn-dc">确定</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  bindEstate();bindXifu();bindBlast();bindBomb();bindDog();
-  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
-  updateKvBar();
-  startTimer();
-  startKVStatsPolling();
-  startPolling();
-  updateButtons();
-}
-
-if(document.readyState==="loading"){
-  document.addEventListener("DOMContentLoaded",init);
-}else{
-  init();
-}
-})();
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>好玩的东西 - 走进新天地·Railway</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Bahnschrift,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  background:linear-gradient(135deg,#f0f4ff,#e0e7ff);
-  color:#333;
-  line-height:1.6;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-}
-.back-link{
-  position:fixed;
-  top:16px;
-  left:16px;
-  color:#2563eb;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:500;
-  padding:8px 14px;
-  border-radius:8px;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(4px);
-  transition:all 0.2s ease;
-  z-index:100;
-}
-.back-link:hover{
-  background:#fff;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-}
-.page-title{
-  font-size:28px;
-  font-weight:700;
-  color:#1e3a8a;
-  margin-bottom:4px;
-  text-align:center;
-  margin-top:60px;
-}
-.page-subtitle{
-  font-size:14px;
-  color:#6b7280;
-  margin-bottom:8px;
-  text-align:center;
-}
-.kv-status-bar{
-  max-width:1200px;
-  width:calc(100% - 40px);
-  margin-bottom:16px;
-  padding:14px 20px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#fef3c7,#fde68a);
-  border:1px solid #fbbf24;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  font-size:16px;
-  color:#92400e;
-}
-.kv-status-bar .kv-label{font-weight:600}
-.kv-status-bar .kv-barwrap{
-  flex:1;
-  min-width:80px;
-  height:8px;
-  background:rgba(255,255,255,0.5);
-  border-radius:4px;
-  overflow:hidden;
-}
-.kv-status-bar .kv-bar{
-  height:100%;
-  border-radius:4px;
-  background:#f59e0b;
-  transition:width 0.5s ease;
-}
-.kv-status-bar .kv-pct{
-  font-weight:700;
-  min-width:140px;
-  text-align:right;
-  font-size:15px;
-}
-.kv-status-bar .kv-timer{
-  font-weight:600;
-  color:#92400e;
-  min-width:180px;
-  text-align:right;
-  font-size:15px;
-}
-.kv-status-bar .kv-lock{
-  color:#dc2626;
-  font-weight:700;
-  font-size:15px;
-  display:none;
-}
-.kv-status-bar.kv-warn{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#f87171;color:#b91c1c}
-.kv-status-bar.kv-warn .kv-bar{background:#ef4444}
-.kv-status-bar.kv-safe{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#34d399;color:#065f46}
-.kv-status-bar.kv-safe .kv-bar{background:#10b981}
-.fc-btn:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  transform:none !important;
-  box-shadow:none !important;
-}
-#funcounter-wrap{
-  max-width:1200px;
-  width:100%;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-.fc-row{
-  display:flex;
-  flex-direction:column;
-  padding:20px 24px;
-  border-radius:16px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.08);
-  gap:12px;
-  transition:all 0.3s ease;
-}
-.fc-row:hover{
-  box-shadow:0 8px 32px rgba(0,0,0,0.12);
-}
-.fc-estate{
-  background:linear-gradient(135deg,#eff6ff,#dbeafe);
-  border:1px solid #bfdbfe;
-}
-.fc-xifu{
-  background:linear-gradient(135deg,#fef3c7,#fde68a);
-  border:1px solid #fbbf24;
-}
-.fc-xifu .fc-title{color:#b45309}
-.fc-xifu .fc-sub{color:#92400e}
-.fc-xifu #fc-xifu-num,.fc-xifu #fc-xifu-sold{color:#b45309}
-.fc-blast{
-  background:#dc2626;
-  border:1px solid #b91c1c;
-  color:#fff;
-}
-.fc-blast.done{
-  background:linear-gradient(135deg,#16a34a,#15803d);
-  border-color:#166534;
-}
-.fc-bombardier{
-  background:linear-gradient(135deg,#d1fae5,#a7f3d0);
-  border:1px solid #01AF55;
-}
-.fc-bombardier .fc-title{color:#065f46}
-.fc-bombardier .fc-sub{color:#047857}
-.fc-bombardier #fc-bomb-num{color:#065f46}
-.fc-dogchair{
-  background:linear-gradient(135deg,#dbeafe,#bfdbfe);
-  border:1px solid #0131AC;
-}
-.fc-dogchair .fc-title{color:#1e3a8a}
-.fc-dogchair .fc-sub{color:#1e40af}
-.fc-dogchair #fc-dog-num{color:#1e3a8a}
-.fc-left{flex:1}
-.fc-right{width:100%}
-.fc-title{font-size:20px;font-weight:700;margin-bottom:4px}
-.fc-estate .fc-title{color:#1d4ed8}
-.fc-blast .fc-title{color:#fbbf24}
-.fc-sub{font-size:13px;color:#6b7280;margin-bottom:2px}
-.fc-blast .fc-sub{color:#fecaca}
-.fc-sold{font-size:12px;color:#9ca3af}
-.fc-blast .fc-sold{color:#fca5a5}
-#fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{
-  font-weight:700;
-  font-size:26px;
-  font-family:Bahnschrift;
-}
-#fc-estate-num,#fc-sold-num{color:#1d4ed8}
-#fc-blast-num{color:#fbbf24}
-.fc-barwrap{
-  width:100%;
-  height:8px;
-  background:rgba(255,255,255,0.3);
-  border-radius:4px;
-  margin-top:6px;
-  overflow:hidden;
-}
-.fc-bar{
-  height:100%;
-  border-radius:4px;
-  transition:width 0.5s ease;
-}
-.fc-estate .fc-bar{background:#2563eb;width:var(--estate-pct,0%)}
-.fc-xifu .fc-bar{background:#f59e0b;width:var(--xifu-pct,0%)}
-.fc-blast .fc-bar{background:#fbbf24;width:var(--blast-pct,0%)}
-.fc-bombardier .fc-bar{background:#01AF55;width:var(--bomb-pct,0%)}
-.fc-dogchair .fc-bar{background:#0131AC;width:var(--dog-pct,0%)}
-.fc-btns{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.fc-btn{
-  padding:8px 14px;
-  border-radius:8px;
-  border:none;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.2s ease;
-  font-family:Bahnschrift;
-}
-.fc-estate .fc-btn{background:#2563eb;color:#fff}
-.fc-estate .fc-btn:hover{background:#1d4ed8;transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,0.3)}
-.fc-xifu .fc-btn{background:#f59e0b;color:#fff}
-.fc-xifu .fc-btn:hover{background:#d97706;transform:translateY(-2px);box-shadow:0 4px 12px rgba(245,158,11,0.3)}
-.fc-blast .fc-btn{background:#fbbf24;color:#7c2d12}
-.fc-blast .fc-btn:hover{background:#f59e0b;transform:translateY(-2px);box-shadow:0 4px 12px rgba(251,191,36,0.3)}
-.fc-bombardier .fc-btn{background:#01AF55;color:#fff}
-.fc-bombardier .fc-btn:hover{background:#059669;transform:translateY(-2px);box-shadow:0 4px 12px rgba(1,175,85,0.3)}
-.fc-dogchair .fc-btn{background:#0131AC;color:#fff}
-.fc-dogchair .fc-btn:hover{background:#1e40af;transform:translateY(-2px);box-shadow:0 4px 12px rgba(1,49,172,0.3)}
-.fc-btn:active{transform:translateY(0)scale(0.96)}
-.fc-custom{display:flex;align-items:center;gap:6px}
-.fc-custom input{
-  width:70px;
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:13px;
-  text-align:center;
-  font-family:Bahnschrift;
-}
-.fc-estate .fc-custom input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.15)}
-.fc-xifu .fc-custom input:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.15)}
-.fc-blast .fc-custom input{background:rgba(255,255,255,0.9);border-color:#fca5a5;color:#7c2d12}
-.fc-blast .fc-custom input:focus{outline:none;border-color:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,0.25)}
-.fc-bombardier .fc-custom input:focus{outline:none;border-color:#01AF55;box-shadow:0 0 0 3px rgba(1,175,85,0.15)}
-.fc-dogchair .fc-custom input:focus{outline:none;border-color:#0131AC;box-shadow:0 0 0 3px rgba(1,49,172,0.15)}
-.funcounter-egg{
-  position:fixed;
-  top:20%;
-  left:50%;
-  transform:translateX(-50%)scale(0.8);
-  background:linear-gradient(135deg,#fbbf24,#f59e0b);
-  color:#1f2937;
-  padding:16px 32px;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:600;
-  box-shadow:0 8px 32px rgba(251,191,36,0.4);
-  z-index:10000;
-  opacity:0;
-  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events:none;
-  white-space:nowrap;
-}
-.funcounter-egg.show{opacity:1;transform:translateX(-50%)scale(1)}
-.funcounter-blastdone{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  backdrop-filter:blur(8px);
-  z-index:10001;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  transition:opacity 0.4s ease;
-  pointer-events:none;
-}
-.funcounter-blastdone.show{opacity:1;pointer-events:auto}
-.bbd-inner{
-  background:#fff;
-  border-radius:20px;
-  padding:40px 36px;
-  text-align:center;
-  max-width:400px;
-  width:90%;
-  box-shadow:0 24px 64px rgba(0,0,0,0.3);
-  transform:scale(0.9);
-  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-.funcounter-blastdone.show .bbd-inner{transform:scale(1)}
-.bbd-inner h2{font-size:24px;color:#dc2626;margin-bottom:12px}
-.bbd-inner p{font-size:16px;color:#6b7280;margin-bottom:24px}
-#bbd-close{
-  background:#dc2626;
-  color:#fff;
-  border:none;
-  padding:12px 32px;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.25s ease;
-}
-#bbd-close:hover{background:#b91c1c;transform:translateY(-2px)}
-@media(max-width:900px){
-  #funcounter-wrap{grid-template-columns:1fr}
-  .fc-title{font-size:18px}
-  #fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{font-size:22px}
-  .page-title{font-size:22px}
-  .kv-status-bar{font-size:14px;padding:10px 16px}
-  .kv-status-bar .kv-pct{font-size:13px;min-width:100px}
-  .kv-status-bar .kv-timer{font-size:13px;min-width:140px}
-}
-</style>
-</head>
-<body>
-<a href="/" class="back-link">返回首页</a>
-<h1 class="page-title">楼盘进度计数器</h1>
-<p class="page-subtitle">实时进度，速度受Workers KV影响</p>
-<div class="kv-status-bar" id="kv-bar">
-  <span class="kv-label">📝 KV写入已用</span>
-  <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
-  <span class="kv-pct" id="kv-pct">计算中...</span>
-  <span class="kv-timer" id="kv-timer">⏳ 距重置: --时--分--秒</span>
-  <span class="kv-lock" id="kv-lock">🔒 写入已锁定</span>
-</div>
-<div id="funcounter-wrap"></div>
-
-<script>
-(function(){
-"use strict";
-var API_BASE="";
-var remaining=11300000000;
-var sold=50000000;
-var blast=0.0;
-var xifuRemaining=20000;
-var xifuSold=0;
-var bombProgress=0.0;
-var dogProgress=0.0;
-var dogDecimals=2;
-var lastSync=0;
-var syncFailCount=0;
-var pollTimer=null;
-var kvReadsToday=0;
-var kvWritesToday=0;
-var KV_READ_LIMIT=100000;
-var KV_WRITE_LIMIT=1000;
-var isSyncing=false;
-var currentPollInterval=30000;
-var timerInterval=null;
-var lastValidStats = { writes: 0, writeLimit: 1000 };
-var isWriteLocked = false;
-
-function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
-function fmtBlast(n){return n.toFixed(2)}
-function fmtBomb(n){return n.toFixed(2)}
-function fmtDog(n){
-  var dec=Math.max(2,dogDecimals);
-  return n.toFixed(dec);
-}
-
-// ---------- 彩蛋消息 ----------
-var eggMessages={
-  estate:{
-    1:["又卖了一套！深铁阅云境火爆热销中","恭喜业主喜提新房！","+1套，开发商笑开花"],
-    5:["大单！神秘买家一次性购入5套！","整层客户出现！","5套成交，销售冠军诞生"],
-    10:["整层售罄！开发商笑醒了","10套大单！这栋楼要清盘了","豪横！直接拿下10套"],
-    custom:["成交！数字由你定义","自定义大单，牛！","这数字...有故事啊"]
-  },
-  xifu:{
-    1:["深铁熙府又出一套！","熙府热销中","+1套"],
-    5:["熙府大单！","5套成交","熙府火爆"],
-    10:["熙府整层！","10套大单","熙府要清盘了"],
-    custom:["熙府成交！","自定义大单","有故事啊"]
-  },
-  blast:{
-    0.01:["爆破队正在热身...","0.01%进度，炸药已就位","开始倒计时..."],
-    0.02:["轰！又炸掉一点！","进度稳步推进","爆破专家在线施工"],
-    0.05:["巨响！这栋楼又矮了一点","+0.05%！震感强烈","专业爆破"],
-    custom:["自定义爆破量，专业！","这数字...精准打击","爆破进度由你掌控"]
-  },
-  bombardier:{
-    0.01:["庞巴迪翻新+0.01%","翻新稳步推进","工人正在加班"],
-    0.02:["翻新进度+0.02%","又翻新了一点","庞巴迪焕然一新"],
-    0.05:["翻新大进展！","+0.05%","庞巴迪要翻新完了"],
-    custom:["自定义翻新量","精准翻新","翻新进度由你掌控"]
-  },
-  dogchair:{
-    0.01:["狗椅倒闭+0.01%","倒闭稳步推进","又离倒闭近了一点"],
-    0.02:["倒闭进度+0.02%","狗椅快不行了","加油倒闭"],
-    0.05:["倒闭大进展！","+0.05%","狗椅即将倒闭"],
-    custom:["自定义倒闭量","精准打击狗椅","倒闭进度由你掌控"]
-  }
-};
-
-function showEgg(type,amount){
-  var msgs;
-  if(type==="estate"){
-    if(amount===1)msgs=eggMessages.estate[1];
-    else if(amount===5)msgs=eggMessages.estate[5];
-    else if(amount===10)msgs=eggMessages.estate[10];
-    else msgs=eggMessages.estate.custom;
-  }else if(type==="xifu"){
-    if(amount===1)msgs=eggMessages.xifu[1];
-    else if(amount===5)msgs=eggMessages.xifu[5];
-    else if(amount===10)msgs=eggMessages.xifu[10];
-    else msgs=eggMessages.xifu.custom;
-  }else if(type==="blast"){
-    if(Math.abs(amount-0.01)<0.001)msgs=eggMessages.blast[0.01];
-    else if(Math.abs(amount-0.02)<0.001)msgs=eggMessages.blast[0.02];
-    else if(Math.abs(amount-0.05)<0.001)msgs=eggMessages.blast[0.05];
-    else msgs=eggMessages.blast.custom;
-  }else if(type==="bombardier"){
-    if(Math.abs(amount-0.01)<0.001)msgs=eggMessages.bombardier[0.01];
-    else if(Math.abs(amount-0.02)<0.001)msgs=eggMessages.bombardier[0.02];
-    else if(Math.abs(amount-0.05)<0.001)msgs=eggMessages.bombardier[0.05];
-    else msgs=eggMessages.bombardier.custom;
-  }else if(type==="dogchair"){
-    if(Math.abs(amount-0.01)<0.001)msgs=eggMessages.dogchair[0.01];
-    else if(Math.abs(amount-0.02)<0.001)msgs=eggMessages.dogchair[0.02];
-    else if(Math.abs(amount-0.05)<0.001)msgs=eggMessages.dogchair[0.05];
-    else msgs=eggMessages.dogchair.custom;
-  }
-  var msg=msgs[Math.floor(Math.random()*msgs.length)];
-  var div=document.createElement("div");
-  div.className="funcounter-egg";
-  div.textContent=msg;
-  document.body.appendChild(div);
-  requestAnimationFrame(function(){div.classList.add("show")});
-  setTimeout(function(){
-    div.classList.remove("show");
-    setTimeout(function(){div.remove()},400);
-  },2200);
-}
-
-// ---------- API ----------
-async function apiGet(){
-  try{
-    var r=await fetch(API_BASE+"/api/counters");
-    if(!r.ok)throw new Error("http"+r.status);
-    return await r.json();
-  }catch(e){console.error("sync-get",e);return null}
-}
-async function apiPost(id,delta){
-  try{
-    var r=await fetch(API_BASE+"/api/counters",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({id:id,delta:delta})
-    });
-    if(!r.ok){
-      var err=await r.json().catch(function(){return{error:"unknown"}});
-      throw new Error(err.error||("http"+r.status));
-    }
-    return await r.json();
-  }catch(e){console.error("sync-post",e);alert(e.message);return null}
-}
-
-// ---------- 从代理接口获取 KV 统计 ----------
-async function fetchKVStats() {
-  try {
-    const res = await fetch('/api/kv-stats');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (data && typeof data.writes === 'number') {
-      lastValidStats = data;
-      return data;
-    }
-    throw new Error('Invalid data');
-  } catch (e) {
-    console.warn('KV stats fetch failed, using cached value', e);
-    return null;
-  }
-}
-
-async function updateStatsBar() {
-  const stats = await fetchKVStats();
-  if (stats) {
-    kvWritesToday = stats.writes;
-    KV_WRITE_LIMIT = stats.writeLimit || 1000;
-    updateKvBar();
-  } else {
-    // 保持旧值
-  }
-  updateKvBar(); // 刷新倒计时
-}
-
-function startKVStatsPolling() {
-  updateStatsBar();
-  setInterval(updateStatsBar, 60000);
-}
-
-// ---------- 按钮锁定 ----------
-function updateButtons() {
-  var btns = document.querySelectorAll('.fc-btn');
-  btns.forEach(function(btn) {
-    btn.disabled = isWriteLocked;
-  });
-  var lockEl = document.getElementById('kv-lock');
-  if (lockEl) {
-    lockEl.style.display = isWriteLocked ? 'inline' : 'none';
-  }
-}
-
-// ---------- 顶部状态条 ----------
-function updateKvBar(){
-  var bar=document.getElementById("kv-bar");
-  var inner=document.getElementById("kv-bar-inner");
-  var pctEl=document.getElementById("kv-pct");
-  var timerEl=document.getElementById("kv-timer");
-  if(!bar||!inner||!pctEl||!timerEl)return;
-  
-  var pct=Math.min((kvWritesToday/KV_WRITE_LIMIT)*100,100);
-  inner.style.width=pct+"%";
-  pctEl.textContent=kvWritesToday.toLocaleString("zh-CN")+" / "+KV_WRITE_LIMIT+" ("+pct.toFixed(1)+"%)";
-  
-  bar.classList.remove("kv-warn","kv-safe");
-  if(pct>=80)bar.classList.add("kv-warn");
-  else if(pct<=30)bar.classList.add("kv-safe");
-  
-  // 锁定逻辑：超过95%锁定
-  if (pct >= 95) {
-    isWriteLocked = true;
-  } else {
-    isWriteLocked = false;
-  }
-  updateButtons(); // 更新按钮状态
 
   var now=new Date();
   var reset=new Date(now);
@@ -1665,103 +714,197 @@ function resetPollInterval(){
 
 // ---------- 操作函数 ----------
 async function doEstate(n){
-  if (isWriteLocked) {
-    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
-    return;
-  }
-  if(remaining<n){alert("剩余楼盘不足！");return}
-  var oldR=remaining,oldS=sold;
-  remaining-=n;sold+=n;
+  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if(remaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=remaining, oldS=sold;
+  remaining -= n; sold += n;
   renderEstate();
-  showEgg("estate",n);
+  showEgg("estate", n);
+  showToast('✅ 已操作，正在同步云端...', 1500);
   resetPollInterval();
-  var res=await apiPost("estate",n);
-  if(res&&res.ok){
-    remaining=res.remaining;sold=res.sold;
-    renderEstate();
-  }else{
-    rollbackEstate(oldR,oldS);
-    if(res===null){} else alert("同步失败，已回滚");
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("estate", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      remaining = res.remaining; sold = res.sold;
+      renderEstate();
+      await updateStatsBar(true);
+      showToast('✅ 同步完成！', 1000);
+    } else {
+      rollbackEstate(oldR, oldS);
+      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    if (e.message === 'KV_LOCKED') {
+      rollbackEstate(oldR, oldS);
+    } else {
+      rollbackEstate(oldR, oldS);
+      alert("操作异常：" + e.message);
+    }
   }
 }
+
 async function doXifu(n){
-  if (isWriteLocked) {
-    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
-    return;
-  }
-  if(xifuRemaining<n){alert("剩余楼盘不足！");return}
-  var oldR=xifuRemaining,oldS=xifuSold;
-  xifuRemaining-=n;xifuSold+=n;
+  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if(xifuRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=xifuRemaining, oldS=xifuSold;
+  xifuRemaining -= n; xifuSold += n;
   renderXifu();
-  showEgg("xifu",n);
+  showEgg("xifu", n);
+  showToast('✅ 已操作，正在同步云端...', 1500);
   resetPollInterval();
-  var res=await apiPost("xifu",n);
-  if(res&&res.ok){
-    xifuRemaining=res.xifuRemaining;xifuSold=res.xifuSold;
-    renderXifu();
-  }else{
-    rollbackXifu(oldR,oldS);
-    if(res===null){} else alert("同步失败，已回滚");
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("xifu", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      xifuRemaining = res.xifuRemaining; xifuSold = res.xifuSold;
+      renderXifu();
+      await updateStatsBar(true);
+      showToast('✅ 同步完成！', 1000);
+    } else {
+      rollbackXifu(oldR, oldS);
+      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    if (e.message === 'KV_LOCKED') {
+      rollbackXifu(oldR, oldS);
+    } else {
+      rollbackXifu(oldR, oldS);
+      alert("操作异常：" + e.message);
+    }
   }
 }
+
 async function doBlast(n){
-  if (isWriteLocked) {
-    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
-    return;
-  }
-  if(blast>=100){alert("大楼已完全爆破！");return}
-  var oldB=blast;
-  blast=Math.min(blast+n,100);
+  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if(blast >= 100){ alert("大楼已完全爆破！"); return; }
+  
+  var oldB = blast;
+  blast = Math.min(blast + n, 100);
   renderBlast();
-  showEgg("blast",n);
+  showEgg("blast", n);
+  showToast('✅ 已操作，正在同步云端...', 1500);
   resetPollInterval();
-  var res=await apiPost("blast",n);
-  if(res&&res.ok){
-    blast=res.blast;
-    renderBlast();
-  }else{
-    rollbackBlast(oldB);
-    if(res===null){} else alert("同步失败，已回滚");
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("blast", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      blast = res.blast;
+      renderBlast();
+      await updateStatsBar(true);
+      showToast('✅ 同步完成！', 1000);
+    } else {
+      rollbackBlast(oldB);
+      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    if (e.message === 'KV_LOCKED') {
+      rollbackBlast(oldB);
+    } else {
+      rollbackBlast(oldB);
+      alert("操作异常：" + e.message);
+    }
   }
 }
+
 async function doBomb(n){
-  if (isWriteLocked) {
-    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
-    return;
-  }
-  if(bombProgress>=100){alert("庞巴迪已完全翻新！");return}
-  var oldB=bombProgress;
-  bombProgress=Math.min(bombProgress+n,100);
+  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if(bombProgress >= 100){ alert("庞巴迪已完全翻新！"); return; }
+  
+  var oldB = bombProgress;
+  bombProgress = Math.min(bombProgress + n, 100);
   renderBomb();
-  showEgg("bombardier",n);
+  showEgg("bombardier", n);
+  showToast('✅ 已操作，正在同步云端...', 1500);
   resetPollInterval();
-  var res=await apiPost("bombardier",n);
-  if(res&&res.ok){
-    bombProgress=res.bombProgress;
-    renderBomb();
-  }else{
-    rollbackBomb(oldB);
-    if(res===null){} else alert("同步失败，已回滚");
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("bombardier", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      bombProgress = res.bombProgress;
+      renderBomb();
+      await updateStatsBar(true);
+      showToast('✅ 同步完成！', 1000);
+    } else {
+      rollbackBomb(oldB);
+      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    if (e.message === 'KV_LOCKED') {
+      rollbackBomb(oldB);
+    } else {
+      rollbackBomb(oldB);
+      alert("操作异常：" + e.message);
+    }
   }
 }
+
 async function doDog(n){
-  if (isWriteLocked) {
-    alert('⚠️ 今日 KV 写入额度即将用尽，已自动锁定，明日 UTC 0 点（北京时间 8 点）重置后再试。');
-    return;
-  }
-  if(dogProgress>=99.9999999999){alert("狗椅已完全倒闭！");return}
-  var oldD=dogProgress,oldDec=dogDecimals;
-  dogProgress=Math.min(dogProgress+n,99.9999999999);
+  if (isProcessing) { showToast('⏳ 请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('🔒 今日写入已锁定，请明天再试', 2500); return; }
+  if(dogProgress >= 99.9999999999){ alert("狗椅已完全倒闭！"); return; }
+  
+  var oldD = dogProgress, oldDec = dogDecimals;
+  dogProgress = Math.min(dogProgress + n, 99.9999999999);
   renderDog();
-  showEgg("dogchair",n);
+  showEgg("dogchair", n);
+  showToast('✅ 已操作，正在同步云端...', 1500);
   resetPollInterval();
-  var res=await apiPost("dogchair",n);
-  if(res&&res.ok){
-    dogProgress=res.dogProgress;dogDecimals=res.dogDecimals||2;
-    renderDog();
-  }else{
-    rollbackDog(oldD,oldDec);
-    if(res===null){} else alert("同步失败，已回滚");
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("dogchair", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      dogProgress = res.dogProgress; dogDecimals = res.dogDecimals || 2;
+      renderDog();
+      await updateStatsBar(true);
+      showToast('✅ 同步完成！', 1000);
+    } else {
+      rollbackDog(oldD, oldDec);
+      if (res === null) showToast('⚠️ 网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    if (e.message === 'KV_LOCKED') {
+      rollbackDog(oldD, oldDec);
+    } else {
+      rollbackDog(oldD, oldDec);
+      alert("操作异常：" + e.message);
+    }
   }
 }
 
@@ -1806,8 +949,13 @@ function stopPolling(){
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
 }
 document.addEventListener("visibilitychange",function(){
-  if(document.hidden) stopPolling();
-  else startPolling();
+  if(document.hidden) {
+    stopPolling();
+  } else {
+    // 回到前台立即刷新 KV 统计
+    updateStatsBar(true);
+    startPolling();
+  }
 });
 
 // ---------- 初始化 ----------
@@ -1911,7 +1059,7 @@ function init(){
   startTimer();
   startKVStatsPolling();
   startPolling();
-  updateButtons(); // 初始锁定状态
+  updateButtons();
 }
 
 if(document.readyState==="loading"){
