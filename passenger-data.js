@@ -923,7 +923,6 @@ const passengerData = {
     { key: "20", name: "20号线", passengers: 1.37 },
   ]
 },
-,
 "2026-08-19": {
   date: "2026-08-19",
   weekday: "星期三",
