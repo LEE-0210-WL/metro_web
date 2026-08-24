@@ -172,12 +172,25 @@ body{
 .fc-blast .fc-sub{color:#fecaca}
 .fc-sold{font-size:12px;color:#9ca3af}
 .fc-blast .fc-sold{color:#fca5a5}
-#fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{
+#fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,
+#fc-yunfan-num,#fc-yunfan-sold,
+#fc-jingyun-num,#fc-jingyun-sold,
+#fc-jingcheng-num,#fc-jingcheng-sold,
+#fc-longjing-num,#fc-longjing-sold,
+#fc-ruicheng-num,#fc-ruicheng-sold,
+#fc-huicheng-num,#fc-huicheng-sold,
+#fc-blast-num,#fc-bomb-num,#fc-dog-num{
   font-weight:700;
   font-size:26px;
   font-family:Bahnschrift;
 }
 #fc-estate-num,#fc-sold-num{color:#1d4ed8}
+#fc-yunfan-num,#fc-yunfan-sold{color:#1e40af}
+#fc-jingyun-num,#fc-jingyun-sold{color:#166534}
+#fc-jingcheng-num,#fc-jingcheng-sold{color:#9d174d}
+#fc-longjing-num,#fc-longjing-sold{color:#854d0e}
+#fc-ruicheng-num,#fc-ruicheng-sold{color:#065f46}
+#fc-huicheng-num,#fc-huicheng-sold{color:#1d4ed8}
 #fc-blast-num{color:#fbbf24}
 .fc-barwrap{
   width:100%;
@@ -302,7 +315,14 @@ body{
 @media(max-width:900px){
   #funcounter-wrap{grid-template-columns:1fr}
   .fc-title{font-size:18px}
-  #fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,#fc-blast-num,#fc-bomb-num,#fc-dog-num{font-size:22px}
+  #fc-estate-num,#fc-sold-num,#fc-xifu-num,#fc-xifu-sold,
+  #fc-yunfan-num,#fc-yunfan-sold,
+  #fc-jingyun-num,#fc-jingyun-sold,
+  #fc-jingcheng-num,#fc-jingcheng-sold,
+  #fc-longjing-num,#fc-longjing-sold,
+  #fc-ruicheng-num,#fc-ruicheng-sold,
+  #fc-huicheng-num,#fc-huicheng-sold,
+  #fc-blast-num,#fc-bomb-num,#fc-dog-num{font-size:22px}
   .page-title{font-size:22px}
   .kv-status-bar{font-size:14px;padding:10px 16px}
   .kv-status-bar .kv-pct{font-size:13px;min-width:100px}
@@ -331,7 +351,7 @@ body{
 <body>
 <a href="/" class="back-link">返回首页</a>
 <h1 class="page-title">楼盘进度计数器</h1>
-<p class="page-subtitle">实时进度，速度受Workers KV/Cloudflare GraphQL Analytics API影响</p>
+<p class="page-subtitle">实时进度，速度受Workers KV影响</p>
 <div class="kv-status-bar" id="kv-bar">
   <span class="kv-label">KV写入已用</span>
   <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
@@ -367,6 +387,21 @@ var xifuSold=0;
 var bombProgress=0.0;
 var dogProgress=0.0;
 var dogDecimals=2;
+
+// 新增楼盘变量
+var yunfanRemaining = 45000;
+var yunfanSold = 0;
+var jingyunRemaining = 55000;
+var jingyunSold = 0;
+var jingchengRemaining = 35000;
+var jingchengSold = 0;
+var longjingRemaining = 25000;
+var longjingSold = 0;
+var ruichengRemaining = 65000;
+var ruichengSold = 0;
+var huichengRemaining = 25000;
+var huichengSold = 0;
+
 var lastSync=0;
 var syncFailCount=0;
 var pollTimer=null;
@@ -588,7 +623,6 @@ function updateKvBar(){
   if(pct>=80)bar.classList.add("kv-warn");
   else if(pct<=30)bar.classList.add("kv-safe");
   
-  // 锁定逻辑：达到 95% 预警锁定
   if (pct >= 95) {
     isWriteLocked = true;
   } else {
@@ -612,7 +646,7 @@ function startTimer(){
   timerInterval=setInterval(updateKvBar,1000);
 }
 
-// ---------- 渲染 ----------
+// ---------- 渲染函数 ----------
 function renderEstate(){
   var el=document.getElementById("fc-estate-num");
   var sl=document.getElementById("fc-sold-num");
@@ -624,6 +658,42 @@ function renderXifu(){
   var sl=document.getElementById("fc-xifu-sold");
   if(el)el.textContent=fmtMoney(xifuRemaining);
   if(sl)sl.textContent=fmtMoney(xifuSold);
+}
+function renderYunfan(){
+  var el=document.getElementById("fc-yunfan-num");
+  var sl=document.getElementById("fc-yunfan-sold");
+  if(el)el.textContent=fmtMoney(yunfanRemaining);
+  if(sl)sl.textContent=fmtMoney(yunfanSold);
+}
+function renderJingyun(){
+  var el=document.getElementById("fc-jingyun-num");
+  var sl=document.getElementById("fc-jingyun-sold");
+  if(el)el.textContent=fmtMoney(jingyunRemaining);
+  if(sl)sl.textContent=fmtMoney(jingyunSold);
+}
+function renderJingcheng(){
+  var el=document.getElementById("fc-jingcheng-num");
+  var sl=document.getElementById("fc-jingcheng-sold");
+  if(el)el.textContent=fmtMoney(jingchengRemaining);
+  if(sl)sl.textContent=fmtMoney(jingchengSold);
+}
+function renderLongjing(){
+  var el=document.getElementById("fc-longjing-num");
+  var sl=document.getElementById("fc-longjing-sold");
+  if(el)el.textContent=fmtMoney(longjingRemaining);
+  if(sl)sl.textContent=fmtMoney(longjingSold);
+}
+function renderRuicheng(){
+  var el=document.getElementById("fc-ruicheng-num");
+  var sl=document.getElementById("fc-ruicheng-sold");
+  if(el)el.textContent=fmtMoney(ruichengRemaining);
+  if(sl)sl.textContent=fmtMoney(ruichengSold);
+}
+function renderHuicheng(){
+  var el=document.getElementById("fc-huicheng-num");
+  var sl=document.getElementById("fc-huicheng-sold");
+  if(el)el.textContent=fmtMoney(huichengRemaining);
+  if(sl)sl.textContent=fmtMoney(huichengSold);
 }
 function renderBlast(){
   var el=document.getElementById("fc-blast-num");
@@ -649,6 +719,20 @@ function renderDog(){
   var bar=document.getElementById("fc-dog-bar");
   if(el)el.textContent=fmtDog(dogProgress)+"/99.9999999999";
   if(bar)bar.style.setProperty("--dog-pct",Math.min(dogProgress*100/99.9999999999,100)+"%");
+}
+
+function renderAll(){
+  renderEstate();
+  renderXifu();
+  renderYunfan();
+  renderJingyun();
+  renderJingcheng();
+  renderLongjing();
+  renderRuicheng();
+  renderHuicheng();
+  renderBlast();
+  renderBomb();
+  renderDog();
 }
 
 function showBlastDone(){
@@ -684,6 +768,66 @@ function bindXifu(){
     else{alert("请输入1-100之间的整数")}
   };
 }
+function bindYunfan(){
+  document.getElementById("fc-btn-yf1").onclick=function(){doYunfan(1)};
+  document.getElementById("fc-btn-yf5").onclick=function(){doYunfan(5)};
+  document.getElementById("fc-btn-yf10").onclick=function(){doYunfan(10)};
+  document.getElementById("fc-btn-yfc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-yf").value,10);
+    if(v>0&&v<=100){doYunfan(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
+function bindJingyun(){
+  document.getElementById("fc-btn-jy1").onclick=function(){doJingyun(1)};
+  document.getElementById("fc-btn-jy5").onclick=function(){doJingyun(5)};
+  document.getElementById("fc-btn-jy10").onclick=function(){doJingyun(10)};
+  document.getElementById("fc-btn-jyc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-jy").value,10);
+    if(v>0&&v<=100){doJingyun(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
+function bindJingcheng(){
+  document.getElementById("fc-btn-jc1").onclick=function(){doJingcheng(1)};
+  document.getElementById("fc-btn-jc5").onclick=function(){doJingcheng(5)};
+  document.getElementById("fc-btn-jc10").onclick=function(){doJingcheng(10)};
+  document.getElementById("fc-btn-jcc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-jc").value,10);
+    if(v>0&&v<=100){doJingcheng(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
+function bindLongjing(){
+  document.getElementById("fc-btn-lj1").onclick=function(){doLongjing(1)};
+  document.getElementById("fc-btn-lj5").onclick=function(){doLongjing(5)};
+  document.getElementById("fc-btn-lj10").onclick=function(){doLongjing(10)};
+  document.getElementById("fc-btn-ljc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-lj").value,10);
+    if(v>0&&v<=100){doLongjing(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
+function bindRuicheng(){
+  document.getElementById("fc-btn-rc1").onclick=function(){doRuicheng(1)};
+  document.getElementById("fc-btn-rc5").onclick=function(){doRuicheng(5)};
+  document.getElementById("fc-btn-rc10").onclick=function(){doRuicheng(10)};
+  document.getElementById("fc-btn-rcc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-rc").value,10);
+    if(v>0&&v<=100){doRuicheng(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
+function bindHuicheng(){
+  document.getElementById("fc-btn-hc1").onclick=function(){doHuicheng(1)};
+  document.getElementById("fc-btn-hc5").onclick=function(){doHuicheng(5)};
+  document.getElementById("fc-btn-hc10").onclick=function(){doHuicheng(10)};
+  document.getElementById("fc-btn-hcc").onclick=function(){
+    var v=parseInt(document.getElementById("fc-inp-hc").value,10);
+    if(v>0&&v<=100){doHuicheng(v)}
+    else{alert("请输入1-100之间的整数")}
+  };
+}
 function bindBlast(){
   document.getElementById("fc-btn-b01").onclick=function(){doBlast(0.01)};
   document.getElementById("fc-btn-b05").onclick=function(){doBlast(0.02)};
@@ -715,9 +859,15 @@ function bindDog(){
   };
 }
 
-// ---------- 回滚 ----------
+// ---------- 回滚函数 ----------
 function rollbackEstate(oldR,oldS){remaining=oldR;sold=oldS;renderEstate();}
 function rollbackXifu(oldR,oldS){xifuRemaining=oldR;xifuSold=oldS;renderXifu();}
+function rollbackYunfan(oldR,oldS){yunfanRemaining=oldR;yunfanSold=oldS;renderYunfan();}
+function rollbackJingyun(oldR,oldS){jingyunRemaining=oldR;jingyunSold=oldS;renderJingyun();}
+function rollbackJingcheng(oldR,oldS){jingchengRemaining=oldR;jingchengSold=oldS;renderJingcheng();}
+function rollbackLongjing(oldR,oldS){longjingRemaining=oldR;longjingSold=oldS;renderLongjing();}
+function rollbackRuicheng(oldR,oldS){ruichengRemaining=oldR;ruichengSold=oldS;renderRuicheng();}
+function rollbackHuicheng(oldR,oldS){huichengRemaining=oldR;huichengSold=oldS;renderHuicheng();}
 function rollbackBlast(oldB){blast=oldB;renderBlast();}
 function rollbackBomb(oldB){bombProgress=oldB;renderBomb();}
 function rollbackDog(oldD,oldDec){dogProgress=oldD;dogDecimals=oldDec;renderDog();}
@@ -801,6 +951,240 @@ async function doXifu(n){
     isProcessing = false;
     updateButtons();
     rollbackXifu(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doYunfan(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(yunfanRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=yunfanRemaining, oldS=yunfanSold;
+  yunfanRemaining -= n; yunfanSold += n;
+  renderYunfan();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("yunfan", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      yunfanRemaining = res.yunfanRemaining; yunfanSold = res.yunfanSold;
+      renderYunfan();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackYunfan(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackYunfan(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doJingyun(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(jingyunRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=jingyunRemaining, oldS=jingyunSold;
+  jingyunRemaining -= n; jingyunSold += n;
+  renderJingyun();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("jingyun", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      jingyunRemaining = res.jingyunRemaining; jingyunSold = res.jingyunSold;
+      renderJingyun();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackJingyun(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackJingyun(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doJingcheng(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(jingchengRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=jingchengRemaining, oldS=jingchengSold;
+  jingchengRemaining -= n; jingchengSold += n;
+  renderJingcheng();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("jingcheng", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      jingchengRemaining = res.jingchengRemaining; jingchengSold = res.jingchengSold;
+      renderJingcheng();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackJingcheng(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackJingcheng(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doLongjing(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(longjingRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=longjingRemaining, oldS=longjingSold;
+  longjingRemaining -= n; longjingSold += n;
+  renderLongjing();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("longjing", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      longjingRemaining = res.longjingRemaining; longjingSold = res.longjingSold;
+      renderLongjing();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackLongjing(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackLongjing(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doRuicheng(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(ruichengRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=ruichengRemaining, oldS=ruichengSold;
+  ruichengRemaining -= n; ruichengSold += n;
+  renderRuicheng();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("ruicheng", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      ruichengRemaining = res.ruichengRemaining; ruichengSold = res.ruichengSold;
+      renderRuicheng();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackRuicheng(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackRuicheng(oldR, oldS);
+    if (e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      alert("操作异常：" + e.message);
+    }
+  }
+}
+
+async function doHuicheng(n){
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(huichengRemaining < n){ alert("剩余楼盘不足！"); return; }
+  
+  var oldR=huichengRemaining, oldS=huichengSold;
+  huichengRemaining -= n; huichengSold += n;
+  renderHuicheng();
+  showEgg("estate", n);
+  showToast('已操作，正在同步云端...', 1500);
+  resetPollInterval();
+  
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost("huicheng", n);
+    isProcessing = false;
+    updateButtons();
+    if (res && res.ok) {
+      huichengRemaining = res.huichengRemaining; huichengSold = res.huichengSold;
+      renderHuicheng();
+      await updateStatsBar(true);
+      showToast('同步完成', 1000);
+    } else {
+      rollbackHuicheng(oldR, oldS);
+      if (res === null) showToast('网络异常，已回滚', 2000);
+    }
+  } catch (e) {
+    isProcessing = false;
+    updateButtons();
+    rollbackHuicheng(oldR, oldS);
     if (e.message && e.message.includes('额度已用完')) {
       // 已由 apiPost 处理
     } else {
@@ -926,7 +1310,7 @@ async function doDog(n){
   }
 }
 
-// ---------- 轮询 ----------
+// ---------- 轮询同步 ----------
 async function syncFromServer(){
   if(isSyncing)return;
   isSyncing=true;
@@ -946,8 +1330,20 @@ async function syncFromServer(){
   if(data.bombProgress!==undefined)bombProgress=data.bombProgress;
   if(data.dogProgress!==undefined)dogProgress=data.dogProgress;
   if(data.dogDecimals!==undefined)dogDecimals=data.dogDecimals;
+  if(data.yunfanRemaining!==undefined)yunfanRemaining=data.yunfanRemaining;
+  if(data.yunfanSold!==undefined)yunfanSold=data.yunfanSold;
+  if(data.jingyunRemaining!==undefined)jingyunRemaining=data.jingyunRemaining;
+  if(data.jingyunSold!==undefined)jingyunSold=data.jingyunSold;
+  if(data.jingchengRemaining!==undefined)jingchengRemaining=data.jingchengRemaining;
+  if(data.jingchengSold!==undefined)jingchengSold=data.jingchengSold;
+  if(data.longjingRemaining!==undefined)longjingRemaining=data.longjingRemaining;
+  if(data.longjingSold!==undefined)longjingSold=data.longjingSold;
+  if(data.ruichengRemaining!==undefined)ruichengRemaining=data.ruichengRemaining;
+  if(data.ruichengSold!==undefined)ruichengSold=data.ruichengSold;
+  if(data.huichengRemaining!==undefined)huichengRemaining=data.huichengRemaining;
+  if(data.huichengSold!==undefined)huichengSold=data.huichengSold;
   
-  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
+  renderAll();
   isSyncing=false;
   
   currentPollInterval=Math.min(600000, currentPollInterval*1.5);
@@ -967,13 +1363,12 @@ function stopPolling(){
   if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
 }
 
-// 双保险可见性监听
 document.addEventListener("visibilitychange", function(){
   if(document.hidden) {
     stopPolling();
   } else {
-    syncFromServer(); // 回到前台立即同步业务数据
-    updateStatsBar(true); // 同步 KV 统计
+    syncFromServer();
+    updateStatsBar(true);
     startPolling();
   }
 });
@@ -990,6 +1385,7 @@ function init(){
   var wrap=document.getElementById("funcounter-wrap");
   if(!wrap)return;
   wrap.innerHTML=
+    // 深铁阅云境
     '<div class="fc-row fc-estate">'+
       '<div class="fc-left">'+
         '<div class="fc-title">大运TOD巨作深铁阅云境</div>'+
@@ -1008,6 +1404,7 @@ function init(){
         '</div>'+
       '</div>'+
     '</div>'+
+    // 深铁熙府
     '<div class="fc-row fc-xifu">'+
       '<div class="fc-left">'+
         '<div class="fc-title">深铁熙府</div>'+
@@ -1026,6 +1423,128 @@ function init(){
         '</div>'+
       '</div>'+
     '</div>'+
+    // 其他热盘标题
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#fef9ef,#fdf0d5);border:1px solid #f0c27a;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#7c5c3e;">🏠 其他热盘</div>'+
+        '<div class="fc-sub" style="font-size:12px;color:#8b7355;">以下楼盘独立计数，互不影响</div>'+
+      '</div>'+
+    '</div>'+
+    // 云帆·闰悦府
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);border:1px solid #93c5fd;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#1e40af;">云帆·闰悦府</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-yunfan-num">'+fmtMoney(yunfanRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-yunfan-sold">'+fmtMoney(yunfanSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-yf1">-1套</button>'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-yf5">-5套</button>'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-yf10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-yf" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-yfc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 景云上辰花园
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#166534;">景云上辰花园</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-jingyun-num">'+fmtMoney(jingyunRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-jingyun-sold">'+fmtMoney(jingyunSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#16a34a;color:#fff;" id="fc-btn-jy1">-1套</button>'+
+          '<button class="fc-btn" style="background:#16a34a;color:#fff;" id="fc-btn-jy5">-5套</button>'+
+          '<button class="fc-btn" style="background:#16a34a;color:#fff;" id="fc-btn-jy10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-jy" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#16a34a;color:#fff;" id="fc-btn-jyc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 深铁璟城
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1px solid #f9a8d4;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#9d174d;">深铁璟城</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-jingcheng-num">'+fmtMoney(jingchengRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-jingcheng-sold">'+fmtMoney(jingchengSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#db2777;color:#fff;" id="fc-btn-jc1">-1套</button>'+
+          '<button class="fc-btn" style="background:#db2777;color:#fff;" id="fc-btn-jc5">-5套</button>'+
+          '<button class="fc-btn" style="background:#db2777;color:#fff;" id="fc-btn-jc10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-jc" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#db2777;color:#fff;" id="fc-btn-jcc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 深铁珑境
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#fefce8,#fef9c3);border:1px solid #fde047;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#854d0e;">深铁珑境</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-longjing-num">'+fmtMoney(longjingRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-longjing-sold">'+fmtMoney(longjingSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#ca8a04;color:#fff;" id="fc-btn-lj1">-1套</button>'+
+          '<button class="fc-btn" style="background:#ca8a04;color:#fff;" id="fc-btn-lj5">-5套</button>'+
+          '<button class="fc-btn" style="background:#ca8a04;color:#fff;" id="fc-btn-lj10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-lj" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#ca8a04;color:#fff;" id="fc-btn-ljc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 深铁瑞城
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #6ee7b7;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#065f46;">深铁瑞城</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-ruicheng-num">'+fmtMoney(ruichengRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-ruicheng-sold">'+fmtMoney(ruichengSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#059669;color:#fff;" id="fc-btn-rc1">-1套</button>'+
+          '<button class="fc-btn" style="background:#059669;color:#fff;" id="fc-btn-rc5">-5套</button>'+
+          '<button class="fc-btn" style="background:#059669;color:#fff;" id="fc-btn-rc10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-rc" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#059669;color:#fff;" id="fc-btn-rcc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 深铁汇城
+    '<div class="fc-row fc-estate" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;">'+
+      '<div class="fc-left">'+
+        '<div class="fc-title" style="color:#1d4ed8;">深铁汇城</div>'+
+        '<div class="fc-sub">还剩楼盘 <span id="fc-huicheng-num">'+fmtMoney(huichengRemaining)+'</span></div>'+
+        '<div class="fc-sold">已卖楼盘 <span id="fc-huicheng-sold">'+fmtMoney(huichengSold)+'</span></div>'+
+      '</div>'+
+      '<div class="fc-right">'+
+        '<div class="fc-btns">'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-hc1">-1套</button>'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-hc5">-5套</button>'+
+          '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-hc10">-10套</button>'+
+          '<div class="fc-custom">'+
+            '<input type="number" id="fc-inp-hc" placeholder="自定义" min="1" max="100">'+
+            '<button class="fc-btn" style="background:#2563eb;color:#fff;" id="fc-btn-hcc">确定</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    // 吵吵吵楼（爆破）——放在楼盘后面
     '<div class="fc-row fc-blast" id="fc-blast-wrap">'+
       '<div class="fc-left">'+
         '<div class="fc-title">吵吵吵楼</div>'+
@@ -1044,6 +1563,7 @@ function init(){
         '</div>'+
       '</div>'+
     '</div>'+
+    // 庞巴迪翻新
     '<div class="fc-row fc-bombardier">'+
       '<div class="fc-left">'+
         '<div class="fc-title">庞巴迪翻新进度</div>'+
@@ -1062,6 +1582,7 @@ function init(){
         '</div>'+
       '</div>'+
     '</div>'+
+    // 狗椅倒闭
     '<div class="fc-row fc-dogchair">'+
       '<div class="fc-left">'+
         '<div class="fc-title">狗椅倒闭进度</div>'+
@@ -1080,8 +1601,20 @@ function init(){
         '</div>'+
       '</div>'+
     '</div>';
-  bindEstate();bindXifu();bindBlast();bindBomb();bindDog();
-  renderEstate();renderXifu();renderBlast();renderBomb();renderDog();
+  
+  bindEstate();
+  bindXifu();
+  bindYunfan();
+  bindJingyun();
+  bindJingcheng();
+  bindLongjing();
+  bindRuicheng();
+  bindHuicheng();
+  bindBlast();
+  bindBomb();
+  bindDog();
+  
+  renderAll();
   updateKvBar();
   startTimer();
   startKVStatsPolling();
