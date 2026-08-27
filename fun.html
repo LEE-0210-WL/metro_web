@@ -170,7 +170,7 @@ body{
   gap:16px;
 }
 
-/* ===== 卡片样式（保留各卡特色配色） ===== */
+/* ===== 卡片样式 ===== */
 .shop-card{
   display:flex;
   flex-direction:column;
@@ -269,15 +269,13 @@ body{
   margin-top:2px;
 }
 
-/* ===== 各卡特色配色 ===== */
-/* 楼盘类 */
+/* ===== 各卡配色 ===== */
 .card-estate{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
 .card-estate .name{color:#1d4ed8}
 .card-estate .stats .num{color:#1d4ed8}
 .card-estate .btns button{background:#2563eb;color:#fff}
 .card-estate .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-estate .custom-row button{background:#2563eb;color:#fff}
-.card-estate .custom-row button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 
 .card-xifu{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;}
 .card-xifu .name{color:#b45309}
@@ -285,9 +283,7 @@ body{
 .card-xifu .btns button{background:#f59e0b;color:#fff}
 .card-xifu .btns button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
 .card-xifu .custom-row button{background:#f59e0b;color:#fff}
-.card-xifu .custom-row button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
 
-/* 工程类 */
 .card-blast{background:#dc2626;border-color:#b91c1c;color:#fff}
 .card-blast .name{color:#fbbf24}
 .card-blast .stats{color:#fecaca}
@@ -295,7 +291,6 @@ body{
 .card-blast .btns button{background:#fbbf24;color:#7c2d12}
 .card-blast .btns button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
 .card-blast .custom-row button{background:#fbbf24;color:#7c2d12}
-.card-blast .custom-row button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
 .card-blast .tag{background:rgba(255,255,255,0.2);color:#fbbf24}
 
 .card-bombardier{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#01AF55;}
@@ -305,7 +300,6 @@ body{
 .card-bombardier .btns button{background:#01AF55;color:#fff}
 .card-bombardier .btns button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
 .card-bombardier .custom-row button{background:#01AF55;color:#fff}
-.card-bombardier .custom-row button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
 
 .card-dogchair{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#0131AC;}
 .card-dogchair .name{color:#1e3a8a}
@@ -314,70 +308,55 @@ body{
 .card-dogchair .btns button{background:#0131AC;color:#fff}
 .card-dogchair .btns button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
 .card-dogchair .custom-row button{background:#0131AC;color:#fff}
-.card-dogchair .custom-row button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
 
-/* 饮料零食 */
 .card-snack{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border-color:#f9a8d4;}
 .card-snack .name{color:#9d174d}
 .card-snack .stats .num{color:#9d174d}
 .card-snack .btns button{background:#db2777;color:#fff}
 .card-snack .btns button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
 .card-snack .custom-row button{background:#db2777;color:#fff}
-.card-snack .custom-row button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
 
-/* 泡面饮料 */
 .card-noodle{background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde047;}
 .card-noodle .name{color:#854d0e}
 .card-noodle .stats .num{color:#854d0e}
 .card-noodle .btns button{background:#ca8a04;color:#fff}
 .card-noodle .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-noodle .custom-row button{background:#ca8a04;color:#fff}
-.card-noodle .custom-row button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 
-/* 日用品 */
 .card-daily{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;}
 .card-daily .name{color:#166534}
 .card-daily .stats .num{color:#166534}
 .card-daily .btns button{background:#16a34a;color:#fff}
 .card-daily .btns button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
 .card-daily .custom-row button{background:#16a34a;color:#fff}
-.card-daily .custom-row button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
 
-/* 餐饮 */
 .card-food{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#f87171;}
 .card-food .name{color:#991b1b}
 .card-food .stats .num{color:#991b1b}
 .card-food .btns button{background:#dc2626;color:#fff}
 .card-food .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
 .card-food .custom-row button{background:#dc2626;color:#fff}
-.card-food .custom-row button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
 
-/* 其他 */
 .card-other{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-color:#a5b4fc;}
 .card-other .name{color:#3730a3}
 .card-other .stats .num{color:#3730a3}
 .card-other .btns button{background:#4f46e5;color:#fff}
 .card-other .btns button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
 .card-other .custom-row button{background:#4f46e5;color:#fff}
-.card-other .custom-row button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
 
-/* 保健 */
 .card-health{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#60a5fa;}
 .card-health .name{color:#1e40af}
 .card-health .stats .num{color:#1e40af}
 .card-health .btns button{background:#2563eb;color:#fff}
 .card-health .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-health .custom-row button{background:#2563eb;color:#fff}
-.card-health .custom-row button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 
-/* 交通 */
 .card-traffic{background:linear-gradient(135deg,#fef9c3,#fef08a);border-color:#facc15;}
 .card-traffic .name{color:#854d0e}
 .card-traffic .stats .num{color:#854d0e}
 .card-traffic .btns button{background:#ca8a04;color:#fff}
 .card-traffic .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-traffic .custom-row button{background:#ca8a04;color:#fff}
-.card-traffic .custom-row button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 
 /* 打卡卡片 */
 .card-checkin{
@@ -572,7 +551,7 @@ function startKVStatsPolling() {
 }
 
 function updateButtons() {
-  var btns = document.querySelectorAll('.shop-card .btns button, .shop-card .custom-row button');
+  var btns = document.querySelectorAll('.shop-card .btns button, .shop-card .custom-row button, #checkinBtn');
   btns.forEach(function(btn) {
     btn.disabled = isWriteLocked || isProcessing;
   });
@@ -648,11 +627,9 @@ function getCategoryLabel(cat){
 function renderShopTabs(categories, current) {
   var container = document.getElementById('shopTabs');
   if(!container) return;
-  // 把"打卡"单独放在最后
   var allCats = ['全部', '楼盘', '工程', '饮料零食', '泡面饮料', '日用品', '餐饮', '其他', '保健', '交通', '打卡'];
   var html = '';
   allCats.forEach(function(cat){
-    // 检查该分类是否有商品（打卡除外）
     if(cat !== '全部' && cat !== '打卡') {
       var hasItem = categories.indexOf(cat) !== -1;
       if(!hasItem) return;
@@ -676,7 +653,6 @@ function renderShopGrid(category) {
   var container = document.getElementById('shopGrid');
   if(!container) return;
   
-  // 检查是否选中"打卡"分类
   if(category === '打卡') {
     container.innerHTML = renderCheckinCard();
     return;
@@ -711,27 +687,26 @@ function renderShopGrid(category) {
     var btnHtml = '';
     if(isBHL) {
       btnHtml = '<div class="btns">'+
-        '<button onclick="doShop(\''+item.id+'\',50)">¥50</button>'+
-        '<button onclick="doShop(\''+item.id+'\',100)">¥100</button>'+
-        '<button onclick="doShop(\''+item.id+'\',200)">¥200</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',50)">¥50</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',100)">¥100</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',200)">¥200</button>'+
         '<div class="custom-row">'+
           '<input type="number" id="inp_'+item.id+'" placeholder="金额" min="1" max="500" step="1">'+
-          '<button onclick="doShopCustom(\''+item.id+'\')">下单</button>'+
+          '<button onclick="window.doShopCustom(\''+item.id+'\')">下单</button>'+
         '</div>'+
       '</div>';
     } else {
       btnHtml = '<div class="btns">'+
-        '<button onclick="doShop(\''+item.id+'\',1)">+1</button>'+
-        '<button onclick="doShop(\''+item.id+'\',5)">+5</button>'+
-        '<button onclick="doShop(\''+item.id+'\',10)">+10</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',1)">+1</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',5)">+5</button>'+
+        '<button onclick="window.doShop(\''+item.id+'\',10)">+10</button>'+
         '<div class="custom-row">'+
           '<input type="number" id="inp_'+item.id+'" placeholder="数量" min="1" max="100" step="1">'+
-          '<button onclick="doShopCustom(\''+item.id+'\')">确定</button>'+
+          '<button onclick="window.doShopCustom(\''+item.id+'\')">确定</button>'+
         '</div>'+
       '</div>';
     }
     
-    // 格式化大数字
     var remainingStr = remainingDisplay;
     if(typeof remainingDisplay === 'number' && remainingDisplay > 10000) {
       remainingStr = remainingDisplay.toLocaleString('zh-CN');
@@ -759,7 +734,6 @@ function renderCheckinCard() {
   if(productData && productData.atsgs) {
     status = productData.atsgs.remaining || 0;
   }
-  // 或者从单独变量获取
   var done = (status >= 1);
   var doneText = done ? '<span class="done">1</span>' : '<span class="undo">0</span>';
   
@@ -768,46 +742,14 @@ function renderCheckinCard() {
     '<div class="stats">今日打卡 · 每人每天限 1 次</div>'+
     '<div class="stats">已打卡: '+doneText+' / <span class="undo">1</span></div>'+
     '<div class="btns">'+
-      '<button id="checkinBtn" class="'+(done?'done-btn':'')+'" '+(done?'disabled':'')+'>'+(done?'✅ 已打卡':'打卡 ✅')+'</button>'+
+      '<button id="checkinBtn" class="'+(done?'done-btn':'')+'" '+(done?'disabled':'')+' onclick="window.doCheckin()">'+(done?'✅ 已打卡':'打卡 ✅')+'</button>'+
     '</div>'+
     '<div class="sold-text">目标总量 1 次 · 打完收工</div>'+
   '</div>';
 }
 
-// ========== 打卡逻辑 ==========
-async function doCheckin() {
-  if(isProcessing) { showToast('请稍候...', 1000); return; }
-  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
-  // 检查是否已打卡
-  if(productData && productData.atsgs && productData.atsgs.remaining >= 1) {
-    showToast('你今天已经打过卡了！', 2000);
-    return;
-  }
-  isProcessing = true;
-  updateButtons();
-  try {
-    var res = await apiPost('atsgs', 1);
-    isProcessing = false;
-    updateButtons();
-    if(res && res.ok) {
-      showToast('打卡成功！✅ 安托山公厕今日已打卡', 2000);
-      await fetchFullData();
-      // 刷新当前分类
-      renderShopGrid(currentCategory);
-    } else {
-      showToast('打卡失败，请重试', 2000);
-    }
-  } catch(e) {
-    isProcessing = false;
-    updateButtons();
-    if(e.message && !e.message.includes('额度已用完')) {
-      showToast('操作异常：'+e.message, 2500);
-    }
-  }
-}
-
-// ========== 商品购买 ==========
-async function doShop(id, delta) {
+// ========== 挂载全局函数 ==========
+window.doShop = async function(id, delta) {
   if(isProcessing) { showToast('请稍候...', 1000); return; }
   if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   var p = productData[id];
@@ -840,9 +782,9 @@ async function doShop(id, delta) {
       showToast('操作异常：'+e.message, 2500);
     }
   }
-}
+};
 
-async function doShopCustom(id) {
+window.doShopCustom = async function(id) {
   var inp = document.getElementById('inp_'+id);
   if(!inp) return;
   var val = parseFloat(inp.value);
@@ -861,8 +803,37 @@ async function doShopCustom(id) {
     showToast('最低金额为 1 元', 1500);
     return;
   }
-  await doShop(id, val);
-}
+  await window.doShop(id, val);
+};
+
+window.doCheckin = async function() {
+  if(isProcessing) { showToast('请稍候...', 1000); return; }
+  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(productData && productData.atsgs && productData.atsgs.remaining >= 1) {
+    showToast('你今天已经打过卡了！', 2000);
+    return;
+  }
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost('atsgs', 1);
+    isProcessing = false;
+    updateButtons();
+    if(res && res.ok) {
+      showToast('打卡成功！✅ 安托山公厕今日已打卡', 2000);
+      await fetchFullData();
+      renderShopGrid(currentCategory);
+    } else {
+      showToast('打卡失败，请重试', 2000);
+    }
+  } catch(e) {
+    isProcessing = false;
+    updateButtons();
+    if(e.message && !e.message.includes('额度已用完')) {
+      showToast('操作异常：'+e.message, 2500);
+    }
+  }
+};
 
 // ========== 获取完整数据 ==========
 async function fetchFullData() {
@@ -880,7 +851,6 @@ async function fetchFullData() {
       renderShopTabs(catArray, currentCategory);
       renderShopGrid(currentCategory);
     }
-    // 打卡数据已包含在products中，打卡卡片会动态显示
   } catch(e) {
     console.error('fetchFullData error', e);
   }
@@ -938,13 +908,6 @@ function init(){
   startKVStatsPolling();
   startPolling();
   updateButtons();
-  
-  // 打卡按钮委托事件
-  document.addEventListener('click', function(e){
-    if(e.target && e.target.id === 'checkinBtn') {
-      doCheckin();
-    }
-  });
 }
 
 if(document.readyState==="loading"){
