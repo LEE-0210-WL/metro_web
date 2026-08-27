@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>好玩的东西 - 走进新天地·Railway</title>
+<title>物件小卖部 - 走进新天地·Railway</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -190,20 +190,37 @@ body{
   font-weight:700;
   margin-bottom:2px;
 }
-.shop-card .stats{
-  font-size:13px;
-  color:#6b7280;
-  margin-bottom:0;
+/* 新排版：三行独立显示 */
+.shop-card .row-remaining{
+  font-size:15px;
+  color:#374151;
+  margin-bottom:2px;
 }
-.shop-card .stats .num{
+.shop-card .row-remaining .num{
   font-weight:700;
-  font-size:26px;
+  font-size:28px;
+  font-family:Bahnschrift;
+  color:inherit;
+}
+.shop-card .row-sold{
+  font-size:14px;
+  color:#6b7280;
+  margin-bottom:2px;
+}
+.shop-card .row-sold .num{
+  font-weight:600;
+  font-size:18px;
   font-family:Bahnschrift;
 }
-.shop-card .sold-text{
-  font-size:12px;
+.shop-card .row-daily{
+  font-size:13px;
   color:#9ca3af;
-  margin-top:0;
+  margin-bottom:6px;
+}
+.shop-card .row-daily .num{
+  font-weight:600;
+  font-size:15px;
+  font-family:Bahnschrift;
 }
 .shop-card .btns{
   display:flex;
@@ -221,7 +238,7 @@ body{
   transition:all 0.2s ease;
   font-family:Bahnschrift;
 }
-.shop-card .btns button:hover{
+.shop-card .btns button:hover:not(:disabled){
   transform:translateY(-2px);
   box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
@@ -261,7 +278,7 @@ body{
   transition:all 0.2s ease;
   font-family:Bahnschrift;
 }
-.shop-card .custom-row button:hover{
+.shop-card .custom-row button:hover:not(:disabled){
   transform:translateY(-2px);
   box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
@@ -280,91 +297,92 @@ body{
 /* ===== 各卡配色 ===== */
 .card-estate{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
 .card-estate .name{color:#1d4ed8}
-.card-estate .stats .num{color:#1d4ed8}
+.card-estate .row-remaining .num{color:#1d4ed8}
 .card-estate .btns button{background:#2563eb;color:#fff}
 .card-estate .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-estate .custom-row button{background:#2563eb;color:#fff}
 
 .card-xifu{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;}
 .card-xifu .name{color:#b45309}
-.card-xifu .stats .num{color:#b45309}
+.card-xifu .row-remaining .num{color:#b45309}
 .card-xifu .btns button{background:#f59e0b;color:#fff}
 .card-xifu .btns button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
 .card-xifu .custom-row button{background:#f59e0b;color:#fff}
 
 .card-blast{background:#dc2626;border-color:#b91c1c;color:#fff}
 .card-blast .name{color:#fbbf24}
-.card-blast .stats{color:#fecaca}
-.card-blast .stats .num{color:#fbbf24}
+.card-blast .row-remaining{color:#fecaca}
+.card-blast .row-remaining .num{color:#fbbf24}
+.card-blast .row-sold{color:#fca5a5}
+.card-blast .row-daily{color:#fca5a5}
 .card-blast .btns button{background:#fbbf24;color:#7c2d12}
 .card-blast .btns button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
 .card-blast .custom-row button{background:#fbbf24;color:#7c2d12}
 .card-blast .tag{background:rgba(255,255,255,0.2);color:#fbbf24}
-.card-blast .sold-text{color:#fca5a5}
 
 .card-bombardier{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#01AF55;}
 .card-bombardier .name{color:#065f46}
-.card-bombardier .stats{color:#047857}
-.card-bombardier .stats .num{color:#065f46}
+.card-bombardier .row-remaining .num{color:#065f46}
 .card-bombardier .btns button{background:#01AF55;color:#fff}
 .card-bombardier .btns button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
 .card-bombardier .custom-row button{background:#01AF55;color:#fff}
-.card-bombardier .sold-text{color:#047857}
+.card-bombardier .row-sold{color:#047857}
+.card-bombardier .row-daily{color:#047857}
 
 .card-dogchair{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#0131AC;}
 .card-dogchair .name{color:#1e3a8a}
-.card-dogchair .stats{color:#1e40af}
-.card-dogchair .stats .num{color:#1e3a8a}
+.card-dogchair .row-remaining .num{color:#1e3a8a}
 .card-dogchair .btns button{background:#0131AC;color:#fff}
 .card-dogchair .btns button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
 .card-dogchair .custom-row button{background:#0131AC;color:#fff}
-.card-dogchair .sold-text{color:#1e40af}
+.card-dogchair .row-sold{color:#1e40af}
+.card-dogchair .row-daily{color:#1e40af}
 
 .card-snack{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border-color:#f9a8d4;}
 .card-snack .name{color:#9d174d}
-.card-snack .stats .num{color:#9d174d}
+.card-snack .row-remaining .num{color:#9d174d}
 .card-snack .btns button{background:#db2777;color:#fff}
 .card-snack .btns button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
 .card-snack .custom-row button{background:#db2777;color:#fff}
 
 .card-noodle{background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde047;}
 .card-noodle .name{color:#854d0e}
-.card-noodle .stats .num{color:#854d0e}
+.card-noodle .row-remaining .num{color:#854d0e}
 .card-noodle .btns button{background:#ca8a04;color:#fff}
 .card-noodle .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-noodle .custom-row button{background:#ca8a04;color:#fff}
 
 .card-daily{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;}
 .card-daily .name{color:#166534}
-.card-daily .stats .num{color:#166534}
+.card-daily .row-remaining .num{color:#166534}
 .card-daily .btns button{background:#16a34a;color:#fff}
 .card-daily .btns button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
 .card-daily .custom-row button{background:#16a34a;color:#fff}
 
 .card-food{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#f87171;}
 .card-food .name{color:#991b1b}
-.card-food .stats .num{color:#991b1b}
+.card-food .row-remaining .num{color:#991b1b}
 .card-food .btns button{background:#dc2626;color:#fff}
 .card-food .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
 .card-food .custom-row button{background:#dc2626;color:#fff}
 
 .card-other{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-color:#a5b4fc;}
 .card-other .name{color:#3730a3}
-.card-other .stats .num{color:#3730a3}
+.card-other .row-remaining .num{color:#3730a3}
 .card-other .btns button{background:#4f46e5;color:#fff}
 .card-other .btns button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
 .card-other .custom-row button{background:#4f46e5;color:#fff}
 
 .card-health{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#60a5fa;}
 .card-health .name{color:#1e40af}
-.card-health .stats .num{color:#1e40af}
+.card-health .row-remaining .num{color:#1e40af}
 .card-health .btns button{background:#2563eb;color:#fff}
 .card-health .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-health .custom-row button{background:#2563eb;color:#fff}
 
 .card-traffic{background:linear-gradient(135deg,#fef9c3,#fef08a);border-color:#facc15;}
 .card-traffic .name{color:#854d0e}
-.card-traffic .stats .num{color:#854d0e}
+.card-traffic .row-remaining .num{color:#854d0e}
 .card-traffic .btns button{background:#ca8a04;color:#fff}
 .card-traffic .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-traffic .custom-row button{background:#ca8a04;color:#fff}
@@ -398,12 +416,29 @@ body{
   color:#fff;
   box-shadow:0 4px 16px rgba(245,158,11,0.3);
 }
-.card-checkin .btns button:hover{transform:scale(1.05)}
+.card-checkin .btns button:hover:not(:disabled){transform:scale(1.05)}
 .card-checkin .btns button:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;box-shadow:none !important}
 .card-checkin .btns button.done-btn{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 4px 16px rgba(34,197,94,0.3)}
 .card-checkin .sold-text{font-size:14px;color:#9ca3af;margin-top:8px}
 .card-checkin .done{color:#16a34a}
 .card-checkin .undo{color:#dc2626}
+
+/* 纯色进度条（工程类专用） */
+.progress-bar-wrap{
+  width:100%;
+  height:10px;
+  background:rgba(0,0,0,0.08);
+  border-radius:5px;
+  overflow:hidden;
+  margin-top:6px;
+  margin-bottom:2px;
+}
+.progress-bar-fill{
+  height:100%;
+  border-radius:5px;
+  background:currentColor;
+  transition:width 0.5s ease;
+}
 
 @media(max-width:768px){
   .shop-grid{grid-template-columns:1fr}
@@ -413,11 +448,12 @@ body{
   .card-checkin .btns button{font-size:17px;padding:12px 32px}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 <a href="/" class="back-link">返回首页</a>
-<h1 class="page-title">楼盘进度计数器</h1>
-<p class="page-subtitle">实时进度，速度受Workers KV影响</p>
+<h1 class="page-title">物件小卖部</h1>
+<p class="page-subtitle">实时进度，速度受 Workers KV / Cloudflare GraphQL Analytics API影响</p>
 <div class="kv-status-bar" id="kv-bar">
   <span class="kv-label">KV写入已用</span>
   <div class="kv-barwrap"><div class="kv-bar" id="kv-bar-inner" style="width:0%"></div></div>
@@ -426,7 +462,6 @@ body{
   <span class="kv-lock" id="kv-lock">写入已锁定</span>
 </div>
 
-<!-- ===== 商品购买区 ===== -->
 <div class="shop-section" id="shopSection">
   <div class="shop-tabs" id="shopTabs"></div>
   <div class="shop-grid" id="shopGrid"></div>
@@ -436,7 +471,6 @@ body{
 (function(){
 "use strict";
 
-// ========== 用户身份标识 ==========
 function getUserId() {
   let id = localStorage.getItem('userId');
   if (!id) {
@@ -447,77 +481,72 @@ function getUserId() {
 }
 var USER_ID = getUserId();
 
-// ========== 基础配置 ==========
-var API_BASE="";
-var lastSync=0;
-var syncFailCount=0;
-var pollTimer=null;
-var kvReadsToday=0;
-var kvWritesToday=0;
-var KV_READ_LIMIT=100000;
-var KV_WRITE_LIMIT=1000;
-var isSyncing=false;
-var currentPollInterval=30000;
-var timerInterval=null;
+var API_BASE = "";
+var lastSync = 0;
+var syncFailCount = 0;
+var pollTimer = null;
+var kvWritesToday = 0;
+var KV_WRITE_LIMIT = 1000;
+var isSyncing = false;
+var currentPollInterval = 30000;
+var timerInterval = null;
 var lastValidStats = { writes: 0, writeLimit: 1000 };
 var isWriteLocked = false;
 var isProcessing = false;
 
 var productData = {};
+var checkinData = { status: 0, target: 1, unit: '次' };
 var currentCategory = '全部';
 
-// ========== Toast 提示 ==========
 var toastTimer = null;
 function showToast(msg, duration) {
   duration = duration || 2500;
   var old = document.querySelector('.toast-msg');
-  if(old) old.remove();
-  if(toastTimer) clearTimeout(toastTimer);
+  if (old) old.remove();
+  if (toastTimer) clearTimeout(toastTimer);
   var div = document.createElement('div');
   div.className = 'toast-msg';
   div.textContent = msg;
   document.body.appendChild(div);
-  toastTimer = setTimeout(function(){
+  toastTimer = setTimeout(function() {
     div.classList.add('hide');
-    setTimeout(function(){ div.remove(); }, 500);
+    setTimeout(function() { div.remove(); }, 500);
     toastTimer = null;
   }, duration);
 }
 
-function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
-
-// ========== API ==========
-async function apiGet(){
-  try{
-    var r=await fetch(API_BASE+"/api/counters", {
+async function apiGet() {
+  try {
+    var r = await fetch(API_BASE + "/api/counters", {
       headers: { 'X-User-Id': USER_ID }
     });
-    if(!r.ok)throw new Error("http"+r.status);
+    if (!r.ok) throw new Error("http" + r.status);
     return await r.json();
-  }catch(e){console.error("sync-get",e);return null}
+  } catch (e) { console.error("sync-get", e); return null; }
 }
-async function apiPost(id,delta){
-  try{
-    var r=await fetch(API_BASE+"/api/counters",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
+
+async function apiPost(id, delta) {
+  try {
+    var r = await fetch(API_BASE + "/api/counters", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
         "X-User-Id": USER_ID
       },
-      body:JSON.stringify({id:id,delta:delta})
+      body: JSON.stringify({ id: id, delta: delta })
     });
-    if(!r.ok){
+    if (!r.ok) {
       var errText = await r.text();
       var errObj;
-      try { errObj = JSON.parse(errText); } catch(e) { errObj = {error: errText}; }
+      try { errObj = JSON.parse(errText); } catch (e) { errObj = { error: errText }; }
       if (r.status === 429) {
         throw new Error(errObj.error || "请求过于频繁");
       }
-      throw new Error(errObj.error || ("http"+r.status));
+      throw new Error(errObj.error || ("http" + r.status));
     }
     return await r.json();
-  }catch(e){
-    console.error("sync-post",e);
+  } catch (e) {
+    console.error("sync-post", e);
     if (e.message && e.message.includes('额度已用完')) {
       alert(e.message);
       return null;
@@ -526,7 +555,6 @@ async function apiPost(id,delta){
   }
 }
 
-// ========== KV 统计 ==========
 async function fetchKVStats() {
   try {
     const res = await fetch('/api/kv-stats?t=' + Date.now());
@@ -544,21 +572,18 @@ async function fetchKVStats() {
 }
 
 async function updateStatsBar(showLoadingToast) {
-  if (showLoadingToast) {
-    showToast('正在同步KV用量...', 1500);
-  }
+  if (showLoadingToast) showToast('正在同步KV用量...', 1500);
   const stats = await fetchKVStats();
   if (stats) {
     kvWritesToday = stats.writes;
     KV_WRITE_LIMIT = stats.writeLimit || 1000;
-    updateKvBar();
   }
   updateKvBar();
 }
 
 function startKVStatsPolling() {
   updateStatsBar(false);
-  setInterval(function(){ updateStatsBar(false); }, 60000);
+  setInterval(function() { updateStatsBar(false); }, 60000);
 }
 
 function updateButtons() {
@@ -567,102 +592,155 @@ function updateButtons() {
     btn.disabled = isWriteLocked || isProcessing;
   });
   var lockEl = document.getElementById('kv-lock');
-  if (lockEl) {
-    lockEl.style.display = isWriteLocked ? 'inline' : 'none';
-  }
+  if (lockEl) lockEl.style.display = isWriteLocked ? 'inline' : 'none';
 }
 
-function updateKvBar(){
-  var bar=document.getElementById("kv-bar");
-  var inner=document.getElementById("kv-bar-inner");
-  var pctEl=document.getElementById("kv-pct");
-  var timerEl=document.getElementById("kv-timer");
-  if(!bar||!inner||!pctEl||!timerEl)return;
-  
-  var pct=Math.min((kvWritesToday/KV_WRITE_LIMIT)*100,100);
-  inner.style.width=pct+"%";
-  pctEl.textContent=kvWritesToday.toLocaleString("zh-CN")+" / "+KV_WRITE_LIMIT+" ("+pct.toFixed(1)+"%)";
-  
-  bar.classList.remove("kv-warn","kv-safe");
-  if(pct>=80)bar.classList.add("kv-warn");
-  else if(pct<=30)bar.classList.add("kv-safe");
-  
-  if (pct >= 95) {
-    isWriteLocked = true;
-  } else {
-    isWriteLocked = false;
-  }
+function updateKvBar() {
+  var bar = document.getElementById("kv-bar");
+  var inner = document.getElementById("kv-bar-inner");
+  var pctEl = document.getElementById("kv-pct");
+  var timerEl = document.getElementById("kv-timer");
+  if (!bar || !inner || !pctEl || !timerEl) return;
+
+  var pct = Math.min((kvWritesToday / KV_WRITE_LIMIT) * 100, 100);
+  inner.style.width = pct + "%";
+  pctEl.textContent = kvWritesToday.toLocaleString("zh-CN") + " / " + KV_WRITE_LIMIT + " (" + pct.toFixed(1) + "%)";
+
+  bar.classList.remove("kv-warn", "kv-safe");
+  if (pct >= 80) bar.classList.add("kv-warn");
+  else if (pct <= 30) bar.classList.add("kv-safe");
+
+  isWriteLocked = (pct >= 95);
   updateButtons();
 
-  var now=new Date();
-  var reset=new Date(now);
-  reset.setUTCHours(0,0,0,0);
-  if(now>=reset) reset.setUTCDate(reset.getUTCDate()+1);
-  var diff=Math.max(0,Math.floor((reset-now)/1000));
-  var h=Math.floor(diff/3600);
-  var m=Math.floor((diff%3600)/60);
-  var s=diff%60;
-  timerEl.textContent="距重置: "+h+"时"+m+"分"+s+"秒";
+  var now = new Date();
+  var reset = new Date(now);
+  reset.setUTCHours(0, 0, 0, 0);
+  if (now >= reset) reset.setUTCDate(reset.getUTCDate() + 1);
+  var diff = Math.max(0, Math.floor((reset - now) / 1000));
+  var h = Math.floor(diff / 3600);
+  var m = Math.floor((diff % 3600) / 60);
+  var s = diff % 60;
+  timerEl.textContent = "距重置: " + h + "时" + m + "分" + s + "秒";
 }
 
-function startTimer(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval=setInterval(updateKvBar,1000);
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateKvBar, 1000);
 }
 
-// ========== 获取分类对应的CSS类 ==========
-function getCardClass(category) {
-  var map = {
-    '楼盘': 'card-estate',
-    '工程': 'card-blast',   // 默认工程用红色，但我们会针对特定id覆盖
-    '饮料零食': 'card-snack',
-    '泡面饮料': 'card-noodle',
-    '日用品': 'card-daily',
-    '餐饮': 'card-food',
-    '其他': 'card-other',
-    '保健': 'card-health',
-    '交通': 'card-traffic'
-  };
-  return map[category] || 'card-other';
-}
-
-// 根据id和category综合判断
 function getCardClassForProduct(id, category) {
   if (id === 'blast') return 'card-blast';
   if (id === 'bombardier') return 'card-bombardier';
   if (id === 'dogchair') return 'card-dogchair';
   if (id === 'estate' || id === 'yunfan' || id === 'jingyun' || id === 'jingcheng' || id === 'longjing' || id === 'ruicheng' || id === 'huicheng') return 'card-estate';
   if (id === 'xifu') return 'card-xifu';
-  return getCardClass(category);
+  var map = {
+    '楼盘': 'card-estate', '工程': 'card-blast', '饮料零食': 'card-snack',
+    '泡面饮料': 'card-noodle', '日用品': 'card-daily', '餐饮': 'card-food',
+    '其他': 'card-other', '保健': 'card-health', '交通': 'card-traffic'
+  };
+  return map[category] || 'card-other';
 }
 
-function getCategoryLabel(cat){
+function getCategoryLabel(cat) {
   var map = {
-    '楼盘':'楼盘','工程':'工程','饮料零食':'饮料零食','泡面饮料':'泡面饮料',
-    '日用品':'日用品','餐饮':'餐饮','其他':'其他','保健':'保健','交通':'交通','打卡':'打卡'
+    '楼盘': '楼盘', '工程': '工程', '饮料零食': '饮料零食', '泡面饮料': '泡面饮料',
+    '日用品': '日用品', '餐饮': '餐饮', '其他': '其他', '保健': '保健', '交通': '交通', '打卡': '打卡'
   };
   return map[cat] || cat;
 }
 
-// ========== 渲染 ==========
+function generateButtons(id, p) {
+  var isBHL = (id === 'bhl');
+  var dailyLimit = p.dailyLimit || Infinity;
+  var remaining = p.remaining !== undefined ? p.remaining : Infinity;
+  var dailyUsed = p.dailyUsed !== undefined ? p.dailyUsed : 0;
+  var userDailyUsed = p.userDailyUsed !== undefined ? p.userDailyUsed : 0;
+  var perUserLimit = p.perUserDailyLimit || Infinity;
+  var step = p.step || 1;
+
+  function canAdd(delta) {
+    if (remaining < delta) return false;
+    if (dailyUsed + delta > dailyLimit) return false;
+    if (userDailyUsed + delta > perUserLimit) return false;
+    return true;
+  }
+
+  var html = '<div class="btns">';
+
+  if (isBHL) {
+    [50, 100, 200].forEach(function(amt) {
+      var disabled = !canAdd(1) ? 'disabled' : '';
+      html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>¥' + amt + '</button>';
+    });
+    html += '<div class="custom-row">' +
+      '<input type="number" id="inp_' + id + '" placeholder="金额" min="1" max="500" step="1">' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1) ? 'disabled' : '') + '>下单</button>' +
+      '</div>';
+  } else if (p.category === '工程') {
+    var btns = [];
+    if (step <= 0.1 && dailyLimit >= 0.1) btns.push(0.1);
+    if (step <= 0.5 && dailyLimit >= 0.5) btns.push(0.5);
+    if (step <= 1 && dailyLimit >= 1) btns.push(1);
+    if (dailyLimit >= 5) btns.push(5);
+    if (dailyLimit >= 10) btns.push(10);
+    btns = btns.filter(function(v, i, a) { return a.indexOf(v) === i; }).sort(function(a, b) { return a - b; });
+    btns.forEach(function(amt) {
+      var disabled = !canAdd(amt) ? 'disabled' : '';
+      var label = amt < 1 ? '+' + (amt * 100).toFixed(0) + '%' : '+' + amt;
+      html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>' + label + '</button>';
+    });
+    html += '<div class="custom-row">' +
+      '<input type="number" id="inp_' + id + '" placeholder="数值" min="' + step + '" max="' + Math.min(dailyLimit, remaining) + '" step="' + step + '">' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(step) ? 'disabled' : '') + '>确定</button>' +
+      '</div>';
+  } else {
+    var btnValues = [1, 5, 10];
+    btnValues = btnValues.filter(function(v) { return v <= dailyLimit; });
+    if (btnValues.length === 0) btnValues = [1];
+    btnValues.forEach(function(amt) {
+      var disabled = !canAdd(amt) ? 'disabled' : '';
+      html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>+' + amt + '</button>';
+    });
+    var maxInput = Math.min(100, dailyLimit - dailyUsed, remaining);
+    html += '<div class="custom-row">' +
+      '<input type="number" id="inp_' + id + '" placeholder="数量" min="1" max="' + maxInput + '" step="1">' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1) ? 'disabled' : '') + '>确定</button>' +
+      '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// 纯色进度条：使用卡片文字颜色
+function renderProgressBar(p, textColor) {
+  var remaining = p.remaining !== undefined ? p.remaining : 0;
+  var total = p.totalStock || 100;
+  var pct = Math.min((remaining / total) * 100, 100);
+  return '<div class="progress-bar-wrap">' +
+    '<div class="progress-bar-fill" style="width:' + pct.toFixed(1) + '%;color:' + textColor + ';background:' + textColor + '"></div>' +
+    '</div>';
+}
+
 function renderShopTabs(categories, current) {
   var container = document.getElementById('shopTabs');
-  if(!container) return;
+  if (!container) return;
   var allCats = ['全部', '楼盘', '工程', '饮料零食', '泡面饮料', '日用品', '餐饮', '其他', '保健', '交通', '打卡'];
   var html = '';
-  allCats.forEach(function(cat){
-    if(cat !== '全部' && cat !== '打卡') {
+  allCats.forEach(function(cat) {
+    if (cat !== '全部' && cat !== '打卡') {
       var hasItem = categories.indexOf(cat) !== -1;
-      if(!hasItem) return;
+      if (!hasItem) return;
     }
     var active = (cat === current) ? ' active' : '';
-    html += '<button class="shop-tab'+active+'" data-cat="'+cat+'">'+getCategoryLabel(cat)+'</button>';
+    html += '<button class="shop-tab' + active + '" data-cat="' + cat + '">' + getCategoryLabel(cat) + '</button>';
   });
   container.innerHTML = html;
-  container.querySelectorAll('.shop-tab').forEach(function(btn){
-    btn.addEventListener('click', function(){
+  container.querySelectorAll('.shop-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
       var cat = this.dataset.cat;
-      document.querySelectorAll('.shop-tab').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.shop-tab').forEach(function(b) { b.classList.remove('active'); });
       this.classList.add('active');
       currentCategory = cat;
       renderShopGrid(cat);
@@ -672,165 +750,179 @@ function renderShopTabs(categories, current) {
 
 function renderShopGrid(category) {
   var container = document.getElementById('shopGrid');
-  if(!container) return;
-  
-  if(category === '打卡') {
+  if (!container) return;
+
+  if (category === '打卡') {
     container.innerHTML = renderCheckinCard();
     return;
   }
-  
+
   var items = [];
-  for(var id in productData) {
+  for (var id in productData) {
     var p = productData[id];
     var cat = p.category || '其他';
-    if(category !== '全部' && cat !== category) continue;
-    items.push({id:id, data:p});
+    if (category !== '全部' && cat !== category) continue;
+    items.push({ id: id, data: p });
   }
-  if(items.length === 0) {
+  if (items.length === 0) {
     container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9ca3af;">该分类暂无商品</div>';
     return;
   }
+
   var html = '';
-  items.forEach(function(item){
+  items.forEach(function(item) {
     var p = item.data;
-    var isBHL = (item.id === 'bhl');
     var cardClass = getCardClassForProduct(item.id, p.category);
-    var remainingDisplay = p.remaining !== undefined ? p.remaining : '∞';
-    var soldDisplay = p.sold !== undefined ? p.sold : 0;
-    var dailyDisplay = p.dailyUsed !== undefined ? p.dailyUsed : 0;
+    var remaining = p.remaining !== undefined ? p.remaining : 0;
+    var sold = p.sold !== undefined ? p.sold : 0;
+    var dailyUsed = p.dailyUsed !== undefined ? p.dailyUsed : 0;
     var dailyLimit = p.dailyLimit || '∞';
-    var userDailyDisplay = p.userDailyUsed !== undefined ? p.userDailyUsed : 0;
-    var userDailyLimit = p.perUserDailyLimit || '∞';
+    var userDailyUsed = p.userDailyUsed !== undefined ? p.userDailyUsed : 0;
+    var userDailyLimit = p.perUserDailyLimit;
     var unit = p.unit || '个';
     var name = p.name || item.id;
-    var tagClass = p.category || '其他';
-    
-    var btnHtml = '';
-    if(isBHL) {
-      btnHtml = '<div class="btns">'+
-        '<button onclick="window.doShop(\''+item.id+'\',50)">¥50</button>'+
-        '<button onclick="window.doShop(\''+item.id+'\',100)">¥100</button>'+
-        '<button onclick="window.doShop(\''+item.id+'\',200)">¥200</button>'+
-        '<div class="custom-row">'+
-          '<input type="number" id="inp_'+item.id+'" placeholder="金额" min="1" max="500" step="1">'+
-          '<button onclick="window.doShopCustom(\''+item.id+'\')">下单</button>'+
-        '</div>'+
+    var decimals = p.decimals || 0;
+
+    // 获取文字颜色用于进度条
+    var cardEl = document.createElement('div');
+    cardEl.className = 'shop-card ' + cardClass;
+    document.body.appendChild(cardEl);
+    var computedColor = getComputedStyle(cardEl.querySelector('.name') || cardEl).color;
+    document.body.removeChild(cardEl);
+    // 直接用硬编码颜色避免计算
+    var colorMap = {
+      'card-estate': '#1d4ed8', 'card-xifu': '#b45309', 'card-blast': '#fbbf24',
+      'card-bombardier': '#065f46', 'card-dogchair': '#1e3a8a', 'card-snack': '#9d174d',
+      'card-noodle': '#854d0e', 'card-daily': '#166534', 'card-food': '#991b1b',
+      'card-other': '#3730a3', 'card-health': '#1e40af', 'card-traffic': '#854d0e'
+    };
+    var textColor = colorMap[cardClass] || '#333';
+
+    var remainingStr = remaining.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
+    var soldStr = sold.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
+    var dailyStr = dailyUsed.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
+
+    var progressHtml = '';
+    if (p.category === '工程') {
+      progressHtml = renderProgressBar(p, textColor);
+    }
+
+    // 新排版：三行独立
+    var userDailyHtml = '';
+    if (userDailyLimit !== null && userDailyLimit !== undefined) {
+      userDailyHtml = ' · 个人 <span class="num">' + userDailyUsed + '</span>/' + userDailyLimit;
+    }
+
+    html += '<div class="shop-card ' + cardClass + '">' +
+      '<div class="name">' + name + ' <span class="tag">' + getCategoryLabel(p.category) + '</span></div>' +
+      '<div class="row-remaining">还剩 <span class="num">' + remainingStr + '</span> ' + unit + '</div>' +
+      '<div class="row-sold">已售 <span class="num">' + soldStr + '</span> ' + unit + '</div>' +
+      '<div class="row-daily">今日额度使用 <span class="num">' + dailyStr + '</span>/' + dailyLimit + userDailyHtml + '</div>' +
+      progressHtml +
+      generateButtons(item.id, p) +
       '</div>';
-    } else {
-      btnHtml = '<div class="btns">'+
-        '<button onclick="window.doShop(\''+item.id+'\',1)">+1</button>'+
-        '<button onclick="window.doShop(\''+item.id+'\',5)">+5</button>'+
-        '<button onclick="window.doShop(\''+item.id+'\',10)">+10</button>'+
-        '<div class="custom-row">'+
-          '<input type="number" id="inp_'+item.id+'" placeholder="数量" min="1" max="100" step="1">'+
-          '<button onclick="window.doShopCustom(\''+item.id+'\')">确定</button>'+
-        '</div>'+
-      '</div>';
-    }
-    
-    var remainingStr = remainingDisplay;
-    if(typeof remainingDisplay === 'number' && remainingDisplay > 10000) {
-      remainingStr = remainingDisplay.toLocaleString('zh-CN');
-    }
-    var soldStr = soldDisplay;
-    if(typeof soldDisplay === 'number' && soldDisplay > 10000) {
-      soldStr = soldDisplay.toLocaleString('zh-CN');
-    }
-    
-    html += '<div class="shop-card '+cardClass+'">'+
-      '<div class="name">'+name+' <span class="tag">'+getCategoryLabel(p.category)+'</span></div>'+
-      '<div class="stats">还剩 <span class="num">'+remainingStr+'</span> '+unit+'</div>'+
-      '<div class="sold-text">已售 <span class="num">'+soldStr+'</span> '+unit+' | 今日 <span class="num">'+dailyDisplay+'</span>/'+dailyLimit+
-        (userDailyLimit !== '∞' ? ' | 今日已用 <span class="num">'+userDailyDisplay+'</span>/'+userDailyLimit : '')+
-      '</div>'+
-      btnHtml+
-    '</div>';
   });
   container.innerHTML = html;
 }
 
-// ========== 打卡卡片 ==========
 function renderCheckinCard() {
-  var status = 0;
-  if(productData && productData.atsgs) {
-    status = productData.atsgs.remaining || 0;
-  }
-  var done = (status >= 1);
-  var doneText = done ? '<span class="done">1</span>' : '<span class="undo">0</span>';
-  
-  return '<div class="shop-card card-checkin">'+
-    '<div class="name">🚻 安托山公厕</div>'+
-    '<div class="stats">今日打卡 · 每人每天限 1 次</div>'+
-    '<div class="stats">已打卡: '+doneText+' / <span class="undo">1</span></div>'+
-    '<div class="btns">'+
-      '<button id="checkinBtn" class="'+(done?'done-btn':'')+'" '+(done?'disabled':'')+' onclick="window.doCheckin()">'+(done?'✅ 已打卡':'打卡 ✅')+'</button>'+
-    '</div>'+
-    '<div class="sold-text">目标总量 1 次 · 打完收工</div>'+
-  '</div>';
+  var status = checkinData.status || 0;
+  var target = checkinData.target || 1;
+  var done = (status >= target);
+  var doneText = done ? '<span class="done">' + status + '</span>' : '<span class="undo">' + status + '</span>';
+
+  return '<div class="shop-card card-checkin">' +
+    '<div class="name">🚻 安托山公厕</div>' +
+    '<div class="stats">今日打卡 · 每人每天限 ' + target + ' 次</div>' +
+    '<div class="stats">已打卡: ' + doneText + ' / <span class="undo">' + target + '</span></div>' +
+    '<div class="btns">' +
+    '<button id="checkinBtn" class="' + (done ? 'done-btn' : '') + '" ' + (done || isWriteLocked || isProcessing ? 'disabled' : '') + ' onclick="window.doCheckin()">' + (done ? '✅ 已打卡' : '打卡 ✅') + '</button>' +
+    '</div>' +
+    '<div class="sold-text">目标总量 ' + target + ' 次 · 打完收工</div>' +
+    '</div>';
 }
 
-// ========== 挂载全局函数 ==========
 window.doShop = async function(id, delta) {
-  if(isProcessing) { showToast('请稍候...', 1000); return; }
-  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   var p = productData[id];
-  if(!p) return;
-  if(p.remaining !== undefined && p.remaining < delta) {
-    showToast('库存不足！剩余 '+p.remaining+' '+p.unit, 2000);
+  if (!p) return;
+
+  if (p.remaining !== undefined && p.remaining < delta) {
+    showToast('库存不足！剩余 ' + p.remaining + ' ' + p.unit, 2000);
     return;
   }
+  if (p.dailyLimit !== undefined && p.dailyUsed + delta > p.dailyLimit) {
+    showToast('今日额度不足！', 2000);
+    return;
+  }
+  if (p.perUserDailyLimit !== undefined && p.perUserDailyLimit !== null && p.userDailyUsed + delta > p.perUserDailyLimit) {
+    showToast('个人今日额度不足！', 2000);
+    return;
+  }
+
   isProcessing = true;
   updateButtons();
   try {
     var res = await apiPost(id, delta);
     isProcessing = false;
     updateButtons();
-    if(res && res.ok) {
-      if(res.remaining !== undefined) p.remaining = res.remaining;
-      if(res.sold !== undefined) p.sold = res.sold;
-      if(res.dailyUsed !== undefined) p.dailyUsed = res.dailyUsed;
-      if(res.userDailyUsed !== undefined) p.userDailyUsed = res.userDailyUsed;
+    if (res && res.ok) {
+      if (res.remaining !== undefined) p.remaining = res.remaining;
+      if (res.sold !== undefined) p.sold = res.sold;
+      if (res.dailyUsed !== undefined) p.dailyUsed = res.dailyUsed;
+      if (res.userDailyUsed !== undefined) p.userDailyUsed = res.userDailyUsed;
       renderShopGrid(currentCategory);
-      showToast('购买成功！+'+delta+' '+p.unit, 1500);
+      showToast('操作成功！+' + delta + ' ' + p.unit, 1500);
+      await updateStatsBar(false);
       await fetchFullData();
     } else {
-      showToast('购买失败，请重试', 2000);
+      showToast('操作失败，请重试', 2000);
     }
-  } catch(e) {
+  } catch (e) {
     isProcessing = false;
     updateButtons();
-    if(e.message && !e.message.includes('额度已用完')) {
-      showToast('操作异常：'+e.message, 2500);
+    if (e.message && !e.message.includes('额度已用完')) {
+      showToast('操作异常：' + e.message, 2500);
     }
   }
 };
 
 window.doShopCustom = async function(id) {
-  var inp = document.getElementById('inp_'+id);
-  if(!inp) return;
+  var inp = document.getElementById('inp_' + id);
+  if (!inp) return;
   var val = parseFloat(inp.value);
-  if(isNaN(val) || val <= 0) {
+  if (isNaN(val) || val <= 0) {
     showToast('请输入有效数量', 1500);
     return;
   }
   var p = productData[id];
-  if(!p) return;
-  var maxVal = (id === 'bhl') ? 500 : 100;
-  if(val > maxVal) {
-    showToast('最大值为 '+maxVal, 1500);
+  if (!p) return;
+
+  var maxVal;
+  if (id === 'bhl') {
+    maxVal = 500;
+    if (val < 1) { showToast('最低金额为 1 元', 1500); return; }
+  } else {
+    maxVal = Math.min(100, p.dailyLimit || 100, p.remaining || Infinity);
+  }
+  if (val > maxVal) {
+    showToast('最大值为 ' + maxVal, 1500);
     return;
   }
-  if(id === 'bhl' && val < 1) {
-    showToast('最低金额为 1 元', 1500);
+  var step = p.step || 1;
+  if (val % step !== 0 && Math.abs(val % step) > 0.0001) {
+    showToast('请输入 ' + step + ' 的倍数', 1500);
     return;
   }
+
   await window.doShop(id, val);
 };
 
 window.doCheckin = async function() {
-  if(isProcessing) { showToast('请稍候...', 1000); return; }
-  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
-  if(productData && productData.atsgs && productData.atsgs.remaining >= 1) {
+  if (isProcessing) { showToast('请稍候...', 1000); return; }
+  if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if (checkinData.status >= checkinData.target) {
     showToast('你今天已经打过卡了！', 2000);
     return;
   }
@@ -840,72 +932,82 @@ window.doCheckin = async function() {
     var res = await apiPost('atsgs', 1);
     isProcessing = false;
     updateButtons();
-    if(res && res.ok) {
+    if (res && res.ok) {
+      if (res.checkin) {
+        checkinData = res.checkin;
+      } else {
+        checkinData.status = 1;
+      }
       showToast('打卡成功！✅ 安托山公厕今日已打卡', 2000);
-      await fetchFullData();
       renderShopGrid(currentCategory);
+      await updateStatsBar(false);
+      await fetchFullData();
     } else {
       showToast('打卡失败，请重试', 2000);
     }
-  } catch(e) {
+  } catch (e) {
     isProcessing = false;
     updateButtons();
-    if(e.message && !e.message.includes('额度已用完')) {
-      showToast('操作异常：'+e.message, 2500);
+    if (e.message && !e.message.includes('额度已用完')) {
+      showToast('操作异常：' + e.message, 2500);
     }
   }
 };
 
-// ========== 获取完整数据 ==========
 async function fetchFullData() {
   try {
     var data = await apiGet();
-    if(!data) return;
-    if(data.products) {
+    if (!data) return;
+    if (data.products) {
       productData = data.products;
       var categories = new Set();
-      for(var id in productData) {
+      for (var id in productData) {
         var p = productData[id];
-        if(p.category) categories.add(p.category);
+        if (p.category) categories.add(p.category);
       }
       var catArray = Array.from(categories).sort();
       renderShopTabs(catArray, currentCategory);
       renderShopGrid(currentCategory);
     }
-  } catch(e) {
+    if (data.checkin) {
+      checkinData = data.checkin;
+      if (currentCategory === '打卡') {
+        renderShopGrid('打卡');
+      }
+    }
+  } catch (e) {
     console.error('fetchFullData error', e);
   }
 }
 
-// ========== 轮询 ==========
-async function syncFromServer(){
-  if(isSyncing)return;
-  isSyncing=true;
-  var now=Date.now();
-  var minInterval=Math.min(currentPollInterval,5000*Math.pow(2,Math.min(syncFailCount,6)));
-  if(now-lastSync<minInterval){isSyncing=false;return;}
-  lastSync=now;
+async function syncFromServer() {
+  if (isSyncing) return;
+  isSyncing = true;
+  var now = Date.now();
+  var minInterval = Math.min(currentPollInterval, 5000 * Math.pow(2, Math.min(syncFailCount, 6)));
+  if (now - lastSync < minInterval) { isSyncing = false; return; }
+  lastSync = now;
   await fetchFullData();
-  isSyncing=false;
-  currentPollInterval=Math.min(600000, currentPollInterval*1.5);
-  if(pollTimer){
+  isSyncing = false;
+  currentPollInterval = Math.min(600000, currentPollInterval * 1.5);
+  if (pollTimer) {
     clearInterval(pollTimer);
-    pollTimer=setInterval(syncFromServer,currentPollInterval);
+    pollTimer = setInterval(syncFromServer, currentPollInterval);
   }
 }
 
-function startPolling(){
-  if(pollTimer)clearInterval(pollTimer);
-  currentPollInterval=30000;
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  currentPollInterval = 30000;
   syncFromServer();
-  pollTimer=setInterval(syncFromServer,currentPollInterval);
+  pollTimer = setInterval(syncFromServer, currentPollInterval);
 }
-function stopPolling(){
-  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
 
-document.addEventListener("visibilitychange", function(){
-  if(document.hidden) {
+document.addEventListener("visibilitychange", function() {
+  if (document.hidden) {
     stopPolling();
   } else {
     syncFromServer();
@@ -914,15 +1016,14 @@ document.addEventListener("visibilitychange", function(){
   }
 });
 
-window.addEventListener("pageshow", function(event){
+window.addEventListener("pageshow", function(event) {
   if (event.persisted) {
     syncFromServer();
     updateStatsBar(true);
   }
 });
 
-// ========== 初始化 ==========
-function init(){
+function init() {
   fetchFullData();
   updateKvBar();
   startTimer();
@@ -931,9 +1032,9 @@ function init(){
   updateButtons();
 }
 
-if(document.readyState==="loading"){
-  document.addEventListener("DOMContentLoaded",init);
-}else{
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
   init();
 }
 })();
