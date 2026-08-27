@@ -169,34 +169,34 @@ body{
   grid-template-columns:1fr 1fr;
   gap:16px;
 }
+
+/* ===== 卡片样式（保留各卡特色配色） ===== */
 .shop-card{
-  background:#fff;
-  border-radius:12px;
-  padding:16px 20px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
-  border:1px solid #e5e7eb;
-  transition:all 0.25s ease;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  padding:20px 24px;
+  border-radius:16px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  gap:12px;
+  transition:all 0.3s ease;
+  border:1px solid transparent;
 }
 .shop-card:hover{
-  box-shadow:0 6px 20px rgba(0,0,0,0.1);
+  box-shadow:0 8px 32px rgba(0,0,0,0.12);
   transform:translateY(-2px);
 }
 .shop-card .name{
-  font-size:17px;
+  font-size:20px;
   font-weight:700;
-  color:#111827;
+  margin-bottom:4px;
 }
 .shop-card .stats{
   font-size:13px;
   color:#6b7280;
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
+  margin-bottom:2px;
 }
-.shop-card .stats .num{font-weight:600;color:#1e3a8a}
+.shop-card .stats .num{font-weight:700;font-size:26px;font-family:Bahnschrift;}
+.shop-card .sold-text{font-size:12px;color:#9ca3af;}
 .shop-card .btns{
   display:flex;
   gap:6px;
@@ -204,20 +204,18 @@ body{
   margin-top:4px;
 }
 .shop-card .btns button{
-  padding:6px 14px;
-  border-radius:6px;
+  padding:8px 14px;
+  border-radius:8px;
   border:none;
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s ease;
   font-family:Bahnschrift;
-  background:#2563eb;
-  color:#fff;
 }
 .shop-card .btns button:hover{
   transform:translateY(-2px);
-  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 .shop-card .btns button:disabled{
   opacity:0.4;
@@ -232,9 +230,9 @@ body{
   margin-top:2px;
 }
 .shop-card .custom-row input{
-  width:60px;
-  padding:6px 8px;
-  border-radius:6px;
+  width:70px;
+  padding:8px 10px;
+  border-radius:8px;
   border:1px solid #d1d5db;
   font-size:13px;
   text-align:center;
@@ -246,20 +244,18 @@ body{
   box-shadow:0 0 0 3px rgba(37,99,235,0.15);
 }
 .shop-card .custom-row button{
-  padding:6px 14px;
-  border-radius:6px;
+  padding:8px 14px;
+  border-radius:8px;
   border:none;
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s ease;
   font-family:Bahnschrift;
-  background:#2563eb;
-  color:#fff;
 }
 .shop-card .custom-row button:hover{
   transform:translateY(-2px);
-  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 .shop-card .tag{
   display:inline-block;
@@ -267,60 +263,139 @@ body{
   font-weight:600;
   padding:2px 10px;
   border-radius:12px;
-  background:#e5e7eb;
-  color:#6b7280;
+  background:rgba(255,255,255,0.5);
+  color:inherit;
   align-self:flex-start;
+  margin-top:2px;
 }
-.shop-card .tag.楼盘{background:#dbeafe;color:#1d4ed8}
-.shop-card .tag.工程{background:#fed7aa;color:#9a3412}
-.shop-card .tag.饮料零食{background:#fce7f3;color:#9d174d}
-.shop-card .tag.泡面饮料{background:#fef3c7;color:#92400e}
-.shop-card .tag.日用品{background:#d1fae5;color:#065f46}
-.shop-card .tag.餐饮{background:#fecaca;color:#991b1b}
-.shop-card .tag.其他{background:#e0e7ff;color:#3730a3}
-.shop-card .tag.保健{background:#dbeafe;color:#1e40af}
-.shop-card .tag.交通{background:#fef9c3;color:#854d0e}
 
-.shop-card.type-bhl .name{color:#dc2626}
-.shop-card.type-bhl .btns button{background:#dc2626}
-.shop-card.type-bhl .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
+/* ===== 各卡特色配色 ===== */
+/* 楼盘类 */
+.card-estate{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
+.card-estate .name{color:#1d4ed8}
+.card-estate .stats .num{color:#1d4ed8}
+.card-estate .btns button{background:#2563eb;color:#fff}
+.card-estate .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+.card-estate .custom-row button{background:#2563eb;color:#fff}
+.card-estate .custom-row button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 
-/* ===== 打卡区域 ===== */
-.checkin-area{
-  max-width:1200px;
-  width:100%;
-  margin-top:20px;
+.card-xifu{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;}
+.card-xifu .name{color:#b45309}
+.card-xifu .stats .num{color:#b45309}
+.card-xifu .btns button{background:#f59e0b;color:#fff}
+.card-xifu .btns button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+.card-xifu .custom-row button{background:#f59e0b;color:#fff}
+.card-xifu .custom-row button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+
+/* 工程类 */
+.card-blast{background:#dc2626;border-color:#b91c1c;color:#fff}
+.card-blast .name{color:#fbbf24}
+.card-blast .stats{color:#fecaca}
+.card-blast .stats .num{color:#fbbf24}
+.card-blast .btns button{background:#fbbf24;color:#7c2d12}
+.card-blast .btns button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
+.card-blast .custom-row button{background:#fbbf24;color:#7c2d12}
+.card-blast .custom-row button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
+.card-blast .tag{background:rgba(255,255,255,0.2);color:#fbbf24}
+
+.card-bombardier{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#01AF55;}
+.card-bombardier .name{color:#065f46}
+.card-bombardier .stats{color:#047857}
+.card-bombardier .stats .num{color:#065f46}
+.card-bombardier .btns button{background:#01AF55;color:#fff}
+.card-bombardier .btns button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
+.card-bombardier .custom-row button{background:#01AF55;color:#fff}
+.card-bombardier .custom-row button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
+
+.card-dogchair{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#0131AC;}
+.card-dogchair .name{color:#1e3a8a}
+.card-dogchair .stats{color:#1e40af}
+.card-dogchair .stats .num{color:#1e3a8a}
+.card-dogchair .btns button{background:#0131AC;color:#fff}
+.card-dogchair .btns button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
+.card-dogchair .custom-row button{background:#0131AC;color:#fff}
+.card-dogchair .custom-row button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
+
+/* 饮料零食 */
+.card-snack{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border-color:#f9a8d4;}
+.card-snack .name{color:#9d174d}
+.card-snack .stats .num{color:#9d174d}
+.card-snack .btns button{background:#db2777;color:#fff}
+.card-snack .btns button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
+.card-snack .custom-row button{background:#db2777;color:#fff}
+.card-snack .custom-row button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
+
+/* 泡面饮料 */
+.card-noodle{background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde047;}
+.card-noodle .name{color:#854d0e}
+.card-noodle .stats .num{color:#854d0e}
+.card-noodle .btns button{background:#ca8a04;color:#fff}
+.card-noodle .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
+.card-noodle .custom-row button{background:#ca8a04;color:#fff}
+.card-noodle .custom-row button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
+
+/* 日用品 */
+.card-daily{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;}
+.card-daily .name{color:#166534}
+.card-daily .stats .num{color:#166534}
+.card-daily .btns button{background:#16a34a;color:#fff}
+.card-daily .btns button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
+.card-daily .custom-row button{background:#16a34a;color:#fff}
+.card-daily .custom-row button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
+
+/* 餐饮 */
+.card-food{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#f87171;}
+.card-food .name{color:#991b1b}
+.card-food .stats .num{color:#991b1b}
+.card-food .btns button{background:#dc2626;color:#fff}
+.card-food .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
+.card-food .custom-row button{background:#dc2626;color:#fff}
+.card-food .custom-row button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
+
+/* 其他 */
+.card-other{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-color:#a5b4fc;}
+.card-other .name{color:#3730a3}
+.card-other .stats .num{color:#3730a3}
+.card-other .btns button{background:#4f46e5;color:#fff}
+.card-other .btns button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
+.card-other .custom-row button{background:#4f46e5;color:#fff}
+.card-other .custom-row button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
+
+/* 保健 */
+.card-health{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#60a5fa;}
+.card-health .name{color:#1e40af}
+.card-health .stats .num{color:#1e40af}
+.card-health .btns button{background:#2563eb;color:#fff}
+.card-health .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+.card-health .custom-row button{background:#2563eb;color:#fff}
+.card-health .custom-row button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+
+/* 交通 */
+.card-traffic{background:linear-gradient(135deg,#fef9c3,#fef08a);border-color:#facc15;}
+.card-traffic .name{color:#854d0e}
+.card-traffic .stats .num{color:#854d0e}
+.card-traffic .btns button{background:#ca8a04;color:#fff}
+.card-traffic .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
+.card-traffic .custom-row button{background:#ca8a04;color:#fff}
+.card-traffic .custom-row button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
+
+/* 打卡卡片 */
+.card-checkin{
   background:linear-gradient(135deg,#fef9ef,#fdf0d5);
   border:2px solid #f0c27a;
-  border-radius:16px;
-  padding:30px 24px;
+  min-height:180px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-height:180px;
   text-align:center;
+  padding:30px 24px;
 }
-.checkin-area .title{
-  font-size:32px;
-  font-weight:800;
-  color:#7c5c3e;
-  margin-bottom:8px;
-}
-.checkin-area .sub{
-  font-size:15px;
-  color:#8b7355;
-  margin-bottom:12px;
-}
-.checkin-area .status{
-  font-size:24px;
-  font-weight:700;
-  color:#1e3a8a;
-  margin-bottom:12px;
-}
-.checkin-area .status .done{color:#16a34a}
-.checkin-area .status .undo{color:#dc2626}
-.checkin-area .btn{
+.card-checkin .name{font-size:32px;font-weight:800;color:#7c5c3e}
+.card-checkin .stats{font-size:15px;color:#8b7355}
+.card-checkin .stats .num{font-size:24px;color:#1e3a8a;font-weight:700}
+.card-checkin .btns{margin-top:12px}
+.card-checkin .btns button{
   padding:14px 48px;
   border-radius:12px;
   border:none;
@@ -333,32 +408,19 @@ body{
   color:#fff;
   box-shadow:0 4px 16px rgba(245,158,11,0.3);
 }
-.checkin-area .btn:hover{
-  transform:scale(1.05);
-  box-shadow:0 8px 32px rgba(245,158,11,0.4);
-}
-.checkin-area .btn:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  transform:none !important;
-  box-shadow:none !important;
-}
-.checkin-area .btn.done-btn{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  box-shadow:0 4px 16px rgba(34,197,94,0.3);
-}
-.checkin-area .target-hint{
-  font-size:14px;
-  color:#9ca3af;
-  margin-top:8px;
-}
+.card-checkin .btns button:hover{transform:scale(1.05)}
+.card-checkin .btns button:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;box-shadow:none !important}
+.card-checkin .btns button.done-btn{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 4px 16px rgba(34,197,94,0.3)}
+.card-checkin .sold-text{font-size:14px;color:#9ca3af;margin-top:8px}
+.card-checkin .done{color:#16a34a}
+.card-checkin .undo{color:#dc2626}
 
 @media(max-width:768px){
   .shop-grid{grid-template-columns:1fr}
-  .checkin-area .title{font-size:26px}
-  .checkin-area .status{font-size:20px}
-  .checkin-area .btn{font-size:17px;padding:12px 32px}
   .shop-tab{padding:6px 14px;font-size:13px}
+  .card-checkin .name{font-size:26px}
+  .card-checkin .stats .num{font-size:20px}
+  .card-checkin .btns button{font-size:17px;padding:12px 32px}
 }
 </style>
 </head>
@@ -378,15 +440,6 @@ body{
 <div class="shop-section" id="shopSection">
   <div class="shop-tabs" id="shopTabs"></div>
   <div class="shop-grid" id="shopGrid"></div>
-</div>
-
-<!-- ===== 打卡区域 ===== -->
-<div class="checkin-area" id="checkinArea">
-  <div class="title">🚻 安托山公厕</div>
-  <div class="sub">今日打卡 · 每人每天限 1 次</div>
-  <div class="status" id="checkinStatus">已打卡: <span class="undo">0</span> / <span class="undo">1</span></div>
-  <button class="btn" id="checkinBtn">打卡 ✅</button>
-  <div class="target-hint">目标总量 1 次 · 打完收工</div>
 </div>
 
 <script>
@@ -420,9 +473,7 @@ var lastValidStats = { writes: 0, writeLimit: 1000 };
 var isWriteLocked = false;
 var isProcessing = false;
 
-// 商品数据
 var productData = {};
-var checkinData = null;
 var currentCategory = '全部';
 
 // ========== Toast 提示 ==========
@@ -444,12 +495,6 @@ function showToast(msg, duration) {
 }
 
 function fmtMoney(n){return n.toLocaleString("zh-CN")+"套"}
-function fmtBlast(n){return n.toFixed(2)}
-function fmtBomb(n){return n.toFixed(2)}
-function fmtDog(n){
-  var dec=Math.max(2,2);
-  return n.toFixed(dec);
-}
 
 // ========== API ==========
 async function apiGet(){
@@ -491,7 +536,7 @@ async function apiPost(id,delta){
   }
 }
 
-// ========== 获取 KV 统计 ==========
+// ========== KV 统计 ==========
 async function fetchKVStats() {
   try {
     const res = await fetch('/api/kv-stats?t=' + Date.now());
@@ -526,9 +571,8 @@ function startKVStatsPolling() {
   setInterval(function(){ updateStatsBar(false); }, 60000);
 }
 
-// ========== 按钮锁定 ==========
 function updateButtons() {
-  var btns = document.querySelectorAll('.shop-card .btns button, .shop-card .custom-row button, #checkinBtn');
+  var btns = document.querySelectorAll('.shop-card .btns button, .shop-card .custom-row button');
   btns.forEach(function(btn) {
     btn.disabled = isWriteLocked || isProcessing;
   });
@@ -538,7 +582,6 @@ function updateButtons() {
   }
 }
 
-// ========== 顶部状态条 ==========
 function updateKvBar(){
   var bar=document.getElementById("kv-bar");
   var inner=document.getElementById("kv-bar-inner");
@@ -577,20 +620,43 @@ function startTimer(){
   timerInterval=setInterval(updateKvBar,1000);
 }
 
-// ========== 商品渲染 ==========
+// ========== 获取分类对应的CSS类 ==========
+function getCardClass(category) {
+  var map = {
+    '楼盘': 'card-estate',
+    '工程': 'card-blast',
+    '饮料零食': 'card-snack',
+    '泡面饮料': 'card-noodle',
+    '日用品': 'card-daily',
+    '餐饮': 'card-food',
+    '其他': 'card-other',
+    '保健': 'card-health',
+    '交通': 'card-traffic'
+  };
+  return map[category] || 'card-other';
+}
+
 function getCategoryLabel(cat){
   var map = {
     '楼盘':'楼盘','工程':'工程','饮料零食':'饮料零食','泡面饮料':'泡面饮料',
-    '日用品':'日用品','餐饮':'餐饮','其他':'其他','保健':'保健','交通':'交通'
+    '日用品':'日用品','餐饮':'餐饮','其他':'其他','保健':'保健','交通':'交通','打卡':'打卡'
   };
   return map[cat] || cat;
 }
 
+// ========== 渲染 ==========
 function renderShopTabs(categories, current) {
   var container = document.getElementById('shopTabs');
   if(!container) return;
-  var html = '<button class="shop-tab active" data-cat="全部">全部</button>';
-  categories.forEach(function(cat){
+  // 把"打卡"单独放在最后
+  var allCats = ['全部', '楼盘', '工程', '饮料零食', '泡面饮料', '日用品', '餐饮', '其他', '保健', '交通', '打卡'];
+  var html = '';
+  allCats.forEach(function(cat){
+    // 检查该分类是否有商品（打卡除外）
+    if(cat !== '全部' && cat !== '打卡') {
+      var hasItem = categories.indexOf(cat) !== -1;
+      if(!hasItem) return;
+    }
     var active = (cat === current) ? ' active' : '';
     html += '<button class="shop-tab'+active+'" data-cat="'+cat+'">'+getCategoryLabel(cat)+'</button>';
   });
@@ -609,6 +675,13 @@ function renderShopTabs(categories, current) {
 function renderShopGrid(category) {
   var container = document.getElementById('shopGrid');
   if(!container) return;
+  
+  // 检查是否选中"打卡"分类
+  if(category === '打卡') {
+    container.innerHTML = renderCheckinCard();
+    return;
+  }
+  
   var items = [];
   for(var id in productData) {
     var p = productData[id];
@@ -624,7 +697,7 @@ function renderShopGrid(category) {
   items.forEach(function(item){
     var p = item.data;
     var isBHL = (item.id === 'bhl');
-    var typeClass = isBHL ? ' type-bhl' : '';
+    var cardClass = getCardClass(p.category);
     var remainingDisplay = p.remaining !== undefined ? p.remaining : '∞';
     var soldDisplay = p.sold !== undefined ? p.sold : 0;
     var dailyDisplay = p.dailyUsed !== undefined ? p.dailyUsed : 0;
@@ -634,7 +707,7 @@ function renderShopGrid(category) {
     var unit = p.unit || '个';
     var name = p.name || item.id;
     var tagClass = p.category || '其他';
-    var actionText = isBHL ? '下单' : '购买';
+    
     var btnHtml = '';
     if(isBHL) {
       btnHtml = '<div class="btns">'+
@@ -657,13 +730,22 @@ function renderShopGrid(category) {
         '</div>'+
       '</div>';
     }
-    html += '<div class="shop-card'+typeClass+'">'+
-      '<div class="name">'+name+' <span class="tag '+tagClass+'">'+getCategoryLabel(p.category)+'</span></div>'+
-      '<div class="stats">'+
-        '剩余: <span class="num">'+remainingDisplay+'</span> '+unit+
-        ' | 已售: <span class="num">'+soldDisplay+'</span> '+unit+
-        ' | 今日: <span class="num">'+dailyDisplay+'</span>/'+dailyLimit+
-        (userDailyLimit !== '∞' ? ' | 今日已用: <span class="num">'+userDailyDisplay+'</span>/'+userDailyLimit : '')+
+    
+    // 格式化大数字
+    var remainingStr = remainingDisplay;
+    if(typeof remainingDisplay === 'number' && remainingDisplay > 10000) {
+      remainingStr = remainingDisplay.toLocaleString('zh-CN');
+    }
+    var soldStr = soldDisplay;
+    if(typeof soldDisplay === 'number' && soldDisplay > 10000) {
+      soldStr = soldDisplay.toLocaleString('zh-CN');
+    }
+    
+    html += '<div class="shop-card '+cardClass+'">'+
+      '<div class="name">'+name+' <span class="tag">'+getCategoryLabel(p.category)+'</span></div>'+
+      '<div class="stats">还剩 <span class="num">'+remainingStr+'</span> '+unit+'</div>'+
+      '<div class="sold-text">已售 <span class="num">'+soldStr+'</span> '+unit+' | 今日 <span class="num">'+dailyDisplay+'</span>/'+dailyLimit+
+        (userDailyLimit !== '∞' ? ' | 今日已用 <span class="num">'+userDailyDisplay+'</span>/'+userDailyLimit : '')+
       '</div>'+
       btnHtml+
     '</div>';
@@ -671,34 +753,33 @@ function renderShopGrid(category) {
   container.innerHTML = html;
 }
 
-// ========== 打卡渲染 ==========
-function renderCheckin() {
-  if(!checkinData) return;
-  var status = checkinData.status || 0;
-  var target = checkinData.target || 1;
-  var el = document.getElementById('checkinStatus');
-  var btn = document.getElementById('checkinBtn');
-  if(el) {
-    var doneText = status >= target ? '<span class="done">'+target+'</span>' : '<span class="undo">'+status+'</span>';
-    el.innerHTML = '已打卡: '+doneText+' / <span class="undo">'+target+'</span>';
+// ========== 打卡卡片 ==========
+function renderCheckinCard() {
+  var status = 0;
+  if(productData && productData.atsgs) {
+    status = productData.atsgs.remaining || 0;
   }
-  if(btn) {
-    if(status >= target) {
-      btn.textContent = '✅ 已打卡';
-      btn.disabled = true;
-      btn.className = 'btn done-btn';
-    } else {
-      btn.textContent = '打卡 ✅';
-      btn.disabled = false;
-      btn.className = 'btn';
-    }
-  }
+  // 或者从单独变量获取
+  var done = (status >= 1);
+  var doneText = done ? '<span class="done">1</span>' : '<span class="undo">0</span>';
+  
+  return '<div class="shop-card card-checkin">'+
+    '<div class="name">🚻 安托山公厕</div>'+
+    '<div class="stats">今日打卡 · 每人每天限 1 次</div>'+
+    '<div class="stats">已打卡: '+doneText+' / <span class="undo">1</span></div>'+
+    '<div class="btns">'+
+      '<button id="checkinBtn" class="'+(done?'done-btn':'')+'" '+(done?'disabled':'')+'>'+(done?'✅ 已打卡':'打卡 ✅')+'</button>'+
+    '</div>'+
+    '<div class="sold-text">目标总量 1 次 · 打完收工</div>'+
+  '</div>';
 }
 
+// ========== 打卡逻辑 ==========
 async function doCheckin() {
   if(isProcessing) { showToast('请稍候...', 1000); return; }
   if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
-  if(checkinData && checkinData.status >= 1) {
+  // 检查是否已打卡
+  if(productData && productData.atsgs && productData.atsgs.remaining >= 1) {
     showToast('你今天已经打过卡了！', 2000);
     return;
   }
@@ -709,19 +790,17 @@ async function doCheckin() {
     isProcessing = false;
     updateButtons();
     if(res && res.ok) {
-      checkinData.status = 1;
-      renderCheckin();
       showToast('打卡成功！✅ 安托山公厕今日已打卡', 2000);
       await fetchFullData();
+      // 刷新当前分类
+      renderShopGrid(currentCategory);
     } else {
       showToast('打卡失败，请重试', 2000);
     }
   } catch(e) {
     isProcessing = false;
     updateButtons();
-    if(e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
+    if(e.message && !e.message.includes('额度已用完')) {
       showToast('操作异常：'+e.message, 2500);
     }
   }
@@ -757,9 +836,7 @@ async function doShop(id, delta) {
   } catch(e) {
     isProcessing = false;
     updateButtons();
-    if(e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
+    if(e.message && !e.message.includes('额度已用完')) {
       showToast('操作异常：'+e.message, 2500);
     }
   }
@@ -803,16 +880,13 @@ async function fetchFullData() {
       renderShopTabs(catArray, currentCategory);
       renderShopGrid(currentCategory);
     }
-    if(data.checkin) {
-      checkinData = data.checkin;
-      renderCheckin();
-    }
+    // 打卡数据已包含在products中，打卡卡片会动态显示
   } catch(e) {
     console.error('fetchFullData error', e);
   }
 }
 
-// ========== 轮询同步 ==========
+// ========== 轮询 ==========
 async function syncFromServer(){
   if(isSyncing)return;
   isSyncing=true;
@@ -858,13 +932,19 @@ window.addEventListener("pageshow", function(event){
 
 // ========== 初始化 ==========
 function init(){
-  document.getElementById('checkinBtn').addEventListener('click', doCheckin);
   fetchFullData();
   updateKvBar();
   startTimer();
   startKVStatsPolling();
   startPolling();
   updateButtons();
+  
+  // 打卡按钮委托事件
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.id === 'checkinBtn') {
+      doCheckin();
+    }
+  });
 }
 
 if(document.readyState==="loading"){
