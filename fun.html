@@ -346,6 +346,238 @@ body{
   border:1px solid rgba(255,255,255,0.1);
 }
 .toast-msg.hide{opacity:0;}
+
+/* ===== 商品区域样式 ===== */
+.shop-section{
+  max-width:1200px;
+  width:100%;
+  margin-top:24px;
+}
+.shop-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:16px;
+  border-bottom:2px solid #e5e7eb;
+  padding-bottom:12px;
+}
+.shop-tab{
+  padding:8px 18px;
+  border-radius:20px;
+  border:none;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  background:#f3f4f6;
+  color:#6b7280;
+  font-family:Bahnschrift;
+}
+.shop-tab:hover{
+  background:#e5e7eb;
+  transform:translateY(-1px);
+}
+.shop-tab.active{
+  background:#2563eb;
+  color:#fff;
+  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+}
+.shop-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.shop-card{
+  background:#fff;
+  border-radius:12px;
+  padding:16px 20px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border:1px solid #e5e7eb;
+  transition:all 0.25s ease;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.shop-card:hover{
+  box-shadow:0 6px 20px rgba(0,0,0,0.1);
+  transform:translateY(-2px);
+}
+.shop-card .name{
+  font-size:17px;
+  font-weight:700;
+  color:#111827;
+}
+.shop-card .stats{
+  font-size:13px;
+  color:#6b7280;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.shop-card .stats .num{font-weight:600;color:#1e3a8a}
+.shop-card .btns{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+.shop-card .btns button{
+  padding:6px 14px;
+  border-radius:6px;
+  border:none;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-family:Bahnschrift;
+  background:#2563eb;
+  color:#fff;
+}
+.shop-card .btns button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+}
+.shop-card .btns button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  transform:none !important;
+  box-shadow:none !important;
+}
+.shop-card .custom-row{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-top:2px;
+}
+.shop-card .custom-row input{
+  width:60px;
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid #d1d5db;
+  font-size:13px;
+  text-align:center;
+  font-family:Bahnschrift;
+}
+.shop-card .custom-row input:focus{
+  outline:none;
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+.shop-card .custom-row button{
+  padding:6px 14px;
+  border-radius:6px;
+  border:none;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-family:Bahnschrift;
+  background:#2563eb;
+  color:#fff;
+}
+.shop-card .custom-row button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(37,99,235,0.3);
+}
+.shop-card .tag{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 10px;
+  border-radius:12px;
+  background:#e5e7eb;
+  color:#6b7280;
+  align-self:flex-start;
+}
+.shop-card .tag.饮料零食{background:#fce7f3;color:#9d174d}
+.shop-card .tag.泡面饮料{background:#fef3c7;color:#92400e}
+.shop-card .tag.日用品{background:#d1fae5;color:#065f46}
+.shop-card .tag.餐饮{background:#fecaca;color:#991b1b}
+.shop-card .tag.其他{background:#e0e7ff;color:#3730a3}
+.shop-card .tag.保健{background:#dbeafe;color:#1e40af}
+.shop-card .tag.交通{background:#fef9c3;color:#854d0e}
+.shop-card .tag.楼盘{background:#dbeafe;color:#1d4ed8}
+.shop-card .tag.工程{background:#fed7aa;color:#9a3412}
+
+.shop-card.type-bhl .name{color:#dc2626}
+.shop-card.type-bhl .btns button{background:#dc2626}
+.shop-card.type-bhl .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
+
+/* ===== 打卡区域 ===== */
+.checkin-area{
+  max-width:1200px;
+  width:100%;
+  margin-top:20px;
+  background:linear-gradient(135deg,#fef9ef,#fdf0d5);
+  border:2px solid #f0c27a;
+  border-radius:16px;
+  padding:30px 24px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:180px;
+  text-align:center;
+}
+.checkin-area .title{
+  font-size:32px;
+  font-weight:800;
+  color:#7c5c3e;
+  margin-bottom:8px;
+}
+.checkin-area .sub{
+  font-size:15px;
+  color:#8b7355;
+  margin-bottom:12px;
+}
+.checkin-area .status{
+  font-size:24px;
+  font-weight:700;
+  color:#1e3a8a;
+  margin-bottom:12px;
+}
+.checkin-area .status .done{color:#16a34a}
+.checkin-area .status .undo{color:#dc2626}
+.checkin-area .btn{
+  padding:14px 48px;
+  border-radius:12px;
+  border:none;
+  font-size:20px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  font-family:Bahnschrift;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  color:#fff;
+  box-shadow:0 4px 16px rgba(245,158,11,0.3);
+}
+.checkin-area .btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 8px 32px rgba(245,158,11,0.4);
+}
+.checkin-area .btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  transform:none !important;
+  box-shadow:none !important;
+}
+.checkin-area .btn.done-btn{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow:0 4px 16px rgba(34,197,94,0.3);
+}
+.checkin-area .target-hint{
+  font-size:14px;
+  color:#9ca3af;
+  margin-top:8px;
+}
+
+@media(max-width:768px){
+  .shop-grid{grid-template-columns:1fr}
+  .checkin-area .title{font-size:26px}
+  .checkin-area .status{font-size:20px}
+  .checkin-area .btn{font-size:17px;padding:12px 32px}
+  .shop-tab{padding:6px 14px;font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -361,6 +593,21 @@ body{
 </div>
 <div id="funcounter-wrap"></div>
 
+<!-- ===== 商品购买区 ===== -->
+<div class="shop-section" id="shopSection">
+  <div class="shop-tabs" id="shopTabs"></div>
+  <div class="shop-grid" id="shopGrid"></div>
+</div>
+
+<!-- ===== 打卡区域 ===== -->
+<div class="checkin-area" id="checkinArea">
+  <div class="title">🚻 安托山公厕</div>
+  <div class="sub">今日打卡 · 每人每天限 1 次</div>
+  <div class="status" id="checkinStatus">已打卡: <span class="done">1</span> / <span class="undo">1</span></div>
+  <button class="btn" id="checkinBtn">打卡 ✅</button>
+  <div class="target-hint">目标总量 1 次 · 打完收工</div>
+</div>
+
 <script>
 (function(){
 "use strict";
@@ -375,7 +622,6 @@ function getUserId() {
   return id;
 }
 var USER_ID = getUserId();
-console.log('[User ID]', USER_ID);
 
 // ========== 基础配置 ==========
 var API_BASE="";
@@ -416,7 +662,12 @@ var lastValidStats = { writes: 0, writeLimit: 1000 };
 var isWriteLocked = false;
 var isProcessing = false;
 
-// ---------- Toast 提示 ----------
+// 商品数据
+var productData = {};
+var checkinData = null;
+var currentCategory = '全部';
+
+// ========== Toast 提示 ==========
 var toastTimer = null;
 function showToast(msg, duration) {
   duration = duration || 2500;
@@ -442,7 +693,7 @@ function fmtDog(n){
   return n.toFixed(dec);
 }
 
-// ---------- 彩蛋 ----------
+// ========== 彩蛋 ==========
 var eggMessages={
   estate:{
     1:["又卖了一套！深铁阅云境火爆热销中","恭喜业主喜提新房！","+1套，开发商笑开花"],
@@ -516,13 +767,11 @@ function showEgg(type,amount){
   },2200);
 }
 
-// ---------- API ----------
+// ========== API ==========
 async function apiGet(){
   try{
     var r=await fetch(API_BASE+"/api/counters", {
-      headers: {
-        'X-User-Id': USER_ID
-      }
+      headers: { 'X-User-Id': USER_ID }
     });
     if(!r.ok)throw new Error("http"+r.status);
     return await r.json();
@@ -558,7 +807,7 @@ async function apiPost(id,delta){
   }
 }
 
-// ---------- 获取 KV 统计（从 GraphQL 代理） ----------
+// ========== 获取 KV 统计 ==========
 async function fetchKVStats() {
   try {
     const res = await fetch('/api/kv-stats?t=' + Date.now());
@@ -584,10 +833,8 @@ async function updateStatsBar(showLoadingToast) {
     kvWritesToday = stats.writes;
     KV_WRITE_LIMIT = stats.writeLimit || 1000;
     updateKvBar();
-  } else {
-    // 保持旧值
   }
-  updateKvBar(); // 刷新倒计时
+  updateKvBar();
 }
 
 function startKVStatsPolling() {
@@ -595,9 +842,9 @@ function startKVStatsPolling() {
   setInterval(function(){ updateStatsBar(false); }, 60000);
 }
 
-// ---------- 按钮锁定 ----------
+// ========== 按钮锁定 ==========
 function updateButtons() {
-  var btns = document.querySelectorAll('.fc-btn');
+  var btns = document.querySelectorAll('.fc-btn, .shop-card .btns button, .shop-card .custom-row button, #checkinBtn');
   btns.forEach(function(btn) {
     btn.disabled = isWriteLocked || isProcessing;
   });
@@ -607,7 +854,7 @@ function updateButtons() {
   }
 }
 
-// ---------- 顶部状态条 ----------
+// ========== 顶部状态条 ==========
 function updateKvBar(){
   var bar=document.getElementById("kv-bar");
   var inner=document.getElementById("kv-bar-inner");
@@ -646,7 +893,7 @@ function startTimer(){
   timerInterval=setInterval(updateKvBar,1000);
 }
 
-// ---------- 渲染函数 ----------
+// ========== 渲染函数（楼盘） ==========
 function renderEstate(){
   var el=document.getElementById("fc-estate-num");
   var sl=document.getElementById("fc-sold-num");
@@ -722,32 +969,319 @@ function renderDog(){
 }
 
 function renderAll(){
-  renderEstate();
-  renderXifu();
-  renderYunfan();
-  renderJingyun();
-  renderJingcheng();
-  renderLongjing();
-  renderRuicheng();
-  renderHuicheng();
-  renderBlast();
-  renderBomb();
-  renderDog();
+  renderEstate();renderXifu();renderYunfan();renderJingyun();renderJingcheng();
+  renderLongjing();renderRuicheng();renderHuicheng();renderBlast();renderBomb();renderDog();
 }
 
-function showBlastDone(){
-  var div=document.createElement("div");
-  div.className="funcounter-blastdone";
-  div.innerHTML='<div class="bbd-inner"><h2>大楼已完全爆破！</h2><p>吵吵吵楼已成为历史</p><button id="bbd-close">我知道了</button></div>';
-  document.body.appendChild(div);
-  requestAnimationFrame(function(){div.classList.add("show")});
-  div.querySelector("#bbd-close").onclick=function(){
-    div.classList.remove("show");
-    setTimeout(function(){div.remove()},400);
+// ========== 商品渲染 ==========
+function getCategoryLabel(cat){
+  var map = {
+    '饮料零食':'饮料零食','泡面饮料':'泡面饮料','日用品':'日用品',
+    '餐饮':'餐饮','其他':'其他','保健':'保健','交通':'交通',
+    '楼盘':'楼盘','工程':'工程'
   };
+  return map[cat] || cat;
 }
 
-// ---------- 绑定按钮 ----------
+function renderShopTabs(categories, current) {
+  var container = document.getElementById('shopTabs');
+  if(!container) return;
+  var html = '<button class="shop-tab active" data-cat="全部">全部</button>';
+  categories.forEach(function(cat){
+    var active = (cat === current) ? ' active' : '';
+    html += '<button class="shop-tab'+active+'" data-cat="'+cat+'">'+getCategoryLabel(cat)+'</button>';
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('.shop-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var cat = this.dataset.cat;
+      document.querySelectorAll('.shop-tab').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      renderShopGrid(cat);
+    });
+  });
+}
+
+function renderShopGrid(category) {
+  var container = document.getElementById('shopGrid');
+  if(!container) return;
+  var items = [];
+  for(var id in productData) {
+    var p = productData[id];
+    var cat = p.category || '其他';
+    if(category !== '全部' && cat !== category) continue;
+    items.push({id:id, data:p});
+  }
+  if(items.length === 0) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9ca3af;">该分类暂无商品</div>';
+    return;
+  }
+  var html = '';
+  items.forEach(function(item){
+    var p = item.data;
+    var isBHL = (item.id === 'bhl');
+    var typeClass = isBHL ? ' type-bhl' : '';
+    var remainingDisplay = p.remaining !== undefined ? p.remaining : '∞';
+    var soldDisplay = p.sold !== undefined ? p.sold : 0;
+    var dailyDisplay = p.dailyUsed !== undefined ? p.dailyUsed : 0;
+    var dailyLimit = p.dailyLimit || '∞';
+    var userDailyDisplay = p.userDailyUsed !== undefined ? p.userDailyUsed : 0;
+    var userDailyLimit = p.perUserDailyLimit || '∞';
+    var unit = p.unit || '个';
+    var name = p.name || item.id;
+    var tagClass = p.category || '其他';
+    // 特殊处理八合里
+    var actionText = isBHL ? '下单' : '购买';
+    var btnHtml = '';
+    if(isBHL) {
+      btnHtml = '<div class="btns">'+
+        '<button onclick="doShop(\''+item.id+'\',50)">¥50</button>'+
+        '<button onclick="doShop(\''+item.id+'\',100)">¥100</button>'+
+        '<button onclick="doShop(\''+item.id+'\',200)">¥200</button>'+
+        '<div class="custom-row">'+
+          '<input type="number" id="inp_'+item.id+'" placeholder="金额" min="1" max="500" step="1">'+
+          '<button onclick="doShopCustom(\''+item.id+'\')">下单</button>'+
+        '</div>'+
+      '</div>';
+    } else {
+      btnHtml = '<div class="btns">'+
+        '<button onclick="doShop(\''+item.id+'\',1)">+1</button>'+
+        '<button onclick="doShop(\''+item.id+'\',5)">+5</button>'+
+        '<button onclick="doShop(\''+item.id+'\',10)">+10</button>'+
+        '<div class="custom-row">'+
+          '<input type="number" id="inp_'+item.id+'" placeholder="数量" min="1" max="100" step="1">'+
+          '<button onclick="doShopCustom(\''+item.id+'\')">确定</button>'+
+        '</div>'+
+      '</div>';
+    }
+    html += '<div class="shop-card'+typeClass+'">'+
+      '<div class="name">'+name+' <span class="tag '+tagClass+'">'+getCategoryLabel(p.category)+'</span></div>'+
+      '<div class="stats">'+
+        '剩余: <span class="num">'+remainingDisplay+'</span> '+unit+
+        ' | 已售: <span class="num">'+soldDisplay+'</span> '+unit+
+        ' | 今日: <span class="num">'+dailyDisplay+'</span>/'+dailyLimit+
+        (userDailyLimit !== '∞' ? ' | 今日已用: <span class="num">'+userDailyDisplay+'</span>/'+userDailyLimit : '')+
+      '</div>'+
+      btnHtml+
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ========== 打卡渲染 ==========
+function renderCheckin() {
+  if(!checkinData) return;
+  var status = checkinData.status || 0;
+  var target = checkinData.target || 1;
+  var el = document.getElementById('checkinStatus');
+  var btn = document.getElementById('checkinBtn');
+  if(el) {
+    var doneText = status >= target ? '<span class="done">'+target+'</span>' : '<span class="undo">'+status+'</span>';
+    el.innerHTML = '已打卡: '+doneText+' / <span class="undo">'+target+'</span>';
+  }
+  if(btn) {
+    if(status >= target) {
+      btn.textContent = '✅ 已打卡';
+      btn.disabled = true;
+      btn.className = 'btn done-btn';
+    } else {
+      btn.textContent = '打卡 ✅';
+      btn.disabled = false;
+      btn.className = 'btn';
+    }
+  }
+}
+
+async function doCheckin() {
+  if(isProcessing) { showToast('请稍候...', 1000); return; }
+  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  if(checkinData && checkinData.status >= 1) {
+    showToast('你今天已经打过卡了！', 2000);
+    return;
+  }
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost('atsgs', 1);
+    isProcessing = false;
+    updateButtons();
+    if(res && res.ok) {
+      checkinData.status = 1;
+      renderCheckin();
+      showToast('打卡成功！✅ 安托山公厕今日已打卡', 2000);
+      // 重新拉取完整数据
+      await fetchFullData();
+    } else {
+      showToast('打卡失败，请重试', 2000);
+    }
+  } catch(e) {
+    isProcessing = false;
+    updateButtons();
+    if(e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      showToast('操作异常：'+e.message, 2500);
+    }
+  }
+}
+
+// ========== 商品购买 ==========
+async function doShop(id, delta) {
+  if(isProcessing) { showToast('请稍候...', 1000); return; }
+  if(isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
+  var p = productData[id];
+  if(!p) return;
+  if(p.remaining !== undefined && p.remaining < delta) {
+    showToast('库存不足！剩余 '+p.remaining+' '+p.unit, 2000);
+    return;
+  }
+  isProcessing = true;
+  updateButtons();
+  try {
+    var res = await apiPost(id, delta);
+    isProcessing = false;
+    updateButtons();
+    if(res && res.ok) {
+      // 更新本地数据
+      if(res.remaining !== undefined) p.remaining = res.remaining;
+      if(res.sold !== undefined) p.sold = res.sold;
+      if(res.dailyUsed !== undefined) p.dailyUsed = res.dailyUsed;
+      if(res.userDailyUsed !== undefined) p.userDailyUsed = res.userDailyUsed;
+      renderShopGrid(currentCategory);
+      showToast('购买成功！+'+delta+' '+p.unit, 1500);
+      // 如果是楼盘/工程类，也更新对应变量
+      await fetchFullData();
+    } else {
+      showToast('购买失败，请重试', 2000);
+    }
+  } catch(e) {
+    isProcessing = false;
+    updateButtons();
+    if(e.message && e.message.includes('额度已用完')) {
+      // 已由 apiPost 处理
+    } else {
+      showToast('操作异常：'+e.message, 2500);
+    }
+  }
+}
+
+async function doShopCustom(id) {
+  var inp = document.getElementById('inp_'+id);
+  if(!inp) return;
+  var val = parseFloat(inp.value);
+  if(isNaN(val) || val <= 0) {
+    showToast('请输入有效数量', 1500);
+    return;
+  }
+  var p = productData[id];
+  if(!p) return;
+  var maxVal = (id === 'bhl') ? 500 : 100;
+  if(val > maxVal) {
+    showToast('最大值为 '+maxVal, 1500);
+    return;
+  }
+  // 八合里特殊检查
+  if(id === 'bhl' && val < 1) {
+    showToast('最低金额为 1 元', 1500);
+    return;
+  }
+  await doShop(id, val);
+}
+
+// ========== 获取完整数据 ==========
+async function fetchFullData() {
+  try {
+    var data = await apiGet();
+    if(!data) return;
+    // 更新楼盘数据
+    if(data.remaining !== undefined) remaining = data.remaining;
+    if(data.sold !== undefined) sold = data.sold;
+    if(data.blast !== undefined) blast = data.blast;
+    if(data.xifuRemaining !== undefined) xifuRemaining = data.xifuRemaining;
+    if(data.xifuSold !== undefined) xifuSold = data.xifuSold;
+    if(data.bombProgress !== undefined) bombProgress = data.bombProgress;
+    if(data.dogProgress !== undefined) dogProgress = data.dogProgress;
+    if(data.dogDecimals !== undefined) dogDecimals = data.dogDecimals;
+    if(data.yunfanRemaining !== undefined) yunfanRemaining = data.yunfanRemaining;
+    if(data.yunfanSold !== undefined) yunfanSold = data.yunfanSold;
+    if(data.jingyunRemaining !== undefined) jingyunRemaining = data.jingyunRemaining;
+    if(data.jingyunSold !== undefined) jingyunSold = data.jingyunSold;
+    if(data.jingchengRemaining !== undefined) jingchengRemaining = data.jingchengRemaining;
+    if(data.jingchengSold !== undefined) jingchengSold = data.jingchengSold;
+    if(data.longjingRemaining !== undefined) longjingRemaining = data.longjingRemaining;
+    if(data.longjingSold !== undefined) longjingSold = data.longjingSold;
+    if(data.ruichengRemaining !== undefined) ruichengRemaining = data.ruichengRemaining;
+    if(data.ruichengSold !== undefined) ruichengSold = data.ruichengSold;
+    if(data.huichengRemaining !== undefined) huichengRemaining = data.huichengRemaining;
+    if(data.huichengSold !== undefined) huichengSold = data.huichengSold;
+    renderAll();
+    // 更新商品数据
+    if(data.products) {
+      productData = data.products;
+      var categories = new Set();
+      for(var id in productData) {
+        var p = productData[id];
+        if(p.category) categories.add(p.category);
+      }
+      var catArray = Array.from(categories).sort();
+      renderShopTabs(catArray, currentCategory);
+      renderShopGrid(currentCategory);
+    }
+    // 更新打卡数据
+    if(data.checkin) {
+      checkinData = data.checkin;
+      renderCheckin();
+    }
+  } catch(e) {
+    console.error('fetchFullData error', e);
+  }
+}
+
+// ========== 轮询同步 ==========
+async function syncFromServer(){
+  if(isSyncing)return;
+  isSyncing=true;
+  var now=Date.now();
+  var minInterval=Math.min(currentPollInterval,5000*Math.pow(2,Math.min(syncFailCount,6)));
+  if(now-lastSync<minInterval){isSyncing=false;return;}
+  lastSync=now;
+  await fetchFullData();
+  isSyncing=false;
+  currentPollInterval=Math.min(600000, currentPollInterval*1.5);
+  if(pollTimer){
+    clearInterval(pollTimer);
+    pollTimer=setInterval(syncFromServer,currentPollInterval);
+  }
+}
+
+function startPolling(){
+  if(pollTimer)clearInterval(pollTimer);
+  currentPollInterval=30000;
+  syncFromServer();
+  pollTimer=setInterval(syncFromServer,currentPollInterval);
+}
+function stopPolling(){
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+}
+
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden) {
+    stopPolling();
+  } else {
+    syncFromServer();
+    updateStatsBar(true);
+    startPolling();
+  }
+});
+
+window.addEventListener("pageshow", function(event){
+  if (event.persisted) {
+    syncFromServer();
+    updateStatsBar(true);
+  }
+});
+
+// ========== 绑定按钮（原有楼盘） ==========
 function bindEstate(){
   document.getElementById("fc-btn-e1").onclick=function(){doEstate(1)};
   document.getElementById("fc-btn-e5").onclick=function(){doEstate(5)};
@@ -859,7 +1393,7 @@ function bindDog(){
   };
 }
 
-// ---------- 回滚函数 ----------
+// ========== 回滚函数 ==========
 function rollbackEstate(oldR,oldS){remaining=oldR;sold=oldS;renderEstate();}
 function rollbackXifu(oldR,oldS){xifuRemaining=oldR;xifuSold=oldS;renderXifu();}
 function rollbackYunfan(oldR,oldS){yunfanRemaining=oldR;yunfanSold=oldS;renderYunfan();}
@@ -880,19 +1414,18 @@ function resetPollInterval(){
   }
 }
 
-// ---------- 操作函数 ----------
+// ========== 操作函数（原有楼盘 + 工程） ==========
+// 深铁阅云境
 async function doEstate(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(remaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=remaining, oldS=sold;
   remaining -= n; sold += n;
   renderEstate();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -904,34 +1437,28 @@ async function doEstate(n){
       renderEstate();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackEstate(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackEstate(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 深铁熙府
 async function doXifu(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(xifuRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=xifuRemaining, oldS=xifuSold;
   xifuRemaining -= n; xifuSold += n;
   renderXifu();
   showEgg("xifu", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -943,34 +1470,28 @@ async function doXifu(n){
       renderXifu();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackXifu(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackXifu(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 云帆·闰悦府
 async function doYunfan(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(yunfanRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=yunfanRemaining, oldS=yunfanSold;
   yunfanRemaining -= n; yunfanSold += n;
   renderYunfan();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -982,34 +1503,28 @@ async function doYunfan(n){
       renderYunfan();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackYunfan(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackYunfan(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 景云上辰花园
 async function doJingyun(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(jingyunRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=jingyunRemaining, oldS=jingyunSold;
   jingyunRemaining -= n; jingyunSold += n;
   renderJingyun();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1021,34 +1536,28 @@ async function doJingyun(n){
       renderJingyun();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackJingyun(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackJingyun(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 深铁璟城
 async function doJingcheng(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(jingchengRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=jingchengRemaining, oldS=jingchengSold;
   jingchengRemaining -= n; jingchengSold += n;
   renderJingcheng();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1060,34 +1569,28 @@ async function doJingcheng(n){
       renderJingcheng();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackJingcheng(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackJingcheng(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 深铁珑境
 async function doLongjing(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(longjingRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=longjingRemaining, oldS=longjingSold;
   longjingRemaining -= n; longjingSold += n;
   renderLongjing();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1099,34 +1602,28 @@ async function doLongjing(n){
       renderLongjing();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackLongjing(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackLongjing(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 深铁瑞城
 async function doRuicheng(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(ruichengRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=ruichengRemaining, oldS=ruichengSold;
   ruichengRemaining -= n; ruichengSold += n;
   renderRuicheng();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1138,34 +1635,28 @@ async function doRuicheng(n){
       renderRuicheng();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackRuicheng(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackRuicheng(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 深铁汇城
 async function doHuicheng(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(huichengRemaining < n){ alert("剩余楼盘不足！"); return; }
-  
   var oldR=huichengRemaining, oldS=huichengSold;
   huichengRemaining -= n; huichengSold += n;
   renderHuicheng();
   showEgg("estate", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1177,34 +1668,28 @@ async function doHuicheng(n){
       renderHuicheng();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackHuicheng(oldR, oldS);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackHuicheng(oldR, oldS);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 爆破
 async function doBlast(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(blast >= 100){ alert("大楼已完全爆破！"); return; }
-  
   var oldB = blast;
   blast = Math.min(blast + n, 100);
   renderBlast();
   showEgg("blast", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1216,34 +1701,28 @@ async function doBlast(n){
       renderBlast();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackBlast(oldB);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackBlast(oldB);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 翻新
 async function doBomb(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(bombProgress >= 100){ alert("庞巴迪已完全翻新！"); return; }
-  
   var oldB = bombProgress;
   bombProgress = Math.min(bombProgress + n, 100);
   renderBomb();
   showEgg("bombardier", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1255,34 +1734,28 @@ async function doBomb(n){
       renderBomb();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackBomb(oldB);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackBomb(oldB);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
-
+// 倒闭
 async function doDog(n){
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   if(dogProgress >= 99.9999999999){ alert("狗椅已完全倒闭！"); return; }
-  
   var oldD = dogProgress, oldDec = dogDecimals;
   dogProgress = Math.min(dogProgress + n, 99.9999999999);
   renderDog();
   showEgg("dogchair", n);
   showToast('已操作，正在同步云端...', 1500);
   resetPollInterval();
-  
   isProcessing = true;
   updateButtons();
   try {
@@ -1294,93 +1767,19 @@ async function doDog(n){
       renderDog();
       await updateStatsBar(true);
       showToast('同步完成', 1000);
+      await fetchFullData();
     } else {
       rollbackDog(oldD, oldDec);
       if (res === null) showToast('网络异常，已回滚', 2000);
     }
   } catch (e) {
-    isProcessing = false;
-    updateButtons();
+    isProcessing = false; updateButtons();
     rollbackDog(oldD, oldDec);
-    if (e.message && e.message.includes('额度已用完')) {
-      // 已由 apiPost 处理
-    } else {
-      alert("操作异常：" + e.message);
-    }
+    if (!e.message.includes('额度已用完')) alert("操作异常：" + e.message);
   }
 }
 
-// ---------- 轮询同步 ----------
-async function syncFromServer(){
-  if(isSyncing)return;
-  isSyncing=true;
-  var now=Date.now();
-  var minInterval=Math.min(currentPollInterval,5000*Math.pow(2,Math.min(syncFailCount,6)));
-  if(now-lastSync<minInterval){isSyncing=false;return;}
-  lastSync=now;
-  var data=await apiGet();
-  if(!data){syncFailCount++;isSyncing=false;return;}
-  syncFailCount=0;
-  
-  if(data.remaining!==undefined)remaining=data.remaining;
-  if(data.sold!==undefined)sold=data.sold;
-  if(data.blast!==undefined)blast=data.blast;
-  if(data.xifuRemaining!==undefined)xifuRemaining=data.xifuRemaining;
-  if(data.xifuSold!==undefined)xifuSold=data.xifuSold;
-  if(data.bombProgress!==undefined)bombProgress=data.bombProgress;
-  if(data.dogProgress!==undefined)dogProgress=data.dogProgress;
-  if(data.dogDecimals!==undefined)dogDecimals=data.dogDecimals;
-  if(data.yunfanRemaining!==undefined)yunfanRemaining=data.yunfanRemaining;
-  if(data.yunfanSold!==undefined)yunfanSold=data.yunfanSold;
-  if(data.jingyunRemaining!==undefined)jingyunRemaining=data.jingyunRemaining;
-  if(data.jingyunSold!==undefined)jingyunSold=data.jingyunSold;
-  if(data.jingchengRemaining!==undefined)jingchengRemaining=data.jingchengRemaining;
-  if(data.jingchengSold!==undefined)jingchengSold=data.jingchengSold;
-  if(data.longjingRemaining!==undefined)longjingRemaining=data.longjingRemaining;
-  if(data.longjingSold!==undefined)longjingSold=data.longjingSold;
-  if(data.ruichengRemaining!==undefined)ruichengRemaining=data.ruichengRemaining;
-  if(data.ruichengSold!==undefined)ruichengSold=data.ruichengSold;
-  if(data.huichengRemaining!==undefined)huichengRemaining=data.huichengRemaining;
-  if(data.huichengSold!==undefined)huichengSold=data.huichengSold;
-  
-  renderAll();
-  isSyncing=false;
-  
-  currentPollInterval=Math.min(600000, currentPollInterval*1.5);
-  if(pollTimer){
-    clearInterval(pollTimer);
-    pollTimer=setInterval(syncFromServer,currentPollInterval);
-  }
-}
-
-function startPolling(){
-  if(pollTimer)clearInterval(pollTimer);
-  currentPollInterval=30000;
-  syncFromServer();
-  pollTimer=setInterval(syncFromServer,currentPollInterval);
-}
-function stopPolling(){
-  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
-}
-
-document.addEventListener("visibilitychange", function(){
-  if(document.hidden) {
-    stopPolling();
-  } else {
-    syncFromServer();
-    updateStatsBar(true);
-    startPolling();
-  }
-});
-
-window.addEventListener("pageshow", function(event){
-  if (event.persisted) {
-    syncFromServer();
-    updateStatsBar(true);
-  }
-});
-
-// ---------- 初始化 ----------
+// ========== 初始化 ==========
 function init(){
   var wrap=document.getElementById("funcounter-wrap");
   if(!wrap)return;
@@ -1595,18 +1994,14 @@ function init(){
       '</div>'+
     '</div>';
   
-  bindEstate();
-  bindXifu();
-  bindYunfan();
-  bindJingyun();
-  bindJingcheng();
-  bindLongjing();
-  bindRuicheng();
-  bindHuicheng();
-  bindBlast();
-  bindBomb();
-  bindDog();
+  bindEstate();bindXifu();bindYunfan();bindJingyun();bindJingcheng();
+  bindLongjing();bindRuicheng();bindHuicheng();bindBlast();bindBomb();bindDog();
   
+  // 打卡按钮
+  document.getElementById('checkinBtn').addEventListener('click', doCheckin);
+  
+  // 初始数据加载
+  fetchFullData();
   renderAll();
   updateKvBar();
   startTimer();
