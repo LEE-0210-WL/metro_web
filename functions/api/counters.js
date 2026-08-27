@@ -1,5 +1,5 @@
 // functions/api/counters.js
-// 支持所有商品类型：普通商品（日总量）、限量商品（每用户日限+总库存）、餐饮（八合里特殊）、打卡
+// 完整版，包含所有商品（楼盘、工程、饮料零食等）
 
 export async function onRequestGet(context) {
   const corsHeaders = {
@@ -21,16 +21,12 @@ export async function onRequestGet(context) {
     const userId = context.request.headers.get('X-User-Id') || 'anonymous';
     const today = new Date().toISOString().split('T')[0];
 
-    // ---------- 商品配置 ----------
     const products = getProductConfig();
-
-    // 读取所有商品数据
     const result = {};
     for (const [id, config] of Object.entries(products)) {
       const remaining = parseFloat(await kv.get(`remaining_${id}`) || config.totalStock.toString());
       const sold = parseFloat(await kv.get(`sold_${id}`) || "0");
       const dailyUsed = parseFloat(await kv.get(`daily_${id}_${today}`) || "0");
-      // 如果有限量（每用户每日限额），读取用户当天的使用量
       let userDailyUsed = 0;
       if (config.perUserDailyLimit) {
         userDailyUsed = parseFloat(await kv.get(`daily_${id}_${today}_${userId}`) || "0");
@@ -50,7 +46,7 @@ export async function onRequestGet(context) {
       };
     }
 
-    // 读取打卡数据
+    // 打卡数据
     const checkinKey = `checkin_atsgs_${userId}`;
     const checkinStatus = parseInt(await kv.get(checkinKey) || "0");
 
@@ -105,7 +101,7 @@ export async function onRequestPost(context) {
     const userId = context.request.headers.get('X-User-Id') || 'anonymous';
     const today = new Date().toISOString().split('T')[0];
 
-    // ---------- 处理打卡 ----------
+    // 打卡
     if (id === 'atsgs') {
       const checkinKey = `checkin_atsgs_${userId}`;
       const current = parseInt(await kv.get(checkinKey) || "0");
@@ -128,7 +124,6 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ---------- 商品配置 ----------
     const products = getProductConfig();
     const config = products[id];
     if (!config) {
@@ -138,21 +133,17 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ---------- 读取当前状态 ----------
     let remaining = parseFloat(await kv.get(`remaining_${id}`) || config.totalStock.toString());
     let sold = parseFloat(await kv.get(`sold_${id}`) || "0");
     let dailyUsed = parseFloat(await kv.get(`daily_${id}_${today}`) || "0");
-
-    // 每用户每日限制
     let userDailyUsed = 0;
     const userDailyKey = `daily_${id}_${today}_${userId}`;
     if (config.perUserDailyLimit) {
       userDailyUsed = parseFloat(await kv.get(userDailyKey) || "0");
     }
 
-    // ---------- 特殊处理：八合里牛肉火锅 ----------
+    // 特殊处理八合里
     if (id === 'bhl') {
-      // 每用户每天只能下一单
       if (userDailyUsed >= 1) {
         return new Response(JSON.stringify({
           error: "你今天已经在八合里下过单了！明天再来吧",
@@ -163,7 +154,6 @@ export async function onRequestPost(context) {
           headers: corsHeaders
         });
       }
-      // 每单金额 1~500 元
       if (delta < 1 || delta > 500) {
         return new Response(JSON.stringify({
           error: "每单金额必须在 1 ~ 500 元之间"
@@ -172,18 +162,16 @@ export async function onRequestPost(context) {
           headers: corsHeaders
         });
       }
-      // 总库存用大数表示（不限量，但为了统一结构，设一个很大的数）
       if (remaining < 1) {
         return new Response(JSON.stringify({ error: "今日八合里已售罄" }), {
           status: 400,
           headers: corsHeaders
         });
       }
-      // 执行购买
-      const newRemaining = remaining - 1; // 每单消耗1库存
-      const newSold = sold + delta; // 销售额累加金额
-      const newDailyUsed = dailyUsed + delta; // 每日总收入累加金额
-      const newUserDailyUsed = 1; // 用户当天已下单
+      const newRemaining = remaining - 1;
+      const newSold = sold + delta;
+      const newDailyUsed = dailyUsed + delta;
+      const newUserDailyUsed = 1;
       await kv.put(`remaining_${id}`, newRemaining.toString());
       await kv.put(`sold_${id}`, newSold.toString());
       await kv.put(`daily_${id}_${today}`, newDailyUsed.toString());
@@ -204,8 +192,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ---------- 普通商品处理 ----------
-    // 检查总库存
+    // 普通商品
     if (remaining < delta) {
       return new Response(JSON.stringify({
         error: `${config.name}库存不足！当前剩余 ${remaining} ${config.unit}`
@@ -214,8 +201,6 @@ export async function onRequestPost(context) {
         headers: corsHeaders
       });
     }
-
-    // 检查每日总量限制（全局）
     if (dailyUsed + delta > config.dailyLimit) {
       return new Response(JSON.stringify({
         error: `今日${config.name}额度已用完（${dailyUsed}/${config.dailyLimit} ${config.unit}），明天再来！`
@@ -224,8 +209,6 @@ export async function onRequestPost(context) {
         headers: corsHeaders
       });
     }
-
-    // 检查每用户每日限制
     if (config.perUserDailyLimit) {
       if (userDailyUsed + delta > config.perUserDailyLimit) {
         return new Response(JSON.stringify({
@@ -237,7 +220,6 @@ export async function onRequestPost(context) {
       }
     }
 
-    // 执行购买
     const newRemaining = remaining - delta;
     const newSold = sold + delta;
     const newDailyUsed = dailyUsed + delta;
@@ -284,10 +266,123 @@ export async function onRequestOptions() {
   });
 }
 
-// ---------- 商品配置 ----------
 function getProductConfig() {
   return {
-    // ===== 饮料零食（日总量 100000，无用户限制） =====
+    // ===== 楼盘（原TOD项目） =====
+    estate: {
+      id: 'estate',
+      name: '深铁阅云境',
+      unit: '套',
+      dailyLimit: 500,
+      totalStock: 11300000000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    xifu: {
+      id: 'xifu',
+      name: '深铁熙府',
+      unit: '套',
+      dailyLimit: 1000,
+      totalStock: 20000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    yunfan: {
+      id: 'yunfan',
+      name: '云帆·闰悦府',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 45000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    jingyun: {
+      id: 'jingyun',
+      name: '景云上辰花园',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 55000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    jingcheng: {
+      id: 'jingcheng',
+      name: '深铁璟城',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 35000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    longjing: {
+      id: 'longjing',
+      name: '深铁珑境',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 25000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    ruicheng: {
+      id: 'ruicheng',
+      name: '深铁瑞城',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 65000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+    huicheng: {
+      id: 'huicheng',
+      name: '深铁汇城',
+      unit: '套',
+      dailyLimit: 100,
+      totalStock: 25000,
+      perUserDailyLimit: null,
+      category: '楼盘',
+      type: 'normal'
+    },
+
+    // ===== 工程类（爆破、翻新、倒闭） =====
+    blast: {
+      id: 'blast',
+      name: '吵吵吵楼爆破',
+      unit: '%',
+      dailyLimit: 1.5,
+      totalStock: 100,
+      perUserDailyLimit: null,
+      category: '工程',
+      type: 'normal'
+    },
+    bombardier: {
+      id: 'bombardier',
+      name: '庞巴迪翻新',
+      unit: '%',
+      dailyLimit: 1.5,
+      totalStock: 100,
+      perUserDailyLimit: null,
+      category: '工程',
+      type: 'normal'
+    },
+    dogchair: {
+      id: 'dogchair',
+      name: '狗椅倒闭',
+      unit: '%',
+      dailyLimit: 1.5,
+      totalStock: 99.9999999999,
+      perUserDailyLimit: null,
+      category: '工程',
+      type: 'normal'
+    },
+
+    // ===== 饮料零食 =====
     mlwz: {
       id: 'mlwz',
       name: '麻辣王子',
@@ -328,6 +423,8 @@ function getProductConfig() {
       category: '饮料零食',
       type: 'normal'
     },
+
+    // ===== 泡面饮料 =====
     ydlm: {
       id: 'ydlm',
       name: '营多捞面',
@@ -379,16 +476,16 @@ function getProductConfig() {
       type: 'normal'
     },
 
-    // ===== 日用品（用户每日限量 + 总库存） =====
+    // ===== 日用品 =====
     fxyt: {
       id: 'fxyt',
       name: '翻新圆坨坨',
       unit: '辆',
-      dailyLimit: 10000, // 全局日总量
+      dailyLimit: 10000,
       totalStock: 10000,
-      perUserDailyLimit: 10, // 每人每天限 10 辆
+      perUserDailyLimit: 10,
       category: '日用品',
-      type: 'limited'
+      type: 'normal'
     },
     dycz: {
       id: 'dycz',
@@ -398,22 +495,22 @@ function getProductConfig() {
       totalStock: 10000,
       perUserDailyLimit: 5,
       category: '日用品',
-      type: 'limited'
+      type: 'normal'
     },
 
-    // ===== 餐饮（特殊：八合里） =====
+    // ===== 餐饮 =====
     bhl: {
       id: 'bhl',
       name: '八合里牛肉火锅',
       unit: '单',
-      dailyLimit: 999999, // 每日总单数无硬性限制
-      totalStock: 999999, // 总库存用大数表示
-      perUserDailyLimit: 1, // 每人每天限 1 单
+      dailyLimit: 999999,
+      totalStock: 999999,
+      perUserDailyLimit: 1,
       category: '餐饮',
       type: 'bhl'
     },
 
-    // ===== 其他类（每日限额 1000，总库存 50000，用户无额外限制） =====
+    // ===== 其他 =====
     hdlw: {
       id: 'hdlw',
       name: '恒大烂尾楼公园',
@@ -444,6 +541,8 @@ function getProductConfig() {
       category: '其他',
       type: 'normal'
     },
+
+    // ===== 保健 =====
     yjbat: {
       id: 'yjbat',
       name: '益节补氨糖',
@@ -454,6 +553,8 @@ function getProductConfig() {
       category: '保健',
       type: 'normal'
     },
+
+    // ===== 交通 =====
     '555c': {
       id: '555c',
       name: '停靠纱织北站的555车',
