@@ -817,13 +817,11 @@ function renderShopGrid(category) {
     }
 
     // 工程类用不同文案
-    var row1Label, row2Label;
+    var row1Label;
     if (isEngineering) {
       row1Label = '当前进度';
-      row2Label = '已完成';
     } else {
       row1Label = '还剩';
-      row2Label = '已售';
     }
 
     var userDailyHtml = '';
@@ -833,9 +831,14 @@ function renderShopGrid(category) {
 
     html += '<div class="shop-card ' + cardClass + '">' +
       '<div class="name">' + name + ' <span class="tag">' + getCategoryLabel(p.category) + '</span></div>' +
-      '<div class="row-main">' + row1Label + ' <span class="num">' + remainingStr + '</span> ' + unit + '</div>' +
-      '<div class="row-sub">' + row2Label + ' <span class="num">' + soldStr + '</span> ' + unit + '</div>' +
-      '<div class="row-daily">今日额度使用 <span class="num">' + dailyStr + '</span>/' + dailyLimit + userDailyHtml + '</div>' +
+      '<div class="row-main">' + row1Label + ' <span class="num">' + remainingStr + '</span> ' + unit + '</div>';
+
+    // 工程类不显示"已售/已完成"行
+    if (!isEngineering) {
+      html += '<div class="row-sub">已售 <span class="num">' + soldStr + '</span> ' + unit + '</div>';
+    }
+
+    html += '<div class="row-daily">今日额度使用 <span class="num">' + dailyStr + '</span>/' + dailyLimit + userDailyHtml + '</div>' +
       progressHtml +
       generateButtons(item.id, p) +
       '</div>';
