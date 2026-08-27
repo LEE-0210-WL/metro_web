@@ -190,24 +190,24 @@ body{
   font-weight:700;
   margin-bottom:2px;
 }
-/* 新排版：三行独立显示 */
-.shop-card .row-remaining{
+/* 通用行样式 */
+.shop-card .row-main{
   font-size:15px;
   color:#374151;
   margin-bottom:2px;
 }
-.shop-card .row-remaining .num{
+.shop-card .row-main .num{
   font-weight:700;
   font-size:28px;
   font-family:Bahnschrift;
   color:inherit;
 }
-.shop-card .row-sold{
+.shop-card .row-sub{
   font-size:14px;
   color:#6b7280;
   margin-bottom:2px;
 }
-.shop-card .row-sold .num{
+.shop-card .row-sub .num{
   font-weight:600;
   font-size:18px;
   font-family:Bahnschrift;
@@ -297,23 +297,23 @@ body{
 /* ===== 各卡配色 ===== */
 .card-estate{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
 .card-estate .name{color:#1d4ed8}
-.card-estate .row-remaining .num{color:#1d4ed8}
+.card-estate .row-main .num{color:#1d4ed8}
 .card-estate .btns button{background:#2563eb;color:#fff}
 .card-estate .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-estate .custom-row button{background:#2563eb;color:#fff}
 
 .card-xifu{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;}
 .card-xifu .name{color:#b45309}
-.card-xifu .row-remaining .num{color:#b45309}
+.card-xifu .row-main .num{color:#b45309}
 .card-xifu .btns button{background:#f59e0b;color:#fff}
 .card-xifu .btns button:hover{box-shadow:0 4px 12px rgba(245,158,11,0.3)}
 .card-xifu .custom-row button{background:#f59e0b;color:#fff}
 
 .card-blast{background:#dc2626;border-color:#b91c1c;color:#fff}
 .card-blast .name{color:#fbbf24}
-.card-blast .row-remaining{color:#fecaca}
-.card-blast .row-remaining .num{color:#fbbf24}
-.card-blast .row-sold{color:#fca5a5}
+.card-blast .row-main{color:#fecaca}
+.card-blast .row-main .num{color:#fbbf24}
+.card-blast .row-sub{color:#fca5a5}
 .card-blast .row-daily{color:#fca5a5}
 .card-blast .btns button{background:#fbbf24;color:#7c2d12}
 .card-blast .btns button:hover{box-shadow:0 4px 12px rgba(251,191,36,0.3)}
@@ -322,67 +322,67 @@ body{
 
 .card-bombardier{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#01AF55;}
 .card-bombardier .name{color:#065f46}
-.card-bombardier .row-remaining .num{color:#065f46}
+.card-bombardier .row-main .num{color:#065f46}
 .card-bombardier .btns button{background:#01AF55;color:#fff}
 .card-bombardier .btns button:hover{box-shadow:0 4px 12px rgba(1,175,85,0.3)}
 .card-bombardier .custom-row button{background:#01AF55;color:#fff}
-.card-bombardier .row-sold{color:#047857}
+.card-bombardier .row-sub{color:#047857}
 .card-bombardier .row-daily{color:#047857}
 
 .card-dogchair{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#0131AC;}
 .card-dogchair .name{color:#1e3a8a}
-.card-dogchair .row-remaining .num{color:#1e3a8a}
+.card-dogchair .row-main .num{color:#1e3a8a}
 .card-dogchair .btns button{background:#0131AC;color:#fff}
 .card-dogchair .btns button:hover{box-shadow:0 4px 12px rgba(1,49,172,0.3)}
 .card-dogchair .custom-row button{background:#0131AC;color:#fff}
-.card-dogchair .row-sold{color:#1e40af}
+.card-dogchair .row-sub{color:#1e40af}
 .card-dogchair .row-daily{color:#1e40af}
 
 .card-snack{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border-color:#f9a8d4;}
 .card-snack .name{color:#9d174d}
-.card-snack .row-remaining .num{color:#9d174d}
+.card-snack .row-main .num{color:#9d174d}
 .card-snack .btns button{background:#db2777;color:#fff}
 .card-snack .btns button:hover{box-shadow:0 4px 12px rgba(219,39,119,0.3)}
 .card-snack .custom-row button{background:#db2777;color:#fff}
 
 .card-noodle{background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde047;}
 .card-noodle .name{color:#854d0e}
-.card-noodle .row-remaining .num{color:#854d0e}
+.card-noodle .row-main .num{color:#854d0e}
 .card-noodle .btns button{background:#ca8a04;color:#fff}
 .card-noodle .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-noodle .custom-row button{background:#ca8a04;color:#fff}
 
 .card-daily{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;}
 .card-daily .name{color:#166534}
-.card-daily .row-remaining .num{color:#166534}
+.card-daily .row-main .num{color:#166534}
 .card-daily .btns button{background:#16a34a;color:#fff}
 .card-daily .btns button:hover{box-shadow:0 4px 12px rgba(22,163,74,0.3)}
 .card-daily .custom-row button{background:#16a34a;color:#fff}
 
 .card-food{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:#f87171;}
 .card-food .name{color:#991b1b}
-.card-food .row-remaining .num{color:#991b1b}
+.card-food .row-main .num{color:#991b1b}
 .card-food .btns button{background:#dc2626;color:#fff}
 .card-food .btns button:hover{box-shadow:0 4px 12px rgba(220,38,38,0.3)}
 .card-food .custom-row button{background:#dc2626;color:#fff}
 
 .card-other{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);border-color:#a5b4fc;}
 .card-other .name{color:#3730a3}
-.card-other .row-remaining .num{color:#3730a3}
+.card-other .row-main .num{color:#3730a3}
 .card-other .btns button{background:#4f46e5;color:#fff}
 .card-other .btns button:hover{box-shadow:0 4px 12px rgba(79,70,229,0.3)}
 .card-other .custom-row button{background:#4f46e5;color:#fff}
 
 .card-health{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#60a5fa;}
 .card-health .name{color:#1e40af}
-.card-health .row-remaining .num{color:#1e40af}
+.card-health .row-main .num{color:#1e40af}
 .card-health .btns button{background:#2563eb;color:#fff}
 .card-health .btns button:hover{box-shadow:0 4px 12px rgba(37,99,235,0.3)}
 .card-health .custom-row button{background:#2563eb;color:#fff}
 
 .card-traffic{background:linear-gradient(135deg,#fef9c3,#fef08a);border-color:#facc15;}
 .card-traffic .name{color:#854d0e}
-.card-traffic .row-remaining .num{color:#854d0e}
+.card-traffic .row-main .num{color:#854d0e}
 .card-traffic .btns button{background:#ca8a04;color:#fff}
 .card-traffic .btns button:hover{box-shadow:0 4px 12px rgba(202,138,4,0.3)}
 .card-traffic .custom-row button{background:#ca8a04;color:#fff}
@@ -423,7 +423,7 @@ body{
 .card-checkin .done{color:#16a34a}
 .card-checkin .undo{color:#dc2626}
 
-/* 纯色进度条（工程类专用） */
+/* 纯色进度条 */
 .progress-bar-wrap{
   width:100%;
   height:10px;
@@ -436,7 +436,6 @@ body{
 .progress-bar-fill{
   height:100%;
   border-radius:5px;
-  background:currentColor;
   transition:width 0.5s ease;
 }
 
@@ -651,6 +650,7 @@ function getCategoryLabel(cat) {
   return map[cat] || cat;
 }
 
+// ========== 生成按钮（修复 bhl 的 canAdd） ==========
 function generateButtons(id, p) {
   var isBHL = (id === 'bhl');
   var dailyLimit = p.dailyLimit || Infinity;
@@ -660,7 +660,15 @@ function generateButtons(id, p) {
   var perUserLimit = p.perUserDailyLimit || Infinity;
   var step = p.step || 1;
 
-  function canAdd(delta) {
+  // 修复：bhl 的 remaining 判断固定为1（按单计），不受金额影响
+  function canAdd(delta, forBHL) {
+    if (forBHL) {
+      // bhl: remaining 只判断是否有单（>=1），daily 按金额判断
+      if (remaining < 1) return false;
+      if (dailyUsed + delta > dailyLimit) return false;
+      if (userDailyUsed + 1 > perUserLimit) return false; // bhl 用户限制是按单
+      return true;
+    }
     if (remaining < delta) return false;
     if (dailyUsed + delta > dailyLimit) return false;
     if (userDailyUsed + delta > perUserLimit) return false;
@@ -671,12 +679,12 @@ function generateButtons(id, p) {
 
   if (isBHL) {
     [50, 100, 200].forEach(function(amt) {
-      var disabled = !canAdd(1) ? 'disabled' : '';
+      var disabled = !canAdd(amt, true) ? 'disabled' : '';
       html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>¥' + amt + '</button>';
     });
     html += '<div class="custom-row">' +
       '<input type="number" id="inp_' + id + '" placeholder="金额" min="1" max="500" step="1">' +
-      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1) ? 'disabled' : '') + '>下单</button>' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1, true) ? 'disabled' : '') + '>下单</button>' +
       '</div>';
   } else if (p.category === '工程') {
     var btns = [];
@@ -687,39 +695,39 @@ function generateButtons(id, p) {
     if (dailyLimit >= 10) btns.push(10);
     btns = btns.filter(function(v, i, a) { return a.indexOf(v) === i; }).sort(function(a, b) { return a - b; });
     btns.forEach(function(amt) {
-      var disabled = !canAdd(amt) ? 'disabled' : '';
+      var disabled = !canAdd(amt, false) ? 'disabled' : '';
       var label = amt < 1 ? '+' + (amt * 100).toFixed(0) + '%' : '+' + amt;
       html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>' + label + '</button>';
     });
     html += '<div class="custom-row">' +
       '<input type="number" id="inp_' + id + '" placeholder="数值" min="' + step + '" max="' + Math.min(dailyLimit, remaining) + '" step="' + step + '">' +
-      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(step) ? 'disabled' : '') + '>确定</button>' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(step, false) ? 'disabled' : '') + '>确定</button>' +
       '</div>';
   } else {
     var btnValues = [1, 5, 10];
     btnValues = btnValues.filter(function(v) { return v <= dailyLimit; });
     if (btnValues.length === 0) btnValues = [1];
     btnValues.forEach(function(amt) {
-      var disabled = !canAdd(amt) ? 'disabled' : '';
+      var disabled = !canAdd(amt, false) ? 'disabled' : '';
       html += '<button onclick="window.doShop(\'' + id + '\',' + amt + ')" ' + disabled + '>+' + amt + '</button>';
     });
     var maxInput = Math.min(100, dailyLimit - dailyUsed, remaining);
     html += '<div class="custom-row">' +
       '<input type="number" id="inp_' + id + '" placeholder="数量" min="1" max="' + maxInput + '" step="1">' +
-      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1) ? 'disabled' : '') + '>确定</button>' +
+      '<button onclick="window.doShopCustom(\'' + id + '\')" ' + (!canAdd(1, false) ? 'disabled' : '') + '>确定</button>' +
       '</div>';
   }
   html += '</div>';
   return html;
 }
 
-// 纯色进度条：使用卡片文字颜色
-function renderProgressBar(p, textColor) {
+// 纯色进度条
+function renderProgressBar(p, barColor) {
   var remaining = p.remaining !== undefined ? p.remaining : 0;
   var total = p.totalStock || 100;
   var pct = Math.min((remaining / total) * 100, 100);
   return '<div class="progress-bar-wrap">' +
-    '<div class="progress-bar-fill" style="width:' + pct.toFixed(1) + '%;color:' + textColor + ';background:' + textColor + '"></div>' +
+    '<div class="progress-bar-fill" style="width:' + pct.toFixed(1) + '%;background:' + barColor + '"></div>' +
     '</div>';
 }
 
@@ -748,6 +756,7 @@ function renderShopTabs(categories, current) {
   });
 }
 
+// ========== 渲染商品网格（修复工程类文案） ==========
 function renderShopGrid(category) {
   var container = document.getElementById('shopGrid');
   if (!container) return;
@@ -782,32 +791,41 @@ function renderShopGrid(category) {
     var unit = p.unit || '个';
     var name = p.name || item.id;
     var decimals = p.decimals || 0;
+    var isEngineering = (p.category === '工程');
 
-    // 获取文字颜色用于进度条
-    var cardEl = document.createElement('div');
-    cardEl.className = 'shop-card ' + cardClass;
-    document.body.appendChild(cardEl);
-    var computedColor = getComputedStyle(cardEl.querySelector('.name') || cardEl).color;
-    document.body.removeChild(cardEl);
-    // 直接用硬编码颜色避免计算
     var colorMap = {
       'card-estate': '#1d4ed8', 'card-xifu': '#b45309', 'card-blast': '#fbbf24',
       'card-bombardier': '#065f46', 'card-dogchair': '#1e3a8a', 'card-snack': '#9d174d',
       'card-noodle': '#854d0e', 'card-daily': '#166534', 'card-food': '#991b1b',
       'card-other': '#3730a3', 'card-health': '#1e40af', 'card-traffic': '#854d0e'
     };
-    var textColor = colorMap[cardClass] || '#333';
+    var barColor = colorMap[cardClass] || '#333';
 
-    var remainingStr = remaining.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
-    var soldStr = sold.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
-    var dailyStr = dailyUsed.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
-
-    var progressHtml = '';
-    if (p.category === '工程') {
-      progressHtml = renderProgressBar(p, textColor);
+    // 格式化数字
+    function fmt(n) {
+      if (isEngineering) return n.toFixed(decimals);
+      return n.toLocaleString('zh-CN', { maximumFractionDigits: decimals });
     }
 
-    // 新排版：三行独立
+    var remainingStr = fmt(remaining);
+    var soldStr = fmt(sold);
+    var dailyStr = fmt(dailyUsed);
+
+    var progressHtml = '';
+    if (isEngineering) {
+      progressHtml = renderProgressBar(p, barColor);
+    }
+
+    // 工程类用不同文案
+    var row1Label, row2Label;
+    if (isEngineering) {
+      row1Label = '当前进度';
+      row2Label = '已完成';
+    } else {
+      row1Label = '还剩';
+      row2Label = '已售';
+    }
+
     var userDailyHtml = '';
     if (userDailyLimit !== null && userDailyLimit !== undefined) {
       userDailyHtml = ' · 个人 <span class="num">' + userDailyUsed + '</span>/' + userDailyLimit;
@@ -815,8 +833,8 @@ function renderShopGrid(category) {
 
     html += '<div class="shop-card ' + cardClass + '">' +
       '<div class="name">' + name + ' <span class="tag">' + getCategoryLabel(p.category) + '</span></div>' +
-      '<div class="row-remaining">还剩 <span class="num">' + remainingStr + '</span> ' + unit + '</div>' +
-      '<div class="row-sold">已售 <span class="num">' + soldStr + '</span> ' + unit + '</div>' +
+      '<div class="row-main">' + row1Label + ' <span class="num">' + remainingStr + '</span> ' + unit + '</div>' +
+      '<div class="row-sub">' + row2Label + ' <span class="num">' + soldStr + '</span> ' + unit + '</div>' +
       '<div class="row-daily">今日额度使用 <span class="num">' + dailyStr + '</span>/' + dailyLimit + userDailyHtml + '</div>' +
       progressHtml +
       generateButtons(item.id, p) +
@@ -842,23 +860,43 @@ function renderCheckinCard() {
     '</div>';
 }
 
+// ========== 购买操作（修复 bhl 前端校验） ==========
 window.doShop = async function(id, delta) {
   if (isProcessing) { showToast('请稍候...', 1000); return; }
   if (isWriteLocked) { showToast('今日写入已锁定，请明天再试', 2500); return; }
   var p = productData[id];
   if (!p) return;
 
-  if (p.remaining !== undefined && p.remaining < delta) {
-    showToast('库存不足！剩余 ' + p.remaining + ' ' + p.unit, 2000);
-    return;
-  }
-  if (p.dailyLimit !== undefined && p.dailyUsed + delta > p.dailyLimit) {
-    showToast('今日额度不足！', 2000);
-    return;
-  }
-  if (p.perUserDailyLimit !== undefined && p.perUserDailyLimit !== null && p.userDailyUsed + delta > p.perUserDailyLimit) {
-    showToast('个人今日额度不足！', 2000);
-    return;
+  var isBHL = (id === 'bhl');
+
+  // 前端校验
+  if (isBHL) {
+    // bhl: remaining 只判断单数（>=1），daily 按金额判断
+    if (p.remaining !== undefined && p.remaining < 1) {
+      showToast('今日已售罄', 2000);
+      return;
+    }
+    if (p.dailyLimit !== undefined && p.dailyUsed + delta > p.dailyLimit) {
+      showToast('今日额度不足！', 2000);
+      return;
+    }
+    if (p.perUserDailyLimit !== undefined && p.perUserDailyLimit !== null && p.userDailyUsed >= p.perUserDailyLimit) {
+      showToast('今天已经下过单了！', 2000);
+      return;
+    }
+  } else {
+    if (p.remaining !== undefined && p.remaining < delta) {
+      showToast('库存不足！剩余 ' + p.remaining + ' ' + p.unit, 2000);
+      return;
+    }
+    if (p.dailyLimit !== undefined && p.dailyUsed + delta > p.dailyLimit) {
+      showToast('今日额度不足！', 2000);
+      return;
+    }
+    if (p.perUserDailyLimit !== undefined && p.perUserDailyLimit !== null && p.userDailyUsed + delta > p.perUserDailyLimit) {
+      showToast('个人今日额度不足！', 2000);
+      return;
+    }
   }
 
   isProcessing = true;
@@ -873,7 +911,7 @@ window.doShop = async function(id, delta) {
       if (res.dailyUsed !== undefined) p.dailyUsed = res.dailyUsed;
       if (res.userDailyUsed !== undefined) p.userDailyUsed = res.userDailyUsed;
       renderShopGrid(currentCategory);
-      showToast('操作成功！+' + delta + ' ' + p.unit, 1500);
+      showToast('操作成功！', 1500);
       await updateStatsBar(false);
       await fetchFullData();
     } else {
@@ -899,21 +937,23 @@ window.doShopCustom = async function(id) {
   var p = productData[id];
   if (!p) return;
 
-  var maxVal;
-  if (id === 'bhl') {
-    maxVal = 500;
-    if (val < 1) { showToast('最低金额为 1 元', 1500); return; }
+  var isBHL = (id === 'bhl');
+  if (isBHL) {
+    if (val < 1 || val > 500) {
+      showToast('金额必须在 1~500 之间', 1500);
+      return;
+    }
   } else {
-    maxVal = Math.min(100, p.dailyLimit || 100, p.remaining || Infinity);
-  }
-  if (val > maxVal) {
-    showToast('最大值为 ' + maxVal, 1500);
-    return;
-  }
-  var step = p.step || 1;
-  if (val % step !== 0 && Math.abs(val % step) > 0.0001) {
-    showToast('请输入 ' + step + ' 的倍数', 1500);
-    return;
+    var maxVal = Math.min(100, p.dailyLimit || 100, p.remaining || Infinity);
+    if (val > maxVal) {
+      showToast('最大值为 ' + maxVal, 1500);
+      return;
+    }
+    var step = p.step || 1;
+    if (val % step !== 0 && Math.abs(val % step) > 0.0001) {
+      showToast('请输入 ' + step + ' 的倍数', 1500);
+      return;
+    }
   }
 
   await window.doShop(id, val);
