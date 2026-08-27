@@ -1,6 +1,5 @@
 // functions/api/counters.js
-// 支持每个用户独立的每日额度，用户标识通过 Header X-User-Id 传递
-// 新增楼盘：云帆·闰悦府、景云上辰花园、深铁璟城、深铁珑境、深铁瑞城、深铁汇城
+// 支持所有商品类型：普通商品（日总量）、限量商品（每用户日限+总库存）、餐饮（八合里特殊）、打卡
 
 export async function onRequestGet(context) {
   const corsHeaders = {
@@ -19,57 +18,50 @@ export async function onRequestGet(context) {
       });
     }
 
-    // 获取用户 ID
     const userId = context.request.headers.get('X-User-Id') || 'anonymous';
     const today = new Date().toISOString().split('T')[0];
 
-    // 读取所有业务数据
-    const remaining = parseFloat(await kv.get("remaining") || "11300000000");
-    const sold = parseFloat(await kv.get("sold") || "50000000");
-    const blast = parseFloat(await kv.get("blast") || "0");
-    const xifuRemaining = parseFloat(await kv.get("xifuRemaining") || "20000");
-    const xifuSold = parseFloat(await kv.get("xifuSold") || "0");
-    const bombProgress = parseFloat(await kv.get("bombProgress") || "0");
-    const dogProgress = parseFloat(await kv.get("dogProgress") || "0");
-    const dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
+    // ---------- 商品配置 ----------
+    const products = getProductConfig();
 
-    // 新增楼盘
-    const yunfanRemaining = parseFloat(await kv.get("yunfanRemaining") || "45000");
-    const yunfanSold = parseFloat(await kv.get("yunfanSold") || "0");
-    const jingyunRemaining = parseFloat(await kv.get("jingyunRemaining") || "55000");
-    const jingyunSold = parseFloat(await kv.get("jingyunSold") || "0");
-    const jingchengRemaining = parseFloat(await kv.get("jingchengRemaining") || "35000");
-    const jingchengSold = parseFloat(await kv.get("jingchengSold") || "0");
-    const longjingRemaining = parseFloat(await kv.get("longjingRemaining") || "25000");
-    const longjingSold = parseFloat(await kv.get("longjingSold") || "0");
-    const ruichengRemaining = parseFloat(await kv.get("ruichengRemaining") || "65000");
-    const ruichengSold = parseFloat(await kv.get("ruichengSold") || "0");
-    const huichengRemaining = parseFloat(await kv.get("huichengRemaining") || "25000");
-    const huichengSold = parseFloat(await kv.get("huichengSold") || "0");
+    // 读取所有商品数据
+    const result = {};
+    for (const [id, config] of Object.entries(products)) {
+      const remaining = parseFloat(await kv.get(`remaining_${id}`) || config.totalStock.toString());
+      const sold = parseFloat(await kv.get(`sold_${id}`) || "0");
+      const dailyUsed = parseFloat(await kv.get(`daily_${id}_${today}`) || "0");
+      // 如果有限量（每用户每日限额），读取用户当天的使用量
+      let userDailyUsed = 0;
+      if (config.perUserDailyLimit) {
+        userDailyUsed = parseFloat(await kv.get(`daily_${id}_${today}_${userId}`) || "0");
+      }
+      result[id] = {
+        remaining,
+        sold,
+        dailyUsed,
+        userDailyUsed,
+        dailyLimit: config.dailyLimit,
+        perUserDailyLimit: config.perUserDailyLimit || null,
+        totalStock: config.totalStock,
+        unit: config.unit,
+        name: config.name,
+        category: config.category,
+        type: config.type || 'normal'
+      };
+    }
 
-    // 读取各业务的每日已用量（按用户隔离）
-    const estateDaily = parseFloat(await kv.get(`estate_daily_${today}_${userId}`) || "0");
-    const xifuDaily = parseFloat(await kv.get(`xifu_daily_${today}_${userId}`) || "0");
-    const blastDaily = parseFloat(await kv.get(`blast_daily_${today}_${userId}`) || "0");
-    const bombDaily = parseFloat(await kv.get(`bomb_daily_${today}_${userId}`) || "0");
-    const dogDaily = parseFloat(await kv.get(`dog_daily_${today}_${userId}`) || "0");
-    // 新增楼盘每日用量（可选，暂不返回，可后续加）
+    // 读取打卡数据
+    const checkinKey = `checkin_atsgs_${userId}`;
+    const checkinStatus = parseInt(await kv.get(checkinKey) || "0");
 
     return new Response(JSON.stringify({
-      remaining, sold, blast, xifuRemaining, xifuSold,
-      bombProgress, dogProgress, dogDecimals,
-      yunfanRemaining, yunfanSold,
-      jingyunRemaining, jingyunSold,
-      jingchengRemaining, jingchengSold,
-      longjingRemaining, longjingSold,
-      ruichengRemaining, ruichengSold,
-      huichengRemaining, huichengSold,
-      daily: {
-        estate: estateDaily,
-        xifu: xifuDaily,
-        blast: blastDaily,
-        bomb: bombDaily,
-        dog: dogDaily
+      products: result,
+      checkin: {
+        id: 'atsgs',
+        name: '安托山公厕',
+        status: checkinStatus,
+        target: 1,
+        unit: '次'
       }
     }), {
       headers: corsHeaders
@@ -103,712 +95,175 @@ export async function onRequestPost(context) {
     const id = body.id;
     const delta = parseFloat(body.delta);
 
-    if (!id || isNaN(delta)) {
+    if (!id || isNaN(delta) || delta <= 0) {
       return new Response(JSON.stringify({ error: "invalid params" }), {
         status: 400,
         headers: corsHeaders
       });
     }
 
-    // 获取用户 ID
     const userId = context.request.headers.get('X-User-Id') || 'anonymous';
     const today = new Date().toISOString().split('T')[0];
 
-    // ===== 原有 estate =====
-    if (id === "estate") {
-      const dailyKey = `estate_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 500;
-
-      if (dailySold + delta > maxDaily) {
+    // ---------- 处理打卡 ----------
+    if (id === 'atsgs') {
+      const checkinKey = `checkin_atsgs_${userId}`;
+      const current = parseInt(await kv.get(checkinKey) || "0");
+      if (current >= 1) {
         return new Response(JSON.stringify({
-          error: "今日大运TOD买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
+          error: "你今天已经打过卡了！明天再来吧",
+          checkin: { status: 1, target: 1 }
         }), {
           status: 429,
           headers: corsHeaders
         });
       }
-
-      let remaining = parseFloat(await kv.get("remaining") || "11300000000");
-      let sold = parseFloat(await kv.get("sold") || "50000000");
-
-      if (remaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      remaining -= delta;
-      sold += delta;
-      await kv.put("remaining", remaining.toString());
-      await kv.put("sold", sold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
+      await kv.put(checkinKey, "1");
       return new Response(JSON.stringify({
         ok: true,
-        remaining,
-        sold,
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        // 新增楼盘也一并返回最新值
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          estate: dailySold + delta,
-        }
+        checkin: { status: 1, target: 1 },
+        message: "打卡成功！✅ 安托山公厕今日已打卡"
       }), {
         headers: corsHeaders
       });
     }
 
-    // ===== 原有 xifu =====
-    else if (id === "xifu") {
-      const dailyKey = `xifu_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1000;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日深铁熙府买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let xifuRemaining = parseFloat(await kv.get("xifuRemaining") || "20000");
-      let xifuSold = parseFloat(await kv.get("xifuSold") || "0");
-
-      if (xifuRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough xifu remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      xifuRemaining -= delta;
-      xifuSold += delta;
-      await kv.put("xifuRemaining", xifuRemaining.toString());
-      await kv.put("xifuSold", xifuSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        xifuRemaining,
-        xifuSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          xifu: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 原有 blast =====
-    else if (id === "blast") {
-      if (delta < 0.01 || delta > 1.5) {
-        return new Response(JSON.stringify({ error: "单次爆破步长必须在 0.01 ~ 1.5 之间" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      const dailyKey = `blast_daily_${today}_${userId}`;
-      const dailyBlast = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1.5;
-
-      if (dailyBlast + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日爆破额度已用完，明天再来！",
-          dailyBlast,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let blast = parseFloat(await kv.get("blast") || "0");
-      blast = Math.min(blast + delta, 100);
-      await kv.put("blast", blast.toString());
-      await kv.put(dailyKey, (dailyBlast + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        blast,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          blast: dailyBlast + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 原有 bombardier =====
-    else if (id === "bombardier") {
-      if (delta < 0.01 || delta > 1.5) {
-        return new Response(JSON.stringify({ error: "单次翻新步长必须在 0.01 ~ 1.5 之间" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      const dailyKey = `bomb_daily_${today}_${userId}`;
-      const dailyBomb = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1.5;
-
-      if (dailyBomb + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日翻新额度已用完，明天再来！",
-          dailyBomb,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let bombProgress = parseFloat(await kv.get("bombProgress") || "0");
-      bombProgress = Math.min(bombProgress + delta, 100);
-      await kv.put("bombProgress", bombProgress.toString());
-      await kv.put(dailyKey, (dailyBomb + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        bombProgress,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          bomb: dailyBomb + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 原有 dogchair =====
-    else if (id === "dogchair") {
-      if (delta < 0.01 || delta > 1.5) {
-        return new Response(JSON.stringify({ error: "单次倒闭步长必须在 0.01 ~ 1.5 之间" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      const dailyKey = `dog_daily_${today}_${userId}`;
-      const dailyDog = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 1.5;
-
-      if (dailyDog + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日倒闭额度已用完，明天再来！",
-          dailyDog,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let dogProgress = parseFloat(await kv.get("dogProgress") || "0");
-      let dogDecimals = parseInt(await kv.get("dogDecimals") || "2");
-
-      if (dogProgress >= 99.9 && dogProgress < 99.9999999999) {
-        dogDecimals++;
-      }
-
-      dogProgress = Math.min(dogProgress + delta, 99.9999999999);
-      await kv.put("dogProgress", dogProgress.toString());
-      await kv.put("dogDecimals", dogDecimals.toString());
-      await kv.put(dailyKey, (dailyDog + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        dogProgress,
-        dogDecimals,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          dog: dailyDog + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：云帆·闰悦府 =====
-    else if (id === "yunfan") {
-      const dailyKey = `yunfan_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100; // 每日限额，可调整
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日云帆·闰悦府买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let yunfanRemaining = parseFloat(await kv.get("yunfanRemaining") || "45000");
-      let yunfanSold = parseFloat(await kv.get("yunfanSold") || "0");
-
-      if (yunfanRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough yunfan remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      yunfanRemaining -= delta;
-      yunfanSold += delta;
-      await kv.put("yunfanRemaining", yunfanRemaining.toString());
-      await kv.put("yunfanSold", yunfanSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        yunfanRemaining,
-        yunfanSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          yunfan: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：景云上辰花园 =====
-    else if (id === "jingyun") {
-      const dailyKey = `jingyun_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日景云上辰花园买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let jingyunRemaining = parseFloat(await kv.get("jingyunRemaining") || "55000");
-      let jingyunSold = parseFloat(await kv.get("jingyunSold") || "0");
-
-      if (jingyunRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough jingyun remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      jingyunRemaining -= delta;
-      jingyunSold += delta;
-      await kv.put("jingyunRemaining", jingyunRemaining.toString());
-      await kv.put("jingyunSold", jingyunSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        jingyunRemaining,
-        jingyunSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          jingyun: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：深铁璟城 =====
-    else if (id === "jingcheng") {
-      const dailyKey = `jingcheng_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日深铁璟城买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let jingchengRemaining = parseFloat(await kv.get("jingchengRemaining") || "35000");
-      let jingchengSold = parseFloat(await kv.get("jingchengSold") || "0");
-
-      if (jingchengRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough jingcheng remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      jingchengRemaining -= delta;
-      jingchengSold += delta;
-      await kv.put("jingchengRemaining", jingchengRemaining.toString());
-      await kv.put("jingchengSold", jingchengSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        jingchengRemaining,
-        jingchengSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          jingcheng: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：深铁珑境 =====
-    else if (id === "longjing") {
-      const dailyKey = `longjing_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日深铁珑境买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let longjingRemaining = parseFloat(await kv.get("longjingRemaining") || "25000");
-      let longjingSold = parseFloat(await kv.get("longjingSold") || "0");
-
-      if (longjingRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough longjing remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      longjingRemaining -= delta;
-      longjingSold += delta;
-      await kv.put("longjingRemaining", longjingRemaining.toString());
-      await kv.put("longjingSold", longjingSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        longjingRemaining,
-        longjingSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          longjing: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：深铁瑞城 =====
-    else if (id === "ruicheng") {
-      const dailyKey = `ruicheng_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日深铁瑞城买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let ruichengRemaining = parseFloat(await kv.get("ruichengRemaining") || "65000");
-      let ruichengSold = parseFloat(await kv.get("ruichengSold") || "0");
-
-      if (ruichengRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough ruicheng remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      ruichengRemaining -= delta;
-      ruichengSold += delta;
-      await kv.put("ruichengRemaining", ruichengRemaining.toString());
-      await kv.put("ruichengSold", ruichengSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        ruichengRemaining,
-        ruichengSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        huichengRemaining: parseFloat(await kv.get("huichengRemaining") || "25000"),
-        huichengSold: parseFloat(await kv.get("huichengSold") || "0"),
-        daily: {
-          ruicheng: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    // ===== 新增楼盘：深铁汇城 =====
-    else if (id === "huicheng") {
-      const dailyKey = `huicheng_daily_${today}_${userId}`;
-      const dailySold = parseFloat(await kv.get(dailyKey) || "0");
-      const maxDaily = 100;
-
-      if (dailySold + delta > maxDaily) {
-        return new Response(JSON.stringify({
-          error: "今日深铁汇城买房额度已用完，明天再来！",
-          dailySold,
-          maxDaily
-        }), {
-          status: 429,
-          headers: corsHeaders
-        });
-      }
-
-      let huichengRemaining = parseFloat(await kv.get("huichengRemaining") || "25000");
-      let huichengSold = parseFloat(await kv.get("huichengSold") || "0");
-
-      if (huichengRemaining < delta) {
-        return new Response(JSON.stringify({ error: "not enough huicheng remaining" }), {
-          status: 400,
-          headers: corsHeaders
-        });
-      }
-
-      huichengRemaining -= delta;
-      huichengSold += delta;
-      await kv.put("huichengRemaining", huichengRemaining.toString());
-      await kv.put("huichengSold", huichengSold.toString());
-      await kv.put(dailyKey, (dailySold + delta).toString());
-
-      return new Response(JSON.stringify({
-        ok: true,
-        huichengRemaining,
-        huichengSold,
-        remaining: parseFloat(await kv.get("remaining") || "11300000000"),
-        sold: parseFloat(await kv.get("sold") || "50000000"),
-        blast: parseFloat(await kv.get("blast") || "0"),
-        xifuRemaining: parseFloat(await kv.get("xifuRemaining") || "20000"),
-        xifuSold: parseFloat(await kv.get("xifuSold") || "0"),
-        bombProgress: parseFloat(await kv.get("bombProgress") || "0"),
-        dogProgress: parseFloat(await kv.get("dogProgress") || "0"),
-        dogDecimals: parseInt(await kv.get("dogDecimals") || "2"),
-        yunfanRemaining: parseFloat(await kv.get("yunfanRemaining") || "45000"),
-        yunfanSold: parseFloat(await kv.get("yunfanSold") || "0"),
-        jingyunRemaining: parseFloat(await kv.get("jingyunRemaining") || "55000"),
-        jingyunSold: parseFloat(await kv.get("jingyunSold") || "0"),
-        jingchengRemaining: parseFloat(await kv.get("jingchengRemaining") || "35000"),
-        jingchengSold: parseFloat(await kv.get("jingchengSold") || "0"),
-        longjingRemaining: parseFloat(await kv.get("longjingRemaining") || "25000"),
-        longjingSold: parseFloat(await kv.get("longjingSold") || "0"),
-        ruichengRemaining: parseFloat(await kv.get("ruichengRemaining") || "65000"),
-        ruichengSold: parseFloat(await kv.get("ruichengSold") || "0"),
-        daily: {
-          huicheng: dailySold + delta,
-        }
-      }), {
-        headers: corsHeaders
-      });
-    }
-
-    else {
-      return new Response(JSON.stringify({ error: "unknown id" }), {
+    // ---------- 商品配置 ----------
+    const products = getProductConfig();
+    const config = products[id];
+    if (!config) {
+      return new Response(JSON.stringify({ error: "unknown product id" }), {
         status: 400,
         headers: corsHeaders
       });
     }
+
+    // ---------- 读取当前状态 ----------
+    let remaining = parseFloat(await kv.get(`remaining_${id}`) || config.totalStock.toString());
+    let sold = parseFloat(await kv.get(`sold_${id}`) || "0");
+    let dailyUsed = parseFloat(await kv.get(`daily_${id}_${today}`) || "0");
+
+    // 每用户每日限制
+    let userDailyUsed = 0;
+    const userDailyKey = `daily_${id}_${today}_${userId}`;
+    if (config.perUserDailyLimit) {
+      userDailyUsed = parseFloat(await kv.get(userDailyKey) || "0");
+    }
+
+    // ---------- 特殊处理：八合里牛肉火锅 ----------
+    if (id === 'bhl') {
+      // 每用户每天只能下一单
+      if (userDailyUsed >= 1) {
+        return new Response(JSON.stringify({
+          error: "你今天已经在八合里下过单了！明天再来吧",
+          dailyUsed: userDailyUsed,
+          dailyLimit: 1
+        }), {
+          status: 429,
+          headers: corsHeaders
+        });
+      }
+      // 每单金额 1~500 元
+      if (delta < 1 || delta > 500) {
+        return new Response(JSON.stringify({
+          error: "每单金额必须在 1 ~ 500 元之间"
+        }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+      // 总库存用大数表示（不限量，但为了统一结构，设一个很大的数）
+      if (remaining < 1) {
+        return new Response(JSON.stringify({ error: "今日八合里已售罄" }), {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+      // 执行购买
+      const newRemaining = remaining - 1; // 每单消耗1库存
+      const newSold = sold + delta; // 销售额累加金额
+      const newDailyUsed = dailyUsed + delta; // 每日总收入累加金额
+      const newUserDailyUsed = 1; // 用户当天已下单
+      await kv.put(`remaining_${id}`, newRemaining.toString());
+      await kv.put(`sold_${id}`, newSold.toString());
+      await kv.put(`daily_${id}_${today}`, newDailyUsed.toString());
+      await kv.put(userDailyKey, newUserDailyUsed.toString());
+
+      return new Response(JSON.stringify({
+        ok: true,
+        id: id,
+        remaining: newRemaining,
+        sold: newSold,
+        dailyUsed: newDailyUsed,
+        userDailyUsed: newUserDailyUsed,
+        amount: delta,
+        unit: config.unit,
+        name: config.name
+      }), {
+        headers: corsHeaders
+      });
+    }
+
+    // ---------- 普通商品处理 ----------
+    // 检查总库存
+    if (remaining < delta) {
+      return new Response(JSON.stringify({
+        error: `${config.name}库存不足！当前剩余 ${remaining} ${config.unit}`
+      }), {
+        status: 400,
+        headers: corsHeaders
+      });
+    }
+
+    // 检查每日总量限制（全局）
+    if (dailyUsed + delta > config.dailyLimit) {
+      return new Response(JSON.stringify({
+        error: `今日${config.name}额度已用完（${dailyUsed}/${config.dailyLimit} ${config.unit}），明天再来！`
+      }), {
+        status: 429,
+        headers: corsHeaders
+      });
+    }
+
+    // 检查每用户每日限制
+    if (config.perUserDailyLimit) {
+      if (userDailyUsed + delta > config.perUserDailyLimit) {
+        return new Response(JSON.stringify({
+          error: `你今天已买 ${userDailyUsed} ${config.unit}，每人每天限 ${config.perUserDailyLimit} ${config.unit}`
+        }), {
+          status: 429,
+          headers: corsHeaders
+        });
+      }
+    }
+
+    // 执行购买
+    const newRemaining = remaining - delta;
+    const newSold = sold + delta;
+    const newDailyUsed = dailyUsed + delta;
+    const newUserDailyUsed = userDailyUsed + delta;
+
+    await kv.put(`remaining_${id}`, newRemaining.toString());
+    await kv.put(`sold_${id}`, newSold.toString());
+    await kv.put(`daily_${id}_${today}`, newDailyUsed.toString());
+    if (config.perUserDailyLimit) {
+      await kv.put(userDailyKey, newUserDailyUsed.toString());
+    }
+
+    return new Response(JSON.stringify({
+      ok: true,
+      id: id,
+      remaining: newRemaining,
+      sold: newSold,
+      dailyUsed: newDailyUsed,
+      userDailyUsed: newUserDailyUsed,
+      dailyLimit: config.dailyLimit,
+      perUserDailyLimit: config.perUserDailyLimit || null,
+      unit: config.unit,
+      name: config.name
+    }), {
+      headers: corsHeaders
+    });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
@@ -827,4 +282,187 @@ export async function onRequestOptions() {
       "Access-Control-Max-Age": "86400"
     }
   });
+}
+
+// ---------- 商品配置 ----------
+function getProductConfig() {
+  return {
+    // ===== 饮料零食（日总量 100000，无用户限制） =====
+    mlwz: {
+      id: 'mlwz',
+      name: '麻辣王子',
+      unit: '包',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '饮料零食',
+      type: 'normal'
+    },
+    bsl: {
+      id: 'bsl',
+      name: '补水啦',
+      unit: '瓶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '饮料零食',
+      type: 'normal'
+    },
+    wlj: {
+      id: 'wlj',
+      name: '王老吉',
+      unit: '瓶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '饮料零食',
+      type: 'normal'
+    },
+    wxr: {
+      id: 'wxr',
+      name: '外星人电解质水',
+      unit: '瓶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '饮料零食',
+      type: 'normal'
+    },
+    ydlm: {
+      id: 'ydlm',
+      name: '营多捞面',
+      unit: '包',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '泡面饮料',
+      type: 'normal'
+    },
+    ksfpm: {
+      id: 'ksfpm',
+      name: '康师傅泡面',
+      unit: '桶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '泡面饮料',
+      type: 'normal'
+    },
+    bxpm: {
+      id: 'bxpm',
+      name: '白象泡面',
+      unit: '桶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '泡面饮料',
+      type: 'normal'
+    },
+    bhc: {
+      id: 'bhc',
+      name: '冰红茶',
+      unit: '瓶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '泡面饮料',
+      type: 'normal'
+    },
+    jl: {
+      id: 'jl',
+      name: '劲凉',
+      unit: '桶',
+      dailyLimit: 100000,
+      totalStock: 100000,
+      perUserDailyLimit: null,
+      category: '泡面饮料',
+      type: 'normal'
+    },
+
+    // ===== 日用品（用户每日限量 + 总库存） =====
+    fxyt: {
+      id: 'fxyt',
+      name: '翻新圆坨坨',
+      unit: '辆',
+      dailyLimit: 10000, // 全局日总量
+      totalStock: 10000,
+      perUserDailyLimit: 10, // 每人每天限 10 辆
+      category: '日用品',
+      type: 'limited'
+    },
+    dycz: {
+      id: 'dycz',
+      name: '德祐湿厕纸',
+      unit: '包',
+      dailyLimit: 10000,
+      totalStock: 10000,
+      perUserDailyLimit: 5,
+      category: '日用品',
+      type: 'limited'
+    },
+
+    // ===== 餐饮（特殊：八合里） =====
+    bhl: {
+      id: 'bhl',
+      name: '八合里牛肉火锅',
+      unit: '单',
+      dailyLimit: 999999, // 每日总单数无硬性限制
+      totalStock: 999999, // 总库存用大数表示
+      perUserDailyLimit: 1, // 每人每天限 1 单
+      category: '餐饮',
+      type: 'bhl'
+    },
+
+    // ===== 其他类（每日限额 1000，总库存 50000，用户无额外限制） =====
+    hdlw: {
+      id: 'hdlw',
+      name: '恒大烂尾楼公园',
+      unit: '个',
+      dailyLimit: 1000,
+      totalStock: 50000,
+      perUserDailyLimit: null,
+      category: '其他',
+      type: 'normal'
+    },
+    glfe: {
+      id: 'glfe',
+      name: '格伦菲尔口腔',
+      unit: '个',
+      dailyLimit: 1000,
+      totalStock: 50000,
+      perUserDailyLimit: null,
+      category: '其他',
+      type: 'normal'
+    },
+    ypzp: {
+      id: 'ypzp',
+      name: '鱼泡招聘',
+      unit: '个',
+      dailyLimit: 1000,
+      totalStock: 50000,
+      perUserDailyLimit: null,
+      category: '其他',
+      type: 'normal'
+    },
+    yjbat: {
+      id: 'yjbat',
+      name: '益节补氨糖',
+      unit: '个',
+      dailyLimit: 1000,
+      totalStock: 50000,
+      perUserDailyLimit: null,
+      category: '保健',
+      type: 'normal'
+    },
+    '555c': {
+      id: '555c',
+      name: '停靠纱织北站的555车',
+      unit: '个',
+      dailyLimit: 1000,
+      totalStock: 50000,
+      perUserDailyLimit: null,
+      category: '交通',
+      type: 'normal'
+    }
+  };
 }
