@@ -759,14 +759,14 @@
     // ========= 消息滚动栏逻辑 =========
 const baseMessages = [
   // ===== 更新公告 =====
-  "个人站(v118) 更新公告（2026.9.1 13:00）请查收：",
+  "个人站(v117) 更新公告（2026.8.24 20:10）请查收：",
   "客流passenger-data数据更新至8月22日，详细数据请跳转查看！",
   "五期线路进度更新！",
   "整合全部线路百科页面，数据统一引用js文件，新的工具“线路仪表板”开启测试！",
   "楼盘计数器页面上新更多TOD，可以快捷买房和办理其他业务，但请注意额度限制哦！",
   "全线路！仪表板更新！！1/2/8/11/14の仪表板各自的线路图已上线！（14号线的线路图少标了个站点，修复正在提上日程）",
   "加上了创新设计的banner，除了logo外，每条线路均有自己的诗句作为搭配！",
-  "已上线由同好设计的调查问卷，感谢支持",
+  "已新增了三篇神秘文章（是什么呢？）",
 
   // ===== 运营动态 =====
   "五周年准备中。。。（五周年？好吃吗？）",
@@ -896,7 +896,7 @@ const baseMessages = [
     function openNotice(){
       if(!isFirstEntry())return;
       var base=buildMessages();
-      var surveyMsg='<div style=\"text-align:center;\"><p style=\"font-size:18px;font-weight:700;color:#111827;margin-bottom:16px;\">你有一个问卷，要填吗？🤔</p><p style=\"font-size:14px;color:#6b7280;margin-bottom:20px;\">花几分钟时间，帮助我们做得更好</p><a href=\"survey\" target=\"_self\" style=\"display:inline-flex;align-items:center;gap:6px;padding:12px 32px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;transition:all .25s cubic-bezier(.34,1.56,.64,1);\" onmouseover=\"this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(37,99,235,.35)'\" onmouseout=\"this.style.transform='';this.style.boxShadow=''\">📋 立即填写</a></div>';
+      var surveyMsg="<div style=\"text-align:center;\"><p style=\"font-size:18px;font-weight:700;color:#111827;margin-bottom:16px;\">你有一个问卷，要填吗？🤔</p><p style=\"font-size:14px;color:#6b7280;margin-bottom:20px;\">花几分钟时间，帮助我们做得更好</p><a href=\"survey\" target=\"_self\" style=\"display:inline-flex;align-items:center;gap:6px;padding:12px 32px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;transition:all .25s cubic-bezier(.34,1.56,.64,1);\" onmouseover=\"this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(37,99,235,.35)'\" onmouseout=\"this.style.transform='';this.style.boxShadow=''\">📋 立即填写</a></div>";
       noticeMsgs=[surveyMsg].concat(base);
       if(noticeMsgs.length===0)return;
       noticeIdx=0;
@@ -971,7 +971,7 @@ const baseMessages = [
       }
       if(prevBtn){
         prevBtn.disabled=noticeIdx<=0;
-        prevBtn.style.visibility=noticeIdx===0?'hidden':'visible';
+        prevBtn.style.display=noticeIdx===0?'none':'';
       }
     }
 
