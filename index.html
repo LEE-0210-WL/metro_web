@@ -301,30 +301,38 @@
       opacity: 1;
       transform: translateY(0);
     }
-    .notice-modal-body.slide-out {
-      animation: bodySlideOut 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
+    /* 动画只作用在内容层 .notice-page 上，外层容器尺寸稳定，避免文字抖动 */
+    .notice-page {
+      width: 100%;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+      transform: translateZ(0);
     }
-    .notice-modal-body.slide-in {
-      animation: bodySlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    }
+    /* 切换过程中锁定高度，防止内容高度突变导致弹窗跳动 */
     .notice-modal-body.switching {
-      transition: none !important;
-      animation-fill-mode: both;
+      overflow: hidden;
     }
-    .notice-modal-body.open-anim {
-      animation: bodyOpen 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.18s forwards;
+    .notice-modal-body.slide-out .notice-page {
+      animation: bodySlideOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+    }
+    .notice-modal-body.slide-in .notice-page {
+      animation: bodySlideIn 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    .notice-modal-body.open-anim .notice-page {
+      animation: bodyOpen 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) 0.18s forwards;
     }
     @keyframes bodyOpen {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translate3d(0, 10px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
     @keyframes bodySlideOut {
-      from { opacity: 1; transform: translateX(0); }
-      to { opacity: 0; transform: translateX(-40px); }
+      from { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 0; transform: translate3d(-24px, 0, 0); }
     }
     @keyframes bodySlideIn {
-      from { opacity: 0; transform: translateX(40px); }
-      to { opacity: 1; transform: translateX(0); }
+      from { opacity: 0; transform: translate3d(24px, 0, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
 
     .notice-modal-progress {
@@ -507,7 +515,6 @@
     }
   </style>
   <base target="_blank">
-<base target="_blank">
 </head>
 <body>
   <script src="navbar.js"></script>
@@ -714,32 +721,28 @@
     // ========= 获取下一个即将到来的周年倒计时（可能多条） =========
     function getNextAnniversaryTexts() {
       const now = new Date();
-      const currentYear = now.getFullYear();
+      // 关键：统一按"日期"比较（都归零到当天 0 点），否则带时分秒的 now 会让结果少算一天
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const currentYear = today.getFullYear();
       const candidates = [];
 
       anniversaryData.forEach(item => {
-        const thisYearDate = new Date(currentYear, item.month - 1, item.day);
-        const diffThis = Math.floor((thisYearDate - now) / (1000 * 60 * 60 * 24));
-        if (diffThis > 0) {
+        // 先取今年的周年日；若今天就是周年日或已过去，则顺延到明年
+        let target = new Date(currentYear, item.month - 1, item.day);
+        if (target <= today) {
+          target = new Date(currentYear + 1, item.month - 1, item.day);
+        }
+        const days = Math.round((target - today) / (1000 * 60 * 60 * 24));
+        // 周年数 = 目标年份 - 开通年份（不加 1）
+        const years = target.getFullYear() - item.year;
+        if (days > 0) {
           candidates.push({
-            days: diffThis,
-            years: currentYear - item.year + 1,
+            days: days,
+            years: years,
             line: item.line,
             segment: item.segment,
             stations: item.stations
           });
-        } else {
-          const nextYearDate = new Date(currentYear + 1, item.month - 1, item.day);
-          const diffNext = Math.floor((nextYearDate - now) / (1000 * 60 * 60 * 24));
-          if (diffNext > 0) {
-            candidates.push({
-              days: diffNext,
-              years: currentYear + 1 - item.year + 1,
-              line: item.line,
-              segment: item.segment,
-              stations: item.stations
-            });
-          }
         }
       });
 
@@ -927,39 +930,48 @@ const baseMessages = [
       },350);
     }
 
+    var noticeAnimating = false;
+
     function renderNotice(animate){
       var body=document.getElementById('noticeBody');
+      var page=document.getElementById('noticePage');
       var prog=document.getElementById('noticeProgress');
       var btn=document.getElementById('noticeNextBtn');
       var prevBtn=document.getElementById('noticePrevBtn');
 
       clearTimeout(noticeTimer);
 
-      if(animate && body){
-        body.style.transition='none';
+      // 用内容层做动画，容器不参与位移，文字不会抖
+      var writeContent=function(){
+        if(!page) return;
+        page.innerHTML = noticeMsgs[noticeIdx];
+      };
+
+      if(animate && body && page){
+        noticeAnimating = true;
+        body.classList.add('switching');
         body.classList.remove('slide-in');
         body.classList.add('slide-out');
 
         noticeTimer = setTimeout(function(){
-          body.innerHTML = noticeMsgs[noticeIdx];
+          writeContent();
           body.classList.remove('slide-out');
           body.classList.add('slide-in');
 
           noticeTimer = setTimeout(function(){
             body.classList.remove('slide-in');
-            body.style.transition='';
-          },350);
-        },280);
+            body.classList.remove('switching');
+            noticeAnimating = false;
+          },300);
+        },200);
       } else {
-        if(body) body.innerHTML = noticeMsgs[noticeIdx];
+        writeContent();
       }
 
       if(prog) prog.textContent=(noticeIdx+1)+' / '+noticeMsgs.length;
       if(btn){
-        if(noticeIdx===0){
-          btn.textContent='跳过';
-          btn.onclick=nextNotice;
-        }else if(noticeIdx>=noticeMsgs.length-1){
+        // 按钮保持统一：上一条 / 跳过 / 下一条（最后一条时"下一条"变"我知道了"）
+        if(noticeIdx>=noticeMsgs.length-1){
           btn.textContent='我知道了';
           btn.onclick=closeNotice;
         }else{
@@ -968,18 +980,20 @@ const baseMessages = [
         }
       }
       if(prevBtn){
-        prevBtn.disabled=noticeIdx<=0;
-        prevBtn.style.display=noticeIdx===0?'none':'';
+        // 第一条时保留"上一条"按钮但置灰，保证按钮区布局稳定（不再隐藏导致位移）
+        prevBtn.disabled = noticeIdx<=0;
+        prevBtn.style.display='';
       }
     }
 
     function prevNotice(){
-      if(noticeIdx<=0)return;
+      if(noticeIdx<=0 || noticeAnimating)return;
       noticeIdx--;
       renderNotice(true);
     }
 
     function nextNotice(){
+      if(noticeAnimating)return;
       if(noticeIdx>=noticeMsgs.length-1){
         closeNotice();
         return;
@@ -1083,7 +1097,7 @@ const baseMessages = [
     <div class="notice-overlay" onclick="closeNotice()"></div>
     <div class="notice-modal">
       <div class="notice-modal-header">最新消息</div>
-      <div class="notice-modal-body" id="noticeBody"></div>
+      <div class="notice-modal-body" id="noticeBody"><div class="notice-page" id="noticePage"></div></div>
       <div class="notice-modal-progress" id="noticeProgress"></div>
       <div class="notice-modal-actions">
         <button class="notice-btn notice-btn-prev" id="noticePrevBtn" onclick="prevNotice()">上一条</button>
