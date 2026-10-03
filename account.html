@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>账户 · 走进新天地·Railway</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: HarmonyOS Sans, -apple-system, "Microsoft YaHei", sans-serif;
+    background-color: #f5f5f5; color: #333; line-height: 1.6;
+    padding-top: 70px; padding-bottom: 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 16px; }
+  .card h2 { font-size: 18px; font-weight: 500; margin-bottom: 12px; color: #111827; }
+
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+  .field input {
+    width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+  }
+  .field input:focus { outline: none; border-color: #2563eb; }
+  .btn-primary {
+    width: 100%; padding: 11px 0; background: #111827; color: #fff; border: none;
+    border-radius: 8px; font-size: 15px; cursor: pointer; font-family: inherit;
+  }
+  .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+  .msg { font-size: 13px; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; display: none; }
+  .msg.error { background: #fef2f2; color: #b91c1c; display: block; }
+  .msg.ok { background: #f0fdf4; color: #15803d; display: block; }
+  .hint { font-size: 12px; color: #9ca3af; margin-top: 8px; text-align: center; }
+
+  .userbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 13px; color: #4b5563; }
+  .badge { padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #e5e7eb; color: #374151; }
+  .badge.paid { background: #111827; color: #fff; }
+  .spacer { flex: 1; }
+  .linkbtn { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; font-family: inherit; }
+  .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+  .kv:last-child { border-bottom: none; }
+  .kv .k { color: #6b7280; }
+  .kv .v { font-weight: 500; color: #111827; }
+  .redeem { display: flex; gap: 8px; margin-top: 14px; }
+  .redeem input { flex: 1; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  .redeem button { padding: 8px 16px; background: #111827; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; }
+  ul.plan { font-size: 14px; color: #4b5563; padding-left: 20px; }
+  ul.plan li { margin-bottom: 6px; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; background: #e5e7eb; color: #6b7280; margin-left: 6px; }
+
+  /* ---------- 定价表 ---------- */
+  .promo {
+    background: linear-gradient(90deg, #fff7ed, #fef2f2);
+    border: 1px solid #fed7aa; color: #9a3412;
+    border-radius: 8px; padding: 9px 14px; font-size: 13px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .promo .pill {
+    background: #dc2626; color: #fff; font-size: 11px; padding: 1px 7px;
+    border-radius: 999px; white-space: nowrap;
+  }
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .p {
+    position: relative; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px;
+    background: #fff; display: flex; flex-direction: column;
+  }
+  .p.highlight { border: 2px solid #f59e0b; box-shadow: 0 2px 10px rgba(245,158,11,.15); }
+  .p.featured { border: 2px solid #111827; box-shadow: 0 2px 10px rgba(17,24,39,.12); }
+  .p.current { background: #f9fafb; }
+  .p .ribbon {
+    position: absolute; top: -9px; right: 10px; font-size: 11px; padding: 2px 8px;
+    border-radius: 999px; color: #fff;
+  }
+  .ribbon.hot { background: #f59e0b; }
+  .ribbon.best { background: #111827; }
+  .ribbon.mine { background: #059669; }
+  .p .name { font-size: 15px; font-weight: 600; color: #111827; }
+  .p .price { font-size: 26px; font-weight: 700; color: #111827; margin: 6px 0 2px; }
+  .p .price small { font-size: 13px; font-weight: 400; color: #6b7280; }
+  .p .quota { font-size: 14px; color: #111827; }
+  .p .quota s { color: #9ca3af; font-size: 12px; margin-right: 4px; }
+  .p .bonus { color: #dc2626; font-size: 12px; font-weight: 500; }
+  .p .meta { font-size: 12px; color: #6b7280; margin-top: 6px; }
+  .p .unit { font-size: 12px; color: #9ca3af; margin-top: auto; padding-top: 10px; }
+  .buynote { font-size: 12px; color: #6b7280; margin-top: 14px; text-align: center; }
+  @media (max-width: 600px) { body { padding-top: 60px; } .plans { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card" id="loginCard">
+    <h2>登录</h2>
+    <div class="msg" id="msg"></div>
+    <div class="field">
+      <label>账号</label>
+      <input type="text" id="account" autocomplete="username" placeholder="admin-01">
+    </div>
+    <div class="field" id="nameField" style="display:none">
+      <label>昵称</label>
+      <input type="text" id="username" placeholder="2~20 个字符">
+    </div>
+    <div class="field">
+      <label>密码</label>
+      <input type="password" id="password" autocomplete="current-password" placeholder="至少 8 位">
+    </div>
+    <button class="btn-primary" id="submitBtn">登录</button>
+    <p class="hint" id="modeHint">内测阶段，请使用站长发放的账号登录（如 admin-01）。</p>
+    <p class="hint" id="regLink" style="display:none">
+      <a href="#" id="toRegister" style="color:#2563eb;text-decoration:none">还没有账号？点此注册</a>
+    </p>
+  </div>
+
+  <div class="card" id="profileCard" style="display:none">
+    <h2>我的账户</h2>
+    <div class="userbar">
+      <span id="who"></span>
+      <span class="badge" id="planBadge">免费版</span>
+      <span class="spacer"></span>
+      <button class="linkbtn" id="logoutBtn">退出登录</button>
+    </div>
+    <div style="margin-top:14px">
+      <div class="kv"><span class="k">账号</span><span class="v" id="vAccount"></span></div>
+      <div class="kv"><span class="k">剩余次数</span><span class="v" id="vQuota">—</span></div>
+      <div class="kv"><span class="k">有效期</span><span class="v" id="vExpiry">—</span></div>
+    </div>
+    <div class="redeem">
+      <input type="text" id="redeemCode" placeholder="兑换码（如 METRO-MO-9F3A2C11）">
+      <button id="redeemBtn">兑换</button>
+    </div>
+  </div>
+
+  <div class="card" id="pricingCard">
+    <h2>套餐与定价</h2>
+    <div class="promo" id="promoBar" style="display:none">
+      <span class="pill" id="promoPill">特惠</span>
+      <span id="promoText"></span>
+    </div>
+    <div class="plans" id="planGrid"></div>
+    <p class="buynote" id="buyNote">购买方式：联系站长获取兑换码，在上方「兑换码」处填入即可立即到账。</p>
+  </div>
+
+  <div class="card">
+    <h2>账户能做什么</h2>
+    <ul class="plan">
+      <li><a href="ai.html" style="color:#2563eb;font-weight:500">AI 地铁问答助手</a><span class="tag" style="background:#dcfce7;color:#15803d">已上线</span></li>
+      <li>社区与论坛发帖<span class="tag">规划中</span></li>
+      <li>会员专属数据与工具<span class="tag">规划中</span></li>
+    </ul>
+    <p class="hint" style="text-align:left;margin-top:12px">
+      当前处于内测阶段，账号由站长手动开通。有任何问题可在站点留言反馈。
+    </p>
+  </div>
+</div>
+
+<script src="navbar.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // 走本站同源代理（functions/api-auth），避免 *.workers.dev 在国内被 DNS 污染导致直连失败
+  var API_BASE = '/api-auth';
+  // 后端 REGISTER_ENABLED 打开后，把这行改成 true 即可显示注册入口
+  var REGISTER_OPEN = false;
+
+  // 后端未部署 / 请求失败时的兜底目录，保证价格表始终可见
+  var FALLBACK_PLANS = [
+    { key:'free',     name:'免费版', price:0,     days:0,   baseQuota:10,   quota:10,   bonus:0,   reset:'daily',  badge:'',        desc:'每日自动重置', unitPrice:0 },
+    { key:'week',     name:'体验版', price:7.42,  days:7,   baseQuota:50,   quota:65,   bonus:15,  reset:'period', badge:'',        desc:'7 天内有效', unitPrice:0.114 },
+    { key:'biweek',   name:'两周版', price:17.42, days:14,  baseQuota:130,  quota:169,  bonus:39,  reset:'period', badge:'',        desc:'14 天内有效', unitPrice:0.103 },
+    { key:'month',    name:'月付版', price:27.42, days:30,  baseQuota:250,  quota:325,  bonus:75,  reset:'period', badge:'最受欢迎', desc:'30 天内有效', unitPrice:0.084, highlight:true },
+    { key:'halfyear', name:'半年版', price:47.42, days:180, baseQuota:500,  quota:650,  bonus:150, reset:'period', badge:'',        desc:'180 天内有效', unitPrice:0.073 },
+    { key:'year',     name:'包年版', price:57.42, days:365, baseQuota:1000, quota:1300, bonus:300, reset:'period', badge:'超值之选', desc:'365 天内有效', unitPrice:0.044, featured:true }
+  ];
+  var FALLBACK_PROMO = { active:true, name:'上线特惠', note:'所有付费套餐多送 30% 次数' };
+
+  var TOKEN_KEY = 'metro_token';
+  var token = localStorage.getItem(TOKEN_KEY) || '';
+  var mode = 'login';
+  var currentPlan = 'free';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var loginCard = $('loginCard'), profileCard = $('profileCard');
+
+  function showMsg(text, ok) {
+    var m = $('msg');
+    m.textContent = text;
+    m.className = 'msg ' + (ok ? 'ok' : 'error');
+  }
+
+  function api(path, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }, opts.headers || {});
+    return fetch(API_BASE + path, opts);
+  }
+
+  function toast(text) {
+    var d = document.createElement('div');
+    d.textContent = text;
+    d.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;z-index:99999';
+    document.body.appendChild(d);
+    setTimeout(function () { d.remove(); }, 2600);
+  }
+
+  // ---------- 定价表渲染 ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+    });
+  }
+
+  function renderPlans(plans, promo) {
+    if (promo && promo.active) {
+      $('promoBar').style.display = '';
+      $('promoPill').textContent = promo.name || '特惠';
+      $('promoText').textContent = promo.note || '限时多送 30% 次数';
+    }
+
+    var html = '';
+    for (var i = 0; i < plans.length; i++) {
+      var p = plans[i];
+      var isMine = p.key === currentPlan;
+      var cls = 'p' + (p.highlight ? ' highlight' : '') + (p.featured ? ' featured' : '') + (isMine ? ' current' : '');
+      var ribbon = '';
+      if (isMine) ribbon = '<span class="ribbon mine">当前套餐</span>';
+      else if (p.badge) ribbon = '<span class="ribbon ' + (p.featured ? 'best' : 'hot') + '">' + esc(p.badge) + '</span>';
+
+      var quotaLine = p.bonus > 0
+        ? '<div class="quota"><s>' + p.baseQuota + ' 次</s>' + p.quota + ' 次 <span class="bonus">多送 ' + p.bonus + '</span></div>'
+        : '<div class="quota">' + p.quota + ' 次</div>';
+
+      var unit = p.unitPrice > 0 ? '约 ¥' + p.unitPrice + ' / 次' : '免费';
+
+      html += '<div class="' + cls + '">' + ribbon +
+        '<div class="name">' + esc(p.name) + '</div>' +
+        '<div class="price">¥' + p.price + (p.price > 0 ? '' : ' <small>永久免费</small>') + '</div>' +
+        quotaLine +
+        '<div class="meta">' + (p.reset === 'daily' ? '每日重置 · ' + p.quota + ' 次/天' : esc(p.desc || (p.days + ' 天内有效'))) + '</div>' +
+        '<div class="unit">' + unit + '</div>' +
+        '</div>';
+    }
+    $('planGrid').innerHTML = html;
+  }
+
+  function loadPlans() {
+    fetch(API_BASE + '/plans')
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (d) {
+        if (d && d.plans) renderPlans(d.plans, d.promo);
+        else renderPlans(FALLBACK_PLANS, FALLBACK_PROMO);
+      })
+      .catch(function () { renderPlans(FALLBACK_PLANS, FALLBACK_PROMO); });
+  }
+
+  if (REGISTER_OPEN) {
+    $('regLink').style.display = '';
+    $('toRegister').onclick = function (e) {
+      e.preventDefault();
+      mode = mode === 'login' ? 'register' : 'login';
+      $('nameField').style.display = mode === 'register' ? '' : 'none';
+      $('submitBtn').textContent = mode === 'register' ? '注册并登录' : '登录';
+      $('modeHint').textContent = mode === 'register'
+        ? '注册后即赠送免费额度，可用兑换码升级套餐。'
+        : '内测阶段，请使用站长发放的账号登录（如 admin-01）。';
+      this.textContent = mode === 'register' ? '已有账号？点此登录' : '还没有账号？点此注册';
+    };
+  }
+
+  $('submitBtn').onclick = function () {
+    // 账号既可以是内测账号名（admin-01），也可以是邮箱
+    var payload = { account: $('account').value.trim(), password: $('password').value };
+    if (mode === 'register') {
+      payload.username = $('username').value.trim();
+      payload.email = payload.account; // 注册走邮箱
+    }
+    if (!payload.account || !payload.password) { showMsg('请填写账号和密码'); return; }
+    var btn = this;
+    btn.disabled = true;
+    fetch(API_BASE + '/auth/' + mode, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().then(function (d) { return { status: r.status, body: d }; });
+    }).then(function (res) {
+      btn.disabled = false;
+      if (res.status >= 200 && res.status < 300 && res.body.ok) {
+        token = res.body.token;
+        localStorage.setItem(TOKEN_KEY, token);
+        showMsg('登录成功', true);
+        loadProfile();
+      } else {
+        showMsg(res.body.error || '操作失败');
+      }
+    }).catch(function () {
+      btn.disabled = false;
+      showMsg('网络异常，或后端未部署，请稍后重试');
+    });
+  };
+
+  $('logoutBtn').onclick = function () {
+    api('/auth/logout', { method: 'POST' }).catch(function () {}).then(function () {
+      localStorage.removeItem(TOKEN_KEY);
+      token = '';
+      currentPlan = 'free';
+      profileCard.style.display = 'none';
+      loginCard.style.display = '';
+      $('password').value = '';
+      loadPlans();
+    });
+  };
+
+  $('redeemBtn').onclick = function () {
+    var code = $('redeemCode').value.trim();
+    if (!code) return;
+    api('/auth/redeem', { method: 'POST', body: JSON.stringify({ code: code }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.ok) {
+          var msg = '兑换成功：' + d.planName + ' +' + d.quota + ' 次';
+          if (d.carried > 0) msg += '（含结转 ' + d.carried + ' 次）';
+          toast(msg);
+          $('redeemCode').value = '';
+          loadProfile();
+        } else {
+          toast('兑换失败：' + (d.error || '未知错误'));
+        }
+      })
+      .catch(function () { toast('网络异常'); });
+  };
+
+  function loadProfile() {
+    api('/auth/me').then(function (r) {
+      if (!r.ok) throw new Error('expired');
+      return r.json();
+    }).then(function (d) {
+      loginCard.style.display = 'none';
+      profileCard.style.display = '';
+      $('who').textContent = d.user.username;
+      $('vAccount').textContent = d.user.username;
+
+      var q = d.quota || {};
+      currentPlan = q.plan || 'free';
+      var badge = $('planBadge');
+      badge.textContent = q.planName || (currentPlan === 'free' ? '免费版' : '会员');
+      badge.className = 'badge' + (currentPlan === 'free' ? '' : ' paid');
+
+      $('vQuota').textContent = q.remaining + ' / ' + q.limit + ' 次'
+        + (q.resetType === 'daily' ? '（今日）' : '');
+      $('vExpiry').textContent = q.expiresAt
+        ? q.expiresAt.slice(0, 10) + '（剩余 ' + q.daysLeft + ' 天）'
+        : (q.resetType === 'daily' ? '每日重置，长期有效' : '—');
+
+      loadPlans();
+    }).catch(function () {
+      localStorage.removeItem(TOKEN_KEY);
+      token = '';
+      loadPlans();
+    });
+  }
+
+  loadPlans();
+  if (token) loadProfile();
+})();
+</script>
+</body>
+</html>

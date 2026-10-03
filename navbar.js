@@ -330,6 +330,93 @@
     transform: scale(0.95);
   }
 
+  /* ===== AI 助手常驻入口（右下角，全局可见） ===== */
+  .navbar-ai-btn {
+    position: fixed;
+    bottom: 130px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background: #01AF55;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(1,175,85,0.4);
+    transition: width 0.3s ease, border-radius 0.3s ease, background 0.3s ease,
+                padding 0.3s ease, transform 0.2s ease;
+    z-index: 10001;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0;
+    /* 轻微呼吸几次，让新入口容易被发现，之后自动停下 */
+    animation: navbar-ai-pulse 2.6s ease-in-out 3;
+  }
+  .navbar-ai-btn svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: margin 0.3s ease;
+  }
+  .navbar-ai-btn .btn-text {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 0;
+    transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+  }
+  .navbar-ai-btn:hover {
+    width: 136px;
+    border-radius: 20px;
+    background: #018a44;
+    padding: 0 12px 0 4px;
+  }
+  .navbar-ai-btn:hover .btn-text {
+    max-width: 110px;
+    opacity: 1;
+    margin-left: 2px;
+  }
+  .navbar-ai-btn:active { transform: scale(0.95); }
+  @keyframes navbar-ai-pulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(1,175,85,0.40); }
+    50%      { box-shadow: 0 4px 22px rgba(1,175,85,0.80); }
+  }
+
+  @media (max-width: 768px) {
+    .navbar-ai-btn {
+      bottom: 116px;
+      right: 20px;
+      width: auto;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      padding: 0 10px;
+    }
+    .navbar-ai-btn svg { width: 20px; height: 20px; margin-right: 0; }
+    .navbar-ai-btn .btn-text {
+      max-width: none;
+      opacity: 1;
+      margin-left: 6px;
+      font-size: 13px;
+    }
+    .navbar-ai-btn:hover {
+      width: auto;
+      padding: 0 10px;
+      background: #01AF55;
+    }
+    .navbar-ai-btn:hover .btn-text { max-width: none; margin-left: 6px; }
+  }
+
   @media (max-width: 768px) {
     .navbar-help-btn {
       bottom: 70px;
@@ -563,6 +650,32 @@
 
     helpBtn.addEventListener('click', function () {
       window.location.href = 'advises.html';
+    });
+  })();
+
+  // ===== AI 助手常驻入口（右下角；AI 页面自身不显示） =====
+  (function () {
+    const p = window.location.pathname.replace(/\/+$/, '');
+    // 已经在助手页面上就不再重复显示入口
+    if (/\/ai$/.test(p) || /\/ai\.html$/.test(p)) return;
+    if (document.getElementById('navbar-ai-btn')) return;
+
+    const aiBtn = document.createElement('button');
+    aiBtn.id = 'navbar-ai-btn';
+    aiBtn.className = 'navbar-ai-btn';
+    aiBtn.setAttribute('aria-label', 'AI 地铁问答助手');
+    aiBtn.innerHTML =
+      '<svg viewBox="0 0 24 24">' +
+        '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.9-.9L3 20.5l1.5-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z" />' +
+        '<line x1="8.5" y1="11.5" x2="8.51" y2="11.5" />' +
+        '<line x1="12" y1="11.5" x2="12.01" y2="11.5" />' +
+        '<line x1="15.5" y1="11.5" x2="15.51" y2="11.5" />' +
+      '</svg>' +
+      '<span class="btn-text">AI 助手</span>';
+    document.body.appendChild(aiBtn);
+
+    aiBtn.addEventListener('click', function () {
+      window.location.href = 'ai';
     });
   })();
 
