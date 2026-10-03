@@ -32,7 +32,7 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .kpi-card:hover{transform:translateY(-2px)}
 .kpi-card-icon{font-size:24px;margin-bottom:8px}
 .kpi-card-value{font-size:26px;font-weight:700;color:#111827;line-height:1}
-.kpi-card-label{font-size:12px;color:#6b7280;margin-top:6px}
+.kpi-card-label{font-size:var(--fs-sm);color:#6b7280;margin-top:6px}
 
 /* 区块标题 */
 .section-title{font-size:20px;font-weight:700;color:#111827;margin:32px 0 16px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--line-color,#e5e7eb)}
@@ -42,11 +42,11 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .rank-chart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fafafa}
 .rank-chart-title{font-size:15px;font-weight:600;color:#111827}
 .rank-chart-legend{display:flex;align-items:center;gap:16px}
-.rank-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280}
+.rank-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:#6b7280}
 .rank-chart-legend-dot{width:10px;height:10px;border-radius:3px}
 .rank-chart-svg-wrapper{padding:24px;position:relative}
 .rank-chart-svg-wrapper svg{width:100%;display:block}
-.rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:12px;color:#9ca3af;text-align:center}
+.rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:var(--fs-sm);color:var(--c-text-3);text-align:center}
 
 /* 线路走向图占位 */
 .route-map-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px;display:none}
@@ -75,7 +75,7 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .train-card-label{color:#6b7280}
 .train-encountered{color:#10b981;font-weight:600}
 .train-no-encounter{color:#9ca3af;font-style:italic}
-.train-note{font-size:12px;color:#9ca3af;margin-top:8px;font-style:italic}
+.train-note{font-size:var(--fs-sm);color:var(--c-text-3);margin-top:8px;font-style:italic}
 
 /* 建设中时间线 */
 .timeline-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px}
