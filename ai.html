@@ -161,8 +161,18 @@
 
   #toBottom { position: absolute; right: 22px; bottom: 118px; width: 40px; height: 40px; border-radius: 50%;
               background: #fff; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,.12);
-              cursor: pointer; font-size: 16px; color: #374151; display: none; z-index: 20; }
-  #toBottom.show { display: block; }
+              cursor: pointer; color: #374151; display: none; z-index: 20;
+              align-items: center; justify-content: center; padding: 0; }
+  #toBottom.show { display: flex; }
+  #toBottom:hover { border-color: #9ca3af; color: #111827; }
+  #toBottom svg { width: 20px; height: 20px; }
+
+  /* 轻提示（点 + 按钮时告知暂未开放） */
+  #toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%) translateY(8px);
+           background: #111827; color: #fff; padding: 9px 16px; border-radius: 8px; font-size: 13px;
+           opacity: 0; pointer-events: none; transition: all .25s; z-index: 200;
+           max-width: 88vw; text-align: center; line-height: 1.5; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .composer { flex: 0 0 auto; padding: 12px 16px 14px; background: #fff; border-top: 1px solid #e5e7eb; }
   .composer .inner2 { max-width: 800px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
@@ -175,6 +185,20 @@
   .send.stop { background: #dc2626; }
   .send.stop:hover { background: #b91c1c; }
   .send:disabled { background: #9ca3af; cursor: not-allowed; }
+
+  /* 发送左边的 + 按钮（图片/文件上传入口，暂未开放） */
+  .attach { flex: 0 0 auto; width: 46px; height: 46px; padding: 0; border-radius: 6px;
+            background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; cursor: pointer;
+            font-family: inherit; display: inline-flex; align-items: center; justify-content: center;
+            transition: background .2s ease, color .2s ease, border-color .2s ease; }
+  .attach:hover { background: #e5e7eb; color: #6b7280; border-color: #d1d5db; }
+  .attach:active { transform: scale(.96); }
+  .attach svg { width: 20px; height: 20px; }
+
+  /* 默认页的功能说明 */
+  .intro-note { margin-top: 12px; padding: 9px 12px; border-radius: 8px; font-size: 12.5px;
+                background: #fffbeb; color: #92400e; border: 1px solid #fde68a; line-height: 1.65; }
+  .intro-note b { color: #78350f; }
   .hint { font-size: 11.5px; color: #9ca3af; margin-top: 7px; text-align: center; }
 
   @media (max-width: 720px) {
@@ -270,16 +294,28 @@
 
   <section class="main">
     <div id="chat"><div class="inner" id="chatInner"></div></div>
-    <button id="toBottom" title="回到底部">↓</button>
+    <button id="toBottom" title="回到底部" aria-label="回到底部">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
     <div class="composer">
       <div class="inner2">
         <textarea id="input" rows="1" placeholder="问点深圳地铁的事，比如：车公庙站能换乘哪些线路？"></textarea>
+        <button class="attach" id="attachBtn"
+                title="图片理解与文件上传将在正式公开或二次内测时提供"
+                aria-label="上传图片（暂未开放）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
         <button class="send" id="sendBtn">发送</button>
       </div>
       <div class="hint">回答基于本站知识库生成，仅供参考；卫生间等设施请以现场实际指引为准。</div>
     </div>
   </section>
 </div>
+
+<div id="toast"></div>
 
 <script>
 (function () {
@@ -558,7 +594,12 @@
         c.onclick = function () { inputEl.value = q; send(); };
         chips.appendChild(c);
       });
-    b.appendChild(chips); line.appendChild(b); row.appendChild(line); innerEl.appendChild(row);
+    b.appendChild(chips);
+    // 默认页的功能说明：当前只支持文字对话
+    var note = el('div', 'intro-note');
+    note.innerHTML = '当前版本<b>仅支持文字对话</b>。图片理解、文件上传等功能将在<b>正式公开</b>或<b>二次内测</b>时提供。';
+    b.appendChild(note);
+    line.appendChild(b); row.appendChild(line); innerEl.appendChild(row);
     stickBottom = true; scrollDown(true);
   }
 
@@ -774,6 +815,21 @@
   function stopGenerating() { if (abortCtrl) abortCtrl.abort(); }
 
   // ===== 事件绑定 =====
+  // 轻提示
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+  }
+
+  // 「+」按钮：图片理解 / 文件上传入口（功能尚未开放）
+  $('attachBtn').onclick = function () {
+    toast('图片理解与文件上传还没开放～将在正式公开或二次内测时提供');
+  };
+
   sendBtn.onclick = function () { if (busy) stopGenerating(); else send(); };
   newBtn.onclick = function () { newConversation().then(function () { inputEl.focus(); }); };
   $('menuBtn').onclick = function () { sideEl.classList.toggle('open'); };
