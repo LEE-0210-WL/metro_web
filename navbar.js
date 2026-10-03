@@ -243,10 +243,10 @@
   /* ===== 返回顶部按钮 ===== */
   .navbar-back-to-top {
     position: fixed;
-    bottom: 34px;
+    bottom: 32px;
     right: 30px;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     background: #2563eb;
     color: white;
     border: none;
@@ -270,15 +270,15 @@
     transform: translateY(-4px);
   }
   /* 图标尺寸交给 CSS，方便随按钮一起放大 / 响应式调整 */
-  .navbar-back-to-top svg { width: 26px; height: 26px; }
+  .navbar-back-to-top svg { width: 24px; height: 24px; }
 
   /* ===== 问号按钮（修复间距） ===== */
   .navbar-help-btn {
     position: fixed;
-    bottom: 100px;
+    bottom: 92px;
     right: 30px;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     background: #6b7280;
     color: white;
     border: none;
@@ -295,8 +295,8 @@
     padding: 0;
   }
   .navbar-help-btn svg {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2.5;
@@ -310,13 +310,13 @@
     opacity: 0;
     transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     margin-left: 0;
   }
   .navbar-help-btn:hover {
-    width: 160px;
-    border-radius: 26px;
+    width: 152px;
+    border-radius: 24px;
     background: #4b5563;
     padding: 0 14px 0 6px;
   }
@@ -324,7 +324,7 @@
     margin-right: 1px;
   }
   .navbar-help-btn:hover .btn-text {
-    max-width: 120px;
+    max-width: 126px;
     opacity: 1;
     margin-left: 2px;
   }
@@ -335,10 +335,10 @@
   /* ===== AI 助手常驻入口（右下角，全局可见） ===== */
   .navbar-ai-btn {
     position: fixed;
-    bottom: 166px;
+    bottom: 154px;
     right: 30px;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     background: #01AF55;
     color: #fff;
     border: none;
@@ -358,8 +358,8 @@
     animation: navbar-ai-pulse 2.6s ease-in-out 3;
   }
   .navbar-ai-btn svg {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
     fill: none;
     stroke: currentColor;
@@ -372,19 +372,19 @@
     max-width: 0;
     opacity: 0;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     margin-left: 0;
     transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
   }
   .navbar-ai-btn:hover {
-    width: 158px;
-    border-radius: 26px;
+    width: 150px;
+    border-radius: 24px;
     background: #018a44;
     padding: 0 14px 0 6px;
   }
   .navbar-ai-btn:hover .btn-text {
-    max-width: 110px;
+    max-width: 120px;
     opacity: 1;
     margin-left: 2px;
   }
@@ -399,20 +399,20 @@
      单手拇指按也不容易按准，所以这里把 bottom 抬得更高、right 也多留一点。 */
   @media (max-width: 768px) {
     .navbar-ai-btn {
-      bottom: 158px;
-      right: 24px;
+      bottom: 146px;
+      right: 22px;
       width: auto;
-      min-width: 48px;
-      height: 48px;
-      border-radius: 24px;
+      min-width: 44px;
+      height: 44px;
+      border-radius: 22px;
       padding: 0 12px;
     }
-    .navbar-ai-btn svg { width: 26px; height: 26px; margin-right: 0; }
+    .navbar-ai-btn svg { width: 22px; height: 22px; margin-right: 0; }
     .navbar-ai-btn .btn-text {
       max-width: none;
       opacity: 1;
       margin-left: 6px;
-      font-size: 14px;
+      font-size: 15px;
     }
     .navbar-ai-btn:hover {
       width: auto;
@@ -424,24 +424,24 @@
 
   @media (max-width: 768px) {
     .navbar-help-btn {
-      bottom: 100px;
-      right: 24px;
+      bottom: 92px;
+      right: 22px;
       width: auto;
-      min-width: 48px;
-      height: 48px;
-      border-radius: 24px;
+      min-width: 44px;
+      height: 44px;
+      border-radius: 22px;
       padding: 0 12px;
     }
     .navbar-help-btn svg {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       margin-right: 0;
     }
     .navbar-help-btn .btn-text {
       max-width: none;
       opacity: 1;
       margin-left: 6px;
-      font-size: 14px;
+      font-size: 15px;
     }
     .navbar-help-btn:hover {
       width: auto;
@@ -456,12 +456,12 @@
       margin-left: 6px;
     }
     .navbar-back-to-top {
-      bottom: 26px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
+      bottom: 24px;
+      right: 22px;
+      width: 42px;
+      height: 42px;
     }
-    .navbar-back-to-top svg { width: 22px; height: 22px; }
+    .navbar-back-to-top svg { width: 20px; height: 20px; }
   }
   `;
 
