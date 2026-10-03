@@ -1,2 +1,231 @@
-<!DOCTYPE html><html lang=zh-CN><head><meta charset=UTF-8><meta name=viewport content=width=device-width,initial-scale=1.0><title>问卷调研 - 走进新天地·Railway</title><link rel=stylesheet href=https://fonts.cdnfonts.com/css/harmonyos-sans><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:HarmonyOS Sans;background-color:#f5f5f5;color:#333;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}.survey-wrap{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;width:min(90%,1200px);margin:0 auto}.survey-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06);width:100%;max-width:900px;overflow:hidden;display:flex;flex-direction:column}.survey-header{padding:20px 24px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.survey-header h1{font-size:20px;font-weight:700;color:#111827;display:flex;align-items:center;gap:8px}.survey-header h1::before{content:'';width:4px;height:20px;background:#2563eb;border-radius:2px}.survey-header .sub{font-size:13px;color:#6b7280}.survey-body{position:relative;width:100%;flex:1;min-height:500px}.survey-body iframe{width:100%;height:85vh;border:none;display:block}.survey-footer{padding:16px 24px;border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.survey-footer .hint{font-size:13px;color:#9ca3af}.back-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);text-decoration:none;background:#f3f4f6;color:#374151}.back-btn:hover{background:#e5e7eb;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}.back-btn::before{content:'←';font-size:16px}@media(max-width:768px){.survey-header{padding:16px 16px 12px}.survey-header h1{font-size:18px}.survey-body iframe{height:75vh}.survey-footer{padding:12px 16px}.back-btn{padding:9px 18px;font-size:13px}}</style><base target=_blank><base target="_blank">
-</head><body><script src=navbar.js></script><div class=survey-wrap><div class=survey-card><div class=survey-header><h1>问卷调研</h1><span class=sub>您的反馈对我们非常重要</span></div><div class=survey-body><iframe src=https://v.wjx.cn/vm/wFNC42M.aspx?width=750&source=iframe&s=t></iframe></div><div class=survey-footer><span class=hint>填写完成后可点击上方按钮返回</span><a href=/ class=back-btn>返回首页</a></div></div></div></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问卷调研 - 走进新天地·Railway</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'HarmonyOS Sans', -apple-system, "Microsoft YaHei", sans-serif;
+    background: #f5f5f5; color: #333; line-height: 1.6; min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  .wrap { flex: 1; display: flex; flex-direction: column; align-items: center;
+          padding: 20px 16px 40px; width: min(92%, 1000px); margin: 0 auto; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.08);
+          border: 1px solid rgba(0,0,0,.06); width: 100%; overflow: hidden;
+          display: flex; flex-direction: column; }
+  .head { padding: 20px 24px 16px; border-bottom: 1px solid #e5e7eb;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .head h1 { font-size: 20px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; }
+  .head h1::before { content: ''; width: 4px; height: 20px; background: #2563eb; border-radius: 2px; }
+  .head .sub { font-size: 13px; color: #6b7280; }
+  .body { position: relative; width: 100%; flex: 1; }
+
+  /* ---------- 选择列表 ---------- */
+  .list { padding: 18px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .item { position: relative; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 18px;
+          cursor: pointer; transition: all .25s cubic-bezier(.34,1.56,.64,1); background: #fff;
+          display: flex; align-items: flex-start; gap: 14px; }
+  .item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1); border-color: #c7d2fe; }
+  .item.pinned { border: 2px solid #2563eb; background: linear-gradient(135deg,#f0f5ff,#fff); }
+  .item .ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+               display: flex; align-items: center; justify-content: center; background: #e0e7ff; color: #3730a3; }
+  .item.pinned .ico { background: #dbeafe; color: #1d4ed8; }
+  .item .ico svg { width: 22px; height: 22px; }
+  .item .txt { flex: 1; min-width: 0; }
+  .item .t { font-size: 16px; font-weight: 600; color: #111827; display: flex; align-items: center;
+             gap: 8px; flex-wrap: wrap; }
+  .item .d { font-size: 13.5px; color: #6b7280; margin-top: 4px; }
+  .item .go { align-self: center; font-size: 13px; color: #2563eb; white-space: nowrap; font-weight: 500; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .tag.pin { background: #dc2626; color: #fff; }
+  .tag.new { background: #dcfce7; color: #15803d; }
+  .tag.closed { background: #f3f4f6; color: #9ca3af; }
+  .item.disabled { opacity: .6; cursor: not-allowed; }
+  .item.disabled:hover { transform: none; box-shadow: none; border-color: #e5e7eb; }
+
+  /* ---------- 填写视图 ---------- */
+  .viewer { display: none; flex-direction: column; }
+  .viewer.on { display: flex; }
+  .list.off { display: none; }
+  .vbar { padding: 12px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center;
+          gap: 12px; flex-wrap: wrap; }
+  .vbar .vt { font-size: 15px; font-weight: 600; color: #111827; flex: 1; min-width: 140px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 9px;
+         border: none; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none;
+         font-family: inherit; transition: all .25s cubic-bezier(.34,1.56,.64,1); }
+  .btn.gray { background: #f3f4f6; color: #374151; }
+  .btn.gray:hover { background: #e5e7eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .btn.blue { background: linear-gradient(135deg,#2563eb,#1d4ed8); color: #fff; }
+  .btn.blue:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,.35); }
+  iframe { width: 100%; height: 82vh; border: none; display: block; }
+  .foot { padding: 16px 24px; border-top: 1px solid #e5e7eb; display: flex; align-items: center;
+          justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .foot .hint { font-size: 13px; color: #9ca3af; }
+  @media (max-width: 640px) {
+    .head, .list, .foot { padding-left: 16px; padding-right: 16px; }
+    .head h1 { font-size: 18px; }
+    iframe { height: 76vh; }
+    .item .go { display: none; }
+  }
+</style>
+</head>
+<body>
+<script src="navbar.js"></script>
+
+<div class="wrap">
+  <div class="card">
+    <div class="head">
+      <h1>问卷调研</h1>
+      <span class="sub" id="headSub">您的反馈对我们非常重要</span>
+    </div>
+
+    <div class="body">
+      <!-- 选择视图 -->
+      <div class="list" id="list"></div>
+
+      <!-- 填写视图 -->
+      <div class="viewer" id="viewer">
+        <div class="vbar">
+          <span class="vt" id="viewerTitle"></span>
+          <button class="btn gray" id="backBtn">← 返回问卷列表</button>
+        </div>
+        <iframe id="frame" title="问卷"></iframe>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="hint">问卷由问卷星提供，数据仅用于改进本站</span>
+      <a href="/" class="btn gray">返回首页</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===================================================================
+  //  问卷清单
+  //  - url 可以填两种：① 问卷星完整链接；② 只填问卷编号（如 wFNC42M）
+  //  - pinned + pinnedUntil：置顶到指定日期，到期自动取消置顶（不用手动改代码）
+  //  - online:false 时显示为"暂未开放"，点击不响应（新问卷还没建好时用）
+  // ===================================================================
+  var SURVEYS = [
+    {
+      id: 'recruit',
+      title: '深圳地铁 AI 助手 · 内测招募',
+      desc: '限 5 名，免费体验一个月。花 2 分钟填写，有机会拿到内测名额。',
+      url: 'Yana9UB',                // 问卷星编号（也可直接填完整链接）
+      online: true,
+      pinned: true,
+      pinnedUntil: '2026-11-30',     // 置顶到这个日期，之后自动降到普通位置
+      tag: '置顶推荐'
+    },
+    {
+      id: 'site',
+      title: '网站使用体验调研',
+      desc: '对网站内容、栏目与功能的意见与建议。',
+      url: 'wFNC42M',                // 原有问卷，保留
+      online: true,
+      pinned: false,
+      tag: ''
+    }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var listEl = $('list'), viewerEl = $('viewer'), frameEl = $('frame');
+
+  // 只填编号时自动拼成问卷星嵌入地址
+  function toEmbedUrl(u) {
+    if (!u) return '';
+    if (/^[A-Za-z0-9]+$/.test(u)) {
+      return 'https://v.wjx.cn/vm/' + u + '.aspx?width=750&source=iframe&s=t';
+    }
+    return u;
+  }
+
+  function isPinned(s) {
+    if (!s.pinned || !s.online) return false;
+    if (!s.pinnedUntil) return true;
+    // 到期日当天 23:59 前都算置顶
+    return Date.now() <= new Date(s.pinnedUntil + 'T23:59:59').getTime();
+  }
+
+  function icon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+           'stroke-linecap="round" stroke-linejoin="round">' +
+           '<path d="M9 11l3 3L22 4"/>' +
+           '<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>';
+  }
+
+  function render() {
+    // 置顶的排最前，其余保持原顺序
+    var ordered = SURVEYS.slice().sort(function (a, b) {
+      return (isPinned(b) ? 1 : 0) - (isPinned(a) ? 1 : 0);
+    });
+
+    listEl.innerHTML = '';
+    ordered.forEach(function (s) {
+      var pin = isPinned(s);
+      var item = document.createElement('div');
+      item.className = 'item' + (pin ? ' pinned' : '') + (s.online ? '' : ' disabled');
+
+      var tags = '';
+      if (pin) tags += '<span class="tag pin">' + (s.tag || '置顶') + '</span>';
+      if (s.online && !pin && s.tag) tags += '<span class="tag new">' + s.tag + '</span>';
+      if (!s.online) tags += '<span class="tag closed">暂未开放</span>';
+
+      item.innerHTML =
+        '<div class="ico">' + icon() + '</div>' +
+        '<div class="txt">' +
+          '<div class="t">' + s.title + tags + '</div>' +
+          '<div class="d">' + s.desc + '</div>' +
+        '</div>' +
+        '<div class="go">' + (s.online ? '去填写 →' : '敬请期待') + '</div>';
+
+      if (s.online) {
+        item.addEventListener('click', function () { open(s); });
+      }
+      listEl.appendChild(item);
+    });
+
+    var pinnedCount = ordered.filter(isPinned).length;
+    $('headSub').textContent = pinnedCount
+      ? '当前有 ' + pinnedCount + ' 份置顶问卷，欢迎优先填写'
+      : '您的反馈对我们非常重要';
+  }
+
+  function open(s) {
+    var url = toEmbedUrl(s.url);
+    if (!url) { alert('这份问卷还没配置地址'); return; }
+    frameEl.src = url;
+    $('viewerTitle').textContent = s.title;
+    listEl.classList.add('off');
+    viewerEl.classList.add('on');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function close() {
+    viewerEl.classList.remove('on');
+    listEl.classList.remove('off');
+    frameEl.src = '';   // 卸载 iframe，避免问卷星页面在后台继续占用
+  }
+
+  $('backBtn').addEventListener('click', close);
+
+  render();
+
+  // 支持 /survey?q=recruit 直接打开某一份
+  var want = new URLSearchParams(location.search).get('q');
+  if (want) {
+    var hit = SURVEYS.filter(function (s) { return s.id === want && s.online; })[0];
+    if (hit) open(hit);
+  }
+})();
+</script>
+</body>
+</html>
