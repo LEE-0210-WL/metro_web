@@ -158,6 +158,9 @@
   .chip { border: 1px solid #d1d5db; background: #fff; border-radius: 999px; padding: 5px 12px;
           font-size: 13px; color: #374151; cursor: pointer; font-family: inherit; }
   .chip:hover { border-color: #111827; }
+  a.chip { text-decoration: none; display: inline-block; line-height: 1.6; }
+  .chip-primary { background: #111827; color: #fff; border-color: #111827; font-weight: 500; }
+  .chip-primary:hover { background: #374151; border-color: #374151; color: #fff; }
 
   #toBottom { position: absolute; right: 22px; bottom: 118px; width: 40px; height: 40px; border-radius: 50%;
               background: #fff; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,.12);
@@ -502,12 +505,21 @@
   function requireLogin() {
     innerEl.innerHTML = '';
     var row = el('div', 'msg ai'), line = el('div', 'line'), b = el('div', 'bubble');
-    b.appendChild(el('div', 'intro', '请先登录后再使用 AI 助手。'));
+    b.appendChild(el('div', 'intro', '🔒 AI 助手正在内测中，仅限受邀用户使用。'));
+    // 这一屏是站上最显眼的 AI 入口落地页（右下角浮动按钮直接跳这里），
+    // 所以未登录状态必须给出「怎么拿到名额」，否则就是一条死路。
+    var note = el('div', 'intro-note');
+    note.innerHTML = '想参加？填一份 2 分钟的问卷，有机会拿到名额（<b>限 5 名 · 免费体验一个月</b>）。';
+    b.appendChild(note);
     var chips = el('div', 'chips');
-    var a = el('a', 'chip', '前往 账户 / 套餐 →');
-    a.href = 'account.html'; chips.appendChild(a); b.appendChild(chips);
+    var apply = el('a', 'chip chip-primary', '📋 申请内测名额');
+    apply.href = 'survey';
+    var login = el('a', 'chip', '已有账号？前往登录');
+    login.href = 'account.html';
+    chips.appendChild(apply); chips.appendChild(login);
+    b.appendChild(chips);
     line.appendChild(b); row.appendChild(line); innerEl.appendChild(row);
-    convListEl.innerHTML = ''; convListEl.appendChild(el('div', 'empty', '登录后可使用 AI 助手'));
+    convListEl.innerHTML = ''; convListEl.appendChild(el('div', 'empty', '内测期间需要受邀账号'));
     newBtn.disabled = true; sendBtn.disabled = true;
   }
   function loadMe() {
