@@ -800,6 +800,7 @@ rect, text {
 </div>
 </main>
 <script src="passenger-data.js"></script>
+<script src="all-lines-enhanced.js"></script>
 <script>
 (function() {
   'use strict';
@@ -1375,7 +1376,22 @@ rect, text {
     const history = getLineHistory(lineKey);
     const container = document.getElementById('lineView');
     if (history.length === 0) {
-      container.innerHTML = '<div class="no-data-box"><div class="emoji">📭</div><div class="title">暂无该线路的客流数据</div><div class="desc">该线路由港铁运营，暂无客流数据收录。</div></div><div class="view-switch" style="margin-top:20px;"><a href="passenger-flow" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>查看全线路对比</a></div>';
+      // 「没有客流数据」有两种完全不同的原因，不能一律写成"港铁运营"：
+      //   ① 港铁（深圳）运营的 4 / 13 号线 —— 官方不公布其分线客流
+      //   ② 在建线路（15/17/19/22/25/27/29/32）—— 还没开通，自然没有客流
+      // 直接带 ?line=<id> 进来是拦不住的（百科页删掉入口也没用），
+      // 所以这里必须按线路自身的 category 标记给出不同说明。
+      const MTR_LINES = ['4', '13'];
+      const lineInfo = (window.ALL_LINES_ENHANCED || []).find(
+        (l) => String(l.id) === String(lineKey)
+      );
+      const isBuilding = lineInfo && String(lineInfo.category) === 'construction';
+      const noDataDesc = MTR_LINES.includes(String(lineKey))
+        ? '该线路由港铁运营，暂无客流数据收录。'
+        : isBuilding
+        ? '该线路正在建设中，尚未开通运营，因此暂无客流数据。'
+        : '该线路暂无客流数据收录。';
+      container.innerHTML = '<div class="no-data-box"><div class="emoji">📭</div><div class="title">暂无该线路的客流数据</div><div class="desc">' + noDataDesc + '</div></div><div class="view-switch" style="margin-top:20px;"><a href="passenger-flow" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>查看全线路对比</a></div>';
       return;
     }
     const stats = calcStats(history);
