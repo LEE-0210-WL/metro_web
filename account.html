@@ -32,10 +32,10 @@
   .msg { font-size: 13px; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; display: none; }
   .msg.error { background: #fef2f2; color: #b91c1c; display: block; }
   .msg.ok { background: #f0fdf4; color: #15803d; display: block; }
-  .hint { font-size: 12px; color: #9ca3af; margin-top: 8px; text-align: center; }
+  .hint { font-size: var(--fs-sm); color: var(--c-text-3); margin-top: 8px; text-align: center; }
 
   .userbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 13px; color: #4b5563; }
-  .badge { padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #e5e7eb; color: #374151; }
+  .badge { padding: 2px 8px; border-radius: 999px; font-size: var(--fs-sm); background: #e5e7eb; color: #374151; }
   .badge.paid { background: #111827; color: #fff; }
   .spacer { flex: 1; }
   .linkbtn { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; font-family: inherit; }
@@ -48,7 +48,7 @@
   .redeem button { padding: 8px 16px; background: #111827; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; }
   ul.plan { font-size: 14px; color: #4b5563; padding-left: 20px; }
   ul.plan li { margin-bottom: 6px; }
-  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; background: #e5e7eb; color: #6b7280; margin-left: 6px; }
+  .tag { display: inline-block; font-size: var(--fs-xs); padding: 1px 7px; border-radius: 4px; background: #e5e7eb; color: var(--c-text-2); margin-left: 6px; }
 
   /* ---------- 定价表 ---------- */
   .promo {
@@ -58,7 +58,7 @@
     display: flex; align-items: center; gap: 8px;
   }
   .promo .pill {
-    background: #dc2626; color: #fff; font-size: 11px; padding: 1px 7px;
+    background: #dc2626; color: #fff; font-size: var(--fs-xs); padding: 1px 7px;
     border-radius: 999px; white-space: nowrap;
   }
   .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
@@ -70,7 +70,7 @@
   .p.featured { border: 2px solid #111827; box-shadow: 0 2px 10px rgba(17,24,39,.12); }
   .p.current { background: #f9fafb; }
   .p .ribbon {
-    position: absolute; top: -9px; right: 10px; font-size: 11px; padding: 2px 8px;
+    position: absolute; top: -9px; right: 10px; font-size: var(--fs-xs); padding: 2px 8px;
     border-radius: 999px; color: #fff;
   }
   .ribbon.hot { background: #f59e0b; }
@@ -80,11 +80,11 @@
   .p .price { font-size: 26px; font-weight: 700; color: #111827; margin: 6px 0 2px; }
   .p .price small { font-size: 13px; font-weight: 400; color: #6b7280; }
   .p .quota { font-size: 14px; color: #111827; }
-  .p .quota s { color: #9ca3af; font-size: 12px; margin-right: 4px; }
-  .p .bonus { color: #dc2626; font-size: 12px; font-weight: 500; }
-  .p .meta { font-size: 12px; color: #6b7280; margin-top: 6px; }
-  .p .unit { font-size: 12px; color: #9ca3af; margin-top: auto; padding-top: 10px; }
-  .buynote { font-size: 12px; color: #6b7280; margin-top: 14px; text-align: center; }
+  .p .quota s { color: var(--c-text-3); font-size: var(--fs-sm); margin-right: 4px; }
+  .p .bonus { color: #dc2626; font-size: var(--fs-sm); font-weight: 500; }
+  .p .meta { font-size: var(--fs-sm); color: #6b7280; margin-top: 6px; }
+  .p .unit { font-size: var(--fs-sm); color: var(--c-text-3); margin-top: auto; padding-top: 10px; }
+  .buynote { font-size: var(--fs-sm); color: #6b7280; margin-top: 14px; text-align: center; }
   @media (max-width: 600px) { body { padding-top: 60px; } .plans { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
