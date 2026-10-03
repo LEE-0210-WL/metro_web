@@ -302,7 +302,7 @@
     (function() {
       const grid = document.getElementById('trainGrid');
       if (!grid || !lineData.trains || lineData.trains.length === 0) {
-        if (grid) grid.innerHTML = '<p style="color:#9ca3af">暂无车辆信息</p>';
+        if (grid) grid.innerHTML = '<p style="color: var(--c-text-3)">暂无车辆信息</p>';
         return;
       }
 
@@ -311,7 +311,7 @@
         const encHtml = enc
           ? `<span class="train-encountered">✓ 已遇到：${enc}</span>`
           : `<span class="train-no-encounter">暂未遇到</span>`;
-        const note = train.note ? `<div style="font-size:12px;color:#9ca3af;margin-top:4px">${train.note}</div>` : '';
+        const note = train.note ? `<div style="font-size:var(--fs-sm);color: var(--c-text-3);margin-top:4px">${train.note}</div>` : '';
 
         return `
           <div class="train-card">

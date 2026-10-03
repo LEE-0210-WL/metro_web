@@ -53,7 +53,7 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .route-map-container{width:100%;overflow:auto;border-radius:8px}
 .route-map-image{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
 .route-map-caption{text-align:center;font-size:14px;color:#6b7280;margin-top:12px}
-.route-map-placeholder{background:#f9fafb;border:2px dashed #e5e7eb;border-radius:12px;padding:60px 20px;text-align:center;color:#9ca3af}
+.route-map-placeholder{background:#f9fafb;border:2px dashed #e5e7eb;border-radius:12px;padding:60px 20px;text-align:center;color: var(--c-text-3)}
 .route-map-placeholder-icon{font-size:48px;margin-bottom:12px}
 .route-map-placeholder-text{font-size:14px}
 
@@ -74,7 +74,7 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .train-card-row:last-child{border-bottom:none}
 .train-card-label{color:#6b7280}
 .train-encountered{color:#10b981;font-weight:600}
-.train-no-encounter{color:#9ca3af;font-style:italic}
+.train-no-encounter{color: var(--c-text-3);font-style:italic}
 .train-note{font-size:var(--fs-sm);color:var(--c-text-3);margin-top:8px;font-style:italic}
 
 /* 建设中时间线 */
@@ -544,7 +544,7 @@ renderRankChart('rank-stations',stationData,'站',0);
 renderRankChart('rank-transfers',transferData,'站',0);
 renderRankChart('rank-be-transferred',beTransferredData,'次',0);
 if(flowData.length>0){renderRankChart('rank-avg-flow',flowData,'万人次',2)}
-else{document.getElementById('rank-avg-flow').innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af;">暂无客流数据</div>'}
+else{document.getElementById('rank-avg-flow').innerHTML='<div style="text-align:center;padding:40px;color: var(--c-text-3);">暂无客流数据</div>'}
 });
 }
 
@@ -559,9 +559,9 @@ return`
 <div style="width:44px;height:44px;border-radius:50%;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;">${l.id==='6z'?'6Z':l.id}</div>
 <div style="flex:1;min-width:0;padding-right:70px;">
 <div style="font-size:15px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
-<div style="font-size:12px;color:#6b7280;margin-top:2px;">${l.alias||''}</div>
+<div style="font-size:var(--fs-sm);color:#6b7280;margin-top:2px;">${l.alias||''}</div>
 </div>
-<div style="position:absolute;top:0;right:0;font-size:11px;padding:3px 8px;border-radius:10px;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;">
+<div style="position:absolute;top:0;right:0;font-size:var(--fs-xs);padding:3px 8px;border-radius:10px;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;">
 ${statusEmoji} ${isOp?'已开通':'建设中'}
 </div>
 </div>
@@ -569,7 +569,7 @@ ${statusEmoji} ${isOp?'已开通':'建设中'}
 <span>📏 ${l.lengthKm||0} km</span>
 <span>🚉 ${l.stationList?.length||0} 站</span>
 </div>
-<div style="margin-top:10px;font-size:12px;padding:4px 10px;border-radius:12px;display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
+<div style="margin-top:10px;font-size:var(--fs-sm);padding:4px 10px;border-radius:12px;display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
 ${fmtOpenDate(l.openDate)}
 </div>
 </div>
@@ -670,7 +670,7 @@ ${lineData.maxPassengerFlow?`
 <div class="route-map-placeholder">
 <div class="route-map-placeholder-icon">🗺️</div>
 <div class="route-map-placeholder-text">
-暂无线路图<br><span style="font-size:12px">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>
+暂无线路图<br><span style="font-size:var(--fs-sm)">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>
 </div>
 </div>
 </div>
@@ -715,7 +715,7 @@ ${train.note?`<div class="train-note">备注：${train.note}</div>`:''}
 `;
 }).join('')}
 </div>
-`:'<h2 class="section-title">🚃 车辆信息</h2><p style="color:#9ca3af;padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
+`:'<h2 class="section-title">🚃 车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
 
 <!-- 建设中时间线 -->
 ${!isOperating?`
@@ -772,7 +772,7 @@ if(placeholder)placeholder.style.display='none';
 testImg.onerror=function(){
 const placeholderText=document.querySelector('#routeMapPlaceholder .route-map-placeholder-text');
 if(placeholderText){
-placeholderText.innerHTML='暂无线路图<br><span style="font-size:12px">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>';
+placeholderText.innerHTML='暂无线路图<br><span style="font-size:var(--fs-sm)">请放置图片文件：<b>line{线路编号}-compu.jpg</b></span>';
 }
 };
 testImg.src=imgName;

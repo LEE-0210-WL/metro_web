@@ -83,7 +83,7 @@
   .conv.active { background: #eef2ff; color: #1d4ed8; }
   .conv .t { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .conv .when { font-size: var(--fs-xs); color: var(--c-text-3); white-space: nowrap; }
-  .conv .ico { opacity: 0; border: none; background: none; color: #9ca3af; cursor: pointer;
+  .conv .ico { opacity: 0; border: none; background: none; color: var(--c-text-3); cursor: pointer;
                font-size: 13px; line-height: 1; padding: 2px 4px; font-family: inherit; }
   .conv:hover .ico { opacity: 1; }
   .conv .ico:hover { color: #111827; }
@@ -192,7 +192,7 @@
 
   /* 发送左边的 + 按钮（图片/文件上传入口，暂未开放） */
   .attach { flex: 0 0 auto; width: 46px; height: 46px; padding: 0; border-radius: 6px;
-            background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; cursor: pointer;
+            background: #f3f4f6; color: var(--c-text-3); border: 1px solid #e5e7eb; cursor: pointer;
             font-family: inherit; display: inline-flex; align-items: center; justify-content: center;
             transition: background .2s ease, color .2s ease, border-color .2s ease; }
   .attach:hover { background: #e5e7eb; color: #6b7280; border-color: #d1d5db; }
@@ -285,7 +285,7 @@
     <div class="row"><span>输出 tokens</span><strong id="stOut">0</strong></div>
     <hr>
     <div class="row"><span>清空本地设置</span>
-      <button class="pill ghost" id="resetBtn" style="padding:4px 10px;font-size:12.5px">重置</button>
+      <button class="pill ghost" id="resetBtn" style="padding:4px 10px;font-size:var(--fs-sm)">重置</button>
     </div>
   </div>
 </div>

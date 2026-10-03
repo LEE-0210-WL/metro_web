@@ -41,10 +41,10 @@
              gap: 8px; flex-wrap: wrap; }
   .item .d { font-size: 13.5px; color: #6b7280; margin-top: 4px; }
   .item .go { align-self: center; font-size: 13px; color: #2563eb; white-space: nowrap; font-weight: 500; }
-  .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .tag { font-size: var(--fs-xs); padding: 2px 8px; border-radius: 999px; font-weight: 600; }
   .tag.pin { background: #dc2626; color: #fff; }
   .tag.new { background: #dcfce7; color: #15803d; }
-  .tag.closed { background: #f3f4f6; color: #9ca3af; }
+  .tag.closed { background: #f3f4f6; color: var(--c-text-3); }
   .item.disabled { opacity: .6; cursor: not-allowed; }
   .item.disabled:hover { transform: none; box-shadow: none; border-color: #e5e7eb; }
 
@@ -65,7 +65,7 @@
   iframe { width: 100%; height: 82vh; border: none; display: block; }
   .foot { padding: 16px 24px; border-top: 1px solid #e5e7eb; display: flex; align-items: center;
           justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .foot .hint { font-size: 13px; color: #9ca3af; }
+  .foot .hint { font-size: 13px; color: var(--c-text-3); }
   @media (max-width: 640px) {
     .head, .list, .foot { padding-left: 16px; padding-right: 16px; }
     .head h1 { font-size: 18px; }

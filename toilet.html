@@ -59,13 +59,13 @@
       border-color: #2563eb;
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
-    .search-input::placeholder { color: #9ca3af; }
+    .search-input::placeholder { color: var(--c-text-3); }
     .search-icon {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: #9ca3af;
+      color: var(--c-text-3);
       pointer-events: none;
     }
 
@@ -126,7 +126,7 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
     }
     .filter-btn .count {
-      font-size: 12px;
+      font-size: var(--fs-xs);
       font-weight: 400;
       opacity: 0.7;
     }
@@ -134,7 +134,7 @@
       background: #111827;
       color: white;
     }
-    .filter-btn.all .count { color: #9ca3af; }
+    .filter-btn.all .count { color: var(--c-text-3); }
 
     /* 线路颜色 */
     .line-1 { background: #01AF55; color: white; }
@@ -211,7 +211,7 @@
       height: 22px;
       padding: 0 6px;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: var(--fs-xs);
       font-weight: 700;
       color: white;
     }
@@ -247,7 +247,7 @@
     .toilet-text { flex: 1; }
     .toilet-label {
       display: inline-block;
-      font-size: 11px;
+      font-size: var(--fs-sm);
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 4px;
@@ -266,7 +266,7 @@
       grid-column: 1 / -1;
       text-align: center;
       padding: 60px 20px;
-      color: #9ca3af;
+      color: var(--c-text-3);
       font-size: 16px;
     }
 
@@ -321,7 +321,7 @@
       background: #111827 !important;
       color: white !important;
     }
-    .filter-btn.search-result .count { color: #9ca3af; }
+    .filter-btn.search-result .count { color: var(--c-text-3); }
     .filter-btn.search-result.active {
       box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.3);
     }
@@ -589,7 +589,7 @@
           if (t.type === 'none') {
             return `
               <div class="toilet-item none">
-                <span class="toilet-text" style="color: #9ca3af;">${t.text}</span>
+                <span class="toilet-text" style="color: var(--c-text-3);">${t.text}</span>
               </div>
             `;
           }

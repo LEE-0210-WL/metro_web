@@ -127,9 +127,9 @@
       margin: 0 auto 8px;
     }
     .line-card-name { font-size: 13px; font-weight: 600; color: #111827; }
-    .line-card-count { font-size: 11px; color: #6b7280; margin-top: 2px; }
+    .line-card-count { font-size: var(--fs-sm); color: #6b7280; margin-top: 2px; }
     .line-card-status {
-      font-size: 10px; padding: 1px 6px; border-radius: 8px;
+      font-size: var(--fs-sm); padding: 1px 6px; border-radius: 8px;
       display: inline-block; margin-top: 4px; font-weight: 500;
     }
 
@@ -151,9 +151,9 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .filter-btn.active { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); }
-    .filter-btn .count { font-size: 12px; font-weight: 400; opacity: 0.7; }
+    .filter-btn .count { font-size: var(--fs-xs); font-weight: 400; opacity: 0.7; }
     .filter-btn.all { background: #111827; color: white; }
-    .filter-btn.all .count { color: #9ca3af; }
+    .filter-btn.all .count { color: var(--c-text-3); }
 
     /* 线路颜色 */
     .line-1 { background: #01AF55; color: white; }
@@ -306,7 +306,7 @@
       .filter-btn { padding: 6px 12px; font-size: 13px; }
       .line-cards-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
       .line-card { padding: 10px 6px; }
-      .line-card-badge { width: 32px; height: 32px; font-size: 12px; }
+      .line-card-badge { width: 32px; height: 32px; font-size: var(--fs-xs); }
       .pagination { gap: 4px; }
       .pagination-btn { padding: 8px 14px; font-size: 13px; }
       .page-number { min-width: 36px; padding: 8px 10px; font-size: 13px; }
@@ -800,7 +800,7 @@
           img.onerror = function() {
             ph.style.background = '#f3f4f6';
             ph.style.animation = 'none';
-            ph.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:14px;">加载失败</div>';
+            ph.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color: var(--c-text-3);font-size:14px;">加载失败</div>';
           };
           img.src = src;
           imgObserver.unobserve(ph);
@@ -914,7 +914,7 @@
       const pagePhotos = filtered.slice(start, end);
 
       if (pagePhotos.length === 0) {
-        stream.innerHTML = '<div style="text-align:center; padding: 60px 20px; color: #9ca3af; font-size: 16px;">暂无照片</div>';
+        stream.innerHTML = '<div style="text-align:center; padding: 60px 20px; color: var(--c-text-3); font-size: 16px;">暂无照片</div>';
         return;
       }
 
