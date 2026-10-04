@@ -147,13 +147,19 @@
       margin-bottom: 32px;
     }
     
+    /* 双列卡片墙：宽屏并排两列，窄屏（≤768px）回落单列 */
     .articles-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 24px;
+      align-items: stretch;
     }
     
     .article-card {
+      /* flex 纵向：卡片作为网格项撑满整行高度，内部内容区再 flex:1 填满，
+         这样同一排两张卡片的「阅读全文」会对齐到底部 */
+      display: flex;
+      flex-direction: column;
       background: white;
       border-radius: 16px;
       overflow: hidden;
@@ -242,6 +248,9 @@
     
     .article-content {
       padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     
     .article-title {
@@ -285,7 +294,8 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      margin-top: 16px;
+      margin-top: auto;      /* 配合 .article-content 的 flex 列，压到卡片底部 */
+      padding-top: 16px;
       color: #2563eb;
       text-decoration: none;
       font-size: 14px;
@@ -328,6 +338,11 @@
     }
     
     @media (max-width: 768px) {
+      /* 手机上双列太窄，回落单列 */
+      .articles-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
       .header {
         padding: 0 16px;
         flex-wrap: wrap;
