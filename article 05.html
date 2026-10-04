@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>运营观察 · EP01 - 走进新天地·Railway</title>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/harmonyos-sans">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      background-color: #374151;
+      color: white;
+    }
+    
+    .nav-links a.active {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .container {
+      width: min(90%, 1200px);
+      margin: 20px auto 40px;
+      padding: 0 20px;
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #00A9E0, #0077b3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    /* 引用块（本文新增：站台广播 / 同好吐槽 / 官方公告原文） */
+    .article-content blockquote {
+      margin: 24px 0;
+      padding: 16px 20px;
+      border-left: 4px solid #2563eb;
+      background: #f8fafc;
+      border-radius: 0 8px 8px 0;
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    /* 文末致谢 / 记录时间 */
+    .article-ack {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+      line-height: 1.9;
+      margin-bottom: 6px;
+    }
+
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: var(--c-text-3);
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: var(--fs-sm);
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: var(--fs-xs);
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 60px;
+      }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        padding: 10px 0;
+        background: #1f2937;
+        position: absolute;
+        top: 60px;
+        left: 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        padding: 12px 20px;
+        border-radius: 0;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+        padding: 0 16px;
+        width: min(90%, 1200px);
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>运营观察 · EP01：2号线大站快车——存活不足24小时</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">运营观察 · EP01</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.9.9
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+      <p>"这是我了解大站快的唯一途径。"</p>
+
+      <p>2026年9月8日，轨交爱好者社群里，这句话刷屏了。没人想到，这趟快车第二天就没了。</p>
+
+      <h2>一、它来过：9月8日的公告</h2>
+
+      <p>9月8日，深圳地铁发布运营公告，宣布2&amp;8号线、11号线试行新版工作日运行图。核心调整有三条：</p>
+
+      <p><strong>2&amp;8号线：</strong></p>
+      <ul>
+        <li>新增溪涌→赤湾方向大站快车，工作日每天3列次。</li>
+        <li>海山站发车时间：11:30、12:30、13:30。</li>
+        <li>跳停10个站：沙头角、梧桐山南、莲塘、仙湖路、莲塘口岸、新秀、湖贝、大剧院、燕南、华强北。</li>
+        <li>海山→岗厦北较普通列车节省约10分钟。</li>
+      </ul>
+
+      <p><strong>11号线：</strong></p>
+      <ul>
+        <li>新增碧头→红岭南方向大站快车，工作日每天3列次。</li>
+        <li>机场站发车时间：11:30、12:30、13:30。</li>
+        <li>跳停5个站：碧海湾、宝安、南山、后海、红树湾南。</li>
+        <li>机场→车公庙较普通列车节省约5分30秒。</li>
+      </ul>
+
+      <p><strong>最重要也最致命的一条：</strong></p>
+      <ul>
+        <li>2&amp;8号线增加深外高中→溪涌区段4编组列车上线列车数量。</li>
+        <li>工作日早晚高峰，大部分6编列车在盐田路站清客折返。</li>
+        <li>往鸿安围、盐田墟、大梅沙、小梅沙、溪涌的乘客，需在深外高中提前下车，或在盐田路下车后经站厅换乘4编组列车。</li>
+      </ul>
+
+      <p>——这条，后来被证明是整个方案的"阿喀琉斯之踵"。</p>
+
+      <!-- 图片画廊：公告与时刻表 -->
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item full-width" onclick="openModal('图文5-7.png')">
+            <img src="图文5-7.png" alt="9月8日运营公告">
+            <div class="gallery-caption">9月8日运营公告（@深圳地铁 微博，9月7日 23:01 发布）</div>
+          </div>
+          <div class="gallery-item full-width" onclick="openModal('图文5-8.jpg')">
+            <img src="图文5-8.jpg" alt="官方大站快车时刻表">
+            <div class="gallery-caption">官方时刻表：2&amp;8号线（海山站）与 11号线（机场站）</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>二、为什么说它是"不可能完成的任务"</h2>
+
+      <p>深圳地铁每一条线路都没有越行线，这是大站快车在现有物理条件下最根本的限制。没有越行线意味着快车和慢车在同一条轨道上跑，快车只能靠"拉开间隔"来避免被慢车挡住。公告里的方案是：快车开行后，慢车间隔被拉大到15分钟。大站快车本身的发车间隔是10分钟。</p>
+
+      <p>社群里有同好点出了问题的核心：大间隔、低运力。但东段的情况又很特殊，4编组列车在溪涌到深外高中区段，间隔可以压到接近1分钟——跟1号线市区段的密度差不多。也就是说，深铁试图用两套完全不同的运营逻辑硬接在一起：西边用大间隔低密度的快慢混跑，东边用高密度小编组摆渡。接驳点就是盐田路站——站厅换乘。</p>
+
+      <!-- 图片：站台 PIDS 的 10 / 15 分钟 -->
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item full-width" onclick="openModal('图文5-6.jpg')">
+            <img src="图文5-6.jpg" alt="站台PIDS显示本趟10分钟、下一趟15分钟">
+            <div class="gallery-caption">9月8日 13:54 的站台 PIDS：本趟车 10 分钟，下一趟开往赤湾 15 分钟——"大间隔"就写在乘客眼前</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>三、现场：混乱从广播开始</h2>
+
+      <p>9月8日当天，深外高中站率先"乱套"。广播只播了一句话："本次列车为大站快车，部分站点不停靠。"——没了。哪个站不停？哪个站停？乘客站在站台上，面对的是一个信息黑洞。</p>
+
+      <p>大站快车进站时，工作人员被迫拿起喇叭在站台上喊话补位。</p>
+
+      <p>盐田路站则是另一番景象。大部分6编列车在此清客折返，乘客被"赶"下车后，需要步行至站厅，再换乘4编列车继续东行。早高峰期间，同台换乘还能勉强维持秩序；到了晚高峰，拖着行李箱的游客、放学的学生、下班回家的居民在站厅里交汇——人潮对冲、导视不清、喇叭声此起彼伏。有同好一针见血：</p>
+
+      <blockquote>"简直是广兰路行为。早高峰还可以让人同台换，晚上你把人全部拉上站厅。"</blockquote>
+
+      <p>说完还补了一个拍桌嘲笑的表情。上海地铁2号线广兰路站，以4/8编组换乘闻名，但那至少是同台换乘。盐田路是站厅换乘，动线更长、通道更窄、体验更差。</p>
+
+      <h2>四、快车本身：LCD屏里的荒诞</h2>
+
+      <p>除了火猫，还有几位同好实际体验了大站快车。车内LCD屏显示"大站快车"字样，停站表清晰列出了被跳过的站点。</p>
+
+      <ul>
+        <li>2号线LCD屏显示下一站"岗厦北"，可换乘10/11/14号线，但屏幕上灰底白字标注了"燕南"、"华强北"不停靠。</li>
+        <li>2号线LCD屏显示下一站"黄贝岭"，可换乘5号线，但"莲塘口岸"、"新秀"、"湖贝"、"大剧院"统统不停靠。</li>
+        <li>11号线LCD屏显示停靠"前海湾"，可换乘1/5号线。</li>
+        <li>站台屏蔽门贴纸则直接印着："大站快车服务，工作日（碧头→红岭南），11:42、12:42、13:42，不停靠灰显车站"。</li>
+      </ul>
+
+      <!-- 图片画廊：车内 LCD -->
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文5-2.jpg')">
+            <img src="图文5-2.jpg" alt="2号线LCD显示大站快车">
+            <div class="gallery-caption">2号线车内LCD：下一站岗厦北，"燕南""华强北"灰显不停靠</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文5-4.jpg')">
+            <img src="图文5-4.jpg" alt="2号线LCD显示黄贝岭">
+            <div class="gallery-caption">2号线车内LCD：下一站黄贝岭，莲塘口岸、新秀、湖贝、大剧院不停靠</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文5-1.jpg')">
+            <img src="图文5-1.jpg" alt="8号线LCD显示海山">
+            <div class="gallery-caption">8号线车内LCD：下一站海山，沙头角、梧桐山南灰显（2&amp;8号线共线运营）</div>
+          </div>
+        </div>
+      </div>
+
+      <p>但有图有真相——车厢里人不多。毕竟是午间时段，大部分乘客还在工位上，硬生生挤出三个"午间窗口"来展示快车技术，本身就有一种微妙的违和感。快车发车间隔10分钟，慢车紧随其后要等15分钟——没有越行线，快慢车之间只能硬生生拉开一个"鸿沟"。快车省下的那10分钟，是用慢车上所有人的时间换来的。</p>
+
+      <h2>五、最短命的快车</h2>
+
+      <p>9月9日，官方微博发布取消公告：</p>
+
+      <blockquote>【运营公告】为方便乘客出行，结合实际，自2026年9月10日起，深圳地铁2/8号线恢复原列车运行图，列车运行交路为"赤湾—溪涌"全程交路和"湾厦—莲塘""深外高中—溪涌"小交路。请各位乘客留意车站、列车广播及显示屏提示信息。</blockquote>
+
+      <p>从9月8日试行，到9月10日恢复原图——2号线大站快车实际存活时间不足24小时。它甚至没能撑过一个完整的晚高峰。社群里的反应出奇平静。没有惊讶，没有愤怒，甚至没有太多讨论。仿佛大家都已经习惯了这种"来了又走"的节奏。——"最短命安检"之后，"最短命大站快"归位。深铁2026年限定款"闪电体验套餐"，正式集齐两枚徽章。</p>
+
+      <h2>六、为什么取消？猜也不难猜</h2>
+
+      <p>官方公告里的"结合实际"四个字，已经说明了一切。背后真正的原因，不需要内部文件也能拼凑出来：</p>
+
+      <p><strong>第一，盐田路站厅换乘现实撑不住。</strong>这是结构性问题，不是优化导视能解决的。晚高峰的人潮对冲、站厅通道的物理瓶颈、换乘动线的曲折——每一个都是硬伤。</p>
+
+      <p><strong>第二，信息指引严重不足。</strong>广播只说"部分站点不停靠"，PIDS显示混乱，工作人员拿喇叭补位——这套组合拳放在一条刚刚开通没几年的线路上，注定是灾难。哪怕车厢LCD屏做得再清晰，也无法弥补站台级的混乱。</p>
+
+      <p><strong>第三，午间快车与真实需求错位。</strong>11:30、12:30、13:30——这三个时间点，既不是通勤高峰，也不是旅游高峰。它更像是一种"表演型运营"，而非"服务型运营"。</p>
+
+      <p><strong>第四，投诉。</strong>网络上虽然没有大规模发酵，但"乱套"两个字后面跟着的，一定是大量打进热线的投诉电话。88960600那头的接线员，9月8日那天应该很忙。</p>
+
+      <h2>七、记录的意义</h2>
+
+      <p>这趟快车已经没了。但它留下的东西还在：拍的LCD屏原图、同好们的那句"这是我了解大站快的唯一途径"以及随之而来的满屏+1、"广兰路行为，晚上把人全拉上站厅"的精准吐槽、4编组车门上那张神似申通3/4号线的贴纸、盐田路站的配线截图，以及官方公告和取消公告的时间线对比。</p>
+
+      <p>这些东西，被记录在"走进新天地·Railway"里。这个网站相信一件事：数字空间的好处就是，再短命的东西，也能被记住。</p>
+
+      <p>这趟车活了不到一天，但它不冤。它至少帮深铁印证了一件事：大站快车在深圳地铁现有的物理条件下，不是"要不要开"的问题，而是"根本开不了"的问题。</p>
+
+      <p>下次再有大站快车的风声，同好们大概会说：</p>
+
+      <blockquote>"哦，又来了啊。"</blockquote>
+
+      <p>然后继续该坐坐、该挤挤。毕竟深圳人坐地铁，什么大风大浪没见过。</p>
+
+      <h2>八、补记：11号线的大站快车，至今还在跑</h2>
+
+      <p>2号线的大站快车活了不到24小时就被取消，但同一天上线的<strong>11号线大站快车，至今仍然保留运行</strong>。同样是"大站快"，两条线的命运截然不同。</p>
+
+      <p>不过11号线的停站选择，同样让人看不明白：被跨掉的名单里，赫然有<strong>后海</strong>——那是与2号线、13号线的换乘站；而它前后那些再普通不过的站，比如<strong>福星</strong>，却照样停靠。一边是换乘枢纽被跳过，一边是普通中间站被保留，这样的取舍很难说是"以客流和换乘需求为导向"。</p>
+
+      <p>更何况，11号线本身也谈不上有多"快"。沿途限速路段一抓一大把，其中<strong>碧海湾—机场</strong>那一段更是离谱中的离谱——限速压得极低，跑起来甚至不如某些普速线路痛快。在这样一条线路上开行大站快车，省下来的时间，有一大半又被限速吃回去了。</p>
+
+      <p>换句话说，11号线的"快"，更多停留在名字上。</p>
+
+      <!-- 图片画廊：11号线 -->
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文5-3.jpg')">
+            <img src="图文5-3.jpg" alt="11号线LCD显示大站快车">
+            <div class="gallery-caption">11号线车内LCD：标注"大站快车"，停靠前海湾（可换乘1/5号线），终点红岭南</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文5-5.jpg')">
+            <img src="图文5-5.jpg" alt="11号线车厢与车号牌">
+            <div class="gallery-caption">11号线车厢内景，车门上方车号牌 11A4008深 11381(I)</div>
+          </div>
+          <div class="gallery-item full-width" onclick="openModal('图文5-9.jpg')">
+            <img src="图文5-9.jpg" alt="屏蔽门上的大站快车贴纸">
+            <div class="gallery-caption">站台屏蔽门贴纸：11号线大站快车（碧头→红岭南），11:42 / 12:42 / 13:42，不停靠灰显车站</div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <p class="article-ack">素材致谢：哔哩哔哩 @三言zerokite（供图）、@火猫firecat（现场体验及金句），以及所有参与实时讨论的同好们。</p>
+      <p class="article-ack">记录时间：2026年9月9日　·　首发于：走进新天地·Railway</p>
+    
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>
