@@ -424,7 +424,9 @@
 
 // 检测函数
 function checkAndRedirect(text) {
-  if (containsIllegalChars(text)) {
+  // stations.js 若缺失（线上曾出现 404），直接调用会抛 ReferenceError 让整个监听器失效；
+  // 这里加一层存在性判断，缺文件时静默跳过，不影响输入框的正常使用。
+  if (typeof containsIllegalChars === 'function' && containsIllegalChars(text)) {
     sessionStorage.setItem('fromFonts', '1');
     window.location.href = 'shit';
     return true;
