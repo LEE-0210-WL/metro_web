@@ -192,11 +192,16 @@
       border-radius: 2px;
     }
 
-    /* 线路网格 */
+    /* 线路网格
+       原先用 flex-wrap + 固定 56px 圆 + 16px 间距：一行放不满时余量**全堆在右边**，
+       而这个余量随屏宽在 0 ~ 71px 之间跳变，所以窗口一变窄右边就会"空一大截"。
+       改用 grid 的 auto-fill + minmax(56px, 1fr)：列宽自动均分容器宽度，
+       满行的右边缘严格贴齐容器右边距，任何屏宽下都不会再出现忽大忽小的右侧空隙。 */
     .lines-grid {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
       gap: 16px;
+      justify-items: center;
       margin-bottom: 20px;
     }
 
@@ -510,7 +515,7 @@
       }
       .page-title { font-size: 26px; }
       .quick-links { grid-template-columns: repeat(2, 1fr); }
-      .lines-grid { gap: 12px; }
+      .lines-grid { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); }
       .line-card { width: 48px; height: 48px; }
       .line-number { font-size: 18px; }
     }

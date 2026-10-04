@@ -101,3 +101,27 @@
   --page-max: 1200px;   /* 内容最大宽度（页面常用 min(90%, 1200px)） */
   --z-float:  10001;    /* 右下角浮动按钮层级 */
 }
+
+/* ============================================================================
+   全站文本不可选中
+   ----------------------------------------------------------------------------
+   与 navbar.js 里注入的那份一致：navbar.js 只覆盖引用了它的 51 个页面，
+   这里再放一份是为了覆盖没引 navbar 的页面（ai.html、票价计算器等 7 个），
+   两边重复声明无害，效果相同。
+
+   ⚠️ 必须排除表单控件与可编辑区，否则打字、选中、复制会全部失效；
+      .allow-select 是给「确实需要让人复制」的元素预留的逃生口。
+   ============================================================================ */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+input, textarea, select, [contenteditable], .allow-select,
+input *, textarea *, select *, [contenteditable] * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}

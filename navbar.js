@@ -39,6 +39,23 @@
   const NAVBAR_CSS = `
   body { margin: 0 !important; }
 
+  /* ===== 全站文本不可选中 =====
+     注意必须把表单控件和可编辑区排除掉，否则输入、选中、复制都会失效；
+     .allow-select 是留给「确实需要让人复制」的元素的逃生口。 */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  input, textarea, select, [contenteditable], .allow-select,
+  input *, textarea *, select *, [contenteditable] * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
   .navbar-header {
     position: fixed;
     top: 0;
