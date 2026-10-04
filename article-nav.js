@@ -39,13 +39,24 @@ const defaultColor = { from: '#6b7280', to: '#4b5563' };
 function applySeriesColor() {
   const el = document.querySelector('.article-series');
   if (!el) return;
-  const text = el.textContent;
-  let colors = null;
-  if (text.includes('摄站')) colors = seriesColors['摄站系列'];
-  else if (text.includes('探站')) colors = seriesColors['探站系列'];
-  else if (text.includes('技术解密')) colors = seriesColors['技术解密'];
-  else colors = defaultColor;
-  
+  const text = (el.textContent || '').trim();
+
+  // 1) 先按「· EPxx」前面的系列名精确匹配
+  const base = text.split(/[·・|]/)[0].trim();
+  let colors = seriesColors[base] || null;
+
+  // 2) 再退化为包含匹配（系列名去掉「系列」二字），
+  //    兼容 "技术解密 · EP01 - 资产编号小秘密" 这种带副标题的写法
+  if (!colors) {
+    for (const name of Object.keys(seriesColors)) {
+      const key = name.replace(/系列$/, '');
+      if (key && (text.includes(key) || base.includes(key))) { colors = seriesColors[name]; break; }
+    }
+  }
+
+  // 3) 都没匹配上才用灰色兜底
+  if (!colors) colors = defaultColor;
+
   el.style.background = `linear-gradient(135deg, ${colors.from}, ${colors.to})`;
   el.style.color = '#fff';
 }
