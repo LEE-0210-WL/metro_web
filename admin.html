@@ -89,6 +89,23 @@
     border-radius: 8px; width: 100%; margin-bottom: 10px;
   }
   .err { background: #fef2f2; color: #b91c1c; border-radius: 8px; padding: 10px 14px; font-size: var(--fs-sm, 13px); margin-top: 10px; }
+  /* ---- DeepSeek 余额卡片 ---- */
+  .balance {
+    border-radius: 16px; padding: 18px 22px; margin-bottom: 20px; background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06); border-left: 5px solid #10b981;
+  }
+  .balance.warn { border-left-color: #f59e0b; background: #fffbeb; }
+  .balance.critical { border-left-color: #ef4444; background: #fef2f2; }
+  .balance h2 { margin: 0; font-size: 15px; }
+  .balance .big { font-size: 30px; font-weight: 700; line-height: 1.1; }
+  .balance .sub { color: var(--c-text-3, #6b7280); font-size: var(--fs-sm, 13px); margin-top: 4px; }
+  .balance .row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-end; margin-top: 12px; }
+  .balance .kv { font-size: var(--fs-sm, 13px); color: #374151; line-height: 1.7; }
+  .balance .kv b { font-size: 17px; }
+  .banner { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: var(--fs-sm, 13px); line-height: 1.7; }
+  .banner.warn { background: #fef3c7; color: #92400e; }
+  .banner.critical { background: #fee2e2; color: #991b1b; }
+
   @media (max-width: 768px) { .container { padding: 0 14px; } .page-title { font-size: 21px; } }
 </style>
 </head>
@@ -112,6 +129,9 @@
       <div class="err" id="loginErr" hidden></div>
     </div>
   </div>
+
+  <!-- DeepSeek 余额 -->
+  <div id="balanceBox" hidden></div>
 
   <!-- 汇总 -->
   <div class="summary" id="summary" hidden></div>
@@ -147,6 +167,7 @@
   var TOKEN_KEY = 'metro_token';
   var $ = function (id) { return document.getElementById(id); };
   var token = localStorage.getItem(TOKEN_KEY) || '';
+  var perReqCost = 0;   // 单次均价，由 /admin/stats 提供，用于估算余额还能撑多少次
 
   function fmt(n) { return (n || 0).toLocaleString('zh-CN'); }
   function money(n) { return '¥' + (n || 0).toFixed(4); }
@@ -178,6 +199,7 @@
         return r.json();
       })
       .then(render)
+      .then(function () { loadBalance(); })
       .catch(function (e) {
         if (e && e.needLogin) showLogin(e.needLogin);
         else { $('globalErr').hidden = false; $('globalErr').textContent = '加载失败：' + (e && e.message || e); }
@@ -193,6 +215,7 @@
 
     var t = d.totals;
     var perReq = t.requests ? t.estCost / t.requests : 0;
+    perReqCost = perReq;
     $('summary').innerHTML = [
       ['账号数', t.users, '个', ''],
       ['总提问次数', fmt(t.requests), '次', 'green'],
@@ -234,7 +257,52 @@
     }).join('');
   }
 
-  $('refreshBtn').addEventListener('click', load);
+  // ==================== DeepSeek 余额 ====================
+  function loadBalance() {
+    api('/admin/balance')
+      .then(function (r) { return r.json(); })
+      .then(function (b) {
+        if (!b || !b.ok) throw new Error((b && (b.error || b.em)) || '余额接口返回异常');
+        renderBalance(b);
+      })
+      .catch(function (e) {
+        var box = $('balanceBox');
+        box.hidden = false; box.className = 'balance warn';
+        box.innerHTML = '<h2>💳 DeepSeek API 余额</h2><div class="banner warn">查询失败：' +
+          esc(String((e && e.message) || e)) + '</div>';
+      });
+  }
+
+  function renderBalance(b) {
+    var box = $('balanceBox');
+    box.hidden = false;
+    box.className = 'balance ' + b.level;
+    var label = b.level === 'critical' ? '🔴 告急' : b.level === 'warn' ? '🟡 偏低' : '🟢 充足';
+    var runs = perReqCost > 0 ? Math.floor(b.balance / perReqCost) : null;
+    var warn = '';
+    if (b.level !== 'ok') {
+      warn = '<div class="banner ' + b.level + '">' + (b.level === 'critical'
+        ? '⚠️ <b>余额告急</b>：官方 is_available = ' + (b.isAvailable ? 'true' : 'false') +
+          '，当前 ¥' + b.balance.toFixed(2) + ' 已低于 ¥' + b.thresholds.critical +
+          '。<b>请立即充值</b>，否则用户提问会直接失败。'
+        : '余额 ¥' + b.balance.toFixed(2) + ' 已低于预警线 ¥' + b.thresholds.warn + '，建议尽快充值（按当前用量约可再撑 ' +
+          (runs !== null ? runs.toLocaleString() + ' 次提问' : '不久') + '）。') + '</div>';
+    }
+    box.innerHTML =
+      '<div class="row-between"><h2>💳 DeepSeek API 余额 ' + label + '</h2>' +
+      '<span class="muted" style="font-size:12px">查于 ' + new Date(b.checkedAt).toLocaleTimeString('zh-CN') +
+      ' · <a href="https://platform.deepseek.com/top_up" target="_blank" rel="noopener" style="color:#2563eb">去充值</a></span></div>' +
+      '<div class="row">' +
+        '<div><div class="big">¥' + b.balance.toFixed(2) + '</div>' +
+        '<div class="sub">' + esc(b.currency) + ' · 充值 ¥' + b.toppedUp.toFixed(2) + ' / 赠送 ¥' + b.granted.toFixed(2) + '</div></div>' +
+        (runs !== null ? '<div class="kv">按本站实测均价 ¥' + perReqCost.toFixed(4) + ' / 次<br>约还能回答 <b>' + runs.toLocaleString() + '</b> 次</div>' : '') +
+        '<div class="kv">官方 is_available<br><b>' + (b.isAvailable ? '✅ true' : '❌ false') + '</b></div>' +
+        '<div class="kv">预警线（本站设定）<br>黄 ¥' + b.thresholds.warn + ' · 红 ¥' + b.thresholds.critical + '</div>' +
+      '</div>' + warn;
+  }
+
+  function refreshAll() { load(); loadBalance(); }
+  $('refreshBtn').addEventListener('click', refreshAll);
 
   function doLogin() {
     var account = $('acc').value.trim(), password = $('pwd').value;
