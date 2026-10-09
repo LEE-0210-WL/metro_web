@@ -321,12 +321,20 @@
       // 渲染卡片
       const grid = document.getElementById('colorsGrid');
       
-      // 浅色颜色列表（用于文字颜色判断）
-      const lightColors = ['#00A9E0', '#00C7B1', '#F67599', '#A192B2', '#DE7C00', '#F2C75C', '#84BD00', '#D3C0CD', '#88D8DF', '#FBE122', '#FEAD77', '#91D6AC'];
+      // 文字颜色不再手写列表，而是按「与背景对比度更高」实时计算 ——
+      // 换色后自动跟随，永远不会和色表不同步（W3C 相对亮度公式）。
+      function bestTextClass(hex) {
+        const h = String(hex).replace('#', '');
+        const rgb = [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16) / 255; });
+        const lin = rgb.map(function (c) { return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+        const L = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+        const cWhite = 1.05 / (L + 0.05);      // 白字对比度
+        const cBlack = (L + 0.05) / 0.05;      // 黑字对比度
+        return cWhite >= cBlack ? 'light' : 'dark';
+      }
 
       lineColors.forEach(item => {
-        const isLight = lightColors.includes(item.hex);
-        const textClass = isLight ? 'dark' : 'light';
+        const textClass = bestTextClass(item.hex);
         const card = document.createElement('div');
         card.className = 'color-card';
         card.innerHTML = `
