@@ -128,7 +128,7 @@ const LINES_DATA = {
   "4": {
     name: "深圳地铁4号线",
     alias: "龙华线",
-    color: "#D42E0F",
+    color: "#DA291C",
     openDate: "2004-12-28",
     length: 31.30,
     stations: 23,
@@ -158,7 +158,7 @@ const LINES_DATA = {
   "5": {
     name: "深圳地铁5号线",
     alias: "环中线",
-    color: "#9E4DAA",
+    color: "#A05EB5",
     openDate: "2011-06-22",
     length: 47.39,
     stations: 34,
@@ -192,7 +192,7 @@ const LINES_DATA = {
   "6": {
     name: "深圳地铁6号线",
     alias: "光明线",
-    color: "#01C4B7",
+    color: "#00C7B1",
     openDate: "2020-08-18",
     length: 49.35,
     stations: 27,
@@ -223,7 +223,7 @@ const LINES_DATA = {
   "6Z": {
     name: "深圳地铁6号线支线",
     alias: "",
-    color: "#87DBDF",
+    color: "#88D8DF",
     openDate: "2022-11-28",
     length: 6.13,
     stations: 4,
@@ -244,7 +244,7 @@ const LINES_DATA = {
   "7": {
     name: "深圳地铁7号线",
     alias: "西丽线",
-    color: "#027776",
+    color: "#008578",
     openDate: "2016-10-28",
     length: 32.35,
     stations: 28,
@@ -280,7 +280,7 @@ const LINES_DATA = {
   "8": {
     name: "深圳地铁8号线",
     alias: "盐田线",
-    color: "#0131AC",
+    color: "#0032A0",
     openDate: "2020-10-28",
     length: 20.38,
     stations: 11,
@@ -302,7 +302,7 @@ const LINES_DATA = {
   "9": {
     name: "深圳地铁9号线",
     alias: "梅林线",
-    color: "#896B70",
+    color: "#7B6469",
     openDate: "2016-10-28",
     length: 36.18,
     stations: 32,
@@ -400,7 +400,7 @@ const LINES_DATA = {
   "12": {
     name: "深圳地铁12号线",
     alias: "南宝线",
-    color: "#A092B2",
+    color: "#A192B2",
     openDate: "2022-11-28",
     length: 40.54,
     stations: 33,
@@ -460,7 +460,7 @@ const LINES_DATA = {
   "14": {
     name: "深圳地铁14号线",
     alias: "东部快线",
-    color: "#F6AD2D",
+    color: "#DE7C00",
     openDate: "2022-10-28",
     length: 50.34,
     stations: 18,
@@ -486,7 +486,7 @@ const LINES_DATA = {
   "16": {
     name: "深圳地铁16号线",
     alias: "龙坪线",
-    color: "#F4CB67",
+    color: "#F2C75C",
     openDate: "2022-12-28",
     length: 29.20,
     stations: 24,
@@ -513,7 +513,7 @@ const LINES_DATA = {
   "20": {
     name: "深圳地铁20号线",
     alias: "",
-    color: "#181BA5",
+    color: "#1E22AA",
     openDate: "2021-12-28",
     length: 8.43,
     stations: 5,
@@ -538,7 +538,7 @@ const LINES_DATA = {
   "15": {
     name: "深圳地铁15号线",
     alias: "环线",
-    color: "#86BE00",
+    color: "#84BD00",
     openDate: "预计2028年6月",
     length: 32.21,
     stations: 24,
