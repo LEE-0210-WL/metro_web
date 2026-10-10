@@ -316,7 +316,7 @@ lab=document.createElementNS('http://www.w3.org/2000/svg','text');
 lab.setAttribute('id',lid);lab.setAttribute('x',x+bw/2);lab.setAttribute('y',baseY+20);
 lab.setAttribute('text-anchor','middle');lab.setAttribute('fill',labFill);
 lab.setAttribute('fill-opacity',barOp);lab.setAttribute('font-weight',isHl?'800':'600');
-lab.setAttribute('font-size',fontSize.lineName);lab.setAttribute('font-weight','600');
+lab.setAttribute('font-size',fontSize.lineName);
 lab.textContent=item.name;
 labelsG.appendChild(lab);
 val=document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -345,6 +345,8 @@ if(lab){lab.setAttribute('x',x+bw/2);lab.textContent=item.name;lab.setAttribute(
 if(val){
 const valY=y-6;
 val.setAttribute('x',x+bw/2);val.setAttribute('y',valY);
+val.dataset.decimals=decimals;
+if(Math.abs((parseFloat(val.getAttribute('data-current-value'))||0)-item.value)<=0.0001){val.textContent=decimals===0?Math.round(item.value).toString():item.value.toFixed(decimals);val.setAttribute('data-current-value',item.value);}
 let oldVal=parseFloat(val.getAttribute('data-current-value'));
 if(isNaN(oldVal))oldVal=0;
 if(Math.abs(oldVal-item.value)>0.0001){startNumberAnimation(val,oldVal,item.value,animDuration)}
