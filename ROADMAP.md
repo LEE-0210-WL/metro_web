@@ -81,6 +81,41 @@
 
 ## 五、维护备忘（踩过的坑）
 
+### ⚠️ 国内访问本站打不开 / 反复 TLS 握手（重要，测试者也会遇到）
+
+**症状**（2026-10-10 实测）：
+- 浏览器报「SSL error / 无法建立安全连接」；Firefox 还会说「HSTS 不允许添加例外」
+- 或者页面一直转圈，提示反复进行 TLS 握手
+
+**根因**（已实测确认，两个问题叠加）：
+1. **运营商 DNS 返回的 IPv6（AAAA）地址是错的** —— 实测 `2406:cb42:0:2017::2` 超时不通，
+   而浏览器**优先走 IPv6** → 一直连不上、反复重试。
+   （IPv4 那条是好的：`172.66.47.19` 实测 HTTP 200）
+2. 若浏览器开启 **ECH**（Firefox 默认开），SNI 被隐藏 →
+   运营商的 `redirect-cnzz` 劫持装置会出示**自签名证书** →
+   Firefox 报 SSL error，且因 `pages.dev` 在 HSTS 预加载列表里而**不给加例外**。
+
+**修法 A（推荐，一次解决所有程序）**：把电脑 DNS 改成国内公共 DNS
+```
+IPv4:  223.5.5.5      119.29.29.29
+IPv6:  2400:3200::1   2402:4e00::
+改完执行: ipconfig /flushdns
+```
+
+**修法 B（只在 Firefox 里，`about:config`）**：
+```
+network.dns.disableIPv6            = true    ← 关键，绕开坏掉的 IPv6
+network.dns.echconfig.enabled      = false   ← 关键，别再藏 SNI
+network.dns.use_https_rr_as_altsvc = false
+network.http.http3.enable          = false   ← 可选，国内 UDP 443 常被掐
+```
+
+**⚠️ 注意**：`network.trr.mode`（DoH 开关）**关掉也没用** —— DoH 关掉不等于 ECH 关掉，
+HTTPS 记录仍可从系统 DNS 获取、ECH 仍会触发。实测踩过这个坑。
+
+**📌 发内测账号给测试者时，务必附上这段说明** —— 4 个测试者一次没用过，
+很可能就是卡在这里打不开网站。
+
 ### ⏰ GitHub PAT 到期时间（别忘了续）
 
 `metro-data/.gh-token` 里的 token（名称 `dsh-auto-push-1year`）有效期 **90 天**，
