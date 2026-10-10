@@ -81,6 +81,28 @@
 
 ## 五、维护备忘（踩过的坑）
 
+### ⏰ GitHub PAT 到期时间（别忘了续）
+
+`metro-data/.gh-token` 里的 token（名称 `dsh-auto-push-1year`）有效期 **90 天**，
+**预计 2027-01-08 到期**。到期后 DSH 无法推送网站代码；
+**但部署 Worker 不受影响**（走 Cloudflare 凭据，与 GitHub 无关）。
+
+**重建 token 时务必选对这两项**（上次选错过）：
+- Repository access → **Only select repositories** → 只勾 `LEE-0210-WL/metro_web`
+- Permissions → Repository permissions → **Contents: Read and write**
+  （选成只读的话，推送会报 `403 Resource not accessible by personal access token`）
+
+### ⚠️ 别用 `npx xxx@latest`（会卡死）
+
+本机网络下 `npx wrangler@latest` 会挂在 npm registry 的版本解析上（实测空转 21 分钟、零输出）。
+**改用 npx 缓存里现成的 wrangler 直接跑**：
+
+```
+node C:\Users\<用户>\AppData\Local\npm-cache\_npx\<hash>\node_modules\wrangler\bin\wrangler.js deploy
+```
+
+（workbuddy 的 node 版本目录也会变，如 `22.22.2-3` → `22.22.2-6`，旧路径会失效）
+
 ### ⚠️ 知识库源文件没有异地备份
 
 知识库原始 `.md` 在 `dist/knowledge/`，但**从未提交进 Git** ——
