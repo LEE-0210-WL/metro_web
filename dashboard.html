@@ -426,8 +426,7 @@ container.innerHTML=`
 <div class="error-page">
 <h2>线路未找到</h2>
 <p>请检查 URL 参数是否正确，例如：<code>dashboard?line=1</code></p>
-<a href="index" class="back-link" style="margin-top:20px">返回首页</a>
-</div>
+<a href="index" class="back-link" style="margin-top:20px">返回首页</a</div>
 `;
 throw new Error('Line not found: '+LINE_ID);
 }else{
@@ -445,11 +444,11 @@ const beTransferredData=ALL_LINES_ENHANCED.map(l=>({key:l.id,name:l.id==='6z'?'6
 const avgFlows=calcAvgPassengerFlow();
 const flowData=ALL_LINES_ENHANCED.filter(l=>l.category==='operating').map(l=>({key:l.id,name:l.id==='6z'?'6Z':l.id,value:avgFlows[l.id]||0,color:l.color||'#999'})).filter(d=>d.value>0).sort((a,b)=>b.value-a.value);
 return [
-{id:'length',icon:'📏',label:'里程',title:'里程排名（公里）',unit:'km',decimals:2,data:lengthData,footer:'按线路长度降序排列 · 包含建设中线路'},
-{id:'stations',icon:'🚉',label:'站点数',title:'站点数排名',unit:'站',decimals:0,data:stationData,footer:'按车站数量降序排列 · 包含建设中线路'},
-{id:'transfers',icon:'🔄',label:'换乘站',title:'换乘站数排名',unit:'站',decimals:0,data:transferData,footer:'按换乘站数量降序排列 · 包含建设中线路'},
-{id:'betr',icon:'🔀',label:'被换乘',title:'被换乘次数排名',unit:'次',decimals:0,data:beTransferredData,footer:'统计各线路被其他线路换乘的总次数 · 数值越高说明该线路越"枢纽"'},
-{id:'flow',icon:'👥',label:'客流',title:'平均客流排名（万人次）',unit:'万人次',decimals:2,data:flowData,footer:'按历史日均客流降序排列 · 仅已开通线路（不含港铁4号线、13号线）'}
+{id:'length',label:'里程',title:'里程排名（公里）',unit:'km',decimals:2,data:lengthData,footer:'按线路长度降序排列 · 包含建设中线路'},
+{id:'stations',label:'站点数',title:'站点数排名',unit:'站',decimals:0,data:stationData,footer:'按车站数量降序排列 · 包含建设中线路'},
+{id:'transfers',label:'换乘站',title:'换乘站数排名',unit:'站',decimals:0,data:transferData,footer:'按换乘站数量降序排列 · 包含建设中线路'},
+{id:'betr',label:'被换乘',title:'被换乘次数排名',unit:'次',decimals:0,data:beTransferredData,footer:'统计各线路被其他线路换乘的总次数 · 数值越高说明该线路越"枢纽"'},
+{id:'flow',label:'客流',title:'平均客流排名（万人次）',unit:'万人次',decimals:2,data:flowData,footer:'按历史日均客流降序排列 · 仅已开通线路（不含港铁4号线、13号线）'}
 ].filter(s=>s.data.length>0);
 }
 function renderRankPanel(o){
@@ -522,61 +521,55 @@ container.innerHTML=`
 
 <!-- 总览标题栏 -->
 <div class="line-header" style="background:linear-gradient(135deg,#2563eb,#1e40af);box-shadow:0 8px 32px #2563eb40;">
-<div class="line-number-big" style="color:#2563eb;font-size:40px;">📊</div>
+<div class="line-number-big" style="color:#2563eb;font-size:28px;">总</div>
 <div class="line-header-info">
 <div class="line-header-name">线路仪表板总览</div>
 <div class="line-header-alias">深圳地铁全线路数据一览</div>
 <div class="line-header-tags">
 <span class="line-header-tag">${totalLines} 条线路</span>
 <span class="line-header-tag">${operating.length} 条已开通</span>
-<span class="line-header-tag">${construction.length} 条建设中</span>
-</div>
-</div>
-</div>
+<span class="line-header-tag">${construction.length} 条建设中</span</div>
+</div</div>
 
 <!-- KPI 总览 -->
 <div class="kpi-grid">
-<div class="kpi-card"><div class="kpi-card-icon">🚇</div><div class="kpi-card-value">${totalLines}</div><div class="kpi-card-label">线路总数</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">📏</div><div class="kpi-card-value">${totalLength}</div><div class="kpi-card-label">运营里程 km</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🚉</div><div class="kpi-card-value">${totalStations}</div><div class="kpi-card-label">运营车站</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🚃</div><div class="kpi-card-value">${totalTrains>0?totalTrains:'913'}</div><div class="kpi-card-label">车辆总数</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🟢</div><div class="kpi-card-value">${operating.length}</div><div class="kpi-card-label">已开通</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🟡</div><div class="kpi-card-value">${construction.length}</div><div class="kpi-card-label">建设中</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🔗</div><div class="kpi-card-value">${transferStationTotal}</div><div class="kpi-card-label">换乘站总数</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🏗️</div><div class="kpi-card-value">${constructionLength}</div><div class="kpi-card-label">在建里程 km</div></div>
-</div>
+<div class="kpi-card"><div class="kpi-card-value">${totalLines}</div><div class="kpi-card-label">线路总数</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${totalLength}</div><div class="kpi-card-label">运营里程 km</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${totalStations}</div><div class="kpi-card-label">运营车站</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${totalTrains>0?totalTrains:'913'}</div><div class="kpi-card-label">车辆总数</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${operating.length}</div><div class="kpi-card-label">已开通</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${construction.length}</div><div class="kpi-card-label">建设中</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${transferStationTotal}</div><div class="kpi-card-label">换乘站总数</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${constructionLength}</div><div class="kpi-card-label">在建里程 km</div></div</div>
 
 <!-- 已开通线路 -->
-<h2 class="section-title">🟢 已开通线路 (${operating.length})</h2>
+<h2 class="section-title">已开通线路 (${operating.length})</h2>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
 ${operating.map(l=>lineCard(l)).join('')}
 </div>
 
 <!-- 建设中线路 -->
-<h2 class="section-title">🟡 建设中线路 (${construction.length})</h2>
+<h2 class="section-title">建设中线路 (${construction.length})</h2>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
 ${construction.map(l=>lineCard(l)).join('')}
 </div>
 
 <!-- ===== 排名图表区（合并为一张图 + tab 切换）===== -->
-<h2 class="section-title">📊 全线路数据排名</h2>
+<h2 class="section-title">全线路数据排名</h2>
 <div class="rank-chart-container">
 <div class="rank-chart-header">
 <div class="rank-chart-title" id="rankOvTitle"></div>
-<div class="rank-badge" id="rankOvBadge"></div>
-</div>
+<div class="rank-badge" id="rankOvBadge"></div</div>
 <div class="rank-tabs" id="rankOvTabs"></div>
 <div class="rank-chart-svg-wrapper" id="rank-overview"></div>
-<div class="rank-chart-footer" id="rankOvFooter"></div>
-</div>
+<div class="rank-chart-footer" id="rankOvFooter"></div</div>
 
 <!-- 相关链接 -->
-<h2 class="section-title">🔗 相关链接</h2>
+<h2 class="section-title">相关链接</h2>
 <div class="related-grid">
-<a href="passenger-flow" class="related-link">📊 每日客流</a>
-<a href="tools" class="related-link">🛠️ 工具箱</a>
-<a href="line-colors" class="related-link">🎨 线路色号</a>
-</div>
+<a href="passenger-flow" class="related-link">每日客流</a>
+<a href="tools" class="related-link">工具箱</a>
+<a href="line-colors" class="related-link">线路色号</a</div>
 `;
 
 // 渲染图表（延迟确保 DOM 已插入）
@@ -587,7 +580,6 @@ renderRankPanel({svgId:'rank-overview',tabsId:'rankOvTabs',titleId:'rankOvTitle'
 
 function lineCard(l){
 const isOp=l.category==='operating';
-const statusEmoji=isOp?'🟢':'🟡';
 const shortName=l.name.replace('深圳地铁','').split('（')[0];
 return`
 <a href="dashboard?line=${l.id}" style="text-decoration:none;color:inherit;">
@@ -596,20 +588,16 @@ return`
 <div style="width:44px;height:44px;border-radius:50%;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;">${l.id==='6z'?'6Z':l.id}</div>
 <div style="flex:1;min-width:0;padding-right:70px;">
 <div style="font-size:15px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
-<div style="font-size:var(--fs-sm);color:#6b7280;margin-top:2px;">${l.alias||''}</div>
-</div>
+<div style="font-size:var(--fs-sm);color:#6b7280;margin-top:2px;">${l.alias||''}</div</div>
 <div style="position:absolute;top:0;right:0;font-size:var(--fs-xs);padding:3px 8px;border-radius:10px;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;">
-${statusEmoji} ${isOp?'已开通':'建设中'}
-</div>
-</div>
+${isOp?'已开通':'建设中'}
+</div</div>
 <div style="display:flex;gap:12px;font-size:13px;color:#4b5563;">
-<span>📏 ${l.lengthKm||0} km</span>
-<span>🚉 ${l.stationList?.length||0} 站</span>
-</div>
+<span>${l.lengthKm||0} km</span>
+<span>${l.stationList?.length||0} 站</span</div>
 <div style="margin-top:10px;font-size:var(--fs-sm);padding:4px 10px;border-radius:12px;display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
 ${fmtOpenDate(l.openDate)}
-</div>
-</div>
+</div</div>
 </a>
 `;
 }
@@ -657,8 +645,7 @@ container.innerHTML=`
 <polyline points="12 19 5 12 12 5"></polyline>
 </svg>
 查看全部线路对比
-</a>
-</div>
+</a</div>
 
 <!-- 线路标题栏 -->
 <div class="line-header" style="background:linear-gradient(135deg,${COLOR},${DARK_COLOR});box-shadow:0 8px 32px ${COLOR}40;">
@@ -667,8 +654,7 @@ container.innerHTML=`
 <div class="line-header-name">${LINE_ID==='6z'?'6号线支线':shortName}</div>
 <div class="line-header-alias">${lineData.alias||''}</div>
 <div class="line-header-tags">
-<span class="line-header-tag">${statusIcon}</span>
-</div>
+<span class="line-header-tag">${statusIcon}</span</div>
 <div class="line-header-tags" style="margin-top:6px;flex-direction:column;align-items:flex-start;gap:6px;">
 ${(()=>{
 const parts=(lineData.openDate||'').split(/；|;/).map(p=>p.trim()).filter(Boolean);
@@ -678,56 +664,49 @@ const text=m?'<strong>'+m[1]+'：</strong>'+m[2]:part;
 return'<span class="line-header-tag">'+text+'</span>';
 }).join('');
 })()}
-</div>
-</div>
+</div</div>
 </div>
 
 <!-- KPI 卡片 -->
 <div class="kpi-grid">
-<div class="kpi-card"><div class="kpi-card-icon">📏</div><div class="kpi-card-value">${lineData.lengthKm||0}</div><div class="kpi-card-label">线路长度 km</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🚉</div><div class="kpi-card-value">${stationCount}</div><div class="kpi-card-label">车站数量</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🔄</div><div class="kpi-card-value">${transferCount}</div><div class="kpi-card-label">换乘站</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">🚃</div><div class="kpi-card-value">${trainCount>0?trainCount:'-'}</div><div class="kpi-card-label">车辆总数</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">⚙️</div><div class="kpi-card-value">${lineData.formationCode||'-'}</div><div class="kpi-card-label">车辆编组</div></div>
-<div class="kpi-card"><div class="kpi-card-icon">⚡</div><div class="kpi-card-value">${lineData.maxSpeedKmh||0}</div><div class="kpi-card-label">设计时速 km/h</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${lineData.lengthKm||0}</div><div class="kpi-card-label">线路长度 km</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${stationCount}</div><div class="kpi-card-label">车站数量</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${transferCount}</div><div class="kpi-card-label">换乘站</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${trainCount>0?trainCount:'-'}</div><div class="kpi-card-label">车辆总数</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${lineData.formationCode||'-'}</div><div class="kpi-card-label">车辆编组</div></div>
+<div class="kpi-card"><div class="kpi-card-value">${lineData.maxSpeedKmh||0}</div><div class="kpi-card-label">设计时速 km/h</div></div>
 ${lineData.maxPassengerFlow?`
-<div class="kpi-card"><div class="kpi-card-icon">👥</div><div class="kpi-card-value" style="font-size:16px">${lineData.maxPassengerFlow}</div><div class="kpi-card-label">历史最大客流</div></div>
+<div class="kpi-card"><div class="kpi-card-value" style="font-size:16px">${lineData.maxPassengerFlow}</div><div class="kpi-card-label">历史最大客流</div></div>
 `:''}
-<div class="kpi-card"><div class="kpi-card-icon">🔀</div><div class="kpi-card-value">${lineData.transferCount||0}</div><div class="kpi-card-label">被换乘次数</div></div>
-</div>
+<div class="kpi-card"><div class="kpi-card-value">${lineData.transferCount||0}</div><div class="kpi-card-label">被换乘次数</div></div</div>
 
 <!-- ===== 这条线什么水平（排名 + 当前线路高亮）===== -->
 <h2 class="section-title">这条线什么水平</h2>
 <div class="rank-chart-container">
 <div class="rank-chart-header">
 <div class="rank-chart-title" id="rankSlTitle"></div>
-<div class="rank-badge" id="rankSlBadge"></div>
-</div>
+<div class="rank-badge" id="rankSlBadge"></div</div>
 <div class="rank-tabs" id="rankSlTabs"></div>
 <div class="rank-chart-svg-wrapper" id="rank-single"></div>
-<div class="rank-chart-footer" id="rankSlFooter"></div>
-</div>
+<div class="rank-chart-footer" id="rankSlFooter"></div</div>
 
 <!-- 线路走向图 -->
-<h2 class="section-title">🗺️ 线路图</h2>
+<h2 class="section-title">线路图</h2>
 <div class="route-map-section" id="routeMapSection">
 <div class="route-map-container">
-<img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false">
-</div>
-<div class="route-map-caption" id="routeMapCaption"></div>
-</div>
+<img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false"</div>
+<div class="route-map-caption" id="routeMapCaption"></div</div>
 <div class="route-map-section" id="routeMapPlaceholder" style="display:none;">
 <div class="route-map-placeholder">
-<div class="route-map-placeholder-icon">🗺️</div>
+
 <div class="route-map-placeholder-text">
 暂无线路图
-</div>
-</div>
+</div</div>
 </div>
 
 <!-- 换乘信息 -->
 ${transferCount>0?`
-<h2 class="section-title">🔄 换乘信息 (${transferCount}座换乘站)</h2>
+<h2 class="section-title">换乘信息 (${transferCount}座换乘站)</h2>
 <div class="transfer-grid">
 ${Object.entries(lineData.transfers||{}).map(([station,lines])=>{
 const badges=lines.map(lid=>{
@@ -738,10 +717,8 @@ return`
 <div class="transfer-card">
 <div>
 <div class="transfer-station-name">${station}站</div>
-<div class="transfer-station-sub">可换乘 ${lines.length} 条线路</div>
-</div>
-<div class="transfer-badges">${badges}</div>
-</div>
+<div class="transfer-station-sub">可换乘 ${lines.length} 条线路</div</div>
+<div class="transfer-badges">${badges}</div</div>
 `;
 }).join('')}
 </div>
@@ -749,7 +726,7 @@ return`
 
 <!-- 车辆信息 -->
 ${lineData.trains&&lineData.trains.length>0?`
-<h2 class="section-title">🚃 车辆信息 (${lineData.trains.length}种车型)</h2>
+<h2 class="section-title">车辆信息 (${lineData.trains.length}种车型)</h2>
 <div class="train-grid">
 ${lineData.trains.map(train=>{
 const enc=train.encountered;
@@ -765,38 +742,33 @@ ${train.note?`<div class="train-note">备注：${train.note}</div>`:''}
 `;
 }).join('')}
 </div>
-`:'<h2 class="section-title">🚃 车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
+`:'<h2 class="section-title">车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
 
 <!-- 建设中时间线 -->
 ${!isOperating?`
-<h2 class="section-title">🏗️ 建设进度</h2>
+<h2 class="section-title">建设进度</h2>
 <div class="timeline-section">
 <div class="timeline">
 <div class="timeline-item">
 <div class="timeline-date">规划批复</div>
-<div class="timeline-content">${lineData.name} 纳入深圳市城市轨道交通建设规划</div>
-</div>
+<div class="timeline-content">${lineData.name} 纳入深圳市城市轨道交通建设规划</div</div>
 <div class="timeline-item">
 <div class="timeline-date">开工建设</div>
-<div class="timeline-content">一期工程正式开工</div>
-</div>
+<div class="timeline-content">一期工程正式开工</div</div>
 <div class="timeline-item">
 <div class="timeline-date">${lineData.openDate}</div>
-<div class="timeline-content">预计开通运营 · ${lineData.lengthDesc} · ${lineData.stationsDesc}</div>
-</div>
-</div>
-</div>
+<div class="timeline-content">预计开通运营 · ${lineData.lengthDesc} · ${lineData.stationsDesc}</div</div>
+</div</div>
 `:''}
 
 <!-- 相关链接 -->
-<h2 class="section-title">🔗 相关链接</h2>
+<h2 class="section-title">相关链接</h2>
 <div class="related-grid">
-${showPassengerFlow?`<a href="passenger-flow?line=${LINE_ID}" class="related-link">📊 客流数据</a>`:''}
-<a href="progress-tracking?line=${LINE_ID}" class="related-link">📰 进度跟踪</a>
-<a href="trains?line=${LINE_ID}" class="related-link">🚇 车辆详情</a>
-<a href="history?line=${LINE_ID}" class="related-link">🏗️ 建设历程</a>
-<a href="line-colors" class="related-link">🎨 线路色号</a>
-</div>
+${showPassengerFlow?`<a href="passenger-flow?line=${LINE_ID}" class="related-link">客流数据</a>`:''}
+<a href="progress-tracking?line=${LINE_ID}" class="related-link">进度跟踪</a>
+<a href="trains?line=${LINE_ID}" class="related-link">车辆详情</a>
+<a href="history?line=${LINE_ID}" class="related-link">建设历程</a>
+<a href="line-colors" class="related-link">线路色号</a</div>
 `;
 
 // 线路走向图自动加载
