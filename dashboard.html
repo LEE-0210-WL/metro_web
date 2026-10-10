@@ -52,6 +52,7 @@ html,body{font-family:'HarmonyOS Sans',-apple-system,BlinkMacSystemFont,'Segoe U
 .rank-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:#6b7280}
 .rank-chart-legend-dot{width:10px;height:10px;border-radius:3px}
 .rank-chart-svg-wrapper{padding:24px;position:relative}
+.rank-chart-svg-wrapper rect{transform-box:fill-box}
 .rank-chart-svg-wrapper svg{width:100%;display:block}
 .rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:var(--fs-sm);color:var(--c-text-3);text-align:center}
 
@@ -177,17 +178,20 @@ el._rafId=requestAnimationFrame(update);
 
 function animateBar(element,fromX,fromY,fromHeight,toX,toY,toHeight,duration){
 if(fromX===toX&&fromY===toY&&fromHeight===toHeight)return;
-const dx=fromX-toX,dy=fromY-toY;
+// 只用一个 transform 动画完成位移+高度变化：
+// 底边(y+height)在两个状态下都等于基线，配合 transform-origin:bottom 缩放，
+// 底边在数学上恒定不动，避免高度/位移两个动画不同步导致的抖动。
+const dx=fromX-toX;
+const dy=(fromY+fromHeight)-(toY+toHeight);
+const k=toHeight>0?Math.max(fromHeight,0)/toHeight:1;
 element.style.transition='none';
-element.style.transform='translate('+dx+'px,'+dy+'px)';
 element.style.transformOrigin='bottom center';
+const from='translate('+dx+'px,'+dy+'px) scaleY('+k+')';
+const to='translate(0px,0px) scaleY(1)';
+element.style.transform=from;
 void element.offsetHeight;
-const opt={duration:duration,easing:'ease-out',fill:'forwards'};
-const ha=element.animate([{height:fromHeight+'px'},{height:toHeight+'px'}],opt);
-const ta=element.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'translate(0,0)'}],opt);
-let fc=0;
-const cf=()=>{fc++;if(fc===2){element.style.transition='';element.style.transform='';element.style.transformOrigin=''}};
-ha.onfinish=cf;ta.onfinish=cf;
+const a=element.animate([{transform:from},{transform:to}],{duration:duration,easing:'ease-out',fill:'forwards'});
+a.onfinish=()=>{element.style.transition='';element.style.transform='';element.style.transformOrigin=''};
 }
 
 function animateText(element,fromX,fromY,toX,toY,duration){
@@ -458,7 +462,7 @@ const badge=document.getElementById(o.badgeId);
 let active=sets[0].id;
 function draw(){
 const s=sets.find(x=>x.id===active)||sets[0];
-if(title)title.textContent=s.icon+' '+s.title;
+if(title)title.textContent=s.title;
 if(footer)footer.textContent=s.footer;
 if(badge){
 if(o.highlightKey){
@@ -469,7 +473,7 @@ badge.innerHTML=idx>=0?('<b>第 '+(idx+1)+' 名</b> / '+s.data.length+' 条'):'<
 renderRankChart(o.svgId,s.data,s.unit,s.decimals,o.highlightKey);
 for(const b of tabs.children)b.classList.toggle('active',b.dataset.id===active);
 }
-tabs.innerHTML=sets.map(s=>'<button type="button" class="rank-tab" data-id="'+s.id+'">'+s.icon+' '+s.label+'</button>').join('');
+tabs.innerHTML=sets.map(s=>'<button type="button" class="rank-tab" data-id="'+s.id+'">'+s.label+'</button>').join('');
 for(const b of tabs.children)b.addEventListener('click',()=>{active=b.dataset.id;draw();});
 draw();
 }
@@ -693,7 +697,7 @@ ${lineData.maxPassengerFlow?`
 </div>
 
 <!-- ===== 这条线什么水平（排名 + 当前线路高亮）===== -->
-<h2 class="section-title">📊 这条线什么水平</h2>
+<h2 class="section-title">这条线什么水平</h2>
 <div class="rank-chart-container">
 <div class="rank-chart-header">
 <div class="rank-chart-title" id="rankSlTitle"></div>
