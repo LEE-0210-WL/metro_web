@@ -921,7 +921,9 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   for (let i = 0; i < stations1.length; i++) {
     const x = seg1StartX + i * stationSpacing;
     const isTransfer = (i === stations1.length - 1);
-    drawStationHorizontal(ctx, x, topY, stations1[i].name, color1, fontSize, circleSize, isTransfer, i % 2 === 0);
+    // 从换乘站往回交替：保证换乘站标签永远在上方，不会被下方的虚线连接线压住
+    const nameOnTop = ((stations1.length - 1 - i) % 2 === 0);
+    drawStationHorizontal(ctx, x, topY, stations1[i].name, color1, fontSize, circleSize, isTransfer, nameOnTop);
   }
 
   ctx.strokeStyle = color2;
@@ -974,7 +976,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   }
   totalWidth += 100;
   const viewHeight = container.clientHeight;
-  const sceneHeight = Math.max(380, viewHeight - 20);
+  const sceneHeight = Math.max(520, viewHeight - 20);
   const centerY = sceneHeight / 2;
   canvas.width = totalWidth * dpr;
   canvas.height = sceneHeight * dpr;
@@ -988,7 +990,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
     const [lineName, stations] = segments[segIdx];
     const objLine = metroGraphRaw.lines[lineName];
     const color = objLine?.color ?? "#666666";
-    const y = centerY + (segIdx % 2 === 0 ? -40 : 40);
+    const y = centerY + (segIdx % 2 === 0 ? -80 : 80);
 
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
@@ -1005,14 +1007,15 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
     for (let i = 0; i < stations.length; i++) {
       const x = currentX + i * stationSpacing;
       const isTransfer = stations[i].is_transfer;
-      drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, true);
+      // 标签朝外：偶数行在线上方、奇数行在线下方，避免两行文字挤在中间打架
+      drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, segIdx % 2 === 0);
     }
 
     if (segIdx < segments.length - 1) {
       const nextSeg = segments[segIdx+1];
       const nextLineName = nextSeg[0];
       const nextObj = metroGraphRaw.lines[nextLineName];
-      const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -40 : 40);
+      const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -80 : 80);
       const endX = currentX + (stations.length - 1) * stationSpacing;
 
       ctx.strokeStyle = '#888';
@@ -1022,13 +1025,19 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       ctx.moveTo(endX, y);
       ctx.lineTo(endX + 35, y);
       ctx.lineTo(endX + 35, nextY);
-      ctx.lineTo(endX + 50, nextY);
+      ctx.lineTo(endX + 52, nextY);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      ctx.font = 'bold 24px "Microsoft YaHei", sans-serif';
+      const midY = (y + nextY) / 2;
+      ctx.font = 'bold 20px "Microsoft YaHei", sans-serif';
+      const tw = ctx.measureText('换乘').width;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(endX + 35 - tw / 2 - 7, midY - 15, tw + 14, 28);
       ctx.fillStyle = '#FF6600';
-      ctx.fillText('换', endX + 18, (y + nextY) / 2 + 4);
+      ctx.textAlign = 'center';
+      ctx.fillText('换乘', endX + 35, midY + 7);
+      ctx.textAlign = 'left';
       currentX += (stations.length - 1) * stationSpacing + 50;
     } else {
       currentX += (stations.length - 1) * stationSpacing;
