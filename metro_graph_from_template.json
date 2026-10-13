@@ -4,7 +4,7 @@
   "lines": {
     "1号线": {
       "line_id": "1",
-      "color": "#01AF55",
+      "color": "#00B140",
       "stations": [
         {
           "seq": 1,
@@ -218,7 +218,7 @@
     },
     "2号线": {
       "line_id": "2",
-      "color": "#B95800",
+      "color": "#B94700",
       "stations": [
         {
           "seq": 1,
@@ -519,7 +519,7 @@
     },
     "3号线": {
       "line_id": "3",
-      "color": "#00A9DF",
+      "color": "#00A9E0",
       "stations": [
         {
           "seq": 1,
@@ -783,7 +783,7 @@
     },
     "4号线": {
       "line_id": "4",
-      "color": "#D42E0F",
+      "color": "#DA291C",
       "stations": [
         {
           "seq": 1,
@@ -946,7 +946,7 @@
     },
     "5号线": {
       "line_id": "5",
-      "color": "#9E4DAA",
+      "color": "#A05EB5",
       "stations": [
         {
           "seq": 1,

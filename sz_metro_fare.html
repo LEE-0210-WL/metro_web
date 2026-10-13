@@ -726,9 +726,18 @@ function swapStations(){
   const el = document.getElementById('endLine');
   const ss = document.getElementById('startStation');
   const es = document.getElementById('endStation');
-  const tl = sl.value; sl.value = el.value; el.value = tl;
+  // 必须先把四个值都记下来：updateStations() 会重建下拉，value 会被重置成第一项
+  const oldStartLine = sl.value, oldEndLine = el.value;
+  const oldStartStation = ss.value, oldEndStation = es.value;
+  sl.value = oldEndLine; el.value = oldStartLine;
   updateStations('start'); updateStations('end');
-  const ts = ss.value; ss.value = es.value; es.value = ts;
+  // 再把站点设回去；若该站在新线路上不存在，则退回第一项
+  const restore = (sel, name) => {
+    const ok = Array.prototype.some.call(sel.options, o => o.value === name);
+    sel.value = ok ? name : (sel.options[0] ? sel.options[0].value : '');
+  };
+  restore(ss, oldEndStation);
+  restore(es, oldStartStation);
 }
 
 // ========== 查询主逻辑 ==========
@@ -869,9 +878,31 @@ function drawTransferRouteHorizontal(ctx, canvas, route, dpr, container) {
     }
   }
   if (currentSegment.length > 0) segments.push([currentLine, currentSegment]);
+
+  // 「距离最短」策略下换乘免费，路由器会做出同站换线这种零距离操作，
+  // 从而切出一个只有一个站的「空段」（图上就是个孤零零的圆）。
+  // 注意：换乘站在相邻两段里各出现一次是正常的（上段终点 + 下段起点），不能合并；
+  // 这里只把「只有一个站」的段并进相邻段。
+  for (let i = 0; i < segments.length; i++) {
+    if (segments.length > 1 && segments[i][1].length === 1) {
+      const only = segments[i][1][0];
+      if (i + 1 < segments.length) {
+        const nextFirst = segments[i+1][1][0];
+        // 下一段已经以同一站开头（正常的换乘站重复）→ 这一段纯属多余，直接丢掉
+        if (!(nextFirst && nextFirst.name === only.name)) segments[i+1][1].unshift(only);
+      } else {
+        const prevLast = segments[i-1][1][segments[i-1][1].length - 1];
+        if (!(prevLast && prevLast.name === only.name)) segments[i-1][1].push(only);
+      }
+      segments.splice(i, 1);
+      i--;
+    }
+  }
+
   if (segments.length === 2) {
     drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container);
   } else {
+    // 1 段（无需换乘）与 3 段以上都走多段函数，它按段号自动排布
     drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container);
   }
 }
