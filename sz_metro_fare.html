@@ -945,13 +945,15 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   const lineTop = topY + circleSize/2 + 5;
   const lineBottom = bottomY - circleSize/2 - 5;
   ctx.strokeStyle = '#888';
-  ctx.lineWidth = 3;
-  ctx.setLineDash([10, 8]);
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = 'butt';            // 虚线用平头，不要圆头
+  ctx.setLineDash([9, 6]);
   ctx.beginPath();
   ctx.moveTo(transferX, lineTop);
   ctx.lineTo(transferX, lineBottom);
   ctx.stroke();
   ctx.setLineDash([]);
+  ctx.lineCap = 'round';
   ctx.font = 'bold 22px "Microsoft YaHei", sans-serif';
   ctx.fillStyle = '#666';
   ctx.textAlign = 'left';
@@ -972,7 +974,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   const fontSize = 24;
   let totalWidth = 100;
   for (const [, stations] of segments) {
-    totalWidth += (stations.length - 1) * stationSpacing + 50;
+    totalWidth += (stations.length - 1) * stationSpacing + 120;
   }
   totalWidth += 100;
   const viewHeight = container.clientHeight;
@@ -1006,7 +1008,11 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
 
     for (let i = 0; i < stations.length; i++) {
       const x = currentX + i * stationSpacing;
-      const isTransfer = stations[i].is_transfer;
+      // 换乘站会在相邻两段里各出现一次，但数据里只有「进新线」那一侧标了 is_transfer，
+      // 所以这里按段的位置补上：非末段的最后一站、非首段的第一站，都是换乘站
+      const isTransfer = stations[i].is_transfer
+        || (i === stations.length - 1 && segIdx < segments.length - 1)
+        || (i === 0 && segIdx > 0);
       // 标签朝外：偶数行在线上方、奇数行在线下方，避免两行文字挤在中间打架
       drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, segIdx % 2 === 0);
     }
@@ -1019,26 +1025,26 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       const endX = currentX + (stations.length - 1) * stationSpacing;
 
       ctx.strokeStyle = '#888';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([8, 5]);
+      ctx.lineWidth = 4.5;
+      ctx.lineCap = 'butt';          // 虚线用平头，不要圆头
+      ctx.setLineDash([9, 6]);
       ctx.beginPath();
       ctx.moveTo(endX, y);
-      ctx.lineTo(endX + 35, y);
-      ctx.lineTo(endX + 35, nextY);
-      ctx.lineTo(endX + 52, nextY);
+      ctx.lineTo(endX + 40, y);
+      ctx.lineTo(endX + 40, nextY);
+      ctx.lineTo(endX + 120, nextY);
       ctx.stroke();
       ctx.setLineDash([]);
+      ctx.lineCap = 'round';         // 还原，后面的实线仍用圆头
 
+      // 「换乘」放在竖直虚线与下一段起点之间的空白处，不需要任何底衬
       const midY = (y + nextY) / 2;
-      ctx.font = 'bold 20px "Microsoft YaHei", sans-serif';
-      const tw = ctx.measureText('换乘').width;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(endX + 35 - tw / 2 - 7, midY - 15, tw + 14, 28);
+      ctx.font = 'bold 19px "Microsoft YaHei", sans-serif';
       ctx.fillStyle = '#FF6600';
       ctx.textAlign = 'center';
-      ctx.fillText('换乘', endX + 35, midY + 7);
+      ctx.fillText('换乘', endX + 80, midY + 7);
       ctx.textAlign = 'left';
-      currentX += (stations.length - 1) * stationSpacing + 50;
+      currentX += (stations.length - 1) * stationSpacing + 120;
     } else {
       currentX += (stations.length - 1) * stationSpacing;
     }
