@@ -972,11 +972,12 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   const circleSize = 28;
   const lineWidth = 10;
   const fontSize = 24;
+  // 阶梯式布局：每段紧接上一段的终点，所以总宽就是各段长度之和
   let totalWidth = 100;
   for (const [, stations] of segments) {
-    totalWidth += (stations.length - 1) * stationSpacing + 120;
+    totalWidth += (stations.length - 1) * stationSpacing;
   }
-  totalWidth += 100;
+  totalWidth += 160;   // 右侧留白给「换乘」标注
   const viewHeight = container.clientHeight;
   const sceneHeight = Math.max(520, viewHeight - 20);
   const centerY = sceneHeight / 2;
@@ -1024,27 +1025,27 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -80 : 80);
       const endX = currentX + (stations.length - 1) * stationSpacing;
 
+      // 换乘站上下对齐：连接线就是一条竖直虚线，不再拐 Z 字
       ctx.strokeStyle = '#888';
       ctx.lineWidth = 4.5;
       ctx.lineCap = 'butt';          // 虚线用平头，不要圆头
       ctx.setLineDash([9, 6]);
       ctx.beginPath();
-      ctx.moveTo(endX, y);
-      ctx.lineTo(endX + 40, y);
-      ctx.lineTo(endX + 40, nextY);
-      ctx.lineTo(endX + 120, nextY);
+      ctx.moveTo(endX, y + circleSize / 2 + 4);
+      ctx.lineTo(endX, nextY - circleSize / 2 - 4);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.lineCap = 'round';         // 还原，后面的实线仍用圆头
 
-      // 「换乘」放在竖直虚线与下一段起点之间的空白处，不需要任何底衬
+      // 「换乘」放在竖线右侧的空白处（上下两行之间是空的），不需要底衬
       const midY = (y + nextY) / 2;
       ctx.font = 'bold 19px "Microsoft YaHei", sans-serif';
       ctx.fillStyle = '#FF6600';
-      ctx.textAlign = 'center';
-      ctx.fillText('换乘', endX + 80, midY + 7);
       ctx.textAlign = 'left';
-      currentX += (stations.length - 1) * stationSpacing + 120;
+      ctx.fillText('换乘', endX + 14, midY + 7);
+
+      // 关键：下一段从换乘站这一列开始（阶梯式），保证换乘站上下对齐
+      currentX = endX;
     } else {
       currentX += (stations.length - 1) * stationSpacing;
     }
