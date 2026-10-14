@@ -924,7 +924,7 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   const viewHeight = container.clientHeight;
   const topY = 110;
   const bottomY = Math.max(300, topY + 160);
-  const sceneHeight = Math.max(bottomY + 100, viewHeight - 20, 420);
+  const sceneHeight = Math.max(bottomY + 100, viewHeight - 20, 380);
   canvas.width = totalWidth * dpr;
   canvas.height = sceneHeight * dpr;
   canvas.style.width = totalWidth + 'px';
@@ -1003,8 +1003,11 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   }
   totalWidth += 240;   // 右侧留白给线路名与「换乘」标注
   const viewHeight = container.clientHeight;
-  const sceneHeight = Math.max(520, viewHeight - 20);
+  // 保底不要超过容器，否则 .map-canvas-container(overflow:auto) 会冒出竖向滚动条
+  const sceneHeight = Math.max(340, viewHeight - 20);
   const centerY = sceneHeight / 2;
+  // 行距自适应：容器高时用 80，容器矮时收窄，保证两行文字始终放得下
+  const rowGap = Math.max(46, Math.min(80, (sceneHeight - 180) / 2));
   canvas.width = totalWidth * dpr;
   canvas.height = sceneHeight * dpr;
   canvas.style.width = totalWidth + 'px';
@@ -1017,7 +1020,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
     const [lineName, stations] = segments[segIdx];
     const objLine = metroGraphRaw.lines[lineName];
     const color = objLine?.color ?? "#666666";
-    const y = centerY + (segIdx % 2 === 0 ? -80 : 80);
+    const y = centerY + (segIdx % 2 === 0 ? -rowGap : rowGap);
 
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
@@ -1048,7 +1051,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       const nextSeg = segments[segIdx+1];
       const nextLineName = nextSeg[0];
       const nextObj = metroGraphRaw.lines[nextLineName];
-      const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -80 : 80);
+      const nextY = centerY + ((segIdx + 1) % 2 === 0 ? -rowGap : rowGap);
       const endX = currentX + (stations.length - 1) * stationSpacing;
 
       // 换乘站上下对齐：连接线就是一条竖直虚线，不再拐 Z 字
