@@ -9,7 +9,7 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     background: #f0f2f5;
     color: #333;
     min-height: 100vh;
@@ -857,10 +857,7 @@ function drawSingleLineHorizontal(ctx, canvas, route, dpr, container) {
     const isTransfer = route[i].is_transfer;
     drawStationHorizontal(ctx, x, y, route[i].name, color, fontSize, circleSize, isTransfer, i % 2 === 0);
   }
-  ctx.font = 'bold 15px "Microsoft YaHei", sans-serif';
-  ctx.fillStyle = color;
-  ctx.textAlign = 'left';
-  ctx.fillText(lineName, startX, y - 70);
+  drawLineNameBothEnds(ctx, lineName, startX, startX + (route.length - 1) * stationSpacing, y - 70, color, 15);
 }
 
 function drawTransferRouteHorizontal(ctx, canvas, route, dpr, container) {
@@ -985,17 +982,13 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.lineCap = 'round';
-  ctx.font = 'bold 22px "Microsoft YaHei", sans-serif';
+  ctx.font = 'bold 22px ' + CANVAS_FONT;
   ctx.fillStyle = '#666';
   ctx.textAlign = 'left';
   ctx.fillText('换乘', transferX + 12, (lineTop + lineBottom) / 2 + 4);
 
-  ctx.font = 'bold 20px "Microsoft YaHei", sans-serif';
-  ctx.fillStyle = color1;
-  ctx.textAlign = 'left';
-  ctx.fillText(line1Name, seg1StartX, topY - 60);
-  ctx.fillStyle = color2;
-  ctx.fillText(line2Name, seg2StartX, bottomY + 60);
+  drawLineNameBothEnds(ctx, line1Name, seg1StartX, transferX, topY - 60, color1, 18);
+  drawLineNameBothEnds(ctx, line2Name, seg2StartX, seg2StartX + (stations2.length - 1) * stationSpacing, bottomY + 60, color2, 18);
 }
 
 function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
@@ -1048,6 +1041,8 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       // 标签朝外：偶数行在线上方、奇数行在线下方，避免两行文字挤在中间打架
       drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, segIdx % 2 === 0);
     }
+    // 本段线路名：两端各写一次（多段模式下原来是完全没有的）
+    drawLineNameBothEnds(ctx, lineName, currentX, currentX + (stations.length - 1) * stationSpacing, y - 58, color, 16);
 
     if (segIdx < segments.length - 1) {
       const nextSeg = segments[segIdx+1];
@@ -1070,10 +1065,10 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
 
       // 「换乘」放在竖线右侧的空白处（上下两行之间是空的），不需要底衬
       const midY = (y + nextY) / 2;
-      ctx.font = 'bold 19px "Microsoft YaHei", sans-serif';
+      ctx.font = 'bold 19px ' + CANVAS_FONT;
       ctx.fillStyle = '#FF6600';
       ctx.textAlign = 'left';
-      ctx.fillText('换乘', endX + 14, midY + 7);
+      ctx.fillText('换乘', endX + 14, midY - 10);
 
       // 关键：下一段从换乘站这一列开始（阶梯式），保证换乘站上下对齐
       currentX = endX;
@@ -1081,6 +1076,30 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       currentX += (stations.length - 1) * stationSpacing;
     }
   }
+}
+
+// 预热 HarmonyOS Sans：canvas 绘制时若字体尚未加载会静默回退成默认字体
+if (document.fonts && document.fonts.load) {
+  try { document.fonts.load('700 16px "HarmonyOS Sans"'); document.fonts.load('16px "HarmonyOS Sans"'); } catch (e) {}
+}
+
+const CANVAS_FONT = '"HarmonyOS Sans", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif';
+
+// 在线路的两端各写一次线路名（起点端左对齐、终点端右对齐）
+function drawLineNameBothEnds(ctx, name, xLeft, xRight, textY, color, size){
+  if(!name) return;
+  const fs = size || 15;
+  ctx.font = 'bold ' + fs + 'px ' + CANVAS_FONT;
+  const w = ctx.measureText(name).width;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  ctx.fillText(name, xLeft, textY);
+  // 段太短时右端不再重复写同名标签，否则两个标签会叠在一起
+  if (xRight - xLeft >= w * 2 + 30) {
+    ctx.textAlign = 'right';
+    ctx.fillText(name, xRight, textY);
+  }
+  ctx.textAlign = 'left';
 }
 
 function drawStationHorizontal(ctx, x, y, name, color, fontSize, circleSize, isTransfer, nameOnTop) {
@@ -1091,7 +1110,7 @@ function drawStationHorizontal(ctx, x, y, name, color, fontSize, circleSize, isT
   ctx.strokeStyle = isTransfer ? '#FF6600' : color;
   ctx.lineWidth = isTransfer ? 5 : 4;
   ctx.stroke();
-  ctx.font = (isTransfer ? 'bold ' : '') + fontSize + 'px "Microsoft YaHei", sans-serif';
+  ctx.font = (isTransfer ? 'bold ' : '') + fontSize + 'px ' + CANVAS_FONT;
   ctx.fillStyle = isTransfer ? '#FF6600' : '#333';
   ctx.textAlign = 'center';
   const textY = nameOnTop ? y - 28 : y + 40;
