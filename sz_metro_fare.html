@@ -829,7 +829,7 @@ function drawSingleLineHorizontal(ctx, canvas, route, dpr, container) {
   const color = lineObj?.color ?? "#666666";
 
   const totalStations = route.length;
-  const totalWidth = totalStations * stationSpacing + 120;
+  const totalWidth = totalStations * stationSpacing + 300;
   const viewHeight = container.clientHeight;
   const centerY = Math.max(160, viewHeight / 2);
   const sceneHeight = Math.max(centerY + 100, 320);
@@ -839,7 +839,7 @@ function drawSingleLineHorizontal(ctx, canvas, route, dpr, container) {
   canvas.style.height = sceneHeight + 'px';
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, totalWidth, sceneHeight);
-  const startX = 70;
+  const startX = 150;
   const y = centerY;
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
@@ -857,7 +857,7 @@ function drawSingleLineHorizontal(ctx, canvas, route, dpr, container) {
     const isTransfer = route[i].is_transfer;
     drawStationHorizontal(ctx, x, y, route[i].name, color, fontSize, circleSize, isTransfer, i % 2 === 0);
   }
-  drawLineNameBothEnds(ctx, lineName, startX, startX + (route.length - 1) * stationSpacing, y - 70, color, 15);
+  drawLineNameBothEnds(ctx, lineName, startX, startX + (route.length - 1) * stationSpacing, y, color, 22);
 }
 
 function drawTransferRouteHorizontal(ctx, canvas, route, dpr, container) {
@@ -919,7 +919,7 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
 
   const seg1LeftWidth = (stations1.length - 1) * stationSpacing;
   const seg2RightWidth = (stations2.length - 1) * stationSpacing;
-  const margin = 80;
+  const margin = 150;
   const totalWidth = margin + seg1LeftWidth + seg2RightWidth + margin;
   const viewHeight = container.clientHeight;
   const topY = 110;
@@ -987,8 +987,8 @@ function drawTwoSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   ctx.textAlign = 'left';
   ctx.fillText('换乘', transferX + 12, (lineTop + lineBottom) / 2 + 4);
 
-  drawLineNameBothEnds(ctx, line1Name, seg1StartX, transferX, topY - 60, color1, 18);
-  drawLineNameBothEnds(ctx, line2Name, seg2StartX, seg2StartX + (stations2.length - 1) * stationSpacing, bottomY + 60, color2, 18);
+  drawLineNameBothEnds(ctx, line1Name, seg1StartX, transferX, topY, color1, 22);
+  drawLineNameBothEnds(ctx, line2Name, seg2StartX, seg2StartX + (stations2.length - 1) * stationSpacing, bottomY, color2, 22);
 }
 
 function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
@@ -997,11 +997,11 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   const lineWidth = 10;
   const fontSize = 24;
   // 阶梯式布局：每段紧接上一段的终点，所以总宽就是各段长度之和
-  let totalWidth = 100;
+  let totalWidth = 150;
   for (const [, stations] of segments) {
     totalWidth += (stations.length - 1) * stationSpacing;
   }
-  totalWidth += 160;   // 右侧留白给「换乘」标注
+  totalWidth += 240;   // 右侧留白给线路名与「换乘」标注
   const viewHeight = container.clientHeight;
   const sceneHeight = Math.max(520, viewHeight - 20);
   const centerY = sceneHeight / 2;
@@ -1011,7 +1011,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
   canvas.style.height = sceneHeight + 'px';
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, totalWidth, sceneHeight);
-  let currentX = 80;
+  let currentX = 150;
 
   for (let segIdx = 0; segIdx < segments.length; segIdx++) {
     const [lineName, stations] = segments[segIdx];
@@ -1042,7 +1042,7 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       drawStationHorizontal(ctx, x, y, stations[i].name, color, fontSize, circleSize, isTransfer, segIdx % 2 === 0);
     }
     // 本段线路名：两端各写一次（多段模式下原来是完全没有的）
-    drawLineNameBothEnds(ctx, lineName, currentX, currentX + (stations.length - 1) * stationSpacing, y - 58, color, 16);
+    drawLineNameBothEnds(ctx, lineName, currentX, currentX + (stations.length - 1) * stationSpacing, y, color, 22);
 
     if (segIdx < segments.length - 1) {
       const nextSeg = segments[segIdx+1];
@@ -1057,8 +1057,12 @@ function drawMultiSegmentHorizontal(ctx, canvas, segments, dpr, container) {
       ctx.lineCap = 'butt';          // 虚线用平头，不要圆头
       ctx.setLineDash([9, 6]);
       ctx.beginPath();
-      ctx.moveTo(endX, y + circleSize / 2 + 4);
-      ctx.lineTo(endX, nextY - circleSize / 2 - 4);
+      // 段在上、下一段在下 → 从本段圆圈下方连到下一段圆圈上方；
+      // 反过来（下 → 上）时要对调，否则虚线会从圆圈中间穿过去
+      const goingUp = nextY < y;
+      const r = circleSize / 2 + 4;
+      ctx.moveTo(endX, goingUp ? y - r : y + r);
+      ctx.lineTo(endX, goingUp ? nextY + r : nextY - r);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.lineCap = 'round';         // 还原，后面的实线仍用圆头
@@ -1086,20 +1090,19 @@ if (document.fonts && document.fonts.load) {
 const CANVAS_FONT = '"HarmonyOS Sans", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif';
 
 // 在线路的两端各写一次线路名（起点端左对齐、终点端右对齐）
-function drawLineNameBothEnds(ctx, name, xLeft, xRight, textY, color, size){
+function drawLineNameBothEnds(ctx, name, xFirst, xLast, y, color, size){
   if(!name) return;
-  const fs = size || 15;
+  const fs = size || 22;
   ctx.font = 'bold ' + fs + 'px ' + CANVAS_FONT;
-  const w = ctx.measureText(name).width;
   ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  const GAP = 30;                         // 圆圈半径 14 + 描边 + 空隙
+  ctx.textAlign = 'right';
+  ctx.fillText(name, xFirst - GAP, y);    // 首站圆圈左侧
   ctx.textAlign = 'left';
-  ctx.fillText(name, xLeft, textY);
-  // 段太短时右端不再重复写同名标签，否则两个标签会叠在一起
-  if (xRight - xLeft >= w * 2 + 30) {
-    ctx.textAlign = 'right';
-    ctx.fillText(name, xRight, textY);
-  }
+  ctx.fillText(name, xLast + GAP, y);     // 末站圆圈右侧
   ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
 }
 
 function drawStationHorizontal(ctx, x, y, name, color, fontSize, circleSize, isTransfer, nameOnTop) {
