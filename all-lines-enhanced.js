@@ -1569,7 +1569,7 @@ const ALL_LINES_ENHANCED = [
     "formationDesc": "4节或6节编组A型列车",
     "maxSpeedDesc": "80公里/小时",
     "lengthKm": 32.21,
-    "stationCount": 25,
+    "stationCount": 24,
     "undergroundCount": 24,
     "elevatedCount": 0,
     "formationCode": "4A/6A",
@@ -1600,8 +1600,7 @@ const ALL_LINES_ENHANCED = [
       "月亮湾公园",
       "铁路公园",
       "通港路",
-      "前保",
-      "听海"
+      "前保"
     ],
     "transfers": {
       "坪洲": [
