@@ -632,6 +632,28 @@
       transform: none;
     }
   }
+
+  /* ==========================================================================
+     ===== 移动端修正 =====
+     1) 触摸屏上点一下会留下 :hover 状态，而 .btn-text 的 hover 规则里有
+        translateY(-50%)，于是文字被顶到偏上位置 —— 移动端强行归零。
+     2) 问号图标（?）字形在 24 视口里占的面积本来就小，跟 AI/账户图标比
+        显得小一圈，单独放大一点补视觉重量。
+     ========================================================================== */
+  .navbar-help-btn svg { width: 30px; height: 30px; }
+
+  @media (max-width: 768px) {
+    .navbar-help-btn:hover .btn-text,
+    .navbar-ai-btn:hover .btn-text,
+    .navbar-account-btn:hover .btn-text {
+      position: static;
+      transform: none;
+      opacity: 1;
+      margin-left: 6px;
+    }
+    .navbar-help-btn svg { width: 24px; height: 24px; }
+  }
+
   `;
 
   // 插入 viewport meta 到 head（确保生效）
