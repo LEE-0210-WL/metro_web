@@ -147,11 +147,14 @@ body {
    浏览器 UA 样式会给 <button>/<input>/<select>/<textarea> 各自指定系统字体
    （Windows 上是 MS Shell Dlg / Arial），它们**不会继承 body** 的字体，
    所以只锁 body 时按钮仍是系统字体，页面看起来「字体不统一」。
-   这条统一拉回来，保留可用 !important 覆盖的逃生口（.no-font-lock）。
+
+   ⚠️ 这里**故意不加 !important**：作者样式本来就能压过 UA 样式，
+      而不加 important 时，页面里更具体的选择器（如 fun.html 的
+      .shop-card button 用 Bahnschrift 显示数字）仍能正常生效。
    ============================================================================ */
 button, input, select, textarea, optgroup,
 button *, input *, select *, textarea * {
-  font-family: var(--font) !important;
+  font-family: var(--font);
 }
 .no-font-lock, .no-font-lock * {
   font-family: unset !important;
