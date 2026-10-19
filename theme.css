@@ -1,3 +1,4 @@
+@import url("fonts/harmonyos-sans.css");
 /* ============================================================================
    走进新天地·Railway —— 设计规范（Design Tokens）
    ----------------------------------------------------------------------------
@@ -93,8 +94,8 @@
   --sh-primary: 0 4px 12px rgba(37, 99, 235, .4);
 
   /* ======================= 字体 ======================= */
-  --font:     'HarmonyOS Sans', -apple-system, BlinkMacSystemFont,
-              "Microsoft YaHei", sans-serif;
+  --font:     'HarmonyOS Sans SC', 'HarmonyOS Sans', -apple-system,
+              BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-num: Bahnschrift, 'HarmonyOS Sans', -apple-system, sans-serif;
 
   /* ======================= 布局 ======================= */

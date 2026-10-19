@@ -1,0 +1,35 @@
+/* ============================================================================
+   HarmonyOS Sans SC —— 站点自托管中文字体（子集化）
+   ----------------------------------------------------------------------------
+   为什么需要它：cdnfonts 的 "HarmonyOS Sans" 只含拉丁字符，中文一直回退到
+   系统字体（Windows 上是微软雅黑），所以页面中文看起来不是鸿蒙字体。
+   这里用官方 HarmonyOS_Sans_SC 子集化（只保留站点实际用到的 1936 个字符），
+   3 个字重合计约 681 KB。
+
+   字重映射：400 Regular / 500 Medium / 700 Bold
+   （800 由浏览器用 700 合成，视觉上够用，省一个文件）
+   ============================================================================ */
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: local('HarmonyOS Sans SC'), url('HarmonyOSSansSC-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: local('HarmonyOS Sans SC Medium'), url('HarmonyOSSansSC-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: local('HarmonyOS Sans SC Bold'), url('HarmonyOSSansSC-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
