@@ -817,7 +817,10 @@ const baseMessages = [
       if (!ul) return;
       ul.innerHTML = '<li>' + messages[currentIndex] + '</li>';
       ul.style.transition = 'none';
-      ul.style.transform = 'translateX(100%)';
+      // 用容器宽度做起点（像素），而不是 100%（= 自身宽度）：
+      // 消息短的时候两者不相等，会导致文字从画面中间冒出来、左侧留空。
+      const _c = ul.parentElement;
+      ul.style.transform = 'translateX(' + ((_c ? _c.offsetWidth : 0) || 0) + 'px)';
     }
 
     function scrollMessage() {
@@ -844,7 +847,8 @@ const baseMessages = [
         isScrolling = false;
         currentIndex = (currentIndex + 1) % messages.length;
         updateMessageContent();
-        scrollTimeout = setTimeout(scrollMessage, PAUSE_DURATION);
+        // 播完立刻接上一条，避免中间 2 秒空白（短消息时尤其明显）
+        scrollTimeout = setTimeout(scrollMessage, 60);
       }, duration);
     }
 
@@ -863,7 +867,7 @@ const baseMessages = [
       const ul = document.getElementById('messageList');
       if (ul) {
         ul.style.transition = 'none';
-        ul.style.transform = 'translateX(100%)';
+        ul.style.transform = 'translateX(' + (ul.parentElement ? ul.parentElement.offsetWidth : 0) + 'px)';
       }
       resizeTimeout = setTimeout(function() {
         currentIndex = 0;

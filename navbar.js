@@ -481,6 +481,148 @@
     }
     .navbar-back-to-top svg { width: 20px; height: 20px; }
   }
+
+  /* ==========================================================================
+     ===== 右下角浮动按钮 v2：悬停不再是"按钮变宽" =====
+     旧做法靠 transition width / border-radius / padding + 内部 max-width 一起动，
+     三个动画速度不同步，图标会在动画过程中左右滑动、文字先挤出再回缩，看着"怪"。
+     新做法：按钮尺寸永远 48×48 不变形，悬停时在左侧浮出一个独立标签，
+     只过渡 opacity + transform（走合成层，不触发布局），因此不会抖。
+     ========================================================================== */
+  .navbar-help-btn,
+  .navbar-ai-btn,
+  .navbar-account-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    padding: 0;
+    overflow: visible;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+  }
+  .navbar-account-btn {
+    position: fixed;
+    bottom: 216px;
+    right: 30px;
+    background: #0ea5e9;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+    z-index: 10001;
+  }
+  .navbar-account-btn svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .navbar-help-btn svg,
+  .navbar-ai-btn svg {
+    position: relative;
+    z-index: 1;
+    transition: none;
+  }
+  /* 浮出标签：绝对定位在按钮左侧，只动 opacity/transform */
+  .navbar-help-btn .btn-text,
+  .navbar-ai-btn .btn-text,
+  .navbar-account-btn .btn-text {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translate(10px, -50%);
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(17, 24, 39, 0.92);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    max-width: none;
+    margin-left: 0;
+  }
+  .navbar-help-btn:hover,
+  .navbar-ai-btn:hover,
+  .navbar-account-btn:hover {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    padding: 0;
+    transform: translateY(-2px);
+  }
+  .navbar-help-btn:hover { background: #4b5563; }
+  .navbar-ai-btn:hover { background: #018a44; }
+  .navbar-account-btn:hover { background: #0284c7; }
+  .navbar-help-btn:hover .btn-text,
+  .navbar-ai-btn:hover .btn-text,
+  .navbar-account-btn:hover .btn-text {
+    opacity: 1;
+    transform: translate(0, -50%);
+    max-width: none;
+    margin-left: 0;
+  }
+  .navbar-help-btn:hover svg,
+  .navbar-ai-btn:hover svg { margin-right: 0; }
+  .navbar-help-btn:active,
+  .navbar-ai-btn:active,
+  .navbar-account-btn:active { transform: scale(0.95); }
+
+  /* 移动端保持"文字常显"的老样子（手指点不到浮出标签） */
+  @media (max-width: 768px) {
+    .navbar-help-btn,
+    .navbar-ai-btn,
+    .navbar-account-btn {
+      right: 22px;
+      width: auto;
+      min-width: 44px;
+      height: 44px;
+      border-radius: 22px;
+      padding: 0 12px;
+      transform: none;
+    }
+    .navbar-help-btn { bottom: 92px; }
+    .navbar-ai-btn { bottom: 146px; }
+    .navbar-account-btn { bottom: 200px; }
+    .navbar-help-btn .btn-text,
+    .navbar-ai-btn .btn-text,
+    .navbar-account-btn .btn-text {
+      position: static;
+      transform: none;
+      opacity: 1;
+      pointer-events: auto;
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      margin-left: 6px;
+      font-size: 15px;
+      line-height: normal;
+    }
+    .navbar-help-btn svg,
+    .navbar-ai-btn svg,
+    .navbar-account-btn svg { width: 22px; height: 22px; }
+    .navbar-help-btn:hover,
+    .navbar-ai-btn:hover,
+    .navbar-account-btn:hover {
+      width: auto;
+      border-radius: 22px;
+      padding: 0 12px;
+      transform: none;
+    }
+  }
   `;
 
   // 插入 viewport meta 到 head（确保生效）
@@ -616,6 +758,29 @@
       }
     }
   });
+
+  // ===== 账户入口（右下角；账户页自身不显示） =====
+  (function () {
+    const p = window.location.pathname.replace(/\/+$/, '');
+    if (/\/account$/.test(p) || /\/account\.html$/.test(p)) return;
+    if (document.getElementById('navbar-account-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'navbar-account-btn';
+    btn.className = 'navbar-account-btn';
+    btn.setAttribute('aria-label', '我的账户');
+    btn.innerHTML =
+      '<svg viewBox="0 0 24 24">' +
+      '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />' +
+      '<circle cx="12" cy="7" r="4" />' +
+      '</svg>' +
+      '<span class="btn-text">账户</span>';
+    document.body.appendChild(btn);
+
+    btn.addEventListener('click', function () {
+      window.location.href = '/account';
+    });
+  })();
 
   // ===== 高亮当前页面 =====
   const currentPage = location.pathname.split('/').pop() || 'index.html';
