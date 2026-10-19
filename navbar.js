@@ -21,6 +21,7 @@
         <a href="announcements">报站</a>
         <a href="progress-tracking">进度跟踪</a>
         <a href="tools">工具</a>
+        <a href="account">用户</a>
       </nav>
       <div class="navbar-time" id="timeDisplay">
         <span id="timeBarText"></span>

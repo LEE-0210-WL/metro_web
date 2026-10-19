@@ -313,7 +313,7 @@
       <div class="inner2">
         <textarea id="input" rows="1" placeholder="问点深圳地铁的事，比如：车公庙站能换乘哪些线路？"></textarea>
         <button class="attach" id="attachBtn"
-                title="图片理解与文件上传将在正式公开或二次内测时提供"
+                title="图片理解与文件上传即将上线"
                 aria-label="上传图片（暂未开放）">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -513,21 +513,21 @@
   function requireLogin() {
     innerEl.innerHTML = '';
     var row = el('div', 'msg ai'), line = el('div', 'line'), b = el('div', 'bubble');
-    b.appendChild(el('div', 'intro', '🔒 AI 助手正在内测中，仅限受邀用户使用。'));
+    b.appendChild(el('div', 'intro', '🔒 登录后即可使用 AI 助手。'));
     // 这一屏是站上最显眼的 AI 入口落地页（右下角浮动按钮直接跳这里），
-    // 所以未登录状态必须给出「怎么拿到名额」，否则就是一条死路。
+    // 所以未登录状态必须给出「怎么登录/注册」，否则就是一条死路。
     var note = el('div', 'intro-note');
-    note.innerHTML = '想参加？填一份 2 分钟的问卷，有机会拿到名额（<b>限 5 名 · 免费体验一个月</b>）。';
+    note.innerHTML = '注册免费，注册即送<b>每日免费额度</b>；已有账号直接登录即可对话。';
     b.appendChild(note);
     var chips = el('div', 'chips');
-    var apply = el('a', 'chip chip-primary', '📋 申请内测名额');
-    apply.href = 'survey';
-    var login = el('a', 'chip', '已有账号？前往登录');
-    login.href = 'account.html';
-    chips.appendChild(apply); chips.appendChild(login);
+    var login = el('a', 'chip chip-primary', '🔑 登录 / 注册');
+    login.href = 'account';
+    var pricing = el('a', 'chip', '查看套餐与价格');
+    pricing.href = 'account';
+    chips.appendChild(login); chips.appendChild(pricing);
     b.appendChild(chips);
     line.appendChild(b); row.appendChild(line); innerEl.appendChild(row);
-    convListEl.innerHTML = ''; convListEl.appendChild(el('div', 'empty', '内测期间需要受邀账号'));
+    convListEl.innerHTML = ''; convListEl.appendChild(el('div', 'empty', '登录后即可开始对话'));
     newBtn.disabled = true; sendBtn.disabled = true;
   }
   function loadMe() {
@@ -617,7 +617,7 @@
     b.appendChild(chips);
     // 默认页的功能说明：当前只支持文字对话
     var note = el('div', 'intro-note');
-    note.innerHTML = '当前版本<b>仅支持文字对话</b>。图片理解、文件上传等功能将在<b>正式公开</b>或<b>二次内测</b>时提供。';
+    note.innerHTML = '当前版本<b>仅支持文字对话</b>。图片理解、文件上传等功能即将上线。';
     b.appendChild(note);
     line.appendChild(b); row.appendChild(line); innerEl.appendChild(row);
     stickBottom = true; scrollDown(true);
@@ -847,7 +847,7 @@
 
   // 「+」按钮：图片理解 / 文件上传入口（功能尚未开放）
   $('attachBtn').onclick = function () {
-    toast('图片理解与文件上传还没开放～将在正式公开或二次内测时提供');
+    toast('图片理解与文件上传即将上线～');
   };
 
   sendBtn.onclick = function () { if (busy) stopGenerating(); else send(); };

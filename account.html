@@ -96,7 +96,7 @@
     <div class="msg" id="msg"></div>
     <div class="field">
       <label>账号</label>
-      <input type="text" id="account" autocomplete="username" placeholder="admin-01">
+      <input type="text" id="account" autocomplete="username" placeholder="邮箱或用户名">
     </div>
     <div class="field" id="nameField" style="display:none">
       <label>昵称</label>
@@ -104,10 +104,10 @@
     </div>
     <div class="field">
       <label>密码</label>
-      <input type="password" id="password" autocomplete="current-password" placeholder="至少 8 位">
+      <input type="password" id="password" autocomplete="current-password" placeholder="密码（注册需 12 位以上）">
     </div>
     <button class="btn-primary" id="submitBtn">登录</button>
-    <p class="hint" id="modeHint">内测阶段，请使用站长发放的账号登录（如 admin-01）。</p>
+    <p class="hint" id="modeHint">登录后即可使用 AI 助手、查看套餐与兑换记录。</p>
     <p class="hint" id="regLink" style="display:none">
       <a href="#" id="toRegister" style="color:#2563eb;text-decoration:none">还没有账号？点此注册</a>
     </p>
@@ -174,7 +174,7 @@
       <li>会员专属数据与工具<span class="tag">规划中</span></li>
     </ul>
     <p class="hint" style="text-align:left;margin-top:12px">
-      当前处于内测阶段，账号由站长手动开通。有任何问题可在站点留言反馈。
+      注册即可获得每日免费额度；使用兑换码或升级套餐可获得更多次数。
     </p>
   </div>
 </div>
@@ -187,7 +187,7 @@
   // 走本站同源代理（functions/api-auth），避免 *.workers.dev 在国内被 DNS 污染导致直连失败
   var API_BASE = '/api-auth';
   // 后端 REGISTER_ENABLED 打开后，把这行改成 true 即可显示注册入口
-  var REGISTER_OPEN = false;
+  var REGISTER_OPEN = true;
 
   // 后端未部署 / 请求失败时的兜底目录，保证价格表始终可见
   var FALLBACK_PLANS = [
@@ -289,14 +289,14 @@
       $('nameField').style.display = mode === 'register' ? '' : 'none';
       $('submitBtn').textContent = mode === 'register' ? '注册并登录' : '登录';
       $('modeHint').textContent = mode === 'register'
-        ? '注册后即赠送免费额度，可用兑换码升级套餐。'
-        : '内测阶段，请使用站长发放的账号登录（如 admin-01）。';
+        ? '注册免费，注册即送每日免费额度（密码至少 12 位）。'
+        : '登录后即可使用 AI 助手、查看套餐与兑换记录。';
       this.textContent = mode === 'register' ? '已有账号？点此登录' : '还没有账号？点此注册';
     };
   }
 
   $('submitBtn').onclick = function () {
-    // 账号既可以是内测账号名（admin-01），也可以是邮箱
+    // 账号既可以是邮箱，也可以是用户名
     var payload = { account: $('account').value.trim(), password: $('password').value };
     if (mode === 'register') {
       payload.username = $('username').value.trim();
