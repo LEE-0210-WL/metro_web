@@ -132,6 +132,27 @@
     </div>
   </div>
 
+  <div class="card" id="securityCard" style="display:none">
+    <h2>安全中心</h2>
+    <div class="kv"><span class="k">登录设备</span><span class="v" id="sessionCount">—</span></div>
+    <div id="sessionList" style="margin-top:6px"></div>
+    <div style="margin-top:12px">
+      <button class="linkbtn" id="revokeOthersBtn">退出其他所有设备</button>
+    </div>
+
+    <h2 style="margin-top:24px">修改密码</h2>
+    <div class="redeem">
+      <input type="password" id="oldPw" placeholder="当前密码" autocomplete="current-password">
+    </div>
+    <div class="redeem">
+      <input type="password" id="newPw" placeholder="新密码（至少 12 位）" autocomplete="new-password">
+    </div>
+    <div style="margin-top:4px"><button id="changePwBtn">修改密码</button></div>
+    <p class="hint" style="text-align:left;margin-top:10px">
+      修改密码后，其他设备会被强制下线。发现陌生设备请立即「退出其他所有设备」并改密。
+    </p>
+  </div>
+
   <div class="card" id="pricingCard">
     <h2>套餐与定价</h2>
     <div class="promo" id="promoBar" style="display:none">
@@ -182,7 +203,7 @@
   var currentPlan = 'free';
 
   var $ = function (id) { return document.getElementById(id); };
-  var loginCard = $('loginCard'), profileCard = $('profileCard');
+  var loginCard = $('loginCard'), profileCard = $('profileCard'), securityCard = $('securityCard');
 
   function showMsg(text, ok) {
     var m = $('msg');
@@ -309,6 +330,7 @@
       token = '';
       currentPlan = 'free';
       profileCard.style.display = 'none';
+      securityCard.style.display = 'none';
       loginCard.style.display = '';
       $('password').value = '';
       loadPlans();
@@ -334,6 +356,97 @@
       .catch(function () { toast('网络异常'); });
   };
 
+  // ---------- 安全中心：登录设备 + 改密 ----------
+  function shortUa(ua) {
+    var s = String(ua || '未知设备');
+    var m = s.match(/\(([^)]+)\)/);
+    var plat = m ? m[1].split(';').slice(-1)[0].trim() : '';
+    var br = /Edg\//.test(s) ? 'Edge' : /Chrome\//.test(s) ? 'Chrome' : /Firefox\//.test(s) ? 'Firefox' : /Safari\//.test(s) ? 'Safari' : '';
+    var out = [br, plat].filter(Boolean).join(' · ');
+    return out || s.slice(0, 40);
+  }
+
+  function fmtTime(t) {
+    if (!t) return '';
+    var s = String(t).replace(' ', 'T');
+    if (!/Z|[+\-]\d\d:?\d\d$/.test(s)) s += 'Z';
+    var d = new Date(s);
+    if (isNaN(d.getTime())) return String(t);
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return (d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  function renderSessions(items) {
+    var box = $('sessionList');
+    if (!items || !items.length) { box.innerHTML = '<p class="hint" style="text-align:left">暂无记录</p>'; return; }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var s = items[i];
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px">' +
+        '<span style="flex:1;min-width:0;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+        esc(shortUa(s.user_agent)) +
+        (s.current ? ' <span style="color:#15803d;font-weight:600">当前设备</span>' : '') +
+        '</span>' +
+        '<span style="color:#94a3b8;white-space:nowrap">' + esc(fmtTime(s.created_at)) + '</span>' +
+        (s.current ? '' : '<button class="linkbtn" data-token="' + esc(s.token_id) + '" style="color:#dc2626">下线</button>') +
+        '</div>';
+    }
+    box.innerHTML = html;
+    var btns = box.querySelectorAll('button[data-token]');
+    for (var k = 0; k < btns.length; k++) {
+      btns[k].onclick = function () {
+        var tk = this.getAttribute('data-token');
+        api('/auth/sessions/revoke', { method: 'POST', body: JSON.stringify({ token_id: tk }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { toast(d.ok ? '该设备已下线' : '操作失败'); loadSessions(); })
+          .catch(function () { toast('网络异常'); });
+      };
+    }
+  }
+
+  function loadSessions() {
+    api('/auth/sessions').then(function (r) { return r.json(); }).then(function (d) {
+      var items = (d && d.items) || [];
+      $('sessionCount').textContent = items.length + ' 台在线';
+      renderSessions(items);
+    }).catch(function () {});
+  }
+
+  $('revokeOthersBtn').onclick = function () {
+    api('/auth/sessions/revoke-others', { method: 'POST', body: '{}' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        toast(d.ok ? ('已下线 ' + d.revoked + ' 台设备') : '操作失败');
+        loadSessions();
+      })
+      .catch(function () { toast('网络异常'); });
+  };
+
+  $('changePwBtn').onclick = function () {
+    var oldPw = $('oldPw').value;
+    var newPw = $('newPw').value;
+    if (!oldPw || !newPw) return toast('请填写原密码和新密码');
+    if (newPw.length < 12) return toast('新密码至少 12 位');
+    var btn = this;
+    btn.disabled = true;
+    api('/auth/password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password: oldPw, new_password: newPw })
+    }).then(function (r) { return r.json().then(function (d) { return { status: r.status, body: d }; }); })
+      .then(function (res) {
+        btn.disabled = false;
+        if (res.body && res.body.ok) {
+          $('oldPw').value = '';
+          $('newPw').value = '';
+          toast('密码已修改，其他设备已下线');
+          loadSessions();
+        } else {
+          toast('修改失败：' + ((res.body && res.body.error) || '未知错误'));
+        }
+      })
+      .catch(function () { btn.disabled = false; toast('网络异常'); });
+  };
+
   function loadProfile() {
     api('/auth/me').then(function (r) {
       if (!r.ok) throw new Error('expired');
@@ -341,6 +454,8 @@
     }).then(function (d) {
       loginCard.style.display = 'none';
       profileCard.style.display = '';
+      securityCard.style.display = '';
+      loadSessions();
       $('who').textContent = d.user.username;
       $('vAccount').textContent = d.user.username;
 
