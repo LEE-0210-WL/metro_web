@@ -44,6 +44,11 @@ export async function onRequest(context) {
   if (auth) headers.set('Authorization', auth);
   headers.set('Origin', SITE_ORIGIN);
 
+  // 把 User-Agent 往后传：Worker 用它记录「登录设备」，
+  // 否则安全中心里所有设备都显示「未知设备」，有事也看不出是哪台。
+  const ua = request.headers.get('User-Agent');
+  if (ua) headers.set('User-Agent', ua);
+
   // 把真实客户端 IP 往后传：Worker 用它做登录失败限流，
   // 否则所有用户会共用 Pages Function 的同一个出口 IP。
   const ip = request.headers.get('CF-Connecting-IP');
