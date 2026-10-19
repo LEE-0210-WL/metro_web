@@ -151,6 +151,9 @@
     <p class="hint" style="text-align:left;margin-top:10px">
       修改密码后，其他设备会被强制下线。发现陌生设备请立即「退出其他所有设备」并改密。
     </p>
+
+    <h2 style="margin-top:24px">最近登录记录</h2>
+    <div id="loginHistory" style="margin-top:6px;font-size:13px;color:#64748b">加载中…</div>
   </div>
 
   <div class="card" id="pricingCard">
@@ -422,6 +425,28 @@
     }
   }
 
+  function renderLoginHistory(items) {
+    var box = $('loginHistory');
+    if (!items || !items.length) { box.innerHTML = '暂无记录'; return; }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var h = items[i];
+      var okTxt = h.ok ? '<span style="color:#15803d">成功</span>' : '<span style="color:#dc2626">失败</span>';
+      html += '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #f8fafc">' +
+        '<span style="width:44px">' + okTxt + '</span>' +
+        '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(shortUa(h.ua)) + '</span>' +
+        '<span style="color:#94a3b8;white-space:nowrap">' + (shortIp(h.ip) ? esc(shortIp(h.ip)) + ' · ' : '') + esc(fmtTime(h.created_at)) + '</span>' +
+        '</div>';
+    }
+    box.innerHTML = html;
+  }
+
+  function loadLoginHistory() {
+    api('/auth/login-history').then(function (r) { return r.json(); }).then(function (d) {
+      renderLoginHistory((d && d.items) || []);
+    }).catch(function () { $('loginHistory').textContent = '加载失败'; });
+  }
+
   function loadSessions() {
     api('/auth/sessions').then(function (r) { return r.json(); }).then(function (d) {
       var items = (d && d.items) || [];
@@ -474,6 +499,7 @@
       profileCard.style.display = '';
       securityCard.style.display = '';
       loadSessions();
+      loadLoginHistory();
       $('who').textContent = d.user.username;
       $('vAccount').textContent = d.user.username;
 
