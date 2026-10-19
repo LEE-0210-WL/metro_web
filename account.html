@@ -92,7 +92,7 @@
 
 <div class="wrap">
   <div class="card" id="loginCard">
-    <h2>登录</h2>
+    <h2 id="authTitle">登录</h2>
     <div class="msg" id="msg"></div>
     <div class="field">
       <label>账号</label>
@@ -288,6 +288,8 @@
       mode = mode === 'login' ? 'register' : 'login';
       $('nameField').style.display = mode === 'register' ? '' : 'none';
       $('submitBtn').textContent = mode === 'register' ? '注册并登录' : '登录';
+      var _t = document.getElementById('authTitle');
+      if (_t) _t.textContent = mode === 'register' ? '注册' : '登录';
       $('modeHint').textContent = mode === 'register'
         ? '注册免费，注册即送每日免费额度（密码至少 12 位）。'
         : '登录后即可使用 AI 助手、查看套餐与兑换记录。';
