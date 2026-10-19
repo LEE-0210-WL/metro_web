@@ -157,6 +157,20 @@
     </div>
   </div>
 
+  <div class="card" id="auditCard" hidden>
+    <div class="row-between" style="margin-bottom:12px">
+      <h2 style="margin:0">登录审计</h2>
+      <span class="muted" id="auditStamp"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>时间</th><th>账号</th><th>结果</th><th>原因</th><th>IP</th><th>设备</th></tr></thead>
+        <tbody id="auditBody"></tbody>
+      </table>
+    </div>
+    <p class="muted" style="margin:10px 0 0;font-size:12px">同一账号 15 分钟内失败 5 次会自动锁定 15 分钟。发现大量失败来自陌生 IP 时，建议改密。</p>
+  </div>
+
   <div class="err" id="globalErr" hidden></div>
 </main>
 
@@ -178,6 +192,7 @@
     $('loginCard').hidden = false;
     $('summary').hidden = true;
     $('tableCard').hidden = true;
+    var _ac = $('auditCard'); if (_ac) _ac.hidden = true;
     if (msg) { $('loginErr').hidden = false; $('loginErr').textContent = msg; }
   }
 
@@ -199,12 +214,38 @@
         return r.json();
       })
       .then(render)
-      .then(function () { loadBalance(); })
+      .then(function () { loadBalance(); loadAudit(); })
       .catch(function (e) {
         if (e && e.needLogin) showLogin(e.needLogin);
         else { $('globalErr').hidden = false; $('globalErr').textContent = '加载失败：' + (e && e.message || e); }
       })
       .finally(function () { $('refreshBtn').disabled = false; });
+  }
+
+  function loadAudit() {
+    api('/admin/login-audit?limit=40')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) return;
+        var items = d.items || [];
+        $('auditCard').hidden = false;
+        $('auditStamp').textContent = '最近 ' + items.length + ' 条';
+        $('auditBody').innerHTML = items.map(function (x) {
+          var okCell = x.ok ? '<span class="pill ok">成功</span>' : '<span class="pill danger">失败</span>';
+          var ua = String(x.ua || '');
+          var dev = /Windows NT/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'macOS' : /Android/.test(ua) ? 'Android' : /Linux/.test(ua) ? 'Linux' : (ua ? '其他' : '—');
+          var br = /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : '';
+          return '<tr>' +
+            '<td class="muted">' + esc(x.created_at) + '</td>' +
+            '<td><b>' + esc(x.account || '—') + '</b></td>' +
+            '<td>' + okCell + '</td>' +
+            '<td class="muted">' + esc(x.reason || '') + '</td>' +
+            '<td class="muted" style="font-size:12px">' + esc(String(x.ip || '').slice(0, 24)) + '</td>' +
+            '<td class="muted">' + esc([br, dev].filter(Boolean).join(' · ') || '—') + '</td>' +
+          '</tr>';
+        }).join('');
+      })
+      .catch(function () {});
   }
 
   function render(d) {
