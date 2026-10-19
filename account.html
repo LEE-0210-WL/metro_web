@@ -43,6 +43,38 @@
   .kv:last-child { border-bottom: none; }
   .kv .k { color: #6b7280; }
   .kv .v { font-weight: 500; color: #111827; }
+  /* 付款前必读：醒目提示块 */
+  .pay-notice {
+    margin: 16px 0 18px;
+    padding: 15px 17px;
+    background: #fff7ed;
+    border: 2px solid #fb923c;
+    border-radius: 12px;
+    text-align: left;
+  }
+  .pay-notice-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #9a3412;
+    letter-spacing: .3px;
+    margin-bottom: 9px;
+  }
+  .pay-notice ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #7c2d12;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .pay-notice li { margin-bottom: 5px; }
+  .pay-notice li:last-child { margin-bottom: 0; }
+  .pay-notice b { color: #b91c1c; font-weight: 700; }
+  @media (max-width: 768px) {
+    .pay-notice { padding: 12px 13px; }
+    .pay-notice-title { font-size: 16px; }
+    .pay-notice ul { font-size: 13px; line-height: 1.7; }
+  }
+
   .redeem { display: flex; gap: 8px; margin-top: 14px; }
   .redeem input { flex: 1; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; }
   .redeem button { padding: 8px 16px; background: #111827; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; }
@@ -162,6 +194,17 @@
       <span class="pill" id="promoPill">特惠</span>
       <span id="promoText"></span>
     </div>
+
+    <div class="pay-notice">
+      <div class="pay-notice-title">⚠️ 付款前必读：请勿点错档位</div>
+      <ul>
+        <li><b>一次性购买，不是按月订阅。</b>爱发电页面显示的「/月」是平台固定文案，<b>请以套餐名括号里的天数为准</b>（例：「体验版（7天）」= 7 天有效）。</li>
+        <li><b>付款前先核对档位。</b>点错档位需联系站长人工处理，期间会员可能无法自动开通。</li>
+        <li><b>后台会核对订单金额与档位是否一致。</b>想用低档价格开通高档、或买了高档却按低档记录的，一律以<b>实际支付金额对应的档位</b>为准，差额需补足或按实付档位发放。</li>
+        <li><b>付款时务必在「备注」填写本站注册邮箱或用户名</b>，系统据此自动开通；没填会变成「待认领」，只能人工补。</li>
+      </ul>
+    </div>
+
     <div class="plans" id="planGrid"></div>
     <p class="buynote" id="buyNote">购买方式：联系站长获取兑换码，在上方「兑换码」处填入即可立即到账。</p>
   </div>
