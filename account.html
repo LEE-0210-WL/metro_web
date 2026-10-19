@@ -358,12 +358,30 @@
 
   // ---------- 安全中心：登录设备 + 改密 ----------
   function shortUa(ua) {
-    var s = String(ua || '未知设备');
-    var m = s.match(/\(([^)]+)\)/);
-    var plat = m ? m[1].split(';').slice(-1)[0].trim() : '';
-    var br = /Edg\//.test(s) ? 'Edge' : /Chrome\//.test(s) ? 'Chrome' : /Firefox\//.test(s) ? 'Firefox' : /Safari\//.test(s) ? 'Safari' : '';
-    var out = [br, plat].filter(Boolean).join(' · ');
-    return out || s.slice(0, 40);
+    var s = String(ua || '');
+    if (!s) return '未知设备';
+    var br = /Edg\//.test(s) ? 'Edge'
+      : /OPR\//.test(s) ? 'Opera'
+      : /Firefox\//.test(s) ? 'Firefox'
+      : /Chrome\//.test(s) ? 'Chrome'
+      : /Safari\//.test(s) ? 'Safari'
+      : /curl\//i.test(s) ? 'curl'
+      : '浏览器';
+    var os = /Windows NT 1[01]/.test(s) ? 'Windows 10/11'
+      : /Windows NT/.test(s) ? 'Windows'
+      : /Android/.test(s) ? 'Android'
+      : /iPhone|iPad|iPod/.test(s) ? 'iOS'
+      : /Mac OS X/.test(s) ? 'macOS'
+      : /Linux/.test(s) ? 'Linux'
+      : '';
+    return [br, os].filter(Boolean).join(' · ') || '未知设备';
+  }
+
+  function shortIp(ip) {
+    var s = String(ip || '');
+    if (!s || s === 'unknown') return '';
+    if (s.indexOf(':') >= 0) return s.length > 18 ? s.slice(0, 18) + '…' : s;
+    return s;
   }
 
   function fmtTime(t) {
@@ -387,7 +405,7 @@
         esc(shortUa(s.user_agent)) +
         (s.current ? ' <span style="color:#15803d;font-weight:600">当前设备</span>' : '') +
         '</span>' +
-        '<span style="color:#94a3b8;white-space:nowrap">' + esc(fmtTime(s.created_at)) + '</span>' +
+        '<span style="color:#94a3b8;white-space:nowrap">' + (shortIp(s.ip) ? esc(shortIp(s.ip)) + ' · ' : '') + esc(fmtTime(s.created_at)) + '</span>' +
         (s.current ? '' : '<button class="linkbtn" data-token="' + esc(s.token_id) + '" style="color:#dc2626">下线</button>') +
         '</div>';
     }
