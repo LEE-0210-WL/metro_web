@@ -44,6 +44,32 @@
   .kv .k { color: #6b7280; }
   .kv .v { font-weight: 500; color: #111827; }
   /* 付款前必读：醒目提示块 */
+  /* 套餐卡上的"立即购买" */
+  .buy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 9px 0;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .buy-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .buy-btn:active { transform: scale(.98); }
+  .buy-hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+    text-align: center;
+  }
+  .buy-hint b { color: #b91c1c; }
+
   .pay-notice {
     margin: 16px 0 18px;
     padding: 15px 17px;
@@ -243,6 +269,16 @@
   ];
   var FALLBACK_PROMO = { active:true, name:'上线特惠', note:'所有付费套餐多送 30% 次数' };
 
+  // 爱发电方案 ID（每档对应一个；购买页 https://afdian.com/order/create?plan_id=xxx）
+  var AFDIAN_PLAN_IDS = {
+    week:     '08b9d05ecb0511f1b36f5254001e7c00',
+    biweek:   '0af5f4f6cb0511f186e75254001e7c00',
+    month:    '0d3a3088cb0511f1b8da5254001e7c00',
+    halfyear: '068b4830cb0511f1b19b52540025c377',
+    year:     '04e35ab8cb0511f1a2f35254001e7c00'
+  };
+  var AFDIAN_HOME = 'https://afdian.com/a/ZJXTD';
+
   var TOKEN_KEY = 'metro_token';
   var token = localStorage.getItem(TOKEN_KEY) || '';
   var mode = 'login';
@@ -309,9 +345,33 @@
         quotaLine +
         '<div class="meta">' + (p.reset === 'daily' ? '每日重置 · ' + p.quota + ' 次/天' : esc(p.desc || (p.days + ' 天内有效'))) + '</div>' +
         '<div class="unit">' + unit + '</div>' +
+        (p.price > 0
+          ? '<button class="buy-btn" data-plan="' + p.key + '">立即购买</button>' +
+            '<div class="buy-hint">爱发电支付 · 赞助期限请选<b>「1 个月」</b></div>'
+          : '') +
         '</div>';
     }
     $('planGrid').innerHTML = html;
+
+    // 购买：未登录先提示登录（认领需要账号），已登录开新窗口到爱发电付款页
+    var buyBtns = $('planGrid').querySelectorAll('.buy-btn');
+    for (var bi = 0; bi < buyBtns.length; bi++) {
+      buyBtns[bi].onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var key = this.getAttribute('data-plan');
+        var pid = AFDIAN_PLAN_IDS[key];
+        if (!pid) { toast('该档位暂未配置支付链接'); return; }
+        if (!token) {
+          showMsg('购买前请先登录或注册账号（用于自动开通会员）');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        var url = 'https://afdian.com/order/create?plan_id=' + encodeURIComponent(pid);
+        window.open(url, '_blank', 'noopener');
+        toast('已打开爱发电付款页；付款时请在「留言」填写你的账号名');
+      };
+    }
   }
 
   function loadPlans() {
