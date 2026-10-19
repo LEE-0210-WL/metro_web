@@ -581,6 +581,12 @@
   .navbar-ai-btn:active,
   .navbar-account-btn:active { transform: scale(0.95); }
 
+  /* ===== 首页：不显示"回到顶部"（页面不够长，它永远不会出现），
+     其余三个按钮整体下移一格补位，避免右下角留一块空 ===== */
+  body.no-backtop .navbar-help-btn { bottom: 32px; }
+  body.no-backtop .navbar-ai-btn { bottom: 94px; }
+  body.no-backtop .navbar-account-btn { bottom: 156px; }
+
   /* 移动端保持"文字常显"的老样子（手指点不到浮出标签） */
   @media (max-width: 768px) {
     .navbar-help-btn,
@@ -597,6 +603,9 @@
     .navbar-help-btn { bottom: 92px; }
     .navbar-ai-btn { bottom: 146px; }
     .navbar-account-btn { bottom: 200px; }
+    body.no-backtop .navbar-help-btn { bottom: 58px; }
+    body.no-backtop .navbar-ai-btn { bottom: 112px; }
+    body.no-backtop .navbar-account-btn { bottom: 166px; }
     .navbar-help-btn .btn-text,
     .navbar-ai-btn .btn-text,
     .navbar-account-btn .btn-text {
@@ -792,7 +801,15 @@
   });
 
   // ===== 返回顶部按钮 =====
+  // 首页内容不够长，滚动量到不了阈值（1000px），按钮永远不会出现；
+  // 那就干脆不创建，并让其余浮动按钮下移补位（对应 CSS 里的 body.no-backtop）。
   (function () {
+    const p = window.location.pathname.replace(/\/+$/, '');
+    const isHome = p === '' || /\/index$/.test(p) || /\/index\.html$/.test(p);
+    if (isHome) {
+      document.body.classList.add('no-backtop');
+      return;
+    }
     if (document.getElementById('navbar-back-to-top')) return;
     const btn = document.createElement('button');
     btn.id = 'navbar-back-to-top';
