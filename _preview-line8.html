@@ -1,0 +1,552 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>8号线百科 - 走进新天地·Railway</title>
+<script src="all-lines-enhanced.js"></script>
+  <link rel="stylesheet" href="line-page.css">
+<style>
+/* —— 预览模式：跳过加载动画、不等待字体 —— */
+#loadingOverlay{display:none!important}
+body{opacity:1!important}
+</style>
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <!-- 加载动画 -->
+  <div class="line-loading-overlay" id="loadingOverlay">
+    <div class="line-loading-container" id="loadingContainer">
+      <div class="line-loading-progress-wrapper" id="progressWrapper">
+        <div class="line-loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="line-loading-percent" id="loadingPercent">0%</div>
+    </div>
+  </div>
+
+  <!-- 主内容区域 -->
+  <main class="container">
+    <!-- 线路标题（动态渲染） -->
+    <div class="line-header" id="lineHeader">
+      <div class="line-number" id="lineNumber">1</div>
+      <div class="line-info">
+        <div class="line-name" id="lineName">加载中...</div>
+        <div class="line-alias" id="lineAlias"></div>
+      </div>
+    </div>
+
+    <a href="index" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      返回首页
+    </a>
+
+    <!-- 线路走向图 -->
+    <div class="route-map-section" id="routeMapSection" style="display:none;">
+      <div class="route-map-container">
+        <img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false">
+      </div>
+      <div class="route-map-caption" id="routeMapCaption"></div>
+    </div>
+
+    <!-- 百科内容 -->
+    <article class="wiki-content">
+      <h2>历史沿革已重写：事实分级标注（🟢 官方 🟡 媒体 🟠 待核），来源见文末。错误反馈请到「建议」页。</h2>
+      <p><strong>最新一次更新：v2.0 --- 2026/10/19  23:50</strong></p>
+      <p><strong>更新说明</strong>：v2.0 --- 历史沿革重写为完整规划建设史，全文标注来源与可信度，新增「资料来源」</p>
+      <p><strong>历史更新</strong>：</p>
+      <p><strong>v1.5.5</strong>  --- 完善8号线百科内容</p>
+      <p><strong>v1.5</strong>  --- 初步制作完成8号线百科</p>
+      <p><strong>v1.0</strong>  --- 8号线百科模板已创建</p>
+
+      <h2>基本信息</h2>
+      <div class="data-grid" id="basicInfoGrid">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>线路走向与站点设置（摘自百度）</h2>
+      <p id="lineRouteDesc">加载中...</p>
+
+      <h2>站点列表（<span id="stationCount">0</span>站）</h2>
+      <div class="station-list" id="stationList">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>换乘信息（<span id="transferCount">0</span>座换乘站）</h2>
+      <div class="transfer-grid" id="transferContainer">
+        <!-- JS动态填充 -->
+      </div>
+
+      <h2>车辆信息</h2>
+      <div class="train-grid" id="trainGrid">
+        <!-- JS动态填充 -->
+      </div>
+
+<h2>历史沿革</h2>
+      <h3>一、那天早上的盐田</h3>
+      <p>2020 年 10 月 28 日，上午。</p>
+      <p>盐田区政府广场上站满了人。开通仪式就设在海山站外面——这个位置选得挺讲究，站在广场上抬头就能看见地铁口的玻璃棚，一公里范围内是区政府办事大厅、海湾里大厦、市第七人民医院、盐田中央公园、区图书馆<sup>[1]</sup>。盐田的中心，全在这一公里里。</p>
+      <p>住在沙头角的李先生来得早。他是来试乘首班车的<sup>[1]</sup>。</p>
+      <p>对盐田人来说，这件事的荒诞之处在于：深圳地铁 2004 年就通车了，到 2020 年已经修了十几年，线路图上一片密密麻麻——<strong>但从来没有一根线，通到盐田。</strong></p>
+      <p>盐田有海，有港口，有梧桐山，有大小梅沙。深圳人年年去，年年堵在路上。所以当 8 号线把「去大梅沙」这件事从「开车两小时」变成「坐地铁四十分钟」的时候，它改的不只是一条交通走廊。</p>
+      <p>那天，深圳地铁一口气开了四条新线（段）：2 号线三期、3 号线三期、4 号线三期、8 号线一期。深圳的轨道线路总数到了 11 条，运营里程破了 400 公里<sup>[1]</sup>。</p>
+      <p>深圳晚报第二天的标题是「四线齐发」<sup>[1]</sup>。</p>
+      <p>但对盐田来说，只有一条是它的。</p>
+      <h3>二、最早的 8 号线，跟现在完全不是一回事</h3>
+      <p>翻回 2005 年。</p>
+      <p>那一年，8 号线被写进《深圳市整体交通规划》的第 002 章，「深圳市城市轨道交通建设规划方案图」——听着很正式，实际上就是<strong>图纸上的一条远期线</strong>。沿线人不够，什么时候开工？没时间表<sup>[13]</sup>。</p>
+      <p>到 2009 年，事情往前挪了一步：8 号线进了《深圳市城市轨道交通建设规划（2011～2020）》，原计划 2011～2012 年启动<sup>[13]</sup>。</p>
+      <p>这一年它的走向是这样的：</p>
+      <pre>
+      国贸 → 仙湖 → 弘法寺 → 梧桐山 → 大梅沙 → 小梅沙 → 东部华侨城
+      </pre>
+      <p>看出问题没有——<strong>起点是国贸，终点是小梅沙</strong><sup>[13]</sup>。</p>
+      <p>这是一条<strong>旅游专线</strong>的规划思路：从罗湖老城区出发，把仙湖植物园、弘法寺、梧桐山、大小梅沙、东部华侨城串成一串<sup>[13]</sup>。说白了，是一条「节假日拉游客去海边」的线。</p>
+      <p>这个思路在当时不算离谱。深圳东部确实需要一个轨道通道，而沿线日常通勤人口密度又不足以支撑一条通勤线——先服务旅游，逻辑上是通的。</p>
+      <p>问题是，它一躺就是六年。</p>
+      <h3>三、六年：架在空中，还是钻到地下</h3>
+      <p>2009 到 2015，8 号线基本没动。</p>
+      <p>原因不是没钱，也不是没地，是<strong>吵架</strong>——这条线到底用什么制式。</p>
+      <p>磁悬浮，还是轮轨。</p>
+      <p>这事儿在轨交圈里讨论了很多年，也吵了很多年。表面上是技术选型，实际上牵着三件事：</p>
+      <p><strong>第一，钱。</strong> 磁悬浮的造价和维护成本跟轮轨不是一个量级。国内真正跑起来的磁浮线，掰着手指头数得过来，而且大多是短距离、示范性质。</p>
+      <p><strong>第二，制式兼容。</strong> 这是最要命的一条。用磁浮，它就是一条<strong>孤线</strong>——不能跟任何既有线路共线、共车、共信号、共车辆段。深圳地铁那套 A 型车轮轨体系，它一个都接不上。</p>
+      <p><strong>第三，高架。</strong> 磁浮方案意味着一条高架线从盐田的山海之间穿过去。<strong>这个方案遭到了市民反对</strong><sup>[13][14]</sup>。</p>
+      <p>前两条是工程账，第三条是民意账。三笔账一算，2015 年，深圳做了决定：</p>
+      <p><strong>弃用磁悬浮，改用轮轨</strong><sup>[5]</sup>。</p>
+      <h3>四、2015：十年规划，说改就改</h3>
+      <p>决定制式的同时，规划也一起改了。改得还挺狠。</p>
+      <p>2009 年的方案，起点是国贸，终点是小梅沙，用磁悬浮、走高架，性质是一条独立的东部旅游专线。</p>
+      <p>2015 年的定案，起点改到莲塘，终点改到盐田路，制式换成轮轨、以地下为主，而且<strong>与 2 号线贯通运营</strong>——性质从「独立线路」变成了「2 号线的东延通道」<sup>[5][13]</sup>。</p>
+      <p>这不是微调，这是<strong>推倒重来</strong>。</p>
+      <p>从「国贸到小梅沙的独立高架磁浮旅游线」，变成「从莲塘接出去、跟 2 号线跑同一套车的轮轨段」——功能定位变了，技术制式变了，起终点变了，连"这条线是干嘛的"都变了。</p>
+      <p>一个从 2005 年就在图纸上的项目，前期工作做了十年，最后等于重新做了一遍。</p>
+      <p>2015 年 12 月 28 日，8 号线一期开工<sup>[6]</sup>。中新网当时的报道标题是「深圳地铁8号线动工 预计在2020年通车」<sup>[6]</sup>。</p>
+      <p>回头看，这个「2020 年」估得挺准。</p>
+      <h3>五、车迷说的那六道关</h3>
+      <p>深圳地铁修一条线，有几道固定关卡。轨交圈开玩笑说这是「六道关」，一道一道过：</p>
+      <pre>
+      洞通 → 轨通 → 电通 → 热滑 → 试运行 → 开通
+      </pre>
+      <p>洞通：隧道全挖通了。 轨通：轨道全铺完了。 电通：供电到位了，全线带电。 热滑：列车自己上轨道跑一圈，检查弓网、限界、道岔。 试运行：按图跑车，模拟正式运营。 开通：卖票。</p>
+      <p>8 号线一期的节点，基本就是按这个节奏走的：</p>
+      <pre>
+      2015-12-28   开工
+      2016-06-16   主体结构工程开工
+      2019-08-12   隧道全部贯通        ← 洞通
+      2019-12-22   首列车运抵车辆段
+      2020-05-09   电通
+      2020-06-12   热滑完成，进入综合联调、试运行
+      2020-10-28   开通
+      </pre>
+      <p><sup>[13]</sup></p>
+      <p>一期 6 个站，从梧桐山南（跟 2 号线三期的莲塘站相接）到盐田路<sup>[1]</sup>。</p>
+      <h3>六、二号线还是八号线？</h3>
+      <p>这里得岔开说一件事，因为它是 8 号线最容易被搞混、也最容易被圈内人聊起来的地方：</p>
+      <p><strong>2 号线和 8 号线，到底算一条线还是两条线？</strong></p>
+      <p>从乘客的角度看，它就是一条线：同一列车、同一套信号，从赤湾一路坐到盐田路，中途<strong>不用下车换乘</strong><sup>[1]</sup>。你在 2 号线的站台上车，车开着开着就开到 8 号线的站了。</p>
+      <p>从运营的角度看，它是两条线：两个编号、两张线路图、两套客流统计、两个首末班时间表。</p>
+      <p>你说它是一条线，它有两个名字。你说它是两条线，它一趟车就到了。</p>
+      <p>——这种「薛定谔的线路」，在中国地铁里确实不多见。所以每年都有人在论坛里问，也每年都有人吵。</p>
+      <p>吵归吵，这个设计本身是有道理的：把东部的长距离客流，直接挂到 2 号线这条既有的、已经成熟的东西向干线上，不用另建车辆段、不用另设控制中心、乘客不用换乘。<strong>用一条线的钱，办了两条线的事。</strong></p>
+      <p>代价也有——车不够用。所以开通当天，2/8 号线就上了「大小交路套跑」：</p>
+      <p>往赤湾方向，莲塘到湾厦这一段早高峰 <strong>2 分 35 秒</strong>一班；湾厦往西到赤湾、以及盐田路到莲塘这两头，5 分 10 秒一班。往盐田路方向反过来：湾厦到莲塘 3 分钟，两头 6 分钟。平峰期全线 5 分 45 秒<sup>[1]</sup>。</p>
+      <p>一句话解释：<strong>中间那段车次密，两头那段车次稀。</strong> 越靠近市中心，车越多；越往海边走，车越少。</p>
+      <p>车辆就那么多，这么排，是拿有限的车换整体效率。</p>
+      <h3>七、2.5 万人涌向一个以前没有地铁的海滩</h3>
+      <p>一期通到盐田路。二期接着往东，修到<strong>小梅沙</strong><sup>[3][4]</sup>。</p>
+      <p>二期 2019 年 8 月 13 日开工<sup>[13]</sup>，2023 年一整年基本都在收尾（试运行阶段见 <sup>[11]</sup>）：</p>
+      <pre>
+      2023-04-28   全线轨通
+      2023-05-30   电通，全线进入「带电状态」
+      2023-06      接触网冷滑
+      2023-07-16   热滑成功
+      2023-08-26   与既有线贯通升级完成
+      2023-08-28   通过单位工程验收
+      2023-09      进入试运行
+      2023-12-04~07 初期运营前安全评估
+      2023-12-24   大梅沙站「三权移交」
+      2023-12-27   开通
+      </pre>
+      <p><sup>[13]</sup></p>
+      <p>然后就是那个数字了。</p>
+      <p>读特（深圳特区报）当晚的报道：</p>
+      <blockquote><p>12 月 27 日，深圳地铁 8 号线二期正式开通初期运营，深圳人「乘着地铁去大小梅沙看海」的梦想成为现实，<strong>这也是深圳首条直达海滨大小梅沙的地铁线路</strong>。当晚，读特融媒体记者了解到，开通首日，大梅沙站迎客超过 25000 人次。</p></blockquote>
+      <blockquote><p>根据深圳地铁官方数据统计，截至 20 时 00 分，<strong>大梅沙站进出站客流合计 25211</strong>，车站客流稳定可控。</p></blockquote>
+      <p><sup>[7]</sup></p>
+      <p>两万五千多人。一个以前只能靠自驾、公交、或者干脆不去的地方，第一天就来了两万五千多人。</p>
+      <p>报道里还提了一句「车站客流稳定可控」——这五个字在运营方嘴里，一般是硬撑着说的。但它至少说明一件事：<strong>这条线撑住了。</strong></p>
+      <p>后来这条线有了个名字，叫「山海专列」<sup>[7]</sup>。</p>
+      <h3>八、再往东：溪涌，和「下一站，大鹏」</h3>
+      <p>三期从小梅沙继续往东，到<strong>溪涌</strong>。</p>
+      <pre>
+      2024-11-27   小梅沙—溪涌区间盾构双线贯通（左线 2.99 km）
+      2025-04-07   溪涌车辆基地主体结构全面封顶
+      2025-06-12   正线长轨通
+      2025-06-24   35kV 电通
+      2025-07-28   完成全线低速、中速、高速热滑
+      2025-09-09   通过项目工程验收，进入空载试运行
+      2025-11-01   与既有 2&amp;8 号线贯通，按时刻表试运行
+      2025-12-11   通过竣工验收
+      2025-12-19   新线试乘
+      2025-12-28   开通
+      </pre>
+      <p><sup>[13]</sup></p>
+      <p>2025 年 12 月 28 日，8 号线三期开通<sup>[9]</sup>。</p>
+      <p>这天还有个小插曲，挺能说明问题：<strong>大鹏新区的文旅部门同步动了起来。</strong></p>
+      <p>深圳新闻网当天的报道说，大鹏新区旅游发展和文化体育局正式启动「下一站，大鹏」旅游推广行动，搞了一整套「六个一」——主题专列、导览地图、漫游护照、优惠联盟、文旅活动、文旅推介官<sup>[10]</sup>。</p>
+      <p><strong>地铁还没通车，旅游方案已经写好了。</strong></p>
+      <p>一条线通到哪儿，那儿的生意就跟着重新规划一遍。这大概是「轨道改变城市」最直白的样子。</p>
+      <h3>九、通车之后，这条线还在变</h3>
+      <p>线路修好只是开始，运营还在继续往前磨。</p>
+      <h4>2024 年 1 月 27 日：晨曦特快</h4>
+      <p>休息日早上 <strong>5:30</strong>，从<strong>湾厦站</strong>始发，<strong>越行 25 站</strong>，中间只停 9 个：后海、世界之窗、景田、福田、岗厦北、大剧院、黄贝岭、莲塘、海山。</p>
+      <p><strong>1 小时直达大梅沙，比普通车省 25 分钟。</strong></p>
+      <p><sup>[13]</sup></p>
+      <p>车还是那些车，轨道还是那些轨道，只是<strong>把停站砍掉</strong>——25 分钟就这么抠出来了。运营层面的提速，成本最低的一种。</p>
+      <h4>2024 年 5 月 1 日：大站快车</h4>
+      <p>在「晨曦特快」的基础上，又试了「大站快车」，同时优化周末和节假日的运能<sup>[13]</sup>。</p>
+      <p>从「站站停」到「准直达」，再到「大站快车」——一条已经通车的线路，还在给自己找更好的跑法。</p>
+      <h3>十、二十年，两次推倒</h3>
+      <p>现在回头看 8 号线这二十年，能看出两个转折点：</p>
+      <p><strong>第一次在 2009—2015 年。</strong> 一条「去海边玩的磁浮高架线」，被改成「2 号线的东延轮轨段」。改的是身份。</p>
+      <p><strong>第二次在 2015 年之后。</strong> 改完之后，它不再是深圳东部的「终点」，而是 2 号线的一部分——通到盐田路，通到小梅沙，通到溪涌。改的是边界。</p>
+      <p>有意思的是，这两次改动都不是因为技术不行，而是因为<strong>原来那个方案，不是这个城市真正需要的。</strong></p>
+      <p>一个从国贸去小梅沙玩的游客，和一个从盐田去福田上班的人，需要的不是同一条线。深圳最后选了后者。</p>
+      <h3>十一、一点题外话</h3>
+      <p>深圳这些年修了很多线。有的线是「补短板」——哪儿人多往哪儿修；有的线是「抢时间」——先把骨架搭起来，慢慢填肉。</p>
+      <p>8 号线两样都占了一点。它先是被当成一条「去看海的线」，后来又变成一条「上班的路」，最后变成一条「把东部串起来的通道」。</p>
+      <p>一个城市对「远」的定义，是靠这些线一段一段改写的。</p>
+      <p>二十年前，盐田在深圳人的心理地图上，是个<strong>要特意去一趟</strong>的地方。你得挑个周末，早上出门，算好回程堵车的时间。</p>
+      <p>现在它只是 2 号线多坐几站。</p>
+      <p>有人拍过一张照片，天没亮，湾厦站的站台上已经有人在等 5:30 那班车。他们要去大梅沙看日出。</p>
+      <p>这件事在二十年前听起来有点荒唐——为了看个日出，跑那么远。</p>
+      <p>现在不荒唐了。<strong>因为「那么远」这四个字，已经被 4 万多米的钢轨重新定义了一遍。</strong></p>
+      <h3>资料来源</h3>
+      <p>正文中上标 [n] 对应下列来源。可信度分级：🟢 官方/一手　🟡 权威媒体　🟠 二手待核。</p>
+      <p><strong>[1]</strong> 深圳晚报（人民日报客户端转载）《四线齐发！盐田、观澜、莲塘、福保片区正式进入"地铁时代"》　<span style="color:var(--c-text-3)">🟡 权威媒体</span></p>
+      <p><strong>[2]</strong> 深圳政府门户《地铁8号线一期开通，盐田跨入地铁时代》　<span style="color:var(--c-text-3)">🟢 官方</span></p>
+      <p><strong>[3]</strong> 深圳市人大 szrd.gov.cn《8号线一期有望东延至小梅沙》　<span style="color:var(--c-text-3)">🟢 官方</span></p>
+      <p><strong>[4]</strong> 深圳政府门户《年底可以坐地铁直通大小梅沙了》　<span style="color:var(--c-text-3)">🟢 官方</span></p>
+      <p><strong>[5]</strong> 央广网 2015-08-24《深圳地铁8号线弃用磁悬浮 一期工程年底前开工》　<span style="color:var(--c-text-3)">🟡 权威媒体（<strong>原页已 404</strong>，仅存搜索摘要）</span></p>
+      <p><strong>[6]</strong> 中国新闻网 2015-12-28《深圳地铁8号线动工 预计在2020年通车》　<span style="color:var(--c-text-3)">🟡 权威媒体</span></p>
+      <p><strong>[7]</strong> 读特（深圳特区报）《仪式感满满！市民纷纷打卡"山海专列"》　<span style="color:var(--c-text-3)">🟡 权威媒体（引深圳地铁官方数据）</span></p>
+      <p><strong>[8]</strong> 光明网《深圳地铁8号线二期正式开通！》（2023-12-27）　<span style="color:var(--c-text-3)">🟡 权威媒体</span></p>
+      <p><strong>[9]</strong> 科技日报《深圳市轨道交通8号线三期工程开通运营》（2025-12-29）　<span style="color:var(--c-text-3)">🟡 权威媒体</span></p>
+      <p><strong>[10]</strong> 深圳新闻网《下一站，大鹏！地铁"开"进山海间》　<span style="color:var(--c-text-3)">🟡 权威媒体</span></p>
+      <p><strong>[11]</strong> 城市轨道交通网《运营管理｜深圳地铁8号线二期达到试运行条件》　<span style="color:var(--c-text-3)">🟡 行业媒体</span></p>
+      <p><strong>[12]</strong> 深铁官网 2023 年 12 月新闻　<span style="color:var(--c-text-3)">🟡 <strong>单源，需交叉</strong></span></p>
+      <p><strong>[13]</strong> 百度百科「深圳地铁8号线」历史沿革　<span style="color:var(--c-text-3)">🟠 <strong>二手，待官方文件</strong></span></p>
+      <p><strong>[14]</strong> 深圳商报 2016-01-04 A03「解读地铁新线路」报纸原件　<span style="color:var(--c-text-3)">🟡 纸媒原件</span></p>
+      <p style="color:var(--c-text-3);font-size:var(--fs-sm)">说明：深铁官网内容新旧混杂，官网单独出现的内容只记 🟡，需与政府文件或权威媒体交叉后才升 🟢；磁悬浮之争的决策文件原文尚未找到，目前依据央广网报道（原页已 404）与深圳商报 2016-01-04 报纸原件交叉印证。</p>
+
+<p>深圳地铁8号线采用<strong>A型列车</strong>，6节编组，构造速度<strong>80千米/小时</strong>。列车由中车长客、中车株机等厂家生产，电机传动方式为VVVF交流传动。8号线与2号线共用列车，采用共同导引标识，车站指示牌显示“2号线往赤湾方向”、“8号线往小梅沙方向”。</p>
+
+<h2>特色与亮点</h2>
+      <p><strong>山海专列：</strong>8号线途经滨海栈道、盐田港、大梅沙、小梅沙等景点，被誉为“山海专列”，是深圳首条直达海边的地铁线路。</p>
+      <p><strong>一站一景：</strong>全线采用“一站一景”创新理念，结合盐田区特色，以海、山、集装箱等为元素打造各站主题：梧桐山南站“凤舞”、沙头角站“忆梦”、海山站“竹韵”、盐田港西站“游港”、深外高中站“临山”、盐田路站“探海”。三期溪涌站以“阳光+”为核心理念，将“生态绿谷”引入地下空间。</p>
+      <p><strong>运营模式创新：</strong>开行“晨曦特快”准直达车和大站快车，其中“晨曦特快”在每个休息日5:30从湾厦始发，1小时直达大梅沙，比普通列车节约25分钟，方便市民“坐地铁去海边看日出”。</p>
+      <p><strong>贯通运营：</strong>与2号线贯通运营，实现了从南山赤湾到盐田小梅沙的全程直达，是深圳最长的东西向地铁通道之一。</p>
+
+<p>三期工程已于2025年12月28日开通，延伸至溪涌站。线路未来可能继续东延或与其他线路形成更完善的换乘网络。</p>
+    </article>
+
+    <!-- 相关链接 -->
+    <div class="related-links">
+      <h3>相关链接</h3>
+      <div class="related-links-grid" id="relatedLinks">
+        <!-- JS动态填充 -->
+      </div>
+    </div>
+  </main>
+
+
+  <script>
+    // ==================== 配置：只需改这两行就能复用到其他线路 ====================
+    const LINE_ID = "8";
+    const ROUTE_MAP_IMAGE = ""; // 线路走向图文件名，如 "3号线线路图.jpg"，留空则隐藏
+    // =========================================================================
+
+    // 获取线路数据
+    const lineData = getEnhancedLineData(LINE_ID);
+    if (!lineData) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#666">线路数据加载失败，请检查 all-lines-enhanced.js 是否正确加载</div>';
+      throw new Error("Line data not found for ID: " + LINE_ID);
+    }
+
+    const COLOR = lineData.color || "#00B140";
+    const DARK_COLOR = adjustColor(COLOR, -30);
+
+    // 设置 CSS 变量
+    document.documentElement.style.setProperty('--line-color', COLOR);
+
+    // 设置 body data 属性（供加载动画使用）
+    document.body.dataset.lineName = lineData.id;
+    document.body.dataset.lineColor = COLOR;
+
+    // 辅助函数：调整颜色亮度
+    function adjustColor(hex, amount) {
+      const num = parseInt(hex.replace("#", ""), 16);
+      const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+      const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+      const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+      return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+    }
+
+    // 辅助函数：获取其他线路颜色
+    function getOtherLineColor(lineId) {
+      const line = ALL_LINES_ENHANCED.find(l => l.id === lineId);
+      if (!line) return "#9CA3AF";
+      if (line.category === "construction") return "#9CA3AF";
+      return line.color;
+    }
+
+    // ==================== 1. 加载动画 ====================
+    (function() {
+      const overlay = document.getElementById('loadingOverlay');
+      const container = document.getElementById('loadingContainer');
+      const progressBar = document.getElementById('loadingProgress');
+      const percentText = document.getElementById('loadingPercent');
+
+      // 设置颜色
+      if (progressBar) progressBar.style.background = COLOR;
+      if (percentText) percentText.style.color = COLOR;
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        const increment = Math.random() * 2.5 + 0.5;
+        progress = Math.min(progress + increment, 100);
+
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (percentText) percentText.textContent = Math.floor(progress) + '%';
+
+        if (progress >= 100) {
+          clearInterval(interval);
+
+          setTimeout(() => {
+            if (percentText) {
+              percentText.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+              percentText.style.transform = 'translateY(50px)';
+              percentText.style.opacity = '0';
+            }
+          }, 100);
+
+          setTimeout(() => {
+            if (container) {
+              container.innerHTML = `
+                <div class="line-loading-final" style="background: ${COLOR}">
+                  <div class="line-loading-number">${lineData.id}号线</div>
+                  <div class="line-loading-title">百科</div>
+                </div>
+              `;
+            }
+          }, 500);
+
+          setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              document.body.classList.add('loading-complete');
+            }, 500);
+          }, 2500);
+        }
+      }, 40);
+    })();
+
+    // ==================== 2. 渲染线路标题栏 ====================
+    (function() {
+      const header = document.getElementById('lineHeader');
+      const number = document.getElementById('lineNumber');
+      const name = document.getElementById('lineName');
+      const alias = document.getElementById('lineAlias');
+
+      if (header) {
+        header.style.background = `linear-gradient(135deg, ${COLOR}, ${DARK_COLOR})`;
+        header.style.boxShadow = `0 4px 20px ${COLOR}4D`;
+      }
+      if (number) {
+        number.textContent = lineData.id;
+        number.style.color = COLOR;
+      }
+      if (name) name.textContent = lineData.alias ? lineData.name.split('（')[0].replace('深圳地铁', '') : lineData.name;
+      if (alias) alias.textContent = lineData.alias || '';
+    })();
+
+    // ==================== 3. 渲染基本信息 ====================
+    (function() {
+      const grid = document.getElementById('basicInfoGrid');
+      if (!grid) return;
+
+      const items = [
+        { label: "线路全称", value: lineData.name },
+        { label: "开通日期", value: lineData.openDate },
+        { label: "运营公司", value: lineData.operator },
+        { label: "线路长度", value: lineData.lengthDesc || (lineData.lengthKm ? "约 " + lineData.lengthKm + " 公里" : "-") },
+        { label: "车站数量", value: lineData.stationsDesc || (lineData.stationCount ? lineData.stationCount + "座" : "-") },
+        { label: "车辆编组", value: lineData.formationDesc || lineData.formationCode || "-" },
+        { label: "设计时速", value: lineData.maxSpeedDesc || (lineData.maxSpeedKmh ? lineData.maxSpeedKmh + "公里/小时" : "-") },
+        { label: "历史最大客流", value: lineData.maxPassengerFlow || "暂无数据" },
+        { label: "线路状态", value: lineData.category === "operating" ? "🟢 已开通" : "🟡 建设中" }
+      ];
+
+      grid.innerHTML = items.map(item => `
+        <div class="data-card">
+          <div class="data-card-label">${item.label}</div>
+          <div class="data-card-value">${item.value}</div>
+        </div>
+      `).join('');
+    })();
+
+    // ==================== 4. 渲染站点列表 ====================
+    (function() {
+      const list = document.getElementById('stationList');
+      const count = document.getElementById('stationCount');
+      if (!list || !lineData.stationList) return;
+
+      count.textContent = lineData.stationList.length;
+
+      const transferStations = new Set(Object.keys(lineData.transfers || {}));
+
+      list.innerHTML = lineData.stationList.map(station => {
+        const isTransfer = transferStations.has(station);
+        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}</span>`;
+      }).join('');
+    })();
+
+    // ==================== 5. 渲染换乘信息 ====================
+    (function() {
+      const container = document.getElementById('transferContainer');
+      const count = document.getElementById('transferCount');
+      if (!container || !lineData.transfers) return;
+
+      const entries = Object.entries(lineData.transfers);
+      count.textContent = entries.length;
+
+      container.innerHTML = entries.map(([station, lines]) => {
+        const badges = lines.map(lid => {
+          const lc = getOtherLineColor(lid);
+          return `<span class="line-badge" style="background:${lc}">${lid}号线</span>`;
+        }).join('');
+        return `
+          <div class="transfer-card">
+            <span class="transfer-station">${station}站</span>
+            <div class="transfer-lines">${badges}</div>
+          </div>
+        `;
+      }).join('');
+    })();
+
+    // ==================== 6. 渲染车辆信息 ====================
+    (function() {
+      const grid = document.getElementById('trainGrid');
+      if (!grid || !lineData.trains || lineData.trains.length === 0) {
+        if (grid) grid.innerHTML = '<p style="color: var(--c-text-3)">暂无车辆信息</p>';
+        return;
+      }
+
+      grid.innerHTML = lineData.trains.map(train => {
+        const enc = train.encountered;
+        const encHtml = enc
+          ? `<span class="train-encountered">✓ 已遇到：${enc}</span>`
+          : `<span class="train-no-encounter">暂未遇到</span>`;
+        const note = train.note ? `<div style="font-size:var(--fs-sm);color: var(--c-text-3);margin-top:4px">${train.note}</div>` : '';
+
+        return `
+          <div class="train-card">
+            <div class="train-card-model">${train.model}</div>
+            <div class="train-card-row"><span class="train-card-label">编号范围</span><span>${train.numberRange}</span></div>
+            <div class="train-card-row"><span class="train-card-label">制造商</span><span>${train.manufacturer}</span></div>
+            <div class="train-card-row"><span class="train-card-label">记录</span>${encHtml}</div>
+            ${note}
+          </div>
+        `;
+      }).join('');
+    })();
+
+    // ==================== 7. 线路走向描述（静态，可后续扩展） ====================
+    (function() {
+      const desc = document.getElementById('lineRouteDesc');
+      if (desc && lineData.stationList) {
+        const first = lineData.stationList[0];
+        const last = lineData.stationList[lineData.stationList.length - 1];
+        desc.textContent = `东起${first}站，西至${last}站，共${lineData.stationList.length}座车站。`;
+      }
+    })();
+
+    // ==================== 8. 车辆技术参数（静态，保留原有内容） ====================
+    (function() {
+      const tech = document.getElementById('trainTechDesc');
+      if (tech) {
+        tech.innerHTML = `深圳地铁${lineData.id}号线采用<strong>${lineData.formationDesc || lineData.formationCode || 'A型地铁列车'}</strong>，构造速度<strong>${lineData.maxSpeedDesc || (lineData.maxSpeedKmh + '千米/小时')}</strong>。具体技术参数请参阅车辆制造商资料。`;
+      }
+    })();
+
+    // ==================== 9. 相关链接 ====================
+    (function() {
+      const container = document.getElementById('relatedLinks');
+      if (!container) return;
+
+      const links = [
+        { icon: "📋", text: "线路仪表盘", url: `dashboard?line=${LINE_ID}` },
+        // { icon: "📰", text: "进度跟踪", url: `progress-tracking` },
+        { icon: "📊", text: "客流查询", url: `passenger-flow?line=${LINE_ID}` },
+        { icon: "🚇", text: "车辆信息", url: `trains` },
+        // { icon: "🏗️", text: "建设历程", url: `history` },
+        { icon: "🚻", text: "卫生间查询", url: `toilet?line=${LINE_ID}` },
+        { icon: "🎨", text: "线路色号", url: `line-colors` },
+        { icon: "📷", text: "照片", url: `photos?line=${LINE_ID}` },
+      ];
+
+      container.innerHTML = links.map(l => `
+        <a href="${l.url}" class="related-link-item">${l.icon} ${l.text}</a>
+      `).join('');
+    })();
+
+
+    // ==================== 线路走向图显示控制 ====================
+    (function() {
+      if (ROUTE_MAP_IMAGE) {
+        const section = document.getElementById('routeMapSection');
+        const img = document.getElementById('routeMapImage');
+        const caption = document.getElementById('routeMapCaption');
+        if (section && img) {
+          img.src = ROUTE_MAP_IMAGE;
+          img.alt = '深圳地铁' + lineData.id + '号线线路走向图';
+          if (caption) caption.textContent = '深圳地铁' + lineData.id + '号线线路走向图';
+          section.style.display = 'block';
+        }
+      }
+    })();
+
+    // ==================== 10. 实时时间 ====================
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // ==================== 11. 移动端菜单 ====================
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+  </script>
+</body>
+</html>
