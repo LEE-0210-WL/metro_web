@@ -1,0 +1,28 @@
+/* ============================================================================
+   MiSans —— 站点主字体（小米，完整字库，未做子集）
+   3 个字重：400 / 500 / 700；每个约 4.26 MB
+   备选字体（HarmonyOS / HONOR / vivo）在 fonts/alt/ 下，未接入 theme.css，
+   需要切换时把 theme.css 的 @import 和 --font 改掉即可。
+   ============================================================================ */
+
+@font-face {
+  font-family: 'MiSans';
+  src: local('MiSans'), url('MiSans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MiSans';
+  src: local('MiSans Medium'), url('MiSans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MiSans';
+  src: local('MiSans Bold'), url('MiSans-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
