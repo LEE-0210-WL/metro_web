@@ -1,0 +1,4 @@
+/* 备用字体：HONOR Sans（荣耀，完整字库，未接入 theme.css） */
+@font-face { font-family: 'HONOR Sans'; src: local('HONOR Sans'), url('HONORSans-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'HONOR Sans'; src: local('HONOR Sans Medium'), url('HONORSans-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'HONOR Sans'; src: local('HONOR Sans Bold'), url('HONORSans-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
