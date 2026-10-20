@@ -1,4 +1,4 @@
-@import url("fonts/harmonyos-sans.css");
+@import url("fonts/misans/misans.css");
 /* ============================================================================
    走进新天地·Railway —— 设计规范（Design Tokens）
    ----------------------------------------------------------------------------
@@ -94,9 +94,8 @@
   --sh-primary: 0 4px 12px rgba(37, 99, 235, .4);
 
   /* ======================= 字体 ======================= */
-  --font:     'HarmonyOS Sans SC', 'HarmonyOS Sans', -apple-system,
-              BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-num: Bahnschrift, 'HarmonyOS Sans', -apple-system, sans-serif;
+  --font:     'MiSans', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-num: Bahnschrift, 'MiSans', -apple-system, sans-serif;
 
   /* ======================= 布局 ======================= */
   --page-max: 1200px;   /* 内容最大宽度（页面常用 min(90%, 1200px)） */
@@ -128,10 +127,10 @@ input *, textarea *, select *, [contenteditable] * {
 }
 
 /* ============================================================================
-   全站字体锁定为 HarmonyOS Sans
+   全站字体锁定为 MiSans（备选：HarmonyOS / HONOR / vivo，见 fonts/alt/，未接入）
    ----------------------------------------------------------------------------
    上面第 96 行定义的 --font 之前只是个「死变量」—— 只声明、从没被应用，
-   所以各页面仍各写各的 font-family（有的甚至不含 HarmonyOS Sans）。
+   所以各页面仍各写各的 font-family。
    这里统一锁死：theme.css 在 <head> 里排在页面自己的 <style> 之前，
    同优先级下后写的会赢，因此必须用 !important 才能真正覆盖全站。
 
