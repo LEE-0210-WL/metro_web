@@ -13,6 +13,31 @@
     padding-top: 70px; padding-bottom: 20px;
   }
   .wrap { width: min(90%, 1200px); margin: 0 auto; padding: 16px; }
+    /* ==========================================================================
+     布局：宽屏双栏（登录/账户 + 说明并排；安全中心、套餐整行）
+     ========================================================================== */
+  .wrap {
+    display: grid;
+    gap: 16px;
+    align-items: start;
+    grid-template-columns: 1fr;
+  }
+  .card { margin-bottom: 0; }
+
+  @media (min-width: 1024px) {
+    .wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    #loginCard   { grid-column: 1; grid-row: 1; max-width: 460px; width: 100%; margin-inline: auto; }
+    #profileCard { grid-column: 1; grid-row: 1; }
+    #aboutCard   { grid-column: 2; grid-row: 1; }
+    #securityCard{ grid-column: 1 / -1; grid-row: 2; }
+    #pricingCard { grid-column: 1 / -1; grid-row: 3; }
+  }
+
+  /* 套餐卡：宽屏 3 列、中等 2 列、窄屏 1 列（原来 auto-fit 会把 6 档挤成一行 5 个） */
+  .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .plans { grid-template-columns: 1fr; } }
+
   .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 16px; }
   .card h2 { font-size: 18px; font-weight: 500; margin-bottom: 12px; color: #111827; }
 
@@ -235,7 +260,7 @@
     <p class="buynote" id="buyNote">点「立即购买」跳转爱发电付款，付款后在备注填写账号名即可自动开通；也可联系站长获取兑换码，在上方「兑换码」处填入。</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="aboutCard">
     <h2>账户能做什么</h2>
     <ul class="plan">
       <li><a href="ai.html" style="color:#2563eb;font-weight:500">AI 地铁问答助手</a><span class="tag" style="background:#dcfce7;color:#15803d">已上线</span></li>
