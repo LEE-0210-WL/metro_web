@@ -169,6 +169,10 @@
   .p .unit { font-size: var(--fs-sm); color: var(--c-text-3); margin-top: auto; padding-top: 10px; }
   .buynote { font-size: var(--fs-sm); color: #6b7280; margin-top: 14px; text-align: center; }
   @media (max-width: 600px) { body { padding-top: 60px; } .plans { grid-template-columns: 1fr 1fr; } }
+  /* 套餐卡列数：用 ID 提高优先级，压过上面的 auto-fit 规则 */
+  #planGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 900px) { #planGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { #planGrid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
