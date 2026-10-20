@@ -1,0 +1,4 @@
+/* 备用字体：HarmonyOS Sans SC（华为，完整字库，未接入 theme.css） */
+@font-face { font-family: 'HarmonyOS Sans SC'; src: local('HarmonyOS Sans SC'), url('HarmonyOSSansSC-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'HarmonyOS Sans SC'; src: local('HarmonyOS Sans SC Medium'), url('HarmonyOSSansSC-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'HarmonyOS Sans SC'; src: local('HarmonyOS Sans SC Bold'), url('HarmonyOSSansSC-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
