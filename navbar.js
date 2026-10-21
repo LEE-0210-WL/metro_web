@@ -668,15 +668,20 @@
     transform: none !important;
   }
 
-  /* —— ② 箭头：圆角描边 + 轻微上下浮动 —— */
+  /* —— ② 箭头：放大到与其他图标同级 + 视觉校正 + 轻微上下浮动 —— */
   .navbar-back-to-top svg {
+    width: 28px !important;
+    height: 28px !important;
+    display: block;
     stroke-linecap: round;
     stroke-linejoin: round;
+    /* 箭头头宽杆细、视觉重量偏上，几何居中会显高，往下补 1px */
+    margin-top: 1px;
     animation: navArrowBob 1.8s ease-in-out infinite;
   }
   @keyframes navArrowBob {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-3px); }
+    50%      { transform: translateY(-2px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .navbar-back-to-top svg { animation: none; }
