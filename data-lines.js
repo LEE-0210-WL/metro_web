@@ -550,7 +550,7 @@ const LINES_DATA = {
 
   "15": {
     name: "深圳地铁15号线",
-    alias: "环线",
+    alias: "前南线",
     color: "#84BD00",
     openDate: "预计2028年6月",
     length: 32.21,
@@ -611,7 +611,7 @@ const LINES_DATA = {
 
   "19": {
     name: "深圳地铁19号线",
-    alias: "",
+    alias: "坪山线",
     color: "#197199",
     openDate: "预计2028年",
     length: 33.00,
@@ -670,7 +670,7 @@ const LINES_DATA = {
 
   "25": {
     name: "深圳地铁25号线",
-    alias: "",
+    alias: "大浪线",
     color: "#597276",
     openDate: "预计2028年",
     length: 16.20,
