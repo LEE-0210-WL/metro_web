@@ -183,6 +183,13 @@
       margin-top: 2px;
     }
     
+    .train-note {
+      font-size: 13px;
+      color: var(--c-text-3);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    
     /* 返回按钮 */
     .back-link {
       display: inline-flex;
@@ -274,7 +281,7 @@
     </h1>
     <p class="page-subtitle">收集深圳地铁/港铁深圳各线路车型、编组、制造商等信息，来源网络</p>
     <p class="page-subtitle">注1：8号线现有的9辆“08A0904株”4A编组车已全上（9辆全部上线），根据深铁于9.7发布的大站快车试行公告和同好实际体验来看，工作日少量开行，其余4A暂未查找到信息</br>注2：港铁未采用深铁编号方式，仅为车辆做数字编号，因此不提供4/13号线列车编号和制造商信息</p>
-    <p class="page-subtitle">最近一次更新：2026/10/21 12:40---修正线路标题文字色阈值（160→130），与首页/百科保持一致（影响6、10、12、13、15号线共5条）；按实际土建与运营情况修正各线编组：19号线土建4A未预留6节、25号线近期4A远期6A、22号线近期6A远期8A、29号线4/6混跑、20号线6/8混跑；更正15/19/25号线线路名（前南线/坪山线/大浪线）；补充7号线内部支线（文体公园，不对外开放）742/743两列3编组车、主线6编组编号701-741并自744起编的说明（站点数不变）</p>
+    <p class="page-subtitle">最近一次更新：2026/10/21 13:00---修正线路标题文字色阈值（160→130）与 line-colors 页保持一致（影响6、10、12、13、15号线共5条）；补上车型备注（note）的渲染，7号线内部支线那些说明现在能在页面看到了；按实际土建与运营情况修正各线编组：19号线土建4A未预留6节、25号线近期4A远期6A、22号线近期6A远期8A、29号线4/6混跑、20号线6/8混跑；更正15/19/25号线线路名（前南线/坪山线/大浪线）；补充7号线内部支线（文体公园，不对外开放）742/743两列3编组车、主线6编组编号701-741并自744起编的说明（站点数不变）</p>
     
     <div class="lines-grid" id="linesGrid"></div>
   </main>
@@ -425,11 +432,13 @@
           }
           const range = train.numberRange || '—';
           const manufacturer = train.manufacturer || '厂商未知';
+          const note = train.note ? `<div class="train-note">${train.note}</div>` : '';
           trainHTML += `
             <div class="train-item">
               <div>
                 <div class="train-model">${model}</div>
                 <div class="train-manufacturer">${manufacturer}</div>
+                ${note}
               </div>
               <div class="train-range">${range}</div>
             </div>
