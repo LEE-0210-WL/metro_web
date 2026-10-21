@@ -670,3 +670,87 @@
         min-width: 700px;
       }
     }
+
+/* ===== v2.0 长文排版加固（手机端防翻车）===== */
+
+/* ① <pre> 时间线与线路走向：允许换行 + 内部横向滚动兜底 */
+.wiki-content pre,
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  background: #f5f7fa;
+  border: 1px solid #e5e7eb;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 16px 0;
+  font-family: 'MiSans', var(--font);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ② 行内代码（正文里的 型号 之类） */
+.wiki-content code,
+code {
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.92em;
+  font-family: 'MiSans', var(--font);
+  word-break: break-word;
+}
+
+/* ③ 上标引用 [n]：别缩成看不清的小点 */
+.wiki-content sup,
+sup {
+  font-size: 0.72em;
+  vertical-align: super;
+  line-height: 0;
+  color: inherit;
+  font-weight: 600;
+}
+
+/* ④ 引用块：手机上别把内容挤没 */
+.wiki-content blockquote,
+blockquote {
+  margin: 18px 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--line-color, #00B140);
+  background: #fafafa;
+  border-radius: 0 6px 6px 0;
+}
+.wiki-content blockquote p:last-child,
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ⑤ 标题栏：防止超长线路名把数字挤变形 */
+.line-info { min-width: 0; }
+.line-name, .line-alias {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ⑥ 万一以后放了真表格：容器可横向滚动 */
+.wiki-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 15px;
+  display: block;
+  overflow-x: auto;
+}
+.wiki-content th, .wiki-content td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: left;
+}
+.wiki-content th { background: #f9fafb; font-weight: 600; }
+
+/* ⑦ 手机端进一步压缩 */
+@media (max-width: 768px) {
+  pre { font-size: 13px; padding: 10px 12px; }
+  .wiki-content { padding: 16px; }
+  .wiki-content p { line-height: 1.75; }
+  blockquote { padding: 10px 14px; margin: 14px 0; }
+  sup { font-size: 0.78em; }
+}
