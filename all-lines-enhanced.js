@@ -904,6 +904,7 @@ const ALL_LINES_ENHANCED = [
   },
   {
     "id": "8",
+      "throughStations": ["莲塘"],
     "name": "深圳地铁8号线（盐田线）",
     "alias": "Line 8 / Yantian Line",
     "color": "#B94700",

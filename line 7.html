@@ -372,9 +372,12 @@
     (function() {
       const desc = document.getElementById('lineRouteDesc');
       if (desc && lineData.stationList) {
-        const first = lineData.stationList[0];
-        const last = lineData.stationList[lineData.stationList.length - 1];
-        desc.textContent = `东起${first}站，西至${last}站，共${lineData.stationList.length}座车站。`;
+        // 跨线贯通时，与本线共站的那一站不计入路线两端（站点总数不变）
+        const through = new Set(lineData.throughStations || []);
+        const route = lineData.stationList.filter(function (s) { return !through.has(s); });
+        const first = route[0] || lineData.stationList[0];
+        const last = route[route.length - 1] || lineData.stationList[lineData.stationList.length - 1];
+        desc.textContent = `${first}站 → ${last}站，共${lineData.stationList.length}座车站。`;
       }
     })();
 
