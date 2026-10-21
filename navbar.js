@@ -654,7 +654,91 @@
     .navbar-help-btn svg { width: 24px; height: 24px; }
   }
 
-  `;
+  
+  /* ==========================================================================
+     ========== 浮动按钮 v3：悬停只压暗 / 间距统一 / 箭头圆角浮动 ==========
+     1) 悬停只做颜色压暗，不再位移、不再改宽高/圆角/内边距，也不展开文字
+     2) 回到顶部与三个功能按钮之间的间隙统一为 10px（原来多出一个按钮的空）
+     3) 回到顶部箭头用圆角描边，并加一个很轻的上下浮动
+     ========================================================================== */
+
+  /* —— ① 回到顶部：悬停不位移，只压暗 —— */
+  .navbar-back-to-top:hover {
+    background: #1d4ed8 !important;
+    transform: none !important;
+  }
+
+  /* —— ② 箭头：圆角描边 + 轻微上下浮动 —— */
+  .navbar-back-to-top svg {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: navArrowBob 1.8s ease-in-out infinite;
+  }
+  @keyframes navArrowBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .navbar-back-to-top svg { animation: none; }
+  }
+
+  /* —— ③ 三个浮动按钮：悬停只压暗，尺寸与形状完全不变 —— */
+  .navbar-help-btn:hover,
+  .navbar-ai-btn:hover,
+  .navbar-account-btn:hover {
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+  .navbar-help-btn:hover .btn-text,
+  .navbar-ai-btn:hover .btn-text,
+  .navbar-account-btn:hover .btn-text {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    margin-left: 0 !important;
+  }
+  /* 移动端这些按钮本身就是带文字的胶囊，悬停保持原样 */
+  @media (max-width: 768px) {
+    .navbar-help-btn:hover,
+    .navbar-ai-btn:hover,
+    .navbar-account-btn:hover {
+      width: auto !important;
+      min-width: 44px !important;
+      height: 44px !important;
+      border-radius: 22px !important;
+      padding: 0 12px !important;
+    }
+    .navbar-help-btn:hover .btn-text,
+    .navbar-ai-btn:hover .btn-text,
+    .navbar-account-btn:hover .btn-text {
+      max-width: none !important;
+      opacity: 1 !important;
+      margin-left: 6px !important;
+    }
+  }
+
+  /* —— ④ 间距：回到顶部与三个按钮之间统一 10px —— */
+  .navbar-back-to-top { bottom: 24px !important; right: 22px !important; }
+  .navbar-help-btn      { bottom: 82px !important; }
+  .navbar-ai-btn        { bottom: 140px !important; }
+  .navbar-account-btn   { bottom: 198px !important; }
+  body.no-backtop .navbar-help-btn    { bottom: 24px !important; }
+  body.no-backtop .navbar-ai-btn      { bottom: 82px !important; }
+  body.no-backtop .navbar-account-btn { bottom: 140px !important; }
+
+  @media (max-width: 768px) {
+    .navbar-help-btn      { bottom: 78px !important; }
+    .navbar-ai-btn        { bottom: 132px !important; }
+    .navbar-account-btn   { bottom: 186px !important; }
+    body.no-backtop .navbar-help-btn    { bottom: 24px !important; }
+    body.no-backtop .navbar-ai-btn      { bottom: 78px !important; }
+    body.no-backtop .navbar-account-btn { bottom: 132px !important; }
+  }
+
+`;
 
   // 插入 viewport meta 到 head（确保生效）
   if (!document.querySelector('meta[name="viewport"]')) {
