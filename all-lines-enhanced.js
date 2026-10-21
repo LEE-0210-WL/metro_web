@@ -889,13 +889,15 @@ const ALL_LINES_ENHANCED = [
         "model": "07A4106長",
         "numberRange": "701-741",
         "manufacturer": "长春轨道客车",
-        "encountered": "706、710、711、720、735"
+        "encountered": "706、710、711、720、735",
+        "note": "6 编组主线车。编号 701-741；742/743 为内部支线 3 编组车占用，后续 6 编组自 744 起编"
       },
       {
         "model": "07A0203長",
         "numberRange": "742-743",
         "manufacturer": "长春轨道客车",
-        "encountered": null
+        "encountered": null,
+        "note": "3 编组，编挂于 7 号线内部支线（文体公园方向，不对外开放），与主线 6 编组不通用。742、743 两列"
       }
     ],
     "maxPassengerFlow": "72.3万人次（2024年12月31日）"
