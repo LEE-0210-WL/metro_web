@@ -721,7 +721,7 @@
   }
 
   /* —— ④ 间距：回到顶部与三个按钮之间统一 10px —— */
-  .navbar-back-to-top { bottom: 24px !important; right: 22px !important; }
+  .navbar-back-to-top { bottom: 24px !important; }
   .navbar-help-btn      { bottom: 82px !important; }
   .navbar-ai-btn        { bottom: 140px !important; }
   .navbar-account-btn   { bottom: 198px !important; }
