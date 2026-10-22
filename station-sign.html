@@ -18,14 +18,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
 html { background: #eef1f6; }
+html { display: flex; justify-content: center; }
 body {
   font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
   background: #eef1f6;
   display: flex;
   align-items: stretch;
   width: 916px;          /* 侧栏 268 + 牌子 648 */
+  margin: 0 auto;        /* 在大屏上水平居中 */
   min-height: 100vh;
-  transform-origin: top left;
+  transform-origin: top center;
   will-change: transform;
 }
 
@@ -481,8 +483,17 @@ function fitStage(){
   const availW = window.innerWidth - 8;
   const availH = window.innerHeight - 8;
   const k = Math.min(1, availW / BASE_W, availH / Math.max(BASE_H_MAX, document.body.scrollHeight));
-  document.body.style.transform = 'scale(' + k + ')';
-  // 让 html 高度跟随缩放后的实际高度，避免出现多余滚动空白
+  const b = document.body;
+  b.style.transform = 'scale(' + k + ')';
+  // 缩放后 body 的视觉宽度变为 916*k，用负 margin 让它在视口中水平居中
+  if (k < 1) {
+    const shift = (BASE_W - BASE_W * k) / 2;
+    b.style.marginLeft = (-shift) + 'px';
+    b.style.marginRight = (-shift) + 'px';
+  } else {
+    b.style.marginLeft = 'auto';
+    b.style.marginRight = 'auto';
+  }
   document.documentElement.style.height = 'auto';
 }
 window.addEventListener('resize', fitStage);
