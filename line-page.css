@@ -16,7 +16,7 @@
     body {
       font-family: 'HarmonyOS Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #f5f5f5;
-      color: #333;
+      color: #111827;
       line-height: 1.6;
       min-height: 100vh;
     }
@@ -173,7 +173,7 @@
     }
 
     .nav-links a:hover {
-      background-color: #374151;
+      background-color: #111827;
       color: white;
     }
 
@@ -264,13 +264,13 @@
     .wiki-content h3 {
       font-size: 18px;
       font-weight: 600;
-      color: #1f2937;
+      color: #111827;
       margin: 24px 0 12px;
     }
 
     .wiki-content p {
       font-size: 16px;
-      color: #374151;
+      color: #111827;
       margin-bottom: 16px;
       line-height: 1.8;
       text-align: justify;
@@ -283,7 +283,7 @@
 
     .wiki-content li {
       font-size: 15px;
-      color: #374151;
+      color: #111827;
       margin-bottom: 8px;
       line-height: 1.6;
     }
@@ -309,7 +309,7 @@
 
     .data-card-label {
       font-size: 13px;
-      color: #6b7280;
+      color: #111827;
       margin-bottom: 4px;
     }
 
@@ -335,7 +335,7 @@
       background: #f3f4f6;
       border-radius: 20px;
       font-size: 14px;
-      color: #374151;
+      color: #111827;
       transition: all 0.2s ease;
     }
 
@@ -432,7 +432,7 @@
       align-items: center;
       padding: 6px 0;
       font-size: 14px;
-      color: #4b5563;
+      color: #111827;
       border-bottom: 1px dashed #e5e7eb;
     }
 
@@ -441,7 +441,7 @@
     }
 
     .train-card-label {
-      color: #6b7280;
+      color: #111827;
     }
 
     .train-encountered {
@@ -450,7 +450,7 @@
     }
 
     .train-no-encounter {
-      color: #9ca3af;
+      color: #111827;
       font-style: italic;
     }
 
@@ -507,7 +507,7 @@
       background: #f9fafb;
       border-radius: 10px;
       text-decoration: none;
-      color: #374151;
+      color: #111827;
       font-size: 14px;
       font-weight: 500;
       transition: all 0.2s ease;
@@ -658,7 +658,7 @@
     .route-map-caption {
       text-align: center;
       font-size: 14px;
-      color: #6b7280;
+      color: #111827;
       margin-top: 12px;
     }
 
