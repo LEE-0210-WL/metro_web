@@ -17,12 +17,16 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
+html { background: #eef1f6; }
 body {
   font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
   background: #eef1f6;
   display: flex;
   align-items: stretch;
+  width: 916px;          /* 侧栏 268 + 牌子 648 */
   min-height: 100vh;
+  transform-origin: top left;
+  will-change: transform;
 }
 
 /* ===== 侧边栏 ===== */
@@ -133,12 +137,7 @@ body {
   background: #00b050;
   border-radius: 0 0 38px 38px;
 }
-@media (max-width: 860px) {
-  body { flex-direction: column; }
-  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e2e8f0; }
-  .stage { padding: 20px; }
-  .sign { transform: scale(0.82); }
-}
+/* 小屏不再切换成竖向布局：由 JS 对整个 body 等比缩放，保持横向比例 */
 </style>
 </head>
 <body>
@@ -336,7 +335,21 @@ function downloadPNG(){
   img.src = url;
 }
 
+/* ===== 整体等比缩放：保持电脑上的横向比例，只缩小 ===== */
+const BASE_W = 916;
+const BASE_H_MAX = 700;
+function fitStage(){
+  const availW = window.innerWidth - 8;
+  const availH = window.innerHeight - 8;
+  const k = Math.min(1, availW / BASE_W, availH / Math.max(BASE_H_MAX, document.body.scrollHeight));
+  document.body.style.transform = 'scale(' + k + ')';
+  // 让 html 高度跟随缩放后的实际高度，避免出现多余滚动空白
+  document.documentElement.style.height = 'auto';
+}
+window.addEventListener('resize', fitStage);
+window.addEventListener('orientationchange', () => setTimeout(fitStage, 150));
 build();
+fitStage();
 </script>
 </body>
 </html>
