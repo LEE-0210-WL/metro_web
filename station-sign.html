@@ -78,6 +78,20 @@ body {
 .sidebar button.ghost:hover { background: #f1f5f9; }
 .btns { display: flex; gap: 8px; }
 .btns button { flex: 1; }
+.stage-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.stage-name { font-size: 14px; font-weight: 600; color: #1f2937; }
+.stage-range { font-size: 13px; color: #1e3a8a; font-weight: 500; }
+.stage-date { font-size: 12px; color: #6b7280; }
+.stage-box .empty { color: #9ca3af; }
+
 .meta {
   margin-top: auto;
   padding-top: 16px;
@@ -161,6 +175,15 @@ body {
 
   <button class="ghost" onclick="downloadPNG()">下载 PNG</button>
 
+  <div class="field">
+    <label>所属时期</label>
+    <div class="stage-box">
+      <div class="stage-name" id="stageName">—</div>
+      <div class="stage-range" id="stageRange">—</div>
+      <div class="stage-date" id="stageDate">—</div>
+    </div>
+  </div>
+
   <div class="meta">
     <div><b id="metaLine">—</b></div>
     <div>字体：<b id="metaFont">—</b></div>
@@ -191,14 +214,14 @@ const FONT_SEGMENTS = {
   '14': { font: '华文隶书' },
   '12': { font: '汉仪魏碑' },
   '2': [
-    { stations: ['新秀','莲塘口岸','仙湖路','莲塘'], font: '汉仪颜楷' }
+    { stations: ['莲塘口岸','仙湖路','莲塘'], font: '汉仪颜楷' }
   ],
   '5': [
-    { stations: ['赤湾','荔湾','铁路公园','妈湾','前湾公园','前湾','桂湾'], font: '思源宋体' },
+    { stations: ['前海湾','桂湾','前湾','前湾公园','妈湾','铁路公园','荔湾','赤湾'], font: '思源宋体' },
     { stations: ['湖贝','东门','大剧院'], font: '汉仪行楷' }
   ],
   '7': [
-    { stations: ['西丽湖','北大','深大丽湖'], font: '汉仪行楷' }
+    { stations: ['北大','深大丽湖'], font: '汉仪行楷' }
   ],
   '9': [
     { stations: ['前湾'], font: '汉仪行楷' }
@@ -217,6 +240,105 @@ function fontForStation(lid, station){
     return DEFAULT_FONT;
   }
   return r.font || DEFAULT_FONT;
+}
+
+
+/* ===== 各线路分期起讫点（数据取自 history.html 的 23 个开通事件） ===== */
+const STAGES = {
+  '1': [
+    { name: '一期',    date: '2004-12-28', from: '罗湖',      to: '世界之窗' },
+    { name: '西延段',  date: '2009-09-28', from: '世界之窗',  to: '深大' },
+    { name: '续建段',  date: '2011-06-15', from: '深大',      to: '机场东' }
+  ],
+  '2': [
+    { name: '一期',    date: '2010-12-28', from: '赤湾',      to: '世界之窗' },
+    { name: '东延线',  date: '2011-06-28', from: '世界之窗',  to: '新秀' },
+    { name: '三期',    date: '2020-10-28', from: '新秀',      to: '莲塘' }
+  ],
+  '3': [
+    { name: '一期',    date: '2010-12-28', from: '草埔',      to: '双龙' },
+    { name: '南延',    date: '2020-10-28', from: '益田',      to: '福保' },
+    { name: '四期',    date: '2024-12-28', from: '双龙',      to: '坪地六联' }
+  ],
+  '4': [
+    { name: '一期',    date: '2004-12-28', from: '福田口岸',  to: '少年宫' },
+    { name: '二期',    date: '2011-06-28', from: '少年宫',    to: '清湖' },
+    { name: '北延',    date: '2020-10-28', from: '清湖',      to: '牛湖' }
+  ],
+  '5': [
+    { name: '一期',    date: '2011-06-22', from: '前海湾',    to: '黄贝岭' },
+    { name: '二期',    date: '2019-09-28', from: '前海湾',    to: '赤湾' },
+    { name: '西延段',  date: '2025-12-28', from: '黄贝岭',    to: '大剧院' }
+  ],
+  '6': [
+    { name: '一期',    date: '2020-08-18', from: '深圳北站',  to: '松岗' },
+    { name: '二期',    date: '2020-08-18', from: '科学馆',    to: '深圳北站' }
+  ],
+  '6z': [
+    { name: '一期',    date: '2022-11-28', from: '光明',      to: '深理工' },
+    { name: '二期',    date: '2025-09-28', from: '光明',      to: '光明城' }
+  ],
+  '7': [
+    { name: '一期',    date: '2016-10-28', from: '西丽湖',    to: '太安' },
+    { name: '二期',    date: '2024-12-28', from: '西丽湖',    to: '深大丽湖' }
+  ],
+  '8': [
+    { name: '一期',    date: '2020-10-28', from: '莲塘',      to: '盐田路' },
+    { name: '二期',    date: '2023-12-27', from: '盐田路',    to: '小梅沙' },
+    { name: '三期',    date: '2025-12-28', from: '小梅沙',    to: '溪涌' }
+  ],
+  '9': [
+    { name: '一期',    date: '2016-10-28', from: '红树湾南',  to: '文锦' },
+    { name: '二期',    date: '2019-12-08', from: '红树湾南',  to: '前湾' }
+  ],
+  '10': [
+    { name: '一期',    date: '2020-08-18', from: '福田口岸',  to: '双拥街' },
+    { name: '岗厦北站', date: '2022-10-28', from: '岗厦北',   to: '岗厦北' }
+  ],
+  '11': [
+    { name: '一期',    date: '2016-06-28', from: '福田',      to: '碧头' },
+    { name: '二期（福田—岗厦北）', date: '2022-10-28', from: '福田', to: '岗厦北' },
+    { name: '二期（岗厦北—华强南）', date: '2024-12-28', from: '岗厦北', to: '华强南' },
+    { name: '二期红岭南段', date: '2025-12-28', from: '华强南', to: '红岭南' }
+  ],
+  '12': [
+    { name: '一期',    date: '2022-11-28', from: '左炮台东',  to: '海上田园东' },
+    { name: '二期',    date: '2024-12-28', from: '海上田园东', to: '松岗' }
+  ],
+  '13': [
+    { name: '一期南段', date: '2025-01-10', from: '深圳湾口岸', to: '高新中' },
+    { name: '一期北段', date: '2025-12-28', from: '高新中',    to: '上屋' }
+  ],
+  '14': [
+    { name: '一期',    date: '2022-10-28', from: '岗厦北',    to: '沙田' }
+  ],
+  '16': [
+    { name: '一期',    date: '2022-12-28', from: '大运',      to: '田心' },
+    { name: '二期',    date: '2025-09-28', from: '大运',      to: '园山西坑' }
+  ],
+  '20': [
+    { name: '一期',    date: '2021-12-28', from: '机场北',    to: '会展城' }
+  ]
+};
+
+/* 判断某站属于哪一期：按站序区间匹配，重叠时取更晚开通的期 */
+function stageOf(lid, station){
+  const list = (DATA[lid] && DATA[lid].stations) || [];
+  const stages = STAGES[String(lid)];
+  if (!stages) return null;
+  const idx = list.indexOf(station);
+  if (idx < 0) return null;
+  let hit = null;
+  for (const st of stages) {
+    const a = list.indexOf(st.from), b = list.indexOf(st.to);
+    if (a < 0 || b < 0) continue;
+    const lo = Math.min(a,b), hi = Math.max(a,b);
+    if (idx >= lo && idx <= hi) {
+      // 取开通日期更晚的那一期（解决交界站归属）
+      if (!hit || st.date > hit.date) hit = st;
+    }
+  }
+  return hit;
 }
 
 /* 部分线路只显示已开通区段 */
@@ -285,6 +407,23 @@ function render(){
   enEl.textContent = en || '—';
   enEl.style.color = en ? '#1a1a1a' : '#c0c4cc';
   bandEl.style.background = DATA[lid].color;
+
+  // 所属时期
+  const st = stageOf(lid, name);
+  const elName = document.getElementById('stageName');
+  const elRange = document.getElementById('stageRange');
+  const elDate = document.getElementById('stageDate');
+  if (st) {
+    elName.textContent = st.name;
+    elRange.textContent = st.from + ' → ' + st.to;
+    elDate.textContent = '开通：' + st.date;
+    elName.classList.remove('empty');
+  } else {
+    elName.textContent = '未标注';
+    elName.classList.add('empty');
+    elRange.textContent = '—';
+    elDate.textContent = '—';
+  }
 
   // 信息区：name 已含线路号，不再重复加前缀
   document.getElementById('metaLine').textContent = DATA[lid].name + '　' + DATA[lid].color;
