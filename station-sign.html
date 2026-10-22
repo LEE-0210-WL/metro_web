@@ -18,14 +18,12 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
 html { background: #eef1f6; }
-html { display: flex; justify-content: center; }
 body {
   font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
   background: #eef1f6;
   display: flex;
   align-items: stretch;
-  width: 916px;          /* 侧栏 268 + 牌子 648 */
-  margin: 0 auto;        /* 在大屏上水平居中 */
+  width: 100%;           /* 大屏自然铺满；小屏由 JS 改成固定 916px 再缩放 */
   min-height: 100vh;
   transform-origin: top center;
   will-change: transform;
@@ -480,21 +478,23 @@ function downloadPNG(){
 const BASE_W = 916;
 const BASE_H_MAX = 700;
 function fitStage(){
-  const availW = window.innerWidth - 8;
-  const availH = window.innerHeight - 8;
-  const k = Math.min(1, availW / BASE_W, availH / Math.max(BASE_H_MAX, document.body.scrollHeight));
   const b = document.body;
-  b.style.transform = 'scale(' + k + ')';
-  // 缩放后 body 的视觉宽度变为 916*k，用负 margin 让它在视口中水平居中
+  const availW = window.innerWidth - 8;
+  const k = Math.min(1, availW / BASE_W);
   if (k < 1) {
-    const shift = (BASE_W - BASE_W * k) / 2;
-    b.style.marginLeft = (-shift) + 'px';
-    b.style.marginRight = (-shift) + 'px';
-  } else {
+    // 窄屏：固定 916px 基准宽，整体等比缩小，并水平居中
+    b.style.width = BASE_W + 'px';
     b.style.marginLeft = 'auto';
     b.style.marginRight = 'auto';
+    b.style.transform = 'scale(' + k + ')';
+    b.style.transformOrigin = 'top center';
+  } else {
+    // 大屏：恢复自然铺满，不缩放
+    b.style.width = '100%';
+    b.style.marginLeft = '0';
+    b.style.marginRight = '0';
+    b.style.transform = 'none';
   }
-  document.documentElement.style.height = 'auto';
 }
 window.addEventListener('resize', fitStage);
 window.addEventListener('orientationchange', () => setTimeout(fitStage, 150));
