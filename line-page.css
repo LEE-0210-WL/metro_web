@@ -82,7 +82,7 @@
     .line-loading-number {
       font-size: 80px;
       font-weight: bold;
-      color: #FFFFFF;
+      color: var(--line-text, #ffffff);
       opacity: 0;
       animation: fadeInUp 0.5s ease 0.3s forwards;
     }
@@ -90,7 +90,7 @@
     .line-loading-title {
       font-size: 48px;
       font-weight: bold;
-      color: #FFFFFF;
+      color: var(--line-text, #ffffff);
       opacity: 0;
       animation: fadeInUp 0.5s ease 0.5s forwards;
       text-align: center;
@@ -204,7 +204,7 @@
       border-radius: 16px;
       padding: 32px;
       margin-bottom: 24px;
-      color: white;
+      color: var(--line-text, #ffffff);
       width: 100%;
       display: flex;
       align-items: center;
@@ -341,7 +341,7 @@
 
     .station-tag:hover {
       background: var(--line-color, #00B140);
-      color: white;
+      color: var(--line-text, #ffffff);
     }
 
     .station-tag.transfer::after {
@@ -352,7 +352,7 @@
     }
 
     .station-tag.transfer:hover::after {
-      color: white;
+      color: var(--line-text, #ffffff);
     }
 
     /* 换乘信息 - 宽屏两列卡片式 */
@@ -400,7 +400,7 @@
       border-radius: 12px;
       font-size: 13px;
       font-weight: 600;
-      color: white;
+      color: var(--line-text, #ffffff);
       margin-right: 4px;
     }
 
@@ -515,7 +515,7 @@
 
     .related-link-item:hover {
       background: var(--line-color, #00B140);
-      color: white;
+      color: var(--line-text, #ffffff);
       transform: translateY(-2px);
     }
 

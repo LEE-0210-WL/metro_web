@@ -274,6 +274,28 @@
     // 设置 CSS 变量
     document.documentElement.style.setProperty('--line-color', COLOR);
 
+      // 按线路色亮度决定文字用黑还是白（算法与主页 getTextColor 一致：brightness > 130 用黑字）
+      (function (hex) {
+        var r, g, b, m6, m3;
+        hex = String(hex || '').trim();
+        m6 = /^#?([a-f\d]{6})$/i.exec(hex);
+        m3 = /^#?([a-f\d]{3})$/i.exec(hex);
+        if (m6) {
+          r = parseInt(m6[1].slice(0, 2), 16);
+          g = parseInt(m6[1].slice(2, 4), 16);
+          b = parseInt(m6[1].slice(4, 6), 16);
+        } else if (m3) {
+          r = parseInt(m3[1][0] + m3[1][0], 16);
+          g = parseInt(m3[1][1] + m3[1][1], 16);
+          b = parseInt(m3[1][2] + m3[1][2], 16);
+        } else {
+          document.documentElement.style.setProperty('--line-text', '#ffffff');
+          return;
+        }
+        var brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        document.documentElement.style.setProperty('--line-text', brightness > 130 ? '#111827' : '#ffffff');
+      })(COLOR);
+
     // 设置 body data 属性（供加载动画使用）
     document.body.dataset.lineName = lineData.id;
     document.body.dataset.lineColor = COLOR;
