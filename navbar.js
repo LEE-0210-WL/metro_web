@@ -735,6 +735,89 @@
     body.no-backtop .navbar-account-btn { bottom: 132px !important; }
   }
 
+  /* ===== 底部菜单栏（移动端专用）：替代右侧三个浮动按钮 ===== */
+  .navbar-bottom-bar { display: none; }
+
+  @media (max-width: 768px) {
+    /* 隐藏原来的三个浮动圆按钮 */
+    .navbar-help-btn,
+    .navbar-ai-btn,
+    .navbar-account-btn { display: none !important; }
+
+    /* 底部菜单栏 */
+    .navbar-bottom-bar {
+      display: flex;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #111827;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
+      z-index: 10002;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-sizing: border-box;
+    }
+    .navbar-bottom-bar a,
+    .navbar-bottom-bar button {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 0 7px;
+      margin: 0;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-family: inherit;
+      font-size: 11px;
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.18s ease;
+    }
+    .navbar-bottom-bar svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .navbar-bottom-bar a.active,
+    .navbar-bottom-bar a:active,
+    .navbar-bottom-bar button:active { color: #ffffff; }
+    .navbar-bottom-bar a.active svg { stroke: #60a5fa; }
+
+    /* 返回顶部：挪到底部菜单上方，箭头缩小并居中 */
+    .navbar-back-to-top,
+    body.no-backtop .navbar-back-to-top {
+      bottom: 76px !important;
+      right: 16px !important;
+      width: 44px !important;
+      height: 44px !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .navbar-back-to-top svg {
+      width: 18px !important;
+      height: 18px !important;
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 底部菜单会遮住内容，给 body 留出空间 */
+    body { padding-bottom: 68px !important; }
+  }
+
 `;
 
   // 插入 viewport meta 到 head（确保生效）
@@ -986,6 +1069,51 @@
     aiBtn.addEventListener('click', function () {
       window.location.href = 'ai';
     });
+  })();
+
+  // ===== 底部菜单栏（移动端）：首页 / 建议 / AI / 用户 =====
+  (function () {
+    if (document.getElementById('navbar-bottom-bar')) return;
+    const p = window.location.pathname.replace(/\/+$/, '');
+    const isHome = p === '' || /\/index$/.test(p) || /\/index\.html$/.test(p);
+    const isAccount = /\/account$/.test(p) || /\/account\.html$/.test(p);
+    const isAi = /\/ai$/.test(p) || /\/ai\.html$/.test(p);
+    const isAdvises = /\/advises(\.html)?$/.test(p);
+
+    const ICONS = {
+      home: '<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
+      help: '<svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      ai:   '<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.9-.9L3 20.5l1.5-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/><line x1="8.5" y1="11.5" x2="8.51" y2="11.5"/><line x1="12" y1="11.5" x2="12.01" y2="11.5"/><line x1="15.5" y1="11.5" x2="15.51" y2="11.5"/></svg>',
+      user: '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+    };
+
+    const bar = document.createElement('nav');
+    bar.className = 'navbar-bottom-bar';
+    bar.id = 'navbar-bottom-bar';
+    bar.setAttribute('aria-label', '底部导航');
+
+    function addLink(href, icon, label, active) {
+      const a = document.createElement('a');
+      a.href = href;
+      a.innerHTML = ICONS[icon] + '<span>' + label + '</span>';
+      if (active) a.className = 'active';
+      bar.appendChild(a);
+    }
+    function addBtn(fn, icon, label, active) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = ICONS[icon] + '<span>' + label + '</span>';
+      if (active) b.className = 'active';
+      b.addEventListener('click', fn);
+      bar.appendChild(b);
+    }
+
+    addLink('index', 'home', '首页', isHome);
+    if (!isAdvises) addBtn(function () { window.location.href = 'advises.html'; }, 'help', '建议', false);
+    if (!isAi) addBtn(function () { window.location.href = 'ai'; }, 'ai', 'AI', isAi);
+    if (!isAccount) addLink('account', 'user', '用户', isAccount);
+
+    document.body.appendChild(bar);
   })();
 
   // ===== 时钟彩蛋（增加 Ctrl/Alt 修饰键，避免误触发） =====
