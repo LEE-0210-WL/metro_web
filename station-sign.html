@@ -73,8 +73,10 @@ body {
 .sidebar button.primary:hover { background: #1e40af; }
 .sidebar button.ghost { background: #fff; color: #1e3a8a; font-weight: 600; }
 .sidebar button.ghost:hover { background: #f1f5f9; }
-.btns { display: flex; gap: 8px; }
+.row-selects { display: flex; flex-direction: column; gap: 14px; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .btns button { flex: 1; }
+.btns button.ghost { flex-basis: 100%; }   /* 桌面：下载 PNG 独占一行 */
 .stage-box {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -183,12 +185,17 @@ body {
     color: #1f2937;
   }
 
+  /* 侧栏：两列网格 + 折叠 */
   .sidebar {
     width: 100%;
     border-right: none;
     max-height: 0;
     overflow: hidden;
     padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-content: start;
     transition: max-height .28s ease, padding .28s ease;
   }
   .sidebar.open {
@@ -197,6 +204,32 @@ body {
     border-bottom: 1px solid #e2e8f0;
   }
   .sidebar h1 { display: none; }
+
+  /* 线路 + 站点并排 */
+  .row-selects { display: contents; }
+
+  /* 三按钮一排 */
+  .btns { grid-column: 1 / -1; flex-wrap: nowrap; }
+  .btns button.ghost { flex-basis: auto; }
+
+  /* 所属时期 + 线路信息合并成一块 */
+  .field-stage { grid-column: 1 / -1; }
+  .field-stage .stage-box {
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+  }
+  .sidebar .meta {
+    grid-column: 1 / -1;
+    margin-top: 0;
+    border-top: none;
+    padding: 8px 12px 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    font-size: 11.5px;
+    line-height: 1.7;
+  }
 
   .stage { padding: 16px 12px 28px; }
   .sign-wrap { width: 100%; }
@@ -212,24 +245,24 @@ body {
 <aside class="sidebar" id="sidebar">
   <h1>深圳地铁 · 站名牌生成器</h1>
 
-  <div class="field">
-    <label>线路</label>
-    <select id="lineSel" onchange="onLine()"></select>
-  </div>
-
-  <div class="field">
-    <label>站点</label>
-    <select id="stSel" onchange="render()"></select>
+  <div class="row-selects">
+    <div class="field">
+      <label>线路</label>
+      <select id="lineSel" onchange="onLine()"></select>
+    </div>
+    <div class="field">
+      <label>站点</label>
+      <select id="stSel" onchange="render()"></select>
+    </div>
   </div>
 
   <div class="btns">
     <button onclick="prev()">上一站</button>
     <button onclick="next()">下一站</button>
+    <button class="ghost" onclick="downloadPNG()">下载 PNG</button>
   </div>
 
-  <button class="ghost" onclick="downloadPNG()">下载 PNG</button>
-
-  <div class="field">
+  <div class="field field-stage">
     <label>所属时期</label>
     <div class="stage-box">
       <div class="stage-name" id="stageName">—</div>
