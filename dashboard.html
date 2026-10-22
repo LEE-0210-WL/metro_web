@@ -13,7 +13,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .container{max-width:min(90%,1200px);margin:20px auto;padding:20px}
 
 /* 线路标题栏 */
-.line-header{border-radius:20px;padding:40px 32px;margin-bottom:24px;color:white;display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
+.line-header{border-radius:20px;padding:40px 32px;margin-bottom:24px;color:var(--line-text,#fff);display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
 .line-header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);pointer-events:none}
 .line-number-big{width:100px;height:100px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;flex-shrink:0;position:relative;z-index:1;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
 .line-header-info{flex:1;position:relative;z-index:1}
@@ -71,7 +71,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .transfer-station-name{font-size:18px;font-weight:700;color:#111827}
 .transfer-station-sub{font-size:13px;color:#6b7280;margin-top:2px}
 .transfer-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.transfer-badge{display:inline-block;padding:4px 12px;border-radius:14px;font-size:13px;font-weight:600;color:white}
+.transfer-badge{display:inline-block;padding:4px 12px;border-radius:14px;font-size:13px;font-weight:600;color:var(--line-text,#fff)}
 
 /* 车辆信息卡片 */
 .train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
@@ -98,7 +98,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 /* 相关链接 */
 .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .related-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:white;border-radius:12px;text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s}
-.related-link:hover{background:var(--line-color,#3b82f6);color:white;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+.related-link:hover{background:var(--line-color,#3b82f6);color:var(--line-text,#fff);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
 
 /* 错误页面 */
 .error-page{text-align:center;padding:80px 20px}
@@ -412,6 +412,21 @@ const COLOR=lineData?(lineData.color||'#3b82f6'):'#2563eb';
 const DARK_COLOR=lineData?adjustColor(COLOR,-30):'#1e40af';
 document.documentElement.style.setProperty('--line-color',COLOR);
 
+/* ===== 按背景色亮度决定文字黑白（与主页 getTextColor 一致）=====
+   线色做背景的地方必须各自调用一次：换乘徽标用的是别条线的颜色。 */
+function getContrastText(hex){
+  var r,g,b,m6,m3;
+  hex=String(hex||'').trim();
+  m6=/^#?([a-f\d]{6})$/i.exec(hex);
+  m3=/^#?([a-f\d]{3})$/i.exec(hex);
+  if(m6){r=parseInt(m6[1].slice(0,2),16);g=parseInt(m6[1].slice(2,4),16);b=parseInt(m6[1].slice(4,6),16);}
+  else if(m3){r=parseInt(m3[1][0]+m3[1][0],16);g=parseInt(m3[1][1]+m3[1][1],16);b=parseInt(m3[1][2]+m3[1][2],16);}
+  else{return '#ffffff';}
+  var brightness=0.299*r+0.587*g+0.114*b;
+  return brightness>130?'#111827':'#ffffff';
+}
+document.documentElement.style.setProperty('--line-text',getContrastText(COLOR));
+
 const container=document.getElementById('mainContainer');
 
 // 预处理换乘次数
@@ -712,7 +727,7 @@ ${transferCount>0?`
 ${Object.entries(lineData.transfers||{}).map(([station,lines])=>{
 const badges=lines.map(lid=>{
 const lc=getOtherLineColor(lid);
-return`<span class="transfer-badge" style="background:${lc}">${getLineDisplayName(lid)}</span>`;
+return`<span class="transfer-badge" style="background:${lc};color:${getContrastText(lc)}">${getLineDisplayName(lid)}</span>`;
 }).join('');
 return`
 <div class="transfer-card">

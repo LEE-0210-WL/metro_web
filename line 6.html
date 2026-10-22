@@ -306,8 +306,11 @@
     // 设置 CSS 变量
     document.documentElement.style.setProperty('--line-color', COLOR);
 
-      // 按线路色亮度决定文字用黑还是白（算法与主页 getTextColor 一致：brightness > 130 用黑字）
-      (function (hex) {
+      /* ===== 按背景色亮度决定文字用黑还是白 =====
+         算法与主页 getTextColor 完全一致：brightness > 130 用黑字，否则白字。
+         任何「线路色做背景 + 文字」的地方都必须单独调用一次，
+         因为换乘徽标用的是别条线的颜色（例如 1 号线页面上出现 11 号线的深枣红）。 */
+      function getContrastText(hex) {
         var r, g, b, m6, m3;
         hex = String(hex || '').trim();
         m6 = /^#?([a-f\d]{6})$/i.exec(hex);
@@ -321,12 +324,14 @@
           g = parseInt(m3[1][1] + m3[1][1], 16);
           b = parseInt(m3[1][2] + m3[1][2], 16);
         } else {
-          document.documentElement.style.setProperty('--line-text', '#ffffff');
-          return;
+          return '#ffffff';
         }
         var brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-        document.documentElement.style.setProperty('--line-text', brightness > 130 ? '#111827' : '#ffffff');
-      })(COLOR);
+        return brightness > 130 ? '#111827' : '#ffffff';
+      }
+
+      // 页面主色对应的文字色
+      document.documentElement.style.setProperty('--line-text', getContrastText(COLOR));
 
     // 设置 body data 属性（供加载动画使用）
     document.body.dataset.lineName = lineData.id;
@@ -478,7 +483,7 @@
       container.innerHTML = entries.map(([station, lines]) => {
         const badges = lines.map(lid => {
           const lc = getOtherLineColor(lid);
-          return `<span class="line-badge" style="background:${lc}">${getLineDisplayName(lid)}</span>`;
+          return `<span class="line-badge" style="background:${lc};color:${getContrastText(lc)}">${getLineDisplayName(lid)}</span>`;
         }).join('');
         return `
           <div class="transfer-card">
