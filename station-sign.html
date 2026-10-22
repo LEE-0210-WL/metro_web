@@ -113,6 +113,9 @@ body {
 .sign {
   width: 648px;
   height: 432px;
+  flex: 0 0 auto;        /* 关键：禁止被 flex 压缩，比例永远 3:2 */
+  min-width: 648px;
+  min-height: 432px;
   background: #fff;
   border: 2px solid #d5d9e0;
   border-radius: 40px;
@@ -152,7 +155,7 @@ body {
 }
 /* ===== 移动端：顶部菜单栏 + 侧栏折叠 + 站名牌独立缩放到容器宽 ===== */
 .mobile-bar { display: none; }
-.sign-wrap { display: flex; justify-content: center; }
+.sign-wrap { display: flex; justify-content: center; align-items: flex-start; overflow: visible; }
 
 @media (max-width: 820px) {
   body { flex-direction: column; }
@@ -232,7 +235,7 @@ body {
   }
 
   .stage { padding: 16px 12px 28px; }
-  .sign-wrap { width: 100%; }
+  .sign-wrap { width: 100%; justify-content: center; }
 }
 </style>
 </head>
@@ -574,7 +577,9 @@ function fitSign(){
   const k = Math.min(1, avail / SIGN_W);
   sign.style.transformOrigin = 'top center';
   sign.style.transform = 'scale(' + k + ')';
+  // 缩放后 sign 的布局尺寸仍是 648x432，用 wrap 高度收掉多余空白
   wrap.style.height = (SIGN_H * k) + 'px';
+  wrap.style.overflow = 'hidden';
 }
 function toggleMenu(){
   const sb = document.getElementById('sidebar');
