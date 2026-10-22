@@ -24,28 +24,30 @@ body {
 h1 { font-size: 20px; color: #1f2937; font-weight: 700; }
 .ctrl { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; }
 .ctrl select, .ctrl button {
-  padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1;
-  background: #fff; font-size: 14px; color: #1f2937; outline: none; cursor: pointer;
+  padding: 9px 16px; border-radius: 8px; border: 1px solid #cbd5e1;
+  background: #fff; font-size: 16px; color: #1f2937; outline: none; cursor: pointer;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
 }
+.ctrl select { min-width: 210px; }
 .ctrl button { background: #1e3a8a; color: #fff; border-color: #1e3a8a; font-weight: 600; }
 .ctrl button:hover { background: #1e40af; }
 .ctrl button.ghost { background: #fff; color: #1e3a8a; }
 .sign-stage { width: 100%; max-width: 900px; display: flex; justify-content: center; }
 .sign {
-  width: 720px; height: 320px; background: #fff;
+  width: 720px; height: 480px; background: #fff;
   border: 2px solid #d5d9e0; border-radius: 6px; position: relative;
   display: flex; flex-direction: column; justify-content: center; align-items: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; padding-bottom: 22px;
 }
 .sign .zh {
-  font-size: 88px; line-height: 1; color: #1a1a1a;
+  font-size: 132px; line-height: 1; color: #1a1a1a;
   letter-spacing: 0.04em; text-align: center; white-space: nowrap;
 }
 .sign .en {
-  font-family: Arial, Helvetica, sans-serif; font-size: 28px; font-weight: 700; color: #374151;
+  font-family: Arial, Helvetica, sans-serif; font-size: 42px; font-weight: 700; color: #374151;
   margin-top: 10px; letter-spacing: 0.02em; text-align: center; white-space: nowrap;
 }
-.sign .band { position: absolute; left: 0; right: 0; bottom: 0; height: 24px; background: #00b050; }
+.sign .band { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: #00b050; }
 .info { font-size: 13px; color: #6b7280; text-align: center; line-height: 1.7; }
 .info b { color: #1f2937; }
 </style>
@@ -116,12 +118,19 @@ function fontForStation(lid, station){
 }
 let DATA = {};
 let IDX = 0;
+/* 部分线路只显示已开通区段（数据里含规划/在建站，需截断） */
+const STATION_LIMIT = {
+  '20': 5   // 20号线一期（机场北—会展城）5 站，二期在建不纳入
+};
 function build(){
   DATA = {};
   getOperatingLinesEnhanced().forEach(item => {
     const d = getEnhancedLineData(item.id);
     if (!d || !d.stationList) return;
-    DATA[item.id] = { color: d.color, name: (d.name||'').replace('深圳地铁',''), stations: d.stationList };
+    let stations = d.stationList.slice();
+    const lim = STATION_LIMIT[String(item.id)];
+    if (lim) stations = stations.slice(0, lim);
+    DATA[item.id] = { color: d.color, name: (d.name||'').replace('深圳地铁',''), stations: stations };
   });
   const sel = document.getElementById('lineSel');
   sel.innerHTML = '';
@@ -133,7 +142,9 @@ function build(){
   });
   ids.forEach(id => {
     const o = document.createElement('option');
-    o.value = id; o.textContent = id + '号线 ' + DATA[id].name;
+    o.value = id;
+    // DATA[id].name 形如「5号线（环中线）」，直接用它，不要前缀
+    o.textContent = DATA[id].name;
     sel.appendChild(o);
   });
   sel.value = DATA['5'] ? '5' : ids[0];
