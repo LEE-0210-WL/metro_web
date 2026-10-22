@@ -23,10 +23,7 @@ body {
   background: #eef1f6;
   display: flex;
   align-items: stretch;
-  width: 100%;           /* 大屏自然铺满；小屏由 JS 改成固定 916px 再缩放 */
   min-height: 100vh;
-  transform-origin: top center;
-  will-change: transform;
 }
 
 /* ===== 侧边栏 ===== */
@@ -151,11 +148,68 @@ body {
   background: #00b050;
   border-radius: 0 0 38px 38px;
 }
-/* 小屏不再切换成竖向布局：由 JS 对整个 body 等比缩放，保持横向比例 */
+/* ===== 移动端：顶部菜单栏 + 侧栏折叠 + 站名牌独立缩放到容器宽 ===== */
+.mobile-bar { display: none; }
+.sign-wrap { display: flex; justify-content: center; }
+
+@media (max-width: 820px) {
+  body { flex-direction: column; }
+
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .mobile-bar button {
+    padding: 7px 14px;
+    border-radius: 9px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #1e3a8a;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .mobile-bar .mobile-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 16px;
+    transition: max-height .28s ease, padding .28s ease;
+  }
+  .sidebar.open {
+    max-height: 1400px;
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .sidebar h1 { display: none; }
+
+  .stage { padding: 16px 12px 28px; }
+  .sign-wrap { width: 100%; }
+}
 </style>
 </head>
 <body>
-<aside class="sidebar">
+<header class="mobile-bar">
+  <button id="menuBtn" onclick="toggleMenu()">菜单</button>
+  <span class="mobile-title">站名牌生成器</span>
+</header>
+
+<aside class="sidebar" id="sidebar">
   <h1>深圳地铁 · 站名牌生成器</h1>
 
   <div class="field">
@@ -192,10 +246,12 @@ body {
 </aside>
 
 <main class="stage">
-  <div class="sign" id="sign">
+  <div class="sign-wrap" id="signWrap">
+    <div class="sign" id="sign">
     <div class="zh" id="signZh">太安</div>
     <div class="en" id="signEn">Tai'an</div>
-    <div class="band" id="signBand"></div>
+      <div class="band" id="signBand"></div>
+    </div>
   </div>
 </main>
 
@@ -474,32 +530,30 @@ function downloadPNG(){
   img.src = url;
 }
 
-/* ===== 整体等比缩放：保持电脑上的横向比例，只缩小 ===== */
-const BASE_W = 916;
-const BASE_H_MAX = 700;
-function fitStage(){
-  const b = document.body;
-  const availW = window.innerWidth - 8;
-  const k = Math.min(1, availW / BASE_W);
-  if (k < 1) {
-    // 窄屏：固定 916px 基准宽，整体等比缩小，并水平居中
-    b.style.width = BASE_W + 'px';
-    b.style.marginLeft = 'auto';
-    b.style.marginRight = 'auto';
-    b.style.transform = 'scale(' + k + ')';
-    b.style.transformOrigin = 'top center';
-  } else {
-    // 大屏：恢复自然铺满，不缩放
-    b.style.width = '100%';
-    b.style.marginLeft = '0';
-    b.style.marginRight = '0';
-    b.style.transform = 'none';
-  }
+/* ===== 站名牌自适应：按容器宽度等比缩放牌子本身 ===== */
+const SIGN_W = 648;
+const SIGN_H = 432;
+function fitSign(){
+  const wrap = document.getElementById('signWrap');
+  const sign = document.getElementById('sign');
+  if (!wrap || !sign) return;
+  const avail = wrap.clientWidth;
+  const k = Math.min(1, avail / SIGN_W);
+  sign.style.transformOrigin = 'top center';
+  sign.style.transform = 'scale(' + k + ')';
+  wrap.style.height = (SIGN_H * k) + 'px';
 }
-window.addEventListener('resize', fitStage);
-window.addEventListener('orientationchange', () => setTimeout(fitStage, 150));
+function toggleMenu(){
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('menuBtn');
+  const open = sb.classList.toggle('open');
+  btn.textContent = open ? '收起' : '菜单';
+}
+window.addEventListener('resize', fitSign);
+window.addEventListener('orientationchange', () => setTimeout(fitSign, 150));
+
 build();
-fitStage();
+fitSign();
 </script>
 </body>
 </html>
