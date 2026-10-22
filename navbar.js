@@ -789,10 +789,36 @@
       stroke-linejoin: round;
       flex-shrink: 0;
     }
+    /* 当前页：图标与文字同时变蓝 */
     .navbar-bottom-bar a.active,
+    .navbar-bottom-bar a.active span,
+    .navbar-bottom-bar button.active,
+    .navbar-bottom-bar button.active span {
+      color: #60a5fa;
+    }
+    .navbar-bottom-bar a.active svg,
+    .navbar-bottom-bar button.active svg { stroke: #60a5fa; }
+
+    /* 悬停压暗 */
+    .navbar-bottom-bar a:hover,
+    .navbar-bottom-bar button:hover {
+      opacity: 0.55;
+    }
+    .navbar-bottom-bar a,
+    .navbar-bottom-bar button {
+      transition: color 0.18s ease, opacity 0.18s ease;
+    }
+    /* 按下时略微回弹 */
     .navbar-bottom-bar a:active,
-    .navbar-bottom-bar button:active { color: #ffffff; }
-    .navbar-bottom-bar a.active svg { stroke: #60a5fa; }
+    .navbar-bottom-bar button:active { opacity: 0.4; }
+
+    /* 问号图标本身只占 viewBox 约 6×11，比其他图标小一圈，单独放大 */
+    .navbar-bottom-bar svg.icon-help {
+      width: 26px;
+      height: 26px;
+      margin-top: -2px;
+      margin-bottom: -2px;
+    }
 
     /* 返回顶部：挪到底部菜单上方，箭头缩小并居中 */
     .navbar-back-to-top,
@@ -1082,7 +1108,7 @@
 
     const ICONS = {
       home: '<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
-      help: '<svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      help: '<svg class="icon-help" viewBox="0 0 24 24"><path d="M8.4 8.6a3.9 3.9 0 1 1 7 3c-.9 1.1-2.7 1.8-2.7 3.9"/><line x1="12.5" y1="19.2" x2="12.51" y2="19.2"/></svg>',
       ai:   '<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.9-.9L3 20.5l1.5-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/><line x1="8.5" y1="11.5" x2="8.51" y2="11.5"/><line x1="12" y1="11.5" x2="12.01" y2="11.5"/><line x1="15.5" y1="11.5" x2="15.51" y2="11.5"/></svg>',
       user: '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
     };
