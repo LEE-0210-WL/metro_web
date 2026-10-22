@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="theme.css">
+<title>站名牌生成器</title>
+<style>
+@font-face { font-family: '黑体'; src: url('黑体.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '汉仪颜楷'; src: url('汉仪颜楷.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '方正舒体'; src: url('方正舒体.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '方正古隶体'; src: url('方正古隶体.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '华文隶书'; src: url('华文隶书.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '汉仪魏碑'; src: url('汉仪魏碑.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '思源宋体'; src: url('思源宋体.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: '汉仪行楷'; src: url('汉仪行楷.woff2') format('woff2'); font-display: swap; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  background: #eef1f6; min-height: 100vh; padding: 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+h1 { font-size: 20px; color: #1f2937; font-weight: 700; }
+.ctrl { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; }
+.ctrl select, .ctrl button {
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1;
+  background: #fff; font-size: 14px; color: #1f2937; outline: none; cursor: pointer;
+}
+.ctrl button { background: #1e3a8a; color: #fff; border-color: #1e3a8a; font-weight: 600; }
+.ctrl button:hover { background: #1e40af; }
+.ctrl button.ghost { background: #fff; color: #1e3a8a; }
+.sign-stage { width: 100%; max-width: 900px; display: flex; justify-content: center; }
+.sign {
+  width: 720px; height: 260px; background: #fff;
+  border: 2px solid #d5d9e0; border-radius: 6px; position: relative;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; padding-bottom: 22px;
+}
+.sign .zh {
+  font-size: 92px; line-height: 1; color: #1a1a1a;
+  letter-spacing: 0.04em; text-align: center; white-space: nowrap;
+}
+.sign .en {
+  font-family: Arial, Helvetica, sans-serif; font-size: 26px; color: #4b5563;
+  margin-top: 10px; letter-spacing: 0.02em; text-align: center; white-space: nowrap;
+}
+.sign .band { position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background: #00b050; }
+.info { font-size: 13px; color: #6b7280; text-align: center; line-height: 1.7; }
+.info b { color: #1f2937; }
+</style>
+</head>
+<body>
+<h1>深圳地铁 · 站名牌生成器</h1>
+<div class="ctrl">
+  <select id="lineSel" onchange="onLine()"></select>
+  <select id="stSel" onchange="render()"></select>
+  <button onclick="prev()">◀ 上一站</button>
+  <button onclick="next()">下一站 ▶</button>
+  <button class="ghost" onclick="downloadPNG()">下载 PNG</button>
+</div>
+<div class="sign-stage">
+  <div class="sign" id="sign">
+    <div class="zh" id="signZh">太安</div>
+    <div class="en" id="signEn">Tai'an</div>
+    <div class="band" id="signBand"></div>
+  </div>
+</div>
+<div class="info">
+  中文按该线路指定字体渲染，英文统一 Arial，底部色带为该线路官方色<br>
+  <b id="metaLine">—</b> ｜ 字体：<b id="metaFont">—</b> ｜ 英文：<b>Arial</b>
+</div>
+<script src="all-lines-enhanced.js"></script>
+<script>
+const EN = {"罗湖":"Luohu","国贸":"Guomao","老街":"Laojie","大剧院":"Grand Theater","科学馆":"Science Museum","华强路":"Huaqiang Rd","岗厦":"Gangxia","会展中心":"Convention Center","购物公园":"Shopping Park","香蜜湖":"Xiangmihu","车公庙":"Chegongmiao","竹子林":"Zhuzilin","侨城东":"Qiaocheng E","华侨城":"OCT","世界之窗":"Window of World","白石洲":"Baishizhou","高新园":"Hi-Tech Park","深大":"Shenzhen University","桃园":"Taoyuan","大新":"Daxin","鲤鱼门":"Liyumen","前海湾":"Qianhaiwan","宝体":"Bao'an Stadium","坪洲":"Pingzhou","西乡":"Xixiang","固戍":"Gushu","后瑞":"Hourui","机场东":"Airport East","赤湾":"Chiwan","蛇口港":"Shekou Port","海上世界":"Sea World","水湾":"Shuiwan","东角头":"Dongjiaotou","湾厦":"Wanxia","海月":"Haiyue","登良":"Dengliang","后海":"Houhai","科苑":"Keyuan","红树湾":"Hongshuwan","侨城北":"Qiaocheng North","深康":"Shenkang","安托山":"Antuo Hill","侨香":"Qiaoxiang","香蜜":"Xiangmi","香梅北":"Xiangmei North","景田":"Jingtian","莲花西":"Lianhua West","福田":"Futian","市民中心":"Civic Center","岗厦北":"Gangxia North","华强北":"Huaqiang North","燕南":"Yannan","湖贝":"Hubei","黄贝岭":"Huangbeiling","新秀":"Xinxiu","莲塘口岸":"Liantang Checkpoint","仙湖路":"Xianhu Rd","莲塘":"Liantang","福保":"Futian BA","益田":"Yitian","石厦":"Shixia","莲花村":"Lianhuacun","华新":"Huaxin","通新岭":"Tongxinling","红岭":"Hongling","晒布":"Shaibu","翠竹":"Cuizhu","田贝":"Tianbei","水贝":"Shuibei","草埔":"Caopu","布吉":"Buji","木棉湾":"Mumianwan","大芬":"Dafen","丹竹头":"Danzhutou","六约":"Liuyue","塘坑":"Tangkeng","横岗":"Henggang","永湖":"Yonghu","大运":"Universiade","爱联":"Ailian","吉祥":"Jixiang","龙城广场":"Longcheng Square","南联":"Nanlian","双龙":"Shuanglong","福田口岸":"Futian CP","福民":"Fumin","莲花北":"Lianhua N","上梅林":"Shangmeilin","民乐":"Minle","白石龙":"Bailong","深圳北站":"Shenzhen N St","红山":"Hongshan","上塘":"Shangtang","龙胜":"Longsheng","龙华":"Longhua","清湖":"Qinghu","清湖北":"Qinghu North","竹村":"Zhucun","茜坑":"Xikeng","长湖":"Changhu","观澜":"Guanlan","松元厦":"Songyuanxia","观澜湖":"Mission Hills","牛湖":"Niuhu","荔湾":"Liwan","铁路公园":"Railway Park","妈湾":"Mawan","前湾公园":"Qianwan Park","前湾":"Qianwan","桂湾":"Guiwan","临海":"Linhai","宝华":"Baohua","翻身":"Fanshen","灵芝":"Lingzhi","洪浪北":"Honglang N","兴东":"Xingdong","留仙洞":"Liuxiandong","西丽":"Xili","大学城":"Univ Town","塘朗":"Tanglang","长岭陂":"Changlingpi","民治":"Minzhi","五和":"Wuhe","坂田":"Bantian","杨美":"Yangmei","上水径":"Shangshuijing","下水径":"Xiashuijing","长龙":"Changlong","百鸽笼":"Baigelong","布心":"Buxin","怡景":"Yijing","体育中心":"Sports Ctr","八卦岭":"Bagualing","银湖":"Yinhu","翰岭":"Hanling","梅林关":"Meilinguan","上芬":"Shangfen","元芬":"Yuanfen","阳台山东":"Yangtai M E","官田":"Guantian","上屋":"Shangwu","长圳":"Changzhen","凤凰城":"FengHuang Town","光明大街":"Guangming St","光明":"Guangming","科学公园":"Science Park","楼村":"Loucun","红花山":"Honghuashan","公明广场":"Gongming Square","合水口":"Heshuikou","薯田埔":"Shutianpu","松岗公园":"Songgang Park","溪头":"Xitou","松岗":"Songgang","深大丽湖":"SZU Lihu","北大":"PKU","西丽湖":"Xili Lake","茶光":"Chaguang","珠光":"Zhuguang","龙井":"Longjing","桃源村":"Taoyuancun","深云":"Shenyun","农林":"Nonglin","上沙":"Shangsha","沙尾":"Shawei","皇岗村":"Huanggangcun","皇岗口岸":"Huanggang CP","赤尾":"Chiwei","华强南":"Huaqiang South","黄木岗":"Huangmugang","红岭北":"Hongling N","笋岗":"Sungang","洪湖":"Honghu","梧桐山南":"Wutong Mountain South","沙头角":"Shatoujiao","海山":"Haishan","盐田港西":"Yantian Port West","深外高中":"Shenwai Senior Campus","盐田路":"Yantian Rd","北山道":"Beishan Rd","盐田食街":"Yantian Food St","大梅沙":"Dameisha","小梅沙":"Xiaomeisha","梦海":"Menghai","怡海":"Yihai","荔林":"Litchi Orchards","南油西":"Nanyou West","南油":"Nanyou","南山书城":"Nanshan Book Mall","深大南":"Shenzhen University South","粤海门":"Yuehaimen","高新南":"Hi-Tech S","红树湾南":"Hongshuwan South","深湾":"Shenwan","深圳湾公园":"Shenzhen Bay Park","下沙":"Xiasha","香梅":"Xiangmei","梅景":"Meijing","下梅林":"Xiameilin","梅村":"Meicun","孖岭":"Maling","泥岗":"Nigang","园岭":"Yuanling","鹿丹村":"Ludancun","人民南":"Renmin S","向西村":"Xiangxicun","文锦":"Wenjin","冬瓜岭":"Donggualing","雅宝":"Yabao","南坑":"Nankeng","光雅园":"Guangyayuan","坂田北":"Bantian North","华为":"Huawei","岗头":"Gangtou","雪象":"Xuexiang","甘坑":"Gankeng","凉帽山":"Liangmao Hill","上李朗":"Shanglilang","木古":"Mugu","华南城":"Huancheng","禾花":"Hehua","平湖":"Pinghu","双拥街":"Shuangyong St","碧头":"Bitou","后亭":"Houting","沙井":"Shajing","塘尾":"Tangwei","桥头":"Qiaotou","福永":"Fuyong","机场北":"Airport North","机场":"Airport","碧海湾":"Bihaiwan","南山":"Nanshan","福星":"Fuxing","红岭南":"Hongling South","中大八院":"SYSU 8th Hosp","左炮台东":"Zuopaotai East","太子湾":"Taiziwan","花果山":"Huaguoshan","四海":"Sihai","南光":"Nanguang","南头古城":"Nantou Ancient City","中山公园":"Zhongshan Park","同乐南":"Tongle South","上川":"Shangchuan","流塘":"Liutang","宝田一路":"Baotian 1st Road","平峦山":"Pingluanshan","西乡桃源":"Xixiang Taoyuan","钟屋南":"Zhongwu South","黄田":"Huangtian","兴围":"Xingwei","福围":"Fuwei","怀德":"Huaide","桥头西":"Qiaotou West","福海西":"Fuhai West","国展":"Shenzhen World","国展北":"Shenzhen World North","海上田园南":"Waterlands Resort South","海上田园东":"Waterlands Resort East","蚝乡":"Haoxiang","沙蚝":"Shahao","沙井古墟":"Shajing Ancient Market","步涌":"Buchong","深圳湾口岸":"Shenzhen Bay Checkpoint","人才公园":"Talent Park","高新中":"Hi-Tech Central","高新北":"Hi-Tech North","西丽高铁":"Xili HSR","石鼓":"Shigu","百旺港大":"Baiwang HKU","应人石":"Yingrenshi","罗租":"Luzu","石岩":"Shiyan","光明城":"Guangmingcheng","德雅路":"Deya Rd","月亮路":"Yueliang Rd","将围":"Jiangwei","新围":"Xinwei","上村":"Shangcun","下村":"Xiacun","李松蓢":"Lisonglang","罗湖北":"Luohu N","石芽岭":"Shiyaling","六约北":"Liuyue N","四联":"Silian","坳背":"Aobei","嶂背":"Zhangbei","南约":"Nanyue","宝龙":"Baolong","锦龙":"Jinlong","坪山围":"Pingshanwei","坪山广场":"Pingshan Square","坪山中心":"Pingshan Center","坑梓":"Kengzi","沙田":"Shatian","深理工":"SUAT","中大":"Sun Yat-sen University","圳美":"Zhenmei","碧眼":"Biyan","虹桥公园":"Hongqiao Park","新庄":"Xinzhuang","红坳公园":"Hong'ao Park","西丽高铁站":"Xili High-Speed Railway Station","田心":"Tianxin","技术大学":"Technology University","石井":"Shijing","沙壆":"Shabo","坪环":"Pinghuan","六和":"Liuhe","新和":"Xinhe","东纵纪念馆":"Dongjiang Column Memorial Hall","燕子湖":"Yanzihu","大运中心":"Universiade Center","会展城":"Convention & Exhibition City","国展南":"Shenzhen World South","新安公园":"Xin'an Park","宝安客运站":"Bao'an Passenger Transport Terminal","贝尔路":"Bei'er Rd","港湾":"Gangwan","坪地六联":"Pingdi Liulian","富坪":"Fuping","白石塘":"Baishitang","低碳城":"Low Carbon City","坪西":"Pingxi","新生":"Xinsheng","梨园":"Liyuan","龙园":"Longyuan","盛平":"Shengping","尚景":"Shangjing","回龙埔":"Huilongpu","愉园":"Yuyuan","黄阁坑":"Huanggekeng","龙城公园":"Longcheng Park","新澜":"Xinlan","马安山":"Ma'anshan","宝安":"Bao'an","盐田墟":"Yantianxu","鸿安围":"Hong'anwei","溪涌":"Xichong"};
+const FONT_RULES = [
+  { lines: ['3','8','20'], zhFont: '汉仪颜楷' },
+  { lines: ['16'],         zhFont: '方正舒体' },
+  { lines: ['6z','13'],    zhFont: '方正古隶体' },
+  { lines: ['14'],         zhFont: '华文隶书' },
+  { lines: ['12'],         zhFont: '汉仪魏碑' },
+  { lines: ['5'],          zhFont: '思源宋体' },
+  { lines: ['11','7','9'], zhFont: '汉仪行楷' },
+];
+const DEFAULT_FONT = '黑体';
+let DATA = {};
+let IDX = 0;
+function fontFor(lid){
+  for (const r of FONT_RULES) if (r.lines.includes(String(lid))) return r.zhFont;
+  return DEFAULT_FONT;
+}
+function build(){
+  DATA = {};
+  getOperatingLinesEnhanced().forEach(item => {
+    const d = getEnhancedLineData(item.id);
+    if (!d || !d.stationList) return;
+    DATA[item.id] = { color: d.color, name: (d.name||'').replace('深圳地铁',''), stations: d.stationList };
+  });
+  const sel = document.getElementById('lineSel');
+  sel.innerHTML = '';
+  const ids = Object.keys(DATA).sort((a,b) => {
+    const na = parseInt(a,10), nb = parseInt(b,10);
+    if (isNaN(na) && isNaN(nb)) return a.localeCompare(b);
+    if (isNaN(na)) return 1; if (isNaN(nb)) return -1;
+    return na - nb;
+  });
+  ids.forEach(id => {
+    const o = document.createElement('option');
+    o.value = id; o.textContent = id + '号线 ' + DATA[id].name;
+    sel.appendChild(o);
+  });
+  sel.value = DATA['5'] ? '5' : ids[0];
+  onLine();
+}
+function onLine(){
+  const lid = document.getElementById('lineSel').value;
+  const sel = document.getElementById('stSel');
+  sel.innerHTML = '';
+  DATA[lid].stations.forEach((n, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = n;
+    sel.appendChild(o);
+  });
+  sel.value = 0;
+  render();
+}
+function render(){
+  const lid = document.getElementById('lineSel').value;
+  const sel = document.getElementById('stSel');
+  IDX = parseInt(sel.value) || 0;
+  const name = DATA[lid].stations[IDX];
+  const en = EN[name] || '';
+  const zhEl = document.getElementById('signZh');
+  const enEl = document.getElementById('signEn');
+  const bandEl = document.getElementById('signBand');
+  const font = fontFor(lid);
+  zhEl.textContent = name;
+  zhEl.style.fontFamily = "'" + font + "', 'Microsoft YaHei', sans-serif";
+  enEl.textContent = en || '—';
+  enEl.style.color = en ? '#4b5563' : '#c0c4cc';
+  bandEl.style.background = DATA[lid].color;
+  const len = name.length;
+  let fs = 92;
+  if (len >= 6) fs = 52;
+  else if (len >= 5) fs = 62;
+  else if (len >= 4) fs = 74;
+  else if (len >= 3) fs = 84;
+  zhEl.style.fontSize = fs + 'px';
+  document.getElementById('metaLine').textContent = lid + '号线 ' + DATA[lid].name + '（' + DATA[lid].color + '）';
+  document.getElementById('metaFont').textContent = font;
+}
+function next(){
+  const lid = document.getElementById('lineSel').value;
+  if (IDX < DATA[lid].stations.length - 1) { document.getElementById('stSel').value = IDX + 1; render(); }
+}
+function prev(){
+  if (IDX > 0) { document.getElementById('stSel').value = IDX - 1; render(); }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+function downloadPNG(){
+  const sign = document.getElementById('sign');
+  const zh = document.getElementById('signZh');
+  const en = document.getElementById('signEn');
+  const band = document.getElementById('signBand');
+  const W = sign.offsetWidth, H = sign.offsetHeight;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">' +
+    '<foreignObject width="100%" height="100%">' +
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + W + 'px;height:' + H + 'px;background:#fff;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;">' +
+    '<div style="font-family:' + zh.style.fontFamily.replace(/"/g, "'") + ';font-size:' + parseInt(zh.style.fontSize) + 'px;color:#1a1a1a;line-height:1;">' + zh.textContent + '</div>' +
+    '<div style="font-family:Arial;font-size:26px;color:#4b5563;margin-top:10px;">' + en.textContent + '</div>' +
+    '<div style="position:absolute;left:0;right:0;bottom:0;height:14px;background:' + band.style.background + '"></div>' +
+    '</div></foreignObject></svg>';
+  const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = W * 2; c.height = H * 2;
+    const ctx = c.getContext('2d');
+    ctx.scale(2,2);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.download = (zh.textContent || 'station') + '_站名牌.png';
+    a.href = c.toDataURL('image/png');
+    a.click();
+  };
+  img.src = url;
+}
+build();
+</script>
+</body>
+</html>
