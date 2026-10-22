@@ -389,31 +389,376 @@
   </div>
 </div>
 
+<script src="all-lines-enhanced.js"></script>
 <script>
-const DATA={
-1:{c:'#00b050',n:'罗宝线',s:[{n:'罗湖',e:'Luohu',t:[]},{n:'国贸',e:'Guomao',t:[]},{n:'老街',e:'Laojie',t:[3]},{n:'大剧院',e:'Grand Theater',t:[2,8]},{n:'科学馆',e:'Science Museum',t:[6]},{n:'华强路',e:'Huaqiang Rd',t:[7]},{n:'岗厦',e:'Gangxia',t:[10]},{n:'会展中心',e:'Convention Center',t:[4]},{n:'购物公园',e:'Shopping Park',t:[3]},{n:'香蜜湖',e:'Xiangmihu',t:[]},{n:'车公庙',e:'Chegongmiao',t:[7,9,11]},{n:'竹子林',e:'Zhuzilin',t:[]},{n:'侨城东',e:'Qiaocheng E',t:[]},{n:'华侨城',e:'OCT',t:[]},{n:'世界之窗',e:'Window of World',t:[2]},{n:'白石洲',e:'Baishizhou',t:[]},{n:'高新园',e:'Hi-Tech Park',t:[]},{n:'深大',e:'Shenzhen Univ',t:[13]},{n:'桃园',e:'Taoyuan',t:[12]},{n:'大新',e:'Daxin',t:[]},{n:'鲤鱼门',e:'Liyumen',t:[]},{n:'前海湾',e:'Qianhaiwan',t:[5,11]},{n:'新安',e:"Xin'an",t:[]},{n:'宝安中心',e:"Bao'an Ctr",t:[5]},{n:'宝体',e:'Baoti',t:[]},{n:'坪洲',e:'Pingzhou',t:[]},{n:'西乡',e:'Xixiang',t:[]},{n:'固戍',e:'Gushu',t:[]},{n:'后瑞',e:'Hourui',t:[]},{n:'机场东',e:'Airport E',t:[12]}]},
-2:{c:'#e74c3c',n:'蛇口线',s:[{n:'赤湾',e:'Chiwan',t:[5,8]},{n:'蛇口港',e:'Shekou Port',t:[]},{n:'海上世界',e:'Sea World',t:[12]},{n:'水湾',e:'Shuiwan',t:[]},{n:'东角头',e:'Dongjiaotou',t:[13]},{n:'湾厦',e:'Wansha',t:[]},{n:'海月',e:'Haiyue',t:[]},{n:'登良',e:'Dengliang',t:[]},{n:'后海',e:'Houhai',t:[11]},{n:'科苑',e:'Keyuan',t:[13]},{n:'红树湾',e:'Hongshuwan',t:[]},{n:'世界之窗',e:'Window of World',t:[1]},{n:'侨城北',e:'Qiaocheng N',t:[]},{n:'深康',e:'Shenkang',t:[7]},{n:'安托山',e:'Antuo Hill',t:[7]},{n:'侨香',e:'Qiaoxiang',t:[]},{n:'香蜜',e:'Xiangmi',t:[]},{n:'香梅北',e:'Xiangmei N',t:[9]},{n:'景田',e:'Jingtian',t:[9]},{n:'莲花西',e:'Lianhua W',t:[3,11]},{n:'福田',e:'Futian',t:[3,11]},{n:'市民中心',e:'Civic Center',t:[4,10,11,14]},{n:'岗厦北',e:'Gangxia N',t:[10,11,14]},{n:'华强北',e:'Huaqiang N',t:[7]},{n:'燕南',e:'Yannan',t:[]},{n:'大剧院',e:'Grand Theater',t:[1,8]},{n:'湖贝',e:'Hubei',t:[5]},{n:'黄贝岭',e:'Huangbeiling',t:[5,8]},{n:'新秀',e:'Xinxiu',t:[9]},{n:'莲塘口岸',e:'Liantang CP',t:[8]},{n:'仙湖路',e:'Xianhu Rd',t:[]},{n:'莲塘',e:'Liantang',t:[8]}]},
-3:{c:'#3498db',n:'龙岗线',s:[{n:'福保',e:'Futian BA',t:[]},{n:'益田',e:'Yitian',t:[]},{n:'石厦',e:'Shixia',t:[7]},{n:'购物公园',e:'Shopping Park',t:[1]},{n:'福田',e:'Futian',t:[2,11]},{n:'少年宫',e:"Children's Pal",t:[4]},{n:'莲花村',e:'Lianhuacun',t:[10]},{n:'华新',e:'Huaxin',t:[7]},{n:'通新岭',e:'Tongxinling',t:[6]},{n:'红岭',e:'Hongling',t:[9]},{n:'老街',e:'Laojie',t:[1]},{n:'晒布',e:'Shaibu',t:[]},{n:'翠竹',e:'Cuizhu',t:[]},{n:'田贝',e:'Tianbei',t:[7]},{n:'水贝',e:'Shuibei',t:[]},{n:'草埔',e:'Caopu',t:[14]},{n:'布吉',e:'Buji',t:[5,14]},{n:'木棉湾',e:'Mumianwan',t:[]},{n:'大芬',e:'Dafen',t:[]},{n:'丹竹头',e:'Danzhutou',t:[]},{n:'六约',e:'Liuyue',t:[]},{n:'塘坑',e:'Tangkeng',t:[]},{n:'横岗',e:'Henggang',t:[]},{n:'永湖',e:'Yonghu',t:[]},{n:'荷坳',e:"He'ao",t:[]},{n:'大运',e:'Universiade',t:[14,16]},{n:'爱联',e:'Ailian',t:[]},{n:'吉祥',e:'Jixiang',t:[]},{n:'龙城广场',e:'Longcheng Sq',t:[]},{n:'南联',e:'Nanlian',t:[]},{n:'双龙',e:'Shuanglong',t:[16]}]},
-4:{c:'#e74c3c',n:'龙华线',s:[{n:'福田口岸',e:'Futian CP',t:[10]},{n:'福民',e:'Fumin',t:[7,10]},{n:'会展中心',e:'Convention Ctr',t:[1]},{n:'市民中心',e:'Civic Center',t:[2,10,11,14]},{n:'少年宫',e:"Children's Pal",t:[3]},{n:'莲花北',e:'Lianhua N',t:[]},{n:'上梅林',e:'Shangmeilin',t:[9]},{n:'民乐',e:'Minle',t:[6]},{n:'白石龙',e:'Bailong',t:[]},{n:'深圳北站',e:'Shenzhen N St',t:[5,6]},{n:'红山',e:'Hongshan',t:[6]},{n:'上塘',e:'Shangtang',t:[]},{n:'龙胜',e:'Longsheng',t:[]},{n:'龙华',e:'Longhua',t:[]},{n:'清湖',e:'Qinghu',t:[]},{n:'清湖北',e:'Qinghu N',t:[]},{n:'竹村',e:'Zhucun',t:[]},{n:'茜坑',e:'Xikeng',t:[]},{n:'长湖',e:'Changhu',t:[]},{n:'观澜',e:'Guanlan',t:[]},{n:'松元厦',e:'Songyuanxia',t:[22]},{n:'观澜湖',e:'Mission Hills',t:[]},{n:'牛湖',e:'Niuhu',t:[]}]},
-5:{c:'#9b59b6',n:'环中线',s:[{n:'赤湾',e:'Chiwan',t:[2,8]},{n:'荔湾',e:'Liwan',t:[]},{n:'铁路公园',e:'Railway Park',t:[15]},{n:'妈湾',e:'Mawan',t:[]},{n:'前湾公园',e:'Qianwan Park',t:[]},{n:'前湾',e:'Qianwan',t:[9]},{n:'桂湾',e:'Guiwan',t:[11]},{n:'前海湾',e:'Qianhaiwan',t:[1,11]},{n:'临海',e:'Linhai',t:[]},{n:'宝华',e:'Baohua',t:[]},{n:'宝安中心',e:"Bao'an Ctr",t:[1]},{n:'翻身',e:'Fanshen',t:[]},{n:'灵芝',e:'Lingzhi',t:[12]},{n:'洪浪北',e:'Honglang N',t:[]},{n:'兴东',e:'Xingdong',t:[]},{n:'留仙洞',e:'Liuxiandong',t:[7]},{n:'西丽',e:'Xili',t:[7]},{n:'大学城',e:'Univ Town',t:[]},{n:'塘朗',e:'Tanglang',t:[]},{n:'长岭陂',e:'Changlingpi',t:[6]},{n:'深圳北站',e:'Shenzhen N St',t:[4,6]},{n:'民治',e:'Minzhi',t:[]},{n:'五和',e:'Wuhe',t:[10]},{n:'坂田',e:'Bantian',t:[]},{n:'杨美',e:'Yangmei',t:[]},{n:'上水径',e:'Shangshuijing',t:[]},{n:'下水径',e:'Xiashuijing',t:[]},{n:'长龙',e:'Changlong',t:[]},{n:'布吉',e:'Buji',t:[3,14]},{n:'百鸽笼',e:'Baigelong',t:[17]},{n:'布心',e:'Buxin',t:[7]},{n:'太安',e:"Tai'an",t:[7]},{n:'怡景',e:'Yijing',t:[]},{n:'黄贝岭',e:'Huangbeiling',t:[2,8]}]},
-6:{c:'#1abc9c',n:'光明线',s:[{n:'科学馆',e:'Science Mus',t:[1]},{n:'通新岭',e:'Tongxinling',t:[3]},{n:'体育中心',e:'Sports Ctr',t:[]},{n:'八卦岭',e:'Bagualing',t:[7]},{n:'银湖',e:'Yinhu',t:[9]},{n:'翰岭',e:'Hanling',t:[]},{n:'梅林关',e:'Meilinguan',t:[]},{n:'深圳北站',e:'Shenzhen N St',t:[4,5]},{n:'红山',e:'Hongshan',t:[4]},{n:'上芬',e:'Shangfen',t:[]},{n:'元芬',e:'Yuanfen',t:[]},{n:'阳台山东',e:'Yangtai M E',t:[]},{n:'官田',e:'Guantian',t:[]},{n:'上屋',e:'Shangwu',t:[]},{n:'长圳',e:'Changzhen',t:[]},{n:'凤凰城',e:'Phoenix Town',t:[]},{n:'光明大街',e:'Guangming St',t:[]},{n:'光明',e:'Guangming',t:[]},{n:'科学公园',e:'Science Park',t:[]},{n:'楼村',e:'Loucun',t:[]},{n:'红花山',e:'Honghuashan',t:[]},{n:'公明广场',e:'Gongming Sq',t:[]},{n:'合水口',e:'Heshuikou',t:[]},{n:'薯田埔',e:'Shutianpu',t:[]},{n:'松岗公园',e:'Songgang Park',t:[]},{n:'溪头',e:'Xitou',t:[]},{n:'松岗',e:'Songgang',t:[11,12]}]},
-7:{c:'#3b82f6',n:'西丽线',s:[{n:'深大丽湖',e:'SZU Lihu',t:[]},{n:'北大',e:'PKU',t:[]},{n:'西丽湖',e:'Xili Lake',t:[]},{n:'西丽',e:'Xili',t:[5]},{n:'茶光',e:'Chaguang',t:[]},{n:'珠光',e:'Zhuguang',t:[]},{n:'龙井',e:'Longjing',t:[]},{n:'桃源村',e:'Taoyuancun',t:[]},{n:'深云',e:'Shenyun',t:[]},{n:'安托山',e:'Antuo Hill',t:[2,8]},{n:'农林',e:'Nonglin',t:[]},{n:'车公庙',e:'Chegongmiao',t:[1,9,11]},{n:'上沙',e:'Shangsha',t:[]},{n:'沙尾',e:'Shawei',t:[]},{n:'石厦',e:'Shixia',t:[3]},{n:'皇岗村',e:'Huanggangcun',t:[]},{n:'福民',e:'Fumin',t:[4,10]},{n:'皇岗口岸',e:'Huanggang CP',t:[]},{n:'赤尾',e:'Chiwei',t:[]},{n:'华强南',e:'Huaqiang S',t:[11]},{n:'华强北',e:'Huaqiang N',t:[2]},{n:'华新',e:'Huaxin',t:[3]},{n:'黄木岗',e:'Huangmugang',t:[14,24]},{n:'八卦岭',e:'Bagualing',t:[6]},{n:'红岭北',e:'Hongling N',t:[9]},{n:'笋岗',e:'Sungang',t:[17]},{n:'洪湖',e:'Honghu',t:[]},{n:'田贝',e:'Tianbei',t:[3]},{n:'太安',e:"Tai'an",t:[5]}]},
-8:{c:'#f39c12',n:'盐田线',s:[{n:'莲塘',e:'Liantang',t:[2]},{n:'梧桐山南',e:'Wutong M S',t:[]},{n:'沙头角',e:'Shatoujiao',t:[]},{n:'海山',e:'Haishan',t:[]},{n:'盐田港西',e:'Yantian Port W',t:[]},{n:'深外高中',e:'SZ Foreign Lang',t:[]},{n:'盐田路',e:'Yantian Rd',t:[18]},{n:'鸿安围',e:"Hong'anwei",t:[]},{n:'北山道',e:'Beishan Rd',t:[]},{n:'盐田食街',e:'Yantian Food St',t:[]},{n:'大梅沙',e:'Dameisha',t:[]},{n:'小梅沙',e:'Xiaomeisha',t:[]}]},
-9:{c:'#8e44ad',n:'梅林线',s:[{n:'前湾',e:'Qianwan',t:[5]},{n:'梦海',e:'Menghai',t:[]},{n:'怡海',e:'Yihai',t:[]},{n:'荔林',e:'Lilin',t:[]},{n:'南油西',e:'Nanyou W',t:[]},{n:'南油',e:'Nanyou',t:[12]},{n:'南山书城',e:'Nanshan Books',t:[]},{n:'深大南',e:'SZU South',t:[]},{n:'粤海门',e:'Yuehaimen',t:[13]},{n:'高新南',e:'Hi-Tech S',t:[]},{n:'红树湾南',e:'Hongshuwan S',t:[11]},{n:'深湾',e:'Shenwan',t:[]},{n:'深圳湾公园',e:'Shenzhen Bay Pk',t:[]},{n:'下沙',e:'Xiasha',t:[]},{n:'车公庙',e:'Chegongmiao',t:[1,7,11]},{n:'香梅',e:'Xiangmei',t:[]},{n:'景田',e:'Jingtian',t:[2]},{n:'梅景',e:'Meijing',t:[]},{n:'下梅林',e:'Xiameilin',t:[]},{n:'梅村',e:'Meicun',t:[]},{n:'上梅林',e:'Shangmeilin',t:[4]},{n:'孖岭',e:'Maling',t:[10]},{n:'银湖',e:'Yinhu',t:[6]},{n:'泥岗',e:'Nigang',t:[]},{n:'红岭北',e:'Hongling N',t:[7]},{n:'园岭',e:'Yuanling',t:[]},{n:'红岭',e:'Hongling',t:[3]},{n:'鹿丹村',e:'Ludancun',t:[]},{n:'人民南',e:'Renmin S',t:[]},{n:'向西村',e:'Xiangxicun',t:[]},{n:'文锦',e:'Wenjin',t:[]},{n:'新秀',e:'Xinxiu',t:[2]}]},
-10:{c:'#e91e63',n:'坂田线',s:[{n:'福田口岸',e:'Futian CP',t:[4]},{n:'福民',e:'Fumin',t:[4,7]},{n:'岗厦',e:'Gangxia',t:[1]},{n:'岗厦北',e:'Gangxia N',t:[2,11,14]},{n:'莲花村',e:'Lianhuacun',t:[3]},{n:'冬瓜岭',e:'Donggualing',t:[]},{n:'孖岭',e:'Maling',t:[9]},{n:'雅宝',e:'Yabao',t:[]},{n:'南坑',e:'Nankeng',t:[]},{n:'光雅园',e:'Guangyayuan',t:[]},{n:'五和',e:'Wuhe',t:[5]},{n:'坂田北',e:'Bantian N',t:[]},{n:'贝尔路',e:"Bei'er Rd",t:[]},{n:'华为',e:'Huawei',t:[]},{n:'岗头',e:'Gangtou',t:[]},{n:'雪象',e:'Xuexiang',t:[]},{n:'甘坑',e:'Gankeng',t:[]},{n:'凉帽山',e:'Liangmaoshan',t:[]},{n:'上李朗',e:'Shanglilang',t:[]},{n:'木古',e:'Mugu',t:[]},{n:'华南城',e:'S China City',t:[]},{n:'禾花',e:'Hehua',t:[]},{n:'平湖',e:'Pinghu',t:[18]},{n:'双拥街',e:'Shuangyong St',t:[]}]},
-11:{c:'#795548',n:'机场线',s:[{n:'碧头',e:'Bitou',t:[]},{n:'松岗',e:'Songgang',t:[6,12]},{n:'后亭',e:'Houting',t:[]},{n:'沙井',e:'Shajing',t:[]},{n:'马安山',e:"Ma'anshan",t:[]},{n:'塘尾',e:'Tangwei',t:[]},{n:'桥头',e:'Qiaotou',t:[]},{n:'福永',e:'Fuyong',t:[12]},{n:'机场北',e:'Airport N',t:[20]},{n:'机场',e:'Airport',t:[]},{n:'碧海湾',e:'Bihaiwan',t:[]},{n:'宝安',e:"Bao'an",t:[]},{n:'前海湾',e:'Qianhaiwan',t:[1,5]},{n:'南山',e:'Nanshan',t:[12]},{n:'后海',e:'Houhai',t:[2]},{n:'红树湾南',e:'Hongshuwan S',t:[9]},{n:'车公庙',e:'Chegongmiao',t:[1,7,9]},{n:'福田',e:'Futian',t:[2,3]},{n:'岗厦北',e:'Gangxia N',t:[2,10,14]},{n:'福星',e:'Fuxing',t:[]},{n:'华强南',e:'Huaqiang S',t:[7]},{n:'红岭南',e:'Hongling S',t:[1,2]},{n:'中大八院',e:'SYSU 8th Hosp',t:[]}]},
-12:{c:'#607d8b',n:'南宝线',s:[{n:'左炮台东',e:'Zuopaotai E',t:[]},{n:'太子湾',e:'Taiziwan',t:[]},{n:'海上世界',e:'Sea World',t:[2]},{n:'花果山',e:'Huaguoshan',t:[]},{n:'四海',e:'Sihai',t:[]},{n:'南油',e:'Nanyou',t:[9]},{n:'南光',e:'Nanguang',t:[]},{n:'南山',e:'Nanshan',t:[11]},{n:'桃园',e:'Taoyuan',t:[1]},{n:'南头古城',e:'Nantou Ancient',t:[20]},{n:'中山公园',e:'Zhongshan Park',t:[21]},{n:'同乐南',e:'Tongle S',t:[]},{n:'新安公园',e:"Xin'an Park",t:[]},{n:'灵芝',e:'Lingzhi',t:[5]},{n:'上川',e:'Shangchuan',t:[]},{n:'流塘',e:'Liutang',t:[15]},{n:'宝安客运站',e:"Bao'an Coach",t:[]},{n:'宝田一路',e:'Baotian 1st',t:[]},{n:'平峦山',e:'Pingluanshan',t:[]},{n:'西乡桃源',e:'Xixiang Taoyuan',t:[]},{n:'钟屋南',e:'Zhongwu S',t:[]},{n:'黄田',e:'Huangtian',t:[]},{n:'兴围',e:'Xingwei',t:[]},{n:'机场东',e:'Airport E',t:[1]},{n:'福围',e:'Fuwei',t:[]},{n:'怀德',e:'Huaide',t:[]},{n:'福永',e:'Fuyong',t:[11]},{n:'桥头西',e:'Qiaotou W',t:[]},{n:'福海西',e:'Fuhai W',t:[]},{n:'国展',e:'Shenzhen World',t:[20]},{n:'国展北',e:'SZ World N',t:[20]},{n:'海上田园南',e:'Waterlands S',t:[]},{n:'海上田园东',e:'Waterlands E',t:[]},{n:'蚝乡',e:'Haoxiang',t:[]},{n:'沙蚝',e:'Shahao',t:[]},{n:'沙井古墟',e:'Shajing Mkt',t:[]},{n:'步涌',e:'Buchong',t:[]},{n:'松岗',e:'Songgang',t:[6,11]}]},
-13:{c:'#ff9800',n:'石岩线',s:[{n:'深圳湾口岸',e:'Shenzhen Bay CP',t:[]},{n:'人才公园',e:'Talent Park',t:[]},{n:'后海',e:'Houhai',t:[2]},{n:'科苑',e:'Keyuan',t:[2]},{n:'粤海门',e:'Yuehaimen',t:[9]},{n:'深大',e:'Shenzhen Univ',t:[1]},{n:'高新中',e:'Hi-Tech Ctr',t:[]},{n:'高新北',e:'Hi-Tech N',t:[]},{n:'西丽高铁',e:'Xili HSR',t:[15,27,29]},{n:'石鼓',e:'Shigu',t:[]},{n:'留仙洞',e:'Liuxiandong',t:[5]},{n:'百旺港大',e:'Baiwang HKU',t:[]},{n:'应人石',e:'Yingrenshi',t:[]},{n:'罗租',e:'Luzu',t:[]},{n:'石岩',e:'Shiyan',t:[25]},{n:'上屋',e:'Shangwu',t:[6]},{n:'红坳公园',e:"Hong'ao Park",t:[]},{n:'光明城',e:'Guangmingcheng',t:[6,18]},{n:'德雅路',e:'Deya Rd',t:[]},{n:'凤凰城',e:'Phoenix Town',t:[6]},{n:'月亮路',e:'Yueliang Rd',t:[]},{n:'将围',e:'Jiangwei',t:[]},{n:'新围',e:'Xinwei',t:[]},{n:'公明广场',e:'Gongming Sq',t:[6]},{n:'上村',e:'Shangcun',t:[]},{n:'下村',e:'Xiacun',t:[]},{n:'李松蓢',e:'Lisonglang',t:[]}]},
-14:{c:'#ffeb3b',n:'东部快线',s:[{n:'岗厦北',e:'Gangxia N',t:[2,10,11]},{n:'黄木岗',e:'Huangmugang',t:[7,24]},{n:'罗湖北',e:'Luohu N',t:[17,25]},{n:'布吉',e:'Buji',t:[3,5]},{n:'石芽岭',e:'Shiyaling',t:[17]},{n:'六约北',e:'Liuyue N',t:[]},{n:'四联',e:'Silian',t:[]},{n:'坳背',e:'Aobei',t:[]},{n:'大运',e:'Universiade',t:[3,16]},{n:'嶂背',e:'Zhangbei',t:[]},{n:'南约',e:'Nanyue',t:[]},{n:'宝龙',e:'Baolong',t:[]},{n:'锦龙',e:'Jinlong',t:[]},{n:'坪山围',e:'Pingshanwei',t:[16]},{n:'坪山广场',e:'Pingshan Sq',t:[]},{n:'坪山中心',e:'Pingshan Ctr',t:[19]},{n:'坑梓',e:'Kengzi',t:[]},{n:'沙田',e:'Shatian',t:[]}]}
+/* ===== 英文站名对照表（从旧版 PIDS 抽出来的，all-lines-enhanced.js 只有中文名） ===== */
+const EN = {
+"罗湖": "Luohu",
+"国贸": "Guomao",
+"老街": "Laojie",
+"大剧院": "Grand Theater",
+"科学馆": "Science Museum",
+"华强路": "Huaqiang Rd",
+"岗厦": "Gangxia",
+"会展中心": "Convention Center",
+"购物公园": "Shopping Park",
+"香蜜湖": "Xiangmihu",
+"车公庙": "Chegongmiao",
+"竹子林": "Zhuzilin",
+"侨城东": "Qiaocheng E",
+"华侨城": "OCT",
+"世界之窗": "Window of World",
+"白石洲": "Baishizhou",
+"高新园": "Hi-Tech Park",
+"深大": "Shenzhen Univ",
+"桃园": "Taoyuan",
+"大新": "Daxin",
+"鲤鱼门": "Liyumen",
+"前海湾": "Qianhaiwan",
+"宝体": "Baoti",
+"坪洲": "Pingzhou",
+"西乡": "Xixiang",
+"固戍": "Gushu",
+"后瑞": "Hourui",
+"机场东": "Airport E",
+"赤湾": "Chiwan",
+"蛇口港": "Shekou Port",
+"海上世界": "Sea World",
+"水湾": "Shuiwan",
+"东角头": "Dongjiaotou",
+"湾厦": "Wansha",
+"海月": "Haiyue",
+"登良": "Dengliang",
+"后海": "Houhai",
+"科苑": "Keyuan",
+"红树湾": "Hongshuwan",
+"侨城北": "Qiaocheng N",
+"深康": "Shenkang",
+"安托山": "Antuo Hill",
+"侨香": "Qiaoxiang",
+"香蜜": "Xiangmi",
+"香梅北": "Xiangmei N",
+"景田": "Jingtian",
+"莲花西": "Lianhua W",
+"福田": "Futian",
+"市民中心": "Civic Center",
+"岗厦北": "Gangxia N",
+"华强北": "Huaqiang N",
+"燕南": "Yannan",
+"湖贝": "Hubei",
+"黄贝岭": "Huangbeiling",
+"新秀": "Xinxiu",
+"莲塘口岸": "Liantang CP",
+"仙湖路": "Xianhu Rd",
+"莲塘": "Liantang",
+"福保": "Futian BA",
+"益田": "Yitian",
+"石厦": "Shixia",
+"莲花村": "Lianhuacun",
+"华新": "Huaxin",
+"通新岭": "Tongxinling",
+"红岭": "Hongling",
+"晒布": "Shaibu",
+"翠竹": "Cuizhu",
+"田贝": "Tianbei",
+"水贝": "Shuibei",
+"草埔": "Caopu",
+"布吉": "Buji",
+"木棉湾": "Mumianwan",
+"大芬": "Dafen",
+"丹竹头": "Danzhutou",
+"六约": "Liuyue",
+"塘坑": "Tangkeng",
+"横岗": "Henggang",
+"永湖": "Yonghu",
+"大运": "Universiade",
+"爱联": "Ailian",
+"吉祥": "Jixiang",
+"龙城广场": "Longcheng Sq",
+"南联": "Nanlian",
+"双龙": "Shuanglong",
+"福田口岸": "Futian CP",
+"福民": "Fumin",
+"莲花北": "Lianhua N",
+"上梅林": "Shangmeilin",
+"民乐": "Minle",
+"白石龙": "Bailong",
+"深圳北站": "Shenzhen N St",
+"红山": "Hongshan",
+"上塘": "Shangtang",
+"龙胜": "Longsheng",
+"龙华": "Longhua",
+"清湖": "Qinghu",
+"清湖北": "Qinghu N",
+"竹村": "Zhucun",
+"茜坑": "Xikeng",
+"长湖": "Changhu",
+"观澜": "Guanlan",
+"松元厦": "Songyuanxia",
+"观澜湖": "Mission Hills",
+"牛湖": "Niuhu",
+"荔湾": "Liwan",
+"铁路公园": "Railway Park",
+"妈湾": "Mawan",
+"前湾公园": "Qianwan Park",
+"前湾": "Qianwan",
+"桂湾": "Guiwan",
+"临海": "Linhai",
+"宝华": "Baohua",
+"翻身": "Fanshen",
+"灵芝": "Lingzhi",
+"洪浪北": "Honglang N",
+"兴东": "Xingdong",
+"留仙洞": "Liuxiandong",
+"西丽": "Xili",
+"大学城": "Univ Town",
+"塘朗": "Tanglang",
+"长岭陂": "Changlingpi",
+"民治": "Minzhi",
+"五和": "Wuhe",
+"坂田": "Bantian",
+"杨美": "Yangmei",
+"上水径": "Shangshuijing",
+"下水径": "Xiashuijing",
+"长龙": "Changlong",
+"百鸽笼": "Baigelong",
+"布心": "Buxin",
+"怡景": "Yijing",
+"体育中心": "Sports Ctr",
+"八卦岭": "Bagualing",
+"银湖": "Yinhu",
+"翰岭": "Hanling",
+"梅林关": "Meilinguan",
+"上芬": "Shangfen",
+"元芬": "Yuanfen",
+"阳台山东": "Yangtai M E",
+"官田": "Guantian",
+"上屋": "Shangwu",
+"长圳": "Changzhen",
+"凤凰城": "Phoenix Town",
+"光明大街": "Guangming St",
+"光明": "Guangming",
+"科学公园": "Science Park",
+"楼村": "Loucun",
+"红花山": "Honghuashan",
+"公明广场": "Gongming Sq",
+"合水口": "Heshuikou",
+"薯田埔": "Shutianpu",
+"松岗公园": "Songgang Park",
+"溪头": "Xitou",
+"松岗": "Songgang",
+"深大丽湖": "SZU Lihu",
+"北大": "PKU",
+"西丽湖": "Xili Lake",
+"茶光": "Chaguang",
+"珠光": "Zhuguang",
+"龙井": "Longjing",
+"桃源村": "Taoyuancun",
+"深云": "Shenyun",
+"农林": "Nonglin",
+"上沙": "Shangsha",
+"沙尾": "Shawei",
+"皇岗村": "Huanggangcun",
+"皇岗口岸": "Huanggang CP",
+"赤尾": "Chiwei",
+"华强南": "Huaqiang S",
+"黄木岗": "Huangmugang",
+"红岭北": "Hongling N",
+"笋岗": "Sungang",
+"洪湖": "Honghu",
+"梧桐山南": "Wutong M S",
+"沙头角": "Shatoujiao",
+"海山": "Haishan",
+"盐田港西": "Yantian Port W",
+"深外高中": "SZ Foreign Lang",
+"盐田路": "Yantian Rd",
+"北山道": "Beishan Rd",
+"盐田食街": "Yantian Food St",
+"大梅沙": "Dameisha",
+"小梅沙": "Xiaomeisha",
+"梦海": "Menghai",
+"怡海": "Yihai",
+"荔林": "Lilin",
+"南油西": "Nanyou W",
+"南油": "Nanyou",
+"南山书城": "Nanshan Books",
+"深大南": "SZU South",
+"粤海门": "Yuehaimen",
+"高新南": "Hi-Tech S",
+"红树湾南": "Hongshuwan S",
+"深湾": "Shenwan",
+"深圳湾公园": "Shenzhen Bay Pk",
+"下沙": "Xiasha",
+"香梅": "Xiangmei",
+"梅景": "Meijing",
+"下梅林": "Xiameilin",
+"梅村": "Meicun",
+"孖岭": "Maling",
+"泥岗": "Nigang",
+"园岭": "Yuanling",
+"鹿丹村": "Ludancun",
+"人民南": "Renmin S",
+"向西村": "Xiangxicun",
+"文锦": "Wenjin",
+"冬瓜岭": "Donggualing",
+"雅宝": "Yabao",
+"南坑": "Nankeng",
+"光雅园": "Guangyayuan",
+"坂田北": "Bantian N",
+"华为": "Huawei",
+"岗头": "Gangtou",
+"雪象": "Xuexiang",
+"甘坑": "Gankeng",
+"凉帽山": "Liangmaoshan",
+"上李朗": "Shanglilang",
+"木古": "Mugu",
+"华南城": "S China City",
+"禾花": "Hehua",
+"平湖": "Pinghu",
+"双拥街": "Shuangyong St",
+"碧头": "Bitou",
+"后亭": "Houting",
+"沙井": "Shajing",
+"塘尾": "Tangwei",
+"桥头": "Qiaotou",
+"福永": "Fuyong",
+"机场北": "Airport N",
+"机场": "Airport",
+"碧海湾": "Bihaiwan",
+"南山": "Nanshan",
+"福星": "Fuxing",
+"红岭南": "Hongling S",
+"中大八院": "SYSU 8th Hosp",
+"左炮台东": "Zuopaotai E",
+"太子湾": "Taiziwan",
+"花果山": "Huaguoshan",
+"四海": "Sihai",
+"南光": "Nanguang",
+"南头古城": "Nantou Ancient",
+"中山公园": "Zhongshan Park",
+"同乐南": "Tongle S",
+"上川": "Shangchuan",
+"流塘": "Liutang",
+"宝田一路": "Baotian 1st",
+"平峦山": "Pingluanshan",
+"西乡桃源": "Xixiang Taoyuan",
+"钟屋南": "Zhongwu S",
+"黄田": "Huangtian",
+"兴围": "Xingwei",
+"福围": "Fuwei",
+"怀德": "Huaide",
+"桥头西": "Qiaotou W",
+"福海西": "Fuhai W",
+"国展": "Shenzhen World",
+"国展北": "SZ World N",
+"海上田园南": "Waterlands S",
+"海上田园东": "Waterlands E",
+"蚝乡": "Haoxiang",
+"沙蚝": "Shahao",
+"沙井古墟": "Shajing Mkt",
+"步涌": "Buchong",
+"深圳湾口岸": "Shenzhen Bay CP",
+"人才公园": "Talent Park",
+"高新中": "Hi-Tech Ctr",
+"高新北": "Hi-Tech N",
+"西丽高铁": "Xili HSR",
+"石鼓": "Shigu",
+"百旺港大": "Baiwang HKU",
+"应人石": "Yingrenshi",
+"罗租": "Luzu",
+"石岩": "Shiyan",
+"光明城": "Guangmingcheng",
+"德雅路": "Deya Rd",
+"月亮路": "Yueliang Rd",
+"将围": "Jiangwei",
+"新围": "Xinwei",
+"上村": "Shangcun",
+"下村": "Xiacun",
+"李松蓢": "Lisonglang",
+"罗湖北": "Luohu N",
+"石芽岭": "Shiyaling",
+"六约北": "Liuyue N",
+"四联": "Silian",
+"坳背": "Aobei",
+"嶂背": "Zhangbei",
+"南约": "Nanyue",
+"宝龙": "Baolong",
+"锦龙": "Jinlong",
+"坪山围": "Pingshanwei",
+"坪山广场": "Pingshan Sq",
+"坪山中心": "Pingshan Ctr",
+"坑梓": "Kengzi",
+"沙田": "Shatian"
 };
 
-const LC={1:'#00b050',2:'#e74c3c',3:'#3498db',4:'#e74c3c',5:'#9b59b6',6:'#1abc9c',7:'#3b82f6',8:'#f39c12',9:'#8e44ad',10:'#e91e63',11:'#795548',12:'#607d8b',13:'#ff9800',14:'#ffeb3b'};
+/* ===== 从 all-lines-enhanced.js 动态构建线路数据 ===== */
+let DATA = {};
+let LC = {};
+function buildLines(){
+  DATA = {}; LC = {};
+  const ops = getOperatingLinesEnhanced();
+  ops.forEach(item => {
+    const d = getEnhancedLineData(item.id);
+    if (!d || !d.stationList) return;
+    const shortName = (d.name || "").replace("深圳地铁", "").replace(/（.*?）/g, "");
+    const stations = d.stationList.map(name => {
+      const ts = (d.transfers && d.transfers[name]) ? d.transfers[name].map(x => parseInt(x, 10)) : [];
+      return { n: name, e: EN[name] || "", t: ts };
+    });
+    DATA[item.id] = { c: d.color, n: shortName, s: stations };
+    LC[item.id] = d.color;
+  });
+}
 
-let L=5, SI=20, DIR='fwd', AUTO=false, AUTOI=null, DOOR=false;
+/* ===== 状态 ===== */
+let L = null, SI = 0, DIR = 'fwd', AUTO = false, AUTOI = null, DOOR = false;
 
-function init(){popSt();upd();}
-function popSt(){const s=document.getElementById('stSel');s.innerHTML='';DATA[L].s.forEach((st,i)=>{const o=document.createElement('option');o.value=i;o.textContent=st.n;if(i===SI)o.selected=true;s.appendChild(o)});}
-function changeLine(){L=parseInt(document.getElementById('lineSel').value);SI=0;popSt();upd();}
+function init(){
+  buildLines();
+  // 线路下拉
+  const sel = document.getElementById('lineSel');
+  sel.innerHTML = '';
+  const ids = Object.keys(DATA).sort((a,b) => {
+    const na = parseInt(a,10), nb = parseInt(b,10);
+    if (isNaN(na) && isNaN(nb)) return a.localeCompare(b);
+    if (isNaN(na)) return 1; if (isNaN(nb)) return -1;
+    return na - nb;
+  });
+  ids.forEach(id => {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = id + '号线（' + DATA[id].n + '）';
+    sel.appendChild(o);
+  });
+  // 默认 5 号线，没有就第一条
+  L = DATA['5'] ? '5' : (ids[0] || null);
+  if (!L) return;
+  sel.value = L;
+  SI = Math.min(20, DATA[L].s.length - 1);
+  popSt();
+  upd();
+}
+
+function popSt(){
+  const s = document.getElementById('stSel');
+  s.innerHTML = '';
+  if (!L || !DATA[L]) return;
+  DATA[L].s.forEach((st, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = st.n;
+    if (i === SI) o.selected = true;
+    s.appendChild(o);
+  });
+}
+
+function changeLine(){
+  L = document.getElementById('lineSel').value;
+  SI = 0;
+  popSt();
+  upd();
+}
+
 
 function upd(){
   const line=DATA[L], sts=line.s;
