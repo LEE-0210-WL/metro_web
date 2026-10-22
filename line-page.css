@@ -754,3 +754,60 @@ blockquote p:last-child { margin-bottom: 0; }
   blockquote { padding: 10px 14px; margin: 14px 0; }
   sup { font-size: 0.78em; }
 }
+
+
+/* ==========================================================================
+   ===== 历史沿革正文统一黑色 + 资料来源「跳转原文」按钮（2026-10-22） =====
+   需求：正文、二级标题、资料来源文字一律纯黑，不做「正文略灰 / 标题略灰」的分级；
+   资料来源不再直接展示 URL（长 URL 会撑出横向滚动条），改为按钮跳转原文。
+   ========================================================================== */
+
+.hist-body,
+.hist-body p,
+.hist-body li,
+.hist-body h2,
+.hist-body h3,
+.hist-body h4,
+.hist-body h5,
+.hist-body strong,
+.hist-body em,
+.hist-body span,
+.hist-body blockquote,
+.hist-body blockquote p,
+.hist-body td,
+.hist-body th {
+  color: #111827 !important;
+}
+
+/* 资料来源条目：压掉灰色变量，避免「一下灰一下黑」 */
+.hist-body [style*="c-text"] { color: #111827 !important; }
+
+/* 「跳转原文」按钮：与全站主色按钮一致 */
+.hist-body .src-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--r-sm, 6px);
+  border: 1px solid var(--c-primary, #2563eb);
+  background: var(--c-primary, #2563eb);
+  color: var(--c-text-inv, #ffffff) !important;
+  font-size: var(--fs-xs, 12px);
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  transition: background .15s ease, border-color .15s ease;
+}
+.hist-body .src-btn:hover {
+  background: var(--c-primary-d, #1d4ed8);
+  border-color: var(--c-primary-d, #1d4ed8);
+  color: var(--c-text-inv, #ffffff) !important;
+}
+
+/* 防横向溢出：长 URL / 长英文串一律可断行 */
+html, body { overflow-x: hidden; max-width: 100%; }
+.hist-body code,
+.hist-body pre,
+.hist-body a { word-break: break-word; overflow-wrap: anywhere; }

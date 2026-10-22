@@ -155,7 +155,7 @@ body {
 }
 /* ===== 移动端：顶部菜单栏 + 侧栏折叠 + 站名牌独立缩放到容器宽 ===== */
 .mobile-bar { display: none; }
-.sign-wrap { display: flex; justify-content: center; align-items: flex-start; overflow: visible; }
+.sign-wrap { display: flex; justify-content: center; align-items: flex-start; overflow: hidden; }
 
 @media (max-width: 820px) {
   body { flex-direction: column; }
@@ -237,6 +237,7 @@ body {
   .stage { padding: 16px 12px 28px; }
   .sign-wrap { width: 100%; justify-content: center; }
 }
+html, body { overflow-x: hidden; max-width: 100%; }
 </style>
 </head>
 <body>
