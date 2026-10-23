@@ -1,6 +1,0 @@
-# Cloudflare Pages 重定向规则
-# 旧版 PIDS 页面已下线，统一跳到新的 7 号线 PIDS
-
-/PIDS_5.3_1_v7        /pids-line7  301
-/PIDS_5.3_1_v7.html   /pids-line7  301
-/PIDS_5.3_1_v7/*      /pids-line7  301
