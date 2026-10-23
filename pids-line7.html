@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="fonts/misans/misans.css">
+  <link rel="stylesheet" href="theme.css">
 <title>7号线 车内屏 PIDS</title>
 <style>
   /* ===== 7 号线 PIDS 专用子集字体（自托管，避免回退到系统字体）=====
@@ -724,6 +725,21 @@
     /* 「11」两个字都是窄字，占宽小，保持原来的补偿量 */
     .mm-badge.wide.x11 { padding-right: 3.6px; }
 
+  /* 当前（黄色）站徽标：等比放大 1.14 倍（黄药丸 80x46 vs 灰药丸 70x40）*/
+  .mm-badge.cur {
+    width: 36.5px; height: 36.5px;
+    font-size: 34px;
+    border-radius: 3.4px;
+  }
+  .mm-badge.cur.wide {
+    font-size: 34px;
+    letter-spacing: -.12em;
+    padding-right: 6.2px;
+  }
+  .mm-badge.cur.wide.x11 {
+    padding-right: 4.1px;
+  }
+
     .mm-chev {
       position: absolute; top: 50%;
       transform: translate(-50%, -50%);
@@ -1137,7 +1153,7 @@ function renderMiniMap() {
       trs.forEach(lid => {
         const c = isPassed ? '#6b7280' : (getLineColorEnhanced ? getLineColorEnhanced(lid) : '#888');
         const wideCls = String(lid).length > 1 ? (' wide' + (String(lid) === '11' ? ' x11' : '')) : '';
-        bh += '<span class="mm-badge' + wideCls + '" style="background:' + c + ';color:' + getContrastText(c) + '">' + lid + '</span>';
+        bh += '<span class="mm-badge' + wideCls + (isCur ? ' cur' : '') + '" style="background:' + c + ';color:' + getContrastText(c) + '">' + lid + '</span>';
       });
       badges = '<div class="mm-badges">' + bh + '</div>';
     }
