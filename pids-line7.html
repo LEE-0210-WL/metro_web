@@ -240,6 +240,18 @@
     /* ===== 站台 + 3D 风格列车（6 与 1 为车头）===== */
     .car-guide { position: relative; margin-top: 6px; height: 76px; }
 
+  /* 车头方向箭头：深灰，2 个，指向右边 */
+  .head-arrows {
+    position: absolute;
+    top: 70%;
+    right: 2px;
+    transform: translateY(-50%);
+    z-index: 5;
+    pointer-events: none;
+    line-height: 0;
+  }
+  .head-arrows svg { display: block; }
+
     /* 站台地板：大的圆角梯形（用 perspective + rotateX 把圆角矩形压成梯形，透视感）*/
     .platform-floor {
       position: absolute;
@@ -1254,14 +1266,37 @@ function renderCarGuide(name) {
   const CARS = TRAIN_FORMATION[LINE_ID] || 6;    // 编组车厢数
   const lineColor = getLineColorEnhanced ? getLineColorEnhanced(LINE_ID) : '#0032A0';
   box.style.setProperty('--c-line', lineColor);
+
+  // 行车方向决定车头与车厢编号顺序：
+  //   往深大丽湖（dir=-1）→ 1 车为车头，编号 6→1 从左到右
+  //   往太安（dir=1）   → 6 车为车头，编号反转为 1→6 从左到右
+  const headCar = dir === -1 ? 1 : CARS;
+  const rev = dir === 1;
+
+  // 车头方向箭头：深灰，2 个 90° chevron，指向右
+  // 车头方向箭头：深灰，2 个 90° chevron，指向右
+  const HEAD_ARROW = '<div class="head-arrows">' +
+    '<svg width="27" height="16" viewBox="0 0 27 16">' +
+      '<path d="M0 0 L7 8 L0 16 L5.5 16 L12.5 8 L5.5 0 Z" fill="#3b4150"/>' +
+      '<path d="M14 0 L21 8 L14 16 L19.5 16 L26.5 8 L19.5 0 Z" fill="#3b4150"/>' +
+    '</svg></div>';
+
   // 层序（DOM 顺序 = 叠放顺序）：梯形地板 → 站台正面 → 列车
   let html = '<div class="platform-floor"></div><div class="platform-face"></div><div class="train">';
-  for (let c = CARS; c >= 1; c--) {
-    const cls = c === CARS ? ' head-left' : (c === 1 ? ' head-right' : '');
-    const cur = c === currentCar ? ' current' : '';
-    html += '<div class="car' + cls + cur + '">' + c + '</div>';
-  }
-  html += '</div>';
+
+  const order = [];
+  for (let c = CARS; c >= 1; c--) order.push(c);
+  if (rev) order.reverse();
+
+  order.forEach((c, i) => {
+    const isHead = c === headCar;
+    const isEnd = i === 0 || i === order.length - 1;
+    // 最右那节 = 车头（圆角车头朝右）；最左那节 = 车尾
+    const cls = (i === order.length - 1 ? ' head-right' : (i === 0 ? ' head-left' : '')) + (c === currentCar ? ' current' : '');
+    html += '<div class="car' + cls + '">' + c + '</div>';
+  });
+
+  html += '</div>' + HEAD_ARROW;
   box.innerHTML = html;
 }
 
