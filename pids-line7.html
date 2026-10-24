@@ -665,8 +665,9 @@
       -webkit-text-stroke: 0.34px currentColor;
       font-size: 17px; color: #111827; line-height: 1.1; letter-spacing: .01em;
     }
-        /* minimap：只有已过站的英文是深灰，其余全黑 */
-    .mm-node.passed .mm-en { color: #6b7280; }
+        /* minimap：已过站的站名（中英）都变深灰 */
+  .mm-node.passed .mm-cn,
+  .mm-node.passed .mm-en { color: #6b7280; }
 
     .mm-badges {
       position: absolute;
