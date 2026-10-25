@@ -16,11 +16,7 @@
     }
 
     /* ===== 主内容区 - 避让固定导航栏 ===== */
-    .container {
-      width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
 
     /* 标题行 */
     .page-title {  font-size: 28px;
@@ -75,7 +71,7 @@
       gap: 24px;
       padding: 14px 20px;
       background: white;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       margin-bottom: 20px;
       flex-wrap: wrap;
@@ -109,7 +105,7 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      border-radius: 8px;
+      border-radius: var(--r-md);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -174,7 +170,7 @@
     /* 站点卡片 */
     .station-card {
       background: white;
-      border-radius: 16px;
+      border-radius: var(--r-xl);
       padding: 20px 24px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -271,7 +267,9 @@
 
     /* ===== 响应式 ===== */
     @media (max-width: 768px) {
-      .container { margin-top: 20px; padding: 0 16px; }
+      .container {
+        margin-top: 20px;
+      }
       .page-title { font-size: 22px; }
       .station-card { padding: 16px 18px; }
       .station-name { font-size: 16px; }
@@ -283,7 +281,7 @@
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 14px; background: #111827; color: white;
-      text-decoration: none; border-radius: 6px;
+      text-decoration: none; border-radius: var(--r-sm);
       font-weight: 500; font-size: 13px;
       transition: background 0.3s ease;
       flex-shrink: 0; white-space: nowrap;
@@ -325,6 +323,9 @@
       box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.3);
     }
 </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>

@@ -20,33 +20,6 @@
     }
     
     /* 顶部导航栏 - 黑色 */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background-color: #111827;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
     
     .logo img {
       width: 100%;
@@ -66,46 +39,9 @@
     }
     
     /* 导航链接 */
-    .nav-links {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .nav-links a {
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      color: #d1d5db;
-      transition: all 0.3s ease;
-    }
-    
-    .nav-links a:hover {
-      background-color: #374151;
-      color: white;
-    }
-    
-    .nav-links a.active {
-      background-color: #2563eb;
-      color: white;
-    }
-    
-    /* 移动端菜单 */
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
     
     /* 主内容区域 */
-    .container {
-      width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
     
     .page-title {
       font-size: 28px;
@@ -133,9 +69,9 @@
     
     .line-card {
       background: white;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--sh-md);
     }
     
     .line-header {
@@ -199,7 +135,7 @@
       background: #111827;
       color: white;
       text-decoration: none;
-      border-radius: 6px;
+      border-radius: var(--r-sm);
       font-weight: 500;
       font-size: 13px;
       transition: background 0.3s ease;
@@ -213,36 +149,10 @@
     
     /* 响应式设计 */
     @media (max-width: 768px) {
-      .header {
-        padding: 0 16px;
-        flex-wrap: wrap;
-        height: auto;
-        min-height: 60px;
-      }
       
-      .nav-links {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        padding: 10px 0;
-        background: #1f2937;
-        position: absolute;
-        top: 60px;
-        left: 0;
-      }
       
-      .nav-links.active {
-        display: flex;
-      }
       
-      .nav-links a {
-        padding: 12px 20px;
-        border-radius: 0;
-      }
       
-      .mobile-menu-btn {
-        display: block;
-      }
       
       .current-time {
         display: none;
@@ -250,8 +160,6 @@
       
       .container {
         margin-top: 20px;
-        padding: 0 16px;
-        width: min(90%, 1200px);
       }
       
       .lines-grid {
@@ -263,6 +171,9 @@
       }
     }
   </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>
@@ -471,13 +382,6 @@
       }
       updateTime();
       setInterval(updateTime, 1000);
-
-      const mobileBtn = document.getElementById('mobileMenuBtn');
-      if (mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-          document.querySelector('.nav-links').classList.toggle('active');
-        });
-      }
     })();
   </script>
 </body>

@@ -10,7 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1.6}
-.container{max-width:min(90%,1200px);margin:20px auto;padding:20px}
+
 
 /* 线路标题栏 */
 .line-header{border-radius:20px;padding:40px 32px;margin-bottom:24px;color:var(--line-text,#fff);display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
@@ -34,7 +34,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-tab.active{background:#111827;color:#fff;border-color:#111827}
 .rank-badge{font-size:var(--fs-sm);color:#6b7280;font-weight:500;white-space:nowrap}
 .rank-badge b{color:#111827;font-weight:700}
-.kpi-card{background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:4px solid var(--line-color,#3b82f6);transition:transform 0.2s}
+.kpi-card{background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-top:4px solid var(--line-color,#3b82f6);transition:transform 0.2s}
 .kpi-card:hover{transform:translateY(-2px)}
 .kpi-card-icon{font-size:24px;margin-bottom:8px}
 .kpi-card-value{font-size:26px;font-weight:700;color:#111827;line-height:1}
@@ -44,7 +44,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .section-title{font-size:20px;font-weight:700;color:#111827;margin:32px 0 16px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--line-color,#e5e7eb)}
 
 /* 排名图表 */
-.rank-chart-container{background:white;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:24px}
+.rank-chart-container{background:white;border-radius: var(--r-xl);box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:24px}
 .rank-chart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fafafa}
 .rank-chart-title{font-size:15px;font-weight:600;color:#111827}
 .rank-chart-legend{display:flex;align-items:center;gap:16px}
@@ -56,17 +56,17 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:var(--fs-sm);color:var(--c-text-3);text-align:center}
 
 /* 线路走向图占位 */
-.route-map-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px;display:none}
-.route-map-container{width:100%;overflow:auto;border-radius:8px}
+.route-map-section{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);margin-bottom:24px;display:none}
+.route-map-container{width:100%;overflow:auto;border-radius: var(--r-md)}
 .route-map-image{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
 .route-map-caption{text-align:center;font-size:14px;color:#6b7280;margin-top:12px}
-.route-map-placeholder{background:#f9fafb;border:2px dashed #e5e7eb;border-radius:12px;padding:60px 20px;text-align:center;color: var(--c-text-3)}
+.route-map-placeholder{background:#f9fafb;border:2px dashed #e5e7eb;border-radius: var(--r-lg);padding:60px 20px;text-align:center;color: var(--c-text-3)}
 .route-map-placeholder-icon{font-size:48px;margin-bottom:12px}
 .route-map-placeholder-text{font-size:14px}
 
 /* 换乘信息卡片 */
 .transfer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
-.transfer-card{background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-left:4px solid var(--line-color,#3b82f6);display:flex;align-items:center;justify-content:space-between;transition:all 0.2s}
+.transfer-card{background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-left:4px solid var(--line-color,#3b82f6);display:flex;align-items:center;justify-content:space-between;transition:all 0.2s}
 .transfer-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .transfer-station-name{font-size:18px;font-weight:700;color:#111827}
 .transfer-station-sub{font-size:13px;color:#6b7280;margin-top:2px}
@@ -75,7 +75,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 车辆信息卡片 */
 .train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
-.train-card{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:4px solid var(--line-color,#3b82f6)}
+.train-card{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);border-top:4px solid var(--line-color,#3b82f6)}
 .train-card-model{font-size:20px;font-weight:700;color:#111827;margin-bottom:12px}
 .train-card-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;color:#4b5563;border-bottom:1px dashed #e5e7eb}
 .train-card-row:last-child{border-bottom:none}
@@ -85,7 +85,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .train-note{font-size:var(--fs-sm);color:var(--c-text-3);margin-top:8px;font-style:italic}
 
 /* 建设中时间线 */
-.timeline-section{background:white;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:24px}
+.timeline-section{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);margin-bottom:24px}
 .timeline{position:relative;padding-left:28px}
 .timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:#e5e7eb}
 .timeline-item{position:relative;padding-bottom:20px}
@@ -97,7 +97,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 相关链接 */
 .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.related-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:white;border-radius:12px;text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s}
+.related-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:white;border-radius: var(--r-lg);text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow: var(--sh-sm);transition:all 0.2s}
 .related-link:hover{background:var(--line-color,#3b82f6);color:var(--line-text,#fff);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
 
 /* 错误页面 */
@@ -106,9 +106,11 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .error-page p{font-size:16px;color:#6b7280}
 
 /* 响应式 */
-@media(max-width:768px){.container{padding:0 12px;margin-top:70px}.line-header{padding:24px 20px;gap:16px}.line-number-big{width:70px;height:70px;font-size:32px}.line-header-name{font-size:24px}.line-header-alias{font-size:14px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.transfer-grid{grid-template-columns:1fr}.train-grid{grid-template-columns:1fr}.route-map-image{width:100%;height:auto}.rank-tabs{padding:12px 14px 0;gap:6px}.rank-tab{padding:5px 11px;font-size:12px}.rank-chart-svg-wrapper{padding:14px 10px}.rank-chart-header{padding:14px 16px;flex-wrap:wrap;gap:6px}.rank-chart-title{font-size:15px}.rank-chart-footer{padding:10px 16px;font-size:12px}}
+@media(max-width:768px){.container{margin-top:70px}.line-header{padding:24px 20px;gap:16px}.line-number-big{width:70px;height:70px;font-size:32px}.line-header-name{font-size:24px}.line-header-alias{font-size:14px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.transfer-grid{grid-template-columns:1fr}.train-grid{grid-template-columns:1fr}.route-map-image{width:100%;height:auto}.rank-tabs{padding:12px 14px 0;gap:6px}.rank-tab{padding:5px 11px;font-size:12px}.rank-chart-svg-wrapper{padding:14px 10px}.rank-chart-header{padding:14px 16px;flex-wrap:wrap;gap:6px}.rank-chart-title{font-size:15px}.rank-chart-footer{padding:10px 16px;font-size:12px}}
 </style>
 <base target="_blank">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
 <script src="navbar.js"></script>
@@ -599,7 +601,7 @@ const isOp=l.category==='operating';
 const shortName=l.name.replace('深圳地铁','').split('（')[0];
 return`
 <a href="dashboard?line=${l.id}" style="text-decoration:none;color:inherit;">
-<div style="background:white;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-left:4px solid ${l.color||'#999'};transition:all 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
+<div style="background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-left:4px solid ${l.color||'#999'};transition:all 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
 <div style="position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px;">
 <div style="width:44px;height:44px;border-radius:50%;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;">${l.id==='6z'?'6Z':l.id}</div>
 <div style="flex:1;min-width:0;padding-right:70px;">
@@ -611,7 +613,7 @@ ${isOp?'已开通':'建设中'}
 <div style="display:flex;gap:12px;font-size:13px;color:#4b5563;">
 <span>${l.lengthKm||0} km</span>
 <span>${l.stationList?.length||0} 站</span></div>
-<div style="margin-top:10px;font-size:var(--fs-sm);padding:4px 10px;border-radius:12px;display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
+<div style="margin-top:10px;font-size:var(--fs-sm);padding:4px 10px;border-radius: var(--r-lg);display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
 ${fmtOpenDate(l.openDate)}
 </div></div>
 </a>
@@ -758,7 +760,7 @@ ${train.note?`<div class="train-note">备注：${train.note}</div>`:''}
 `;
 }).join('')}
 </div>
-`:'<h2 class="section-title">车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius:16px;">暂无车辆信息</p>'}
+`:'<h2 class="section-title">车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius: var(--r-xl);">暂无车辆信息</p>'}
 
 <!-- 建设中时间线 -->
 ${!isOperating?`

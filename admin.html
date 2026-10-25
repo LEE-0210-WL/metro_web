@@ -13,7 +13,7 @@
     color: #111827;
     font-family: var(--font, 'HarmonyOS Sans', -apple-system, "Microsoft YaHei", sans-serif);
   }
-  .container { width: min(96%, 1320px); margin: 20px auto 60px; padding: 0 20px; }
+
   .page-title {
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     font-size: 26px; font-weight: 700; margin: 0 0 6px;
@@ -22,12 +22,12 @@
   .page-subtitle { color: var(--c-text-3, #6b7280); font-size: var(--fs-sm, 13px); margin: 0 0 22px; }
   .back-link {
     display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-sm, 13px); font-weight: 500;
-    color: #2563eb; text-decoration: none; padding: 6px 12px; border-radius: 8px; background: #eff6ff;
+    color: #2563eb; text-decoration: none; padding: 6px 12px; border-radius: var(--r-md); background: #eff6ff;
   }
   .back-link:hover { background: #dbeafe; }
 
   .card {
-    background: #fff; border-radius: 16px; padding: 20px 22px;
+    background: #fff; border-radius: var(--r-xl); padding: 20px 22px;
     box-shadow: 0 2px 10px rgba(0,0,0,.06); margin-bottom: 20px;
   }
   .card h2 { font-size: 15px; font-weight: 700; margin: 0 0 14px; color: #111827; }
@@ -46,7 +46,7 @@
   .stat.red   { border-left-color: #ef4444; }
 
   /* ---- 表格 ---- */
-  .tbl-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 12px; }
+  .tbl-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: var(--r-lg); }
   table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: var(--fs-sm, 13px); }
   th, td { padding: 9px 12px; text-align: left; white-space: nowrap; border-bottom: 1px solid #eef1f5; }
   th { background: #f8fafc; font-weight: 600; color: #374151; position: sticky; top: 0; z-index: 1; }
@@ -75,7 +75,7 @@
   .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   button {
     font-family: inherit; font-size: var(--fs-sm, 13px); font-weight: 500;
-    padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+    padding: 8px 16px; border-radius: var(--r-md); border: none; cursor: pointer;
     background: #2563eb; color: #fff;
   }
   button:hover { background: #1d4ed8; }
@@ -85,12 +85,12 @@
 
   input {
     font-family: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid #d1d5db;
-    border-radius: 8px; width: 100%; margin-bottom: 10px;
+    border-radius: var(--r-md); width: 100%; margin-bottom: 10px;
   }
-  .err { background: #fef2f2; color: #b91c1c; border-radius: 8px; padding: 10px 14px; font-size: var(--fs-sm, 13px); margin-top: 10px; }
+  .err { background: #fef2f2; color: #b91c1c; border-radius: var(--r-md); padding: 10px 14px; font-size: var(--fs-sm, 13px); margin-top: 10px; }
   /* ---- DeepSeek 余额卡片 ---- */
   .balance {
-    border-radius: 16px; padding: 18px 22px; margin-bottom: 20px; background: #fff;
+    border-radius: var(--r-xl); padding: 18px 22px; margin-bottom: 20px; background: #fff;
     box-shadow: 0 2px 10px rgba(0,0,0,.06); border-left: 5px solid #10b981;
   }
   .balance.warn { border-left-color: #f59e0b; background: #fffbeb; }
@@ -105,8 +105,11 @@
   .banner.warn { background: #fef3c7; color: #92400e; }
   .banner.critical { background: #fee2e2; color: #991b1b; }
 
-  @media (max-width: 768px) { .container { padding: 0 14px; } .page-title { font-size: 21px; } }
+  @media (max-width: 768px) { .page-title { font-size: 21px; } }
 </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
 <script src="navbar.js"></script>

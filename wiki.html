@@ -20,33 +20,6 @@
     }
     
     /* 顶部导航栏 - 黑色 */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background-color: #111827;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
     
     .logo img {
       width: 100%;
@@ -67,55 +40,15 @@
     }
     
     /* 导航链接 */
-    .nav-links {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .nav-links a {
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      color: #d1d5db;
-      transition: all 0.3s ease;
-    }
-    
-    .nav-links a:hover {
-      background-color: #374151;
-      color: white;
-    }
-    
-    .nav-links a.active {
-      background-color: #2563eb;
-      color: white;
-    }
-    
-    /* 移动端菜单 */
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
     
     /* 主内容区域 */
-    .container {
-      width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
     
     /* ===== 标题行布局 ===== */
     .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: block;
       margin-bottom: 16px;
       padding: 20px 0 0 0;
-      gap: 16px;
     }
     
     .page-title-wrap {
@@ -149,6 +82,30 @@
   color: #6b7280;
   margin-bottom: 32px;}
     
+    /* 长备注（原被误塞进标题行） */
+    .page-note {
+      color: var(--c-text-3);
+      font-size: var(--fs-sm);
+      line-height: 1.7;
+      margin: -24px 0 0;
+    }
+    
+    /* 窄屏：标题与返回按钮自动换行，按钮靠右 */
+    @media (max-width: 640px) {
+      .page-title {
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 10px;
+        font-size: 22px;
+      }
+      .page-title .back-link {
+        margin-left: auto;
+        font-size: 13px;
+        padding: 6px 12px;
+      }
+      .page-title .back-link svg { width: 15px; height: 15px; }
+    }
+    
     /* 统计信息 */
     .stats-bar {
       justify-content: space-around;
@@ -157,8 +114,8 @@
       margin-bottom: 32px;
       padding: 20px;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border-radius: var(--r-lg);
+      box-shadow: var(--sh-md);
     }
     
     .stat-item {
@@ -186,7 +143,7 @@
     }
     
     .line-card {
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       padding: 20px 20px 16px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -311,7 +268,7 @@
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 14px; background: #111827; color: white;
-      text-decoration: none; border-radius: 6px;
+      text-decoration: none; border-radius: var(--r-sm);
       font-weight: 500; font-size: 13px;
       transition: background 0.3s ease;
       flex-shrink: 0; white-space: nowrap;
@@ -320,36 +277,10 @@
     
     /* 响应式设计 */
     @media (max-width: 768px) {
-      .header {
-        padding: 0 16px;
-        flex-wrap: wrap;
-        height: auto;
-        min-height: 60px;
-      }
       
-      .nav-links {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        padding: 10px 0;
-        background: #1f2937;
-        position: absolute;
-        top: 60px;
-        left: 0;
-      }
       
-      .nav-links.active {
-        display: flex;
-      }
       
-      .nav-links a {
-        padding: 12px 20px;
-        border-radius: 0;
-      }
       
-      .mobile-menu-btn {
-        display: block;
-      }
       
       .current-time {
         display: none;
@@ -357,8 +288,6 @@
       
       .container {
         margin-top: 20px;
-        padding: 0 16px;
-        width: min(90%, 1200px);
       }
       
       .page-header {
@@ -384,6 +313,9 @@
       }
     }
   </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>
@@ -391,24 +323,21 @@
 
   <main class="container">
     <div class="page-header">
-      <div class="page-title-wrap">
-        <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-        <h1 class="page-title">深圳地铁Wiki</h1>
-  <p style="color:var(--c-text-3);font-size:var(--fs-sm);margin:-4px 0 16px">最近一次更新：2026/10/21 11:45---按实际土建与运营情况修正各线编组（19号线土建4A未预留6节、25号线近期4A远期6A、22号线近期6A远期8A、29号线4/6混跑、20号线6/8混跑），更正15/19/25号线线路名（前南线/坪山线/大浪线），并补充7号线内部支线（文体公园，不对外开放）742/743两列3编组车的说明（站点数不变）</p>
-      </div>
-      <a href="index" class="back-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        返回首页
-      </a>
+      <h1 class="page-title">
+        深圳地铁Wiki
+        <a href="index" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回首页
+        </a>
+      </h1>
     </div>
 
     <div class="page-subtitle-wrapper">
       <p class="page-subtitle">深圳轨道交通网络 - 已开通17条线路，五期8条线路</p>
+      <p class="page-note">最近一次更新：2026/10/21 11:45——按实际土建与运营情况修正各线编组（19号线土建4A未预留6节、25号线近期4A远期6A、22号线近期6A远期8A、29号线4/6混跑、20号线6/8混跑），更正15/19/25号线线路名（前南线/坪山线/大浪线），并补充7号线内部支线（文体公园，不对外开放）742/743两列3编组车的说明（站点数不变）</p>
     </div>
 
     <!-- 统计信息（硬编码不变） -->
@@ -674,7 +603,6 @@
     updateTime();
     setInterval(updateTime, 1000);
 
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {});
   </script>
 </body>
 </html>

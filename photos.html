@@ -17,53 +17,18 @@
     }
 
     /* 顶部导航栏 */
-    .header {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 60px;
-      background-color: #111827;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .logo { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; }
     .logo img { width: 100%; height: 100%; object-fit: cover; }
     .site-name { font-size: 16px; font-weight: 600; color: white; }
-    .current-time { font-size: 14px; color: #ffffff; font-weight: 500; }
+    .current-time { font-size: 14px; color: #ffffff; font-weight: 500; }/* 主内容区域 */
 
-    .nav-links { display: flex; gap: 8px; }
-    .nav-links a {
-      padding: 8px 16px; border-radius: 8px;
-      text-decoration: none; font-size: 14px; font-weight: 500;
-      color: #d1d5db; transition: all 0.3s ease;
-    }
-    .nav-links a:hover { background-color: #374151; color: white; }
-    .nav-links a.active { background-color: #2563eb; color: white; }
-
-    .mobile-menu-btn {
-      display: none; background: none; border: none;
-      color: white; cursor: pointer;
-    }
-
-    /* 主内容区域 */
-    .container {
-      max-width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
 
     /* 标题行 */
     .page-header {
-      display: flex; align-items: center;
-      justify-content: space-between;
+      display: block; 
+      
       margin-bottom: 8px;
       padding: 20px 0 0 0;
-      gap: 16px;
+      
     }
     .page-title-wrap { display: flex; align-items: center; gap: 12px; }
     .page-icon { width: 32px; height: 32px; flex-shrink: 0; color: #111827; }
@@ -83,7 +48,7 @@
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 14px; background: #111827; color: white;
-      text-decoration: none; border-radius: 6px;
+      text-decoration: none; border-radius: var(--r-sm);
       font-weight: 500; font-size: 13px;
       transition: background 0.3s ease;
       flex-shrink: 0; white-space: nowrap;
@@ -102,12 +67,12 @@
       gap: 10px;
     }
     .line-card {
-      background: white; border-radius: 12px; padding: 12px 8px;
+      background: white; border-radius: var(--r-lg); padding: 12px 8px;
       text-align: center; cursor: pointer;
       transition: all 0.2s ease;
       border-left: 4px solid var(--lc, #999);
       text-decoration: none; color: inherit;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      box-shadow: var(--sh-sm);
     }
     .line-card:hover {
       transform: translateY(-2px);
@@ -128,7 +93,7 @@
     .line-card-name { font-size: 13px; font-weight: 600; color: #111827; }
     .line-card-count { font-size: var(--fs-sm); color: #6b7280; margin-top: 2px; }
     .line-card-status {
-      font-size: var(--fs-sm); padding: 1px 6px; border-radius: 8px;
+      font-size: var(--fs-sm); padding: 1px 6px; border-radius: var(--r-md);
       display: inline-block; margin-top: 4px; font-weight: 500;
     }
 
@@ -139,7 +104,7 @@
     }
     .filter-btn {
       display: flex; align-items: center; gap: 8px;
-      padding: 8px 16px; border-radius: 8px;
+      padding: 8px 16px; border-radius: var(--r-md);
       font-size: 14px; font-weight: 500;
       cursor: pointer; border: none;
       transition: all 0.2s ease;
@@ -195,7 +160,7 @@
       break-inside: avoid;
       margin-bottom: 16px;
       background: white;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       cursor: pointer;
@@ -246,7 +211,7 @@
     }
     .image-modal img {
       max-width: 100%; max-height: 70vh;
-      object-fit: contain; border-radius: 8px;
+      object-fit: contain; border-radius: var(--r-md);
     }
     .image-modal-info { margin-top: 20px; text-align: center; color: white; }
     .image-modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
@@ -267,7 +232,7 @@
       gap: 8px; margin-top: 40px; flex-wrap: wrap;
     }
     .pagination-btn {
-      padding: 10px 20px; border-radius: 8px;
+      padding: 10px 20px; border-radius: var(--r-md);
       font-size: 14px; font-weight: 500; cursor: pointer;
       transition: all 0.3s ease;
       border: 1px solid #d1d5db;
@@ -280,7 +245,7 @@
     .pagination-info { font-size: 14px; color: #6b7280; white-space: nowrap; }
     .page-numbers { display: flex; gap: 6px; }
     .page-number {
-      min-width: 40px; padding: 10px 14px; border-radius: 8px;
+      min-width: 40px; padding: 10px 14px; border-radius: var(--r-md);
       font-size: 14px; font-weight: 500; cursor: pointer;
       transition: all 0.3s ease; border: 1px solid #d1d5db;
       background: white; color: #374151; text-align: center;
@@ -290,16 +255,9 @@
 
     /* 响应式 */
     @media (max-width: 768px) {
-      .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 60px; }
-      .nav-links { display: none; width: 100%; flex-direction: column;
-        padding: 10px 0; background: #1f2937;
-        position: absolute; top: 60px; left: 0;
+      .container {
+        margin-top: 20px;
       }
-      .nav-links.active { display: flex; }
-      .nav-links a { padding: 12px 20px; border-radius: 0; }
-      .mobile-menu-btn { display: block; }
-      .current-time { display: none; }
-      .container { margin-top: 20px; padding: 0 16px; width: min(90%, 1200px); }
       .page-title { font-size: 24px; }
       .filter-bar { gap: 6px; }
       .filter-btn { padding: 6px 12px; font-size: 13px; }
@@ -310,7 +268,23 @@
       .pagination-btn { padding: 8px 14px; font-size: 13px; }
       .page-number { min-width: 36px; padding: 8px 10px; font-size: 13px; }
     }
-  </style>
+  
+    /* 窄屏：标题与返回按钮自动换行，按钮靠右 */
+    @media (max-width: 640px) {
+      .page-title {
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 10px;
+        font-size: 22px;
+      }
+      .page-title .back-link {
+        margin-left: auto;
+        font-size: 13px;
+        padding: 6px 12px;
+      }
+      .page-title .back-link svg { width: 15px; height: 15px; }
+    }
+</style>
   <!-- 防护脚本 -->
   <script>
     (function() {
@@ -343,6 +317,9 @@
       setInterval(detectDevTools, 2000);
     })();
   </script>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body oncontextmenu="return false" ondragstart="return false">
   <script src="navbar.js"></script>
@@ -351,21 +328,16 @@
   <main class="container">
     <!-- 标题行 -->
     <div class="page-header">
-      <div class="page-title-wrap">
-        <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
-        <h1 class="page-title">照片</h1>
-      </div>
-      <a href="materials" class="back-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        返回资料页
-      </a>
+      <h1 class="page-title">
+        照片
+        <a href="materials" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回资料页
+        </a>
+      </h1>
     </div>
 
     <p class="page-subtitle">记录深圳地铁的精彩瞬间</p>
@@ -1001,12 +973,6 @@
     setInterval(updateTime, 1000);
 
     // ==================== 移动端菜单 ====================
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {
-        document.querySelector('.nav-links').classList.toggle('active');
-      });
-    }
 
     // ==================== 初始化 ====================
     function doInit() {

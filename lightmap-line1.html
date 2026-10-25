@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="fonts/misans/misans.css">
+<title>1号线 闪灯图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    background: #eef1f6;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px; gap: 14px;
+    overflow-x: hidden;
+    min-width: 0;              /* flex 容器关键：允许收缩 */
+  }
+
+  .controls {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 16px; background: #fff; border-radius: var(--r-lg);
+    box-shadow: 0 2px 10px rgba(15,23,42,.08);
+    font-size: 14px; color: #1f2937;
+  }
+  .controls select {
+    padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid #cbd5e1;
+    background: #fff; color: #1f2937; cursor: pointer;
+    font-family: inherit; font-size: 14px;
+  }
+
+  .controls button {
+    padding: 7px 16px;
+    border-radius: var(--r-md);
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #1f2937;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .controls button:hover { background: #f1f5f9; }
+  .controls button.on {
+    background: #00B140;
+    border-color: #00B140;
+    color: #fff;
+  }
+  .controls label { color: #475569; }
+
+  .stage {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+    min-width: 0;              /* flex 子项关键：允许缩到内容宽度以下 */
+  }
+  .scaler {
+    position: relative;
+    flex: 0 1 auto;
+    min-width: 0;
+    /* 初始给个小值，fit() 会算成真实尺寸；不能用 2950 否则会把页面撑宽 */
+    width: 100px;
+    height: 20px;
+    overflow: hidden;
+  }
+
+  /* ===== 闪灯图 ===== */
+  .lightmap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2950px;
+    height: 480px;
+    background: linear-gradient(180deg, #f7f9fc 0%, #eef1f6 100%);
+    border: 3px solid #2f3a4a;
+    border-radius: 10px;
+    transform-origin: top left;
+  }
+
+  /* 灯带底槽 */
+  .track {
+    position: absolute;
+    left: 150px;
+    right: 190px;
+    top: 50%;
+    height: 15px;
+    margin-top: -7.5px;
+    background: #00B140;
+    border-radius: 7.5px;
+  }
+
+  /* ===== 灯珠 ===== */
+  .light {
+    position: absolute;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .light.big   { width: 22px; height: 22px; margin-top: 0; }
+  .light.small { width: 15px; height: 15px; margin-top: 0; }
+
+  .light.red {
+    background: #e8342a;
+    box-shadow:
+      0 0 5px 2px rgba(232,52,42,.85),
+      0 0 11px 4px rgba(232,52,42,.45),
+      0 0 18px 7px rgba(232,52,42,.18),
+      inset 0 0 3px 1px rgba(255,150,140,.9);
+  }
+  .light.yellow {
+    background: #ffd200;
+    box-shadow:
+      0 0 5px 2px rgba(255,210,0,.9),
+      0 0 12px 5px rgba(255,210,0,.5),
+      0 0 20px 8px rgba(255,210,0,.2),
+      inset 0 0 3px 1px rgba(255,250,200,.95);
+    animation: blinkYellow 0.55s steps(1, end) infinite;   /* 快速亮灭 */
+  }
+  @keyframes blinkYellow {
+    0%, 49.9%   { opacity: 1; }
+    50%, 100%   { opacity: .12; }
+  }
+
+  /* 停靠站态：黄色灯常亮（不闪）*/
+  .lightmap.mode-stop .light.yellow {
+    animation: none !important;
+  }
+
+  /* 灭灯波浪：被扫过的灯变中灰（硬切，无过渡）*/
+  .light.dim {
+    background: #9aa3b0 !important;
+    box-shadow: none !important;
+    opacity: 1;
+    transition: none !important;
+  }
+  .light.yellow.dim {
+    animation: none;
+    background: #9aa3b0 !important;
+    box-shadow: none !important;
+  }
+  .light.green {
+    background: #35d24a;
+    box-shadow:
+      0 0 5px 2px rgba(53,210,74,.85),
+      0 0 11px 4px rgba(53,210,74,.45),
+      0 0 18px 7px rgba(53,210,74,.18),
+      inset 0 0 3px 1px rgba(190,255,200,.9);
+  }
+
+  /* ===== 站名（上下交错）===== */
+  .station {
+    position: absolute;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .station.up   { bottom: calc(50% + 38px); }
+  .station.down { top:    calc(50% + 38px); }
+
+  .station .nm { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .station .cn {
+    font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
+    font-weight: 700;
+    font-size: 29px;
+    color: #101828;
+    line-height: 1.1;
+  }
+  .station .en {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: #344054;
+    line-height: 1.1;
+    letter-spacing: .01em;
+  }
+
+  /* ===== 换乘线路徽标 ===== */
+  .station .bds {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-top: 4px;
+  }
+  .station.up .bds {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+
+  .station .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    padding: 3px 0;
+    box-sizing: border-box;
+    border-radius: var(--r-sm);
+    background: #6b7280;
+    color: #fff;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* 徽标内所有文字颜色都跟随徽标（防止被 .station .cn/.en 覆盖）*/
+  .station .badge * {
+    color: inherit !important;
+  }
+
+  .station .badge .num {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -.10em;
+    padding-right: 4px;
+    flex: 0 0 auto;
+  }
+
+  .station .badge .tx {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    flex: 0 0 auto;
+  }
+
+  .station .badge .tx .cn {
+    font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
+    font-style: normal;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.05;
+  }
+
+  .station .badge .tx .en {
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.05;
+    margin-left: 3px;
+  }
+  .station.down .nm { flex-direction: column; }
+
+
+
+
+
+
+
+
+
+
+
+  /* ===== 两端开门侧箭头 ===== */
+  .door-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 76px; height: 76px;
+    color: #9aa3b0;                 /* 默认灰色（不亮）*/
+    transition: color .15s, filter .15s;
+  }
+  .door-arrow.left  { left: 12px; }
+  .door-arrow.right { right: 12px; }
+  .door-arrow svg { width: 100%; height: 100%; }
+  .door-arrow.active {
+    color: #35d24a;                 /* 本侧：绿色荧光 */
+    filter: drop-shadow(0 0 6px rgba(53,210,74,.85))
+            drop-shadow(0 0 14px rgba(53,210,74,.45));
+  }
+  .door-label {
+    position: absolute;
+    top: calc(50% - 96px);              /* 箭头上方 */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    line-height: 1.3;
+    white-space: nowrap;
+    letter-spacing: .02em;
+  }
+  /* 文字盒宽度 100px，中心正好压在 76px 的箭头中心上（箭头 left/right: 12px）*/
+  .door-label.left  { left: 0;   width: 100px; }
+  .door-label.right { right: 0;  width: 100px; }
+
+  .door-label .en {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: .02em;
+  }
+  .door-label .cn {
+    display: block;
+    font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+</style>
+<link rel="stylesheet" href="components.css">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="controls">
+  <label>当前站</label>
+  <select id="curSel"></select>
+  <label>方向</label>
+  <select id="dirSel">
+    <option value="-1">往 罗湖</option>
+    <option value="1">往 机场东</option>
+  </select>
+  <button id="modeBtn" onclick="toggleMode()">切换：停靠站态</button>
+  <span id="diag" style="font-family:monospace;font-size:12px;color:#64748b;margin-left:8px"></span>
+</div>
+
+<div class="stage">
+  <div class="scaler" id="lmScaler">
+  <div class="lightmap" id="lightmap">
+    <div class="track"></div>
+
+    <!-- 灯珠 -->
+      <div class="light big red" style="left:150.0px"></div>
+      <div class="light small red" style="left:180.0px"></div>
+      <div class="light small red" style="left:210.0px"></div>
+      <div class="light big red" style="left:240.0px"></div>
+      <div class="light small red" style="left:270.0px"></div>
+      <div class="light small red" style="left:300.0px"></div>
+      <div class="light big red" style="left:330.0px"></div>
+      <div class="light small red" style="left:360.0px"></div>
+      <div class="light small red" style="left:390.0px"></div>
+      <div class="light big red" style="left:420.0px"></div>
+      <div class="light small red" style="left:450.0px"></div>
+      <div class="light small red" style="left:480.0px"></div>
+      <div class="light big red" style="left:510.0px"></div>
+      <div class="light small red" style="left:540.0px"></div>
+      <div class="light small red" style="left:570.0px"></div>
+      <div class="light big red" style="left:600.0px"></div>
+      <div class="light small red" style="left:630.0px"></div>
+      <div class="light small red" style="left:660.0px"></div>
+      <div class="light big red" style="left:690.0px"></div>
+      <div class="light small red" style="left:720.0px"></div>
+      <div class="light small red" style="left:750.0px"></div>
+      <div class="light big red" style="left:780.0px"></div>
+      <div class="light small yellow" style="left:810.0px"></div>
+      <div class="light small yellow" style="left:840.0px"></div>
+      <div class="light big yellow" style="left:870.0px"></div>
+      <div class="light small green" style="left:900.0px"></div>
+      <div class="light small green" style="left:930.0px"></div>
+      <div class="light big green" style="left:960.0px"></div>
+      <div class="light small green" style="left:990.0px"></div>
+      <div class="light small green" style="left:1020.0px"></div>
+      <div class="light big green" style="left:1050.0px"></div>
+      <div class="light small green" style="left:1080.0px"></div>
+      <div class="light small green" style="left:1110.0px"></div>
+      <div class="light big green" style="left:1140.0px"></div>
+      <div class="light small green" style="left:1170.0px"></div>
+      <div class="light small green" style="left:1200.0px"></div>
+      <div class="light big green" style="left:1230.0px"></div>
+      <div class="light small green" style="left:1260.0px"></div>
+      <div class="light small green" style="left:1290.0px"></div>
+      <div class="light big green" style="left:1320.0px"></div>
+      <div class="light small green" style="left:1350.0px"></div>
+      <div class="light small green" style="left:1380.0px"></div>
+      <div class="light big green" style="left:1410.0px"></div>
+      <div class="light small green" style="left:1440.0px"></div>
+      <div class="light small green" style="left:1470.0px"></div>
+      <div class="light big green" style="left:1500.0px"></div>
+      <div class="light small green" style="left:1530.0px"></div>
+      <div class="light small green" style="left:1560.0px"></div>
+      <div class="light big green" style="left:1590.0px"></div>
+      <div class="light small green" style="left:1620.0px"></div>
+      <div class="light small green" style="left:1650.0px"></div>
+      <div class="light big green" style="left:1680.0px"></div>
+      <div class="light small green" style="left:1710.0px"></div>
+      <div class="light small green" style="left:1740.0px"></div>
+      <div class="light big green" style="left:1770.0px"></div>
+      <div class="light small green" style="left:1800.0px"></div>
+      <div class="light small green" style="left:1830.0px"></div>
+      <div class="light big green" style="left:1860.0px"></div>
+      <div class="light small green" style="left:1890.0px"></div>
+      <div class="light small green" style="left:1920.0px"></div>
+      <div class="light big green" style="left:1950.0px"></div>
+      <div class="light small green" style="left:1980.0px"></div>
+      <div class="light small green" style="left:2010.0px"></div>
+      <div class="light big green" style="left:2040.0px"></div>
+      <div class="light small green" style="left:2070.0px"></div>
+      <div class="light small green" style="left:2100.0px"></div>
+      <div class="light big green" style="left:2130.0px"></div>
+      <div class="light small green" style="left:2160.0px"></div>
+      <div class="light small green" style="left:2190.0px"></div>
+      <div class="light big green" style="left:2220.0px"></div>
+      <div class="light small green" style="left:2250.0px"></div>
+      <div class="light small green" style="left:2280.0px"></div>
+      <div class="light big green" style="left:2310.0px"></div>
+      <div class="light small green" style="left:2340.0px"></div>
+      <div class="light small green" style="left:2370.0px"></div>
+      <div class="light big green" style="left:2400.0px"></div>
+      <div class="light small green" style="left:2430.0px"></div>
+      <div class="light small green" style="left:2460.0px"></div>
+      <div class="light big green" style="left:2490.0px"></div>
+      <div class="light small green" style="left:2520.0px"></div>
+      <div class="light small green" style="left:2550.0px"></div>
+      <div class="light big green" style="left:2580.0px"></div>
+      <div class="light small green" style="left:2610.0px"></div>
+      <div class="light small green" style="left:2640.0px"></div>
+      <div class="light big green" style="left:2670.0px"></div>
+      <div class="light small green" style="left:2700.0px"></div>
+      <div class="light small green" style="left:2730.0px"></div>
+      <div class="light big green" style="left:2760.0px"></div>
+
+
+    <!-- 两端开门侧箭头 -->
+    <div class="door-arrow left" id="doorArrowL">
+      <svg viewBox="0 0 40 40" fill="none">
+        <path d="M14 3 h12 v14 h9 L20 37 5 17 h9 Z"
+              fill="currentColor" stroke="#3f4753" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="door-arrow right" id="doorArrowR">
+      <svg viewBox="0 0 40 40" fill="none">
+        <path d="M14 3 h12 v14 h9 L20 37 5 17 h9 Z"
+              fill="currentColor" stroke="#3f4753" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="door-label left"  id="doorLabelL"><span class="en">DOORS OPEN<br>THE OTHER SIDE</span><span class="cn">对侧开门</span></div>
+    <div class="door-label right" id="doorLabelR"><span class="en">DOORS OPEN<br>THIS SIDE</span><span class="cn">本侧开门</span></div>
+  </div>
+  </div>
+</div>
+
+<script src="all-lines-enhanced.js"></script>
+<script src="pids-en.js"></script>
+<script>
+/* ===== 数据全部来自 all-lines-enhanced.js / pids-en.js ===== */
+/* 全局错误捕获：有任何 JS 报错直接显示在页面上 */
+window.addEventListener('error', function (e) {
+  var box = document.getElementById('errBox');
+  if (!box) {
+    box = document.createElement('pre');
+    box.id = 'errBox';
+    box.style.cssText = 'position:fixed;left:0;top:0;z-index:99999;background:#fee;color:#b00;' +
+                        'font:12px monospace;padding:8px;margin:0;max-width:100vw;white-space:pre-wrap;border:2px solid #b00';
+    document.body.appendChild(box);
+  }
+  box.textContent += '[ERROR] ' + e.message + ' @ ' + (e.filename || '') + ':' + e.lineno + '\n';
+});
+
+const LINE_ID = '1';
+
+const _line = (typeof getEnhancedLineData === 'function')
+  ? getEnhancedLineData(LINE_ID)
+  : null;
+
+const STATIONS  = (_line && _line.stationList) ? _line.stationList.slice() : [];
+const TRANSFERS = (_line && _line.transfers)   ? _line.transfers          : {};
+const EN        = window.PIDS_EN || {};
+const N = STATIONS.length;
+const SMALL_PER_GAP = 2;
+const GAP = 90;
+const LEFT = 150;
+
+let current = 8;
+let dir = -1;
+let mode = 'next';   // 'next' = 下一站态, 'stop' = 停靠站态
+let doorSide = 'this';   // 'this' = 本侧开门, 'other' = 对侧开门
+
+/* 线路配色（来自 all-lines-enhanced.js）*/
+let waveTimer = null;
+let waveAt = 0;
+
+/* ===== 灭灯波浪：3 个灯一组，从下一站往终点快速移动 ===== */
+function startWave(els, curPos) {
+  if (waveTimer) { clearInterval(waveTimer); waveTimer = null; }
+  if (!els || els.length === 0) return;
+
+  // 起始位置：下一站（黄色灯）之后的一个灯
+  // 先找到黄色灯在 DOM 里的索引
+  let yellowIdx = -1;
+  els.forEach((el, i) => {
+    if (yellowIdx < 0 && el.classList.contains('yellow')) yellowIdx = i;
+  });
+  if (yellowIdx < 0) yellowIdx = 0;
+
+  const start = Math.max(0, yellowIdx - 2);   // 从黄色灯左边的 2 个小绿灯开始（第一组 = 绿绿黄）
+  const end = els.length;        // 波浪扫到灯带末端
+  const WAVE = 3;                // 一组 3 个灯
+
+  waveAt = start;
+
+  const step_dir = (typeof dir !== 'undefined' && dir === 1) ? -1 : 1;   // 朝终点方向
+  const lo = step_dir === 1 ? start : 0;
+  const hi = step_dir === 1 ? end : start + WAVE;
+
+  waveAt = step_dir === 1 ? start : start;
+
+  function step() {
+    els.forEach(el => el.classList.remove('dim'));
+
+    for (let k = 0; k < WAVE; k++) {
+      const i = waveAt + k;
+      if (i >= 0 && i < els.length) els[i].classList.add('dim');
+    }
+
+    waveAt += step_dir;
+    if (step_dir === 1) {
+      if (waveAt + WAVE > end) waveAt = start;
+    } else {
+      if (waveAt < 0) waveAt = start;
+    }
+  }
+
+  step();
+  waveTimer = setInterval(step, 110);
+}
+
+/* 根据背景色自动算文字颜色（站内统一公式）*/
+function getContrastText(bg) {
+  if (!bg) return '#ffffff';
+  let hex = String(bg).replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(function (c) { return c + c; }).join('');
+  if (hex.length !== 6) return '#ffffff';
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+  return brightness > 130 ? '#111827' : '#ffffff';
+}
+
+/* 线路色：直接调用 all-lines-enhanced.js 的 getLineColorEnhanced */
+function getLineColor(id) {
+  const key = String(id);
+  try {
+    if (typeof getLineColorEnhanced === 'function') {
+      const c = getLineColorEnhanced(key);
+      if (c) return c;
+    }
+  } catch (e) {}
+  return '#9CA3AF';
+}
+
+/* ===== 渲染 ===== */
+function render() {
+  if (typeof waveTimer !== 'undefined' && waveTimer) {
+    clearInterval(waveTimer); waveTimer = null;
+  }
+  const map = document.getElementById('lightmap');
+  const track = map.querySelector('.track');
+  map.classList.toggle('mode-stop', mode === 'stop');
+  console.log('[render] dir=' + dir + ' current=' + current + ' (' + STATIONS[current] + ') mode=' + mode);
+
+  // 清掉旧的灯珠和站名
+  map.querySelectorAll('.light, .station').forEach(e => e.remove());
+
+  // 站序：固定为「机场东在左、罗湖在右」（index 29 … 0）
+  const seq = [];
+  for (let i = 0; i < N; i++) seq.push(N - 1 - i);
+
+  const curPos = seq.indexOf(current);   // 当前站在显示序列里的位置
+
+  // 已过方向：往罗湖(dir=-1) → 当前站左侧已过；
+  //            往机场东(dir=1) → 当前站右侧已过
+  const passedLeft = (dir === -1);
+
+  let lightHtml = '';
+  let nameHtml = '';
+
+  for (let pos = 0; pos < N; pos++) {
+    const idx = seq[pos];                // 实际站索引
+    const x = LEFT + pos * GAP;
+
+    // 大灯：已过红 / 当前（下一站）黄 / 未到绿
+    let cls;
+    if (pos === curPos) cls = 'yellow';
+    else if (passedLeft ? pos < curPos : pos > curPos) cls = 'red';
+    else cls = 'green';
+    lightHtml += '<div class="light big ' + cls + '" style="left:' + x.toFixed(1) + 'px"></div>';
+
+    // 站名（上下交错）+ 换乘徽标
+    const name = STATIONS[idx];
+    const en = EN[name] || '';
+    // 已开通线路白名单（五期未开通的全部排除；20 号线二期也未开通，一并排除）
+    const OPENED = ['1','2','3','4','5','6','6z','7','8','9','10','11','12','13','14','16'];
+    const trs = (TRANSFERS[name] || []).filter(t => OPENED.indexOf(String(t).toLowerCase()) >= 0);
+    let badges = '';
+    trs.forEach(t => {
+      const lnEn = 'Line' + t;
+    badges += '<span class="badge" data-line="' + t + '">' +
+                '<b class="num">' + t + '</b>' +
+                '<span class="tx"><i class="cn">号线</i><i class="en">' + lnEn + '</i></span>' +
+              '</span>';
+    });
+    const side = pos % 2 === 0 ? 'up' : 'down';
+    nameHtml +=
+      '<div class="station ' + side + '" style="left:' + x.toFixed(1) + 'px">' +
+        '<div class="nm"><span class="cn">' + name + '</span>' +
+        '<span class="en">' + en + '</span></div>' +
+        '<div class="bds">' + badges + '</div>' +
+      '</div>';
+
+    // 小灯：两站之间 2 个
+    if (pos < N - 1) {
+      for (let k = 1; k <= SMALL_PER_GAP; k++) {
+        const sx = x + GAP * k / (SMALL_PER_GAP + 1);
+        let scls;
+        const adjacentToCur = passedLeft ? (pos === curPos - 1) : (pos === curPos);
+        if (adjacentToCur) {
+          // 紧邻黄色站的 2 个小灯：停靠站态=黄，下一站态=绿
+          scls = (mode === 'stop') ? 'yellow' : 'green';
+        } else if (passedLeft ? pos < curPos - 1 : pos > curPos) {
+          scls = 'red';
+        } else {
+          scls = 'green';
+        }
+        lightHtml += '<div class="light small ' + scls + '" style="left:' + sx.toFixed(1) + 'px"></div>';
+      }
+    }
+  }
+
+  track.style.background = getLineColor(LINE_ID);
+  track.insertAdjacentHTML('afterend', lightHtml);
+  track.parentElement.insertAdjacentHTML('beforeend', nameHtml);
+
+  // 给每个灯加上顺序号（DOM 顺序即灯带顺序）
+  const els = map.querySelectorAll('.light');
+  els.forEach((el, i) => { el.dataset.i = i; });
+
+  if (mode === 'stop') {
+    // 停靠站态：无动画
+    els.forEach(el => el.classList.remove('dim'));
+    if (waveTimer) { clearInterval(waveTimer); waveTimer = null; }
+  } else {
+    startWave(els, curPos);
+  }
+
+  // 调试：打印灯色分布
+  if (window.DEBUG_LM) {
+    const arr = [...map.querySelectorAll('.light.big')].map(el =>
+      el.classList.contains('red') ? 'R' : el.classList.contains('yellow') ? 'Y' : 'G');
+    console.log('[lights] ' + arr.join(''));
+  }
+
+  // 换乘徽标上色（线路色，来自 getLineColorEnhanced）
+  map.querySelectorAll('.badge').forEach(function (el) {
+    const lid = el.getAttribute('data-line');
+    const col = getLineColor(lid);
+    const fg = getContrastText(col);          // ← 文字色自动计算 ✅
+    el.style.setProperty('background-color', col, 'important');
+    el.style.setProperty('color', fg, 'important');
+  });
+
+  // 所有控件与状态同步
+  syncAllControls();
+}
+
+/* ===== 控制区 ===== */
+/* ===== 所有控件与内部状态同步 ===== */
+function syncAllControls() {
+  const csel = document.getElementById('curSel');
+  if (csel) csel.value = String(current);
+  const dsel = document.getElementById('dirSel');
+  if (dsel) dsel.value = String(dir);
+  syncModeBtn();
+  syncDoorArrows();
+}
+
+/* ===== 状态切换 ===== */
+function toggleMode() {
+  if (mode === 'next') {
+    // 下一站态 → 停靠站态（同一站）
+    mode = 'stop';
+  } else {
+    // 停靠站态 → 下一站态（自动推进一站）
+    mode = 'next';
+    advanceStation();
+  }
+  syncModeBtn();
+  syncDoorArrows();
+  render();
+}
+
+/* 推进一站：按方向走，到端点则反向继续 */
+function advanceStation() {
+  const step = (dir === -1) ? -1 : 1;    // 往罗湖(-1)索引递减；往机场东(+1)索引递增
+  let next = current + step;
+
+  if (next < 0 || next >= N) {
+    // 到端点：方向反向，再走一站
+    dir = -dir;
+    next = current + ((dir === -1) ? -1 : 1);
+    // 极端情况（两端来回）也保证不越界
+    if (next < 0) next = 0;
+    if (next >= N) next = N - 1;
+    console.log('[advance] 到端点，方向反转为 ' + dir);
+  }
+
+  current = next;
+
+  // 同步所有控件（render 里还会再调一次，双保险）
+  syncAllControls();
+
+  console.log('[advance] → ' + STATIONS[current] + '（索引 ' + current + '）dir=' + dir);
+}
+function syncDoorArrows() {
+  const L = document.getElementById('doorArrowL');
+  const R = document.getElementById('doorArrowR');
+  if (!L || !R) return;
+  // 固定「本侧开门」：两个箭头都常亮
+  L.classList.add('active');
+  R.classList.add('active');
+
+  const tl = document.getElementById('doorLabelL');
+  const tr = document.getElementById('doorLabelR');
+  if (tl && tr) {
+    tl.innerHTML = '<span class="en">DOORS OPEN<br>THIS SIDE</span><span class="cn">本侧开门</span>';
+    tr.innerHTML = '<span class="en">DOORS OPEN<br>THIS SIDE</span><span class="cn">本侧开门</span>';
+  }
+}
+
+function syncModeBtn() {
+  const b = document.getElementById('modeBtn');
+  if (!b) return;
+  b.textContent = (mode === 'stop') ? '切换：下一站态' : '切换：停靠站态';
+  b.classList.toggle('on', mode === 'stop');
+}
+
+function initControls() {
+  const sel = document.getElementById('curSel');
+  sel.innerHTML = STATIONS.map((n, i) => '<option value="' + i + '">' + n + '</option>').join('');
+  sel.value = String(current);
+  sel.onchange = () => { current = parseInt(sel.value, 10); render(); };
+  syncModeBtn();
+  const dsel = document.getElementById('dirSel');
+  dsel.value = String(dir);                 // ← 让菜单与 dir 变量保持一致
+  dsel.onchange = (e) => { dir = parseInt(e.target.value, 10); console.log('[dir change] ' + dir); render(); };
+}
+
+/* ===== 自适应缩放 ===== */
+const CANVAS_W = 2950;
+const CANVAS_H = 480;
+
+let _lastFitW = 0;
+let _fitLock = false;
+
+function fit() {
+  if (_fitLock) return;
+  const map = document.getElementById('lightmap');
+  const scaler = document.getElementById('lmScaler');
+  if (!map || !scaler) return;
+
+  // 用 body 的可用宽度（padding 20 两侧 = 40）
+  const avail = Math.max(320, (document.body.clientWidth || window.innerWidth) - 40);
+
+  // 宽度没变就不重算，避免 ResizeObserver 反复触发形成循环
+  // 首次必须放行；之后抖动容差 4px
+  if (_lastFitW > 0 && Math.abs(avail - _lastFitW) < 4) return;
+  _lastFitW = avail;
+
+  _fitLock = true;
+  const k = Math.min(1, avail / CANVAS_W);
+
+  scaler.style.width  = (CANVAS_W * k) + 'px';
+  scaler.style.height = (CANVAS_H * k) + 'px';
+
+  map.style.transform = 'scale(' + k + ')';
+  map.style.transformOrigin = 'top left';
+  map.style.left = '0';
+  map.style.top = '0';
+  _fitLock = false;
+
+  // 屏幕诊断
+  const d = document.getElementById('diag');
+  if (d) {
+    const iw = window.innerWidth;
+    const dw = document.documentElement.clientWidth;
+    const bw = document.body.clientWidth;
+    const sw = document.querySelector('.stage').clientWidth;
+    d.textContent = 'win ' + iw + ' / html ' + dw + ' / body ' + bw + ' / stage ' + sw +
+                    ' / avail ' + avail + ' / k ' + k.toFixed(3);
+  }
+  console.log('[fit] win=' + window.innerWidth +
+              ' html=' + document.documentElement.clientWidth +
+              ' body=' + document.body.clientWidth +
+              ' stage=' + document.querySelector('.stage').clientWidth +
+              ' avail=' + avail + ' k=' + k.toFixed(3));
+}
+
+window.addEventListener('resize', fit);
+initControls();
+render();
+
+/* 首次进入 + 任何尺寸变化都重新适配
+   ResizeObserver 监听 stage，彻底解决首次 layout 未稳定导致裁切 */
+(function setupFit() {
+  const stage = document.querySelector('.stage');
+  if (stage && 'ResizeObserver' in window) {
+    try {
+      const ro = new ResizeObserver(function () { fit(); });
+      ro.observe(stage);
+    } catch (e) {}
+  }
+
+  // 2 秒内每 100ms 强制跑一次（不依赖任何事件），保证一定生效
+  var n = 0;
+  var timer = setInterval(function () {
+    fit();
+    n++;
+    if (n > 20) clearInterval(timer);
+  }, 100);
+
+  // 首次立刻跑
+  fit();
+  requestAnimationFrame(fit);
+  window.addEventListener('load', fit);
+})();
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@
   }
   .wrap { flex: 1; display: flex; flex-direction: column; align-items: center;
           padding: 20px 16px 40px; width: min(92%, 1000px); margin: 0 auto; }
-  .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  .card { background: #fff; border-radius: var(--r-xl); box-shadow: var(--sh-lg);
           border: 1px solid rgba(0,0,0,.06); width: 100%; overflow: hidden;
           display: flex; flex-direction: column; }
   .head { padding: 20px 24px 16px; border-bottom: 1px solid #e5e7eb;
@@ -26,12 +26,12 @@
 
   /* ---------- 选择列表 ---------- */
   .list { padding: 18px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
-  .item { position: relative; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 18px;
+  .item { position: relative; border: 1px solid #e5e7eb; border-radius: var(--r-lg); padding: 16px 18px;
           cursor: pointer; transition: all .25s cubic-bezier(.34,1.56,.64,1); background: #fff;
           display: flex; align-items: flex-start; gap: 14px; }
   .item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1); border-color: #c7d2fe; }
   .item.pinned { border: 2px solid #2563eb; background: linear-gradient(135deg,#f0f5ff,#fff); }
-  .item .ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  .item .ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: var(--r-lg);
                display: flex; align-items: center; justify-content: center; background: #e0e7ff; color: #3730a3; }
   .item.pinned .ico { background: #dbeafe; color: #1d4ed8; }
   .item .ico svg { width: 22px; height: 22px; }
@@ -72,6 +72,7 @@
     .item .go { display: none; }
   }
 </style>
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
 <script src="navbar.js"></script>

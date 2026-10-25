@@ -1,0 +1,71 @@
+/* ============================================================
+   layout.css —— 全站页面容器统一
+   2026-10-25
+
+   设计原则（重要）：
+   ● 只管**宽度**与**左右内边距**，不管任何垂直避让。
+     navbar 是 position:fixed 由 navbar.js 注入，并实时把它的实际高度
+     写进 body { padding-top }（见 navbar.js updateBodyPadding）。
+     容器若再写垂直偏移，会与本机制叠加 → 顶部空隙翻倍。
+   ● 页面自己的 .container 里的 width / margin / padding 应删掉，交给本文件。
+
+   断点对齐 navbar.js 的真实行为：
+     默认(>1024)  导航单行 60px          → 宽度 min(90%, 1200px)
+     ≤1024        导航时钟换行 94px        → 宽度 92%
+     ≤768         导航折叠成汉堡菜单       → 宽度 94%
+     ≤400         小屏                    → 左右 padding 收窄
+   ============================================================ */
+
+/* ---------- 标准容器 ---------- */
+.container {
+  width: min(90%, var(--page-max, 1200px));
+  margin: 20px auto 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* ---------- 变体 ---------- */
+/* 窄版容器：长文 / 表单页 */
+.container--narrow {
+  width: min(92%, 900px);
+  margin: 20px auto 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* 宽版容器：仪表板 / 数据页 */
+.container--wide {
+  width: min(96%, 1320px);
+  margin: 20px auto 60px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   响应式：只调宽度与左右 padding，绝不碰 margin-top / padding-top
+   ============================================================ */
+@media (max-width: 1024px) {
+  .container {
+    width: 92%;
+    padding: 0 18px;
+  }
+  .container--narrow { width: 94%; padding: 0 18px; }
+  .container--wide   { width: 96%; padding: 0 18px; }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 94%;
+    padding: 0 16px;
+  }
+  .container--narrow,
+  .container--wide { width: 94%; padding: 0 16px; }
+}
+
+@media (max-width: 400px) {
+  .container,
+  .container--narrow,
+  .container--wide {
+    padding: 0 12px;
+  }
+}

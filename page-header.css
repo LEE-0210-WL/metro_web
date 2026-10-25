@@ -1,0 +1,102 @@
+/* ============================================================
+   page-header.css —— 全站页头统一组件
+   2026-10-25
+
+   作用：
+   1. 统一「标题 + 返回按钮 + 副标题」的布局（按钮在标题行右侧，窄屏时换行靠右）
+   2. 作为兜底：即使某个页面的内联样式写的有问题，这里也保证不出错
+   3. 只在窄屏用 !important，避免影响各页面已有的桌面端定制样式
+
+   用法：在 <head> 里 <style> 之前引入
+     <link rel="stylesheet" href="page-header.css">
+   ============================================================ */
+
+/* ---------- 标题行：标题在左，返回按钮靠右 ---------- */
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+
+/* 标题文字不被按钮挤压：非按钮的子节点可伸缩 */
+.page-title > *:not(.back-link):not(.back-btn) {
+  min-width: 0;
+}
+
+/* ---------- 返回按钮 ---------- */
+.page-title .back-link,
+.page-title .back-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .2s;
+}
+.page-title .back-link:hover,
+.page-title .back-btn:hover { background: #374151; }
+.page-title .back-link svg,
+.page-title .back-btn svg { flex-shrink: 0; }
+
+/* ---------- 副标题 ---------- */
+.page-subtitle-wrapper { margin: 0 0 24px; }
+.page-subtitle {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ---------- 页头容器（兼容旧结构） ---------- */
+.page-header { display: block; }
+
+/* ============================================================
+   窄屏适配：标题/副标题过长时，返回按钮自动换行并靠右
+   ============================================================ */
+@media (max-width: 640px) {
+  .page-title {
+    font-size: 22px !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+  }
+  .page-title .back-link,
+  .page-title .back-btn {
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+    margin-left: auto !important;
+  }
+  .page-title .back-link svg,
+  .page-title .back-btn svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .page-subtitle { font-size: 14px !important; }
+}
+
+@media (max-width: 400px) {
+  .page-title {
+    font-size: 20px !important;
+  }
+  .page-title .back-link,
+  .page-title .back-btn {
+    font-size: 12px !important;
+    padding: 5px 10px !important;
+  }
+}

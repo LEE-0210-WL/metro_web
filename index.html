@@ -152,11 +152,7 @@
     }
 
     /* ========= 主内容区域 ========= */
-    .container {
-      width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
     
 .page-title {
   font-size: 28px;
@@ -438,7 +434,7 @@
       align-items: center;
       justify-content: center;
       padding: 24px 16px;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       text-decoration: none;
       color: white;
       transition: all 0.3s ease;
@@ -510,7 +506,6 @@
       }
       .container {
         margin-top: 10px;
-        padding: 0 16px;
       }
       .page-title { font-size: 26px; }
       .quick-links { grid-template-columns: repeat(2, 1fr); }
@@ -520,6 +515,9 @@
     }
   </style>
   <base target="_blank">
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>

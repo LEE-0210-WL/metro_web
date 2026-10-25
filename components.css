@@ -1,0 +1,150 @@
+/* ============================================================
+   components.css —— 全站通用 UI 组件
+   2026-10-25
+
+   依赖 theme.css 的设计令牌：
+     --r-sm/md/lg/xl      6/8/12/16px
+     --sh-sm/md/lg        0 1px 3px / 0 2px 8px / 0 4px 20px
+     --sp-1…8             4/8/12/16/20/24/32px
+     --fs-xs…3xl          12/13/14/15/16/18/24/28px
+     --c-*                颜色
+
+   用法：在 layout.css 之后引入
+     <link rel="stylesheet" href="components.css">
+
+   注意：这些类都是**新增**的，不会覆盖各页面已有样式。
+         已有页面要迁移时，只在确实需要统一视觉的地方替换类名。
+   ============================================================ */
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: var(--c-surface, #fff);
+  border-radius: var(--r-lg, 12px);
+  box-shadow: var(--sh-md, 0 2px 8px rgba(0, 0, 0, .08));
+  padding: var(--sp-5, 20px);
+  box-sizing: border-box;
+}
+
+.card--flat {
+  box-shadow: none;
+  border: 1px solid var(--c-border, #e5e7eb);
+}
+
+.card--lg {
+  border-radius: var(--r-xl, 16px);
+  box-shadow: var(--sh-lg, 0 4px 20px rgba(0, 0, 0, .08));
+  padding: var(--sp-6, 24px);
+}
+
+.card--hover {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card--hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sh-lg, 0 4px 20px rgba(0, 0, 0, .08));
+}
+
+/* ---------- 胶囊 / 标签 ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--r-full, 999px);
+  font-size: var(--fs-sm, 13px);
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.chip--primary {
+  background: var(--c-primary-bg, #eff6ff);
+  color: var(--c-primary, #2563eb);
+}
+
+.chip--neutral {
+  background: var(--c-surface-2, #f3f4f6);
+  color: var(--c-text-2, #4b5563);
+}
+
+.chip--outline {
+  background: transparent;
+  border: 1px solid var(--c-border, #e5e7eb);
+  color: var(--c-text-2, #4b5563);
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--r-md, 8px);
+  font-family: inherit;
+  font-size: var(--fs-base, 14px);
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background: var(--c-primary, #2563eb);
+  color: #fff;
+}
+.btn--primary:hover { background: var(--c-primary-d, #1d4ed8); }
+
+.btn--dark {
+  background: var(--c-text, #111827);
+  color: #fff;
+}
+.btn--dark:hover { background: #374151; }
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--c-border, #e5e7eb);
+  color: var(--c-text-2, #4b5563);
+}
+.btn--ghost:hover { background: var(--c-surface-2, #f3f4f6); }
+
+.btn--sm {
+  padding: 6px 12px;
+  font-size: var(--fs-sm, 13px);
+}
+
+/* ---------- 角标 ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--r-full, 999px);
+  font-size: var(--fs-xs, 12px);
+  font-weight: 600;
+  line-height: 1;
+  background: var(--c-primary, #2563eb);
+  color: #fff;
+}
+
+/* ---------- 统计数字块 ---------- */
+.stat {
+  text-align: center;
+}
+.stat__value {
+  font-family: var(--font-num, inherit);
+  font-size: var(--fs-2xl, 24px);
+  font-weight: 700;
+  color: var(--c-primary, #2563eb);
+  line-height: 1.2;
+}
+.stat__label {
+  font-size: var(--fs-sm, 13px);
+  color: var(--c-text-3, #6b7280);
+  margin-top: var(--sp-1, 4px);
+}

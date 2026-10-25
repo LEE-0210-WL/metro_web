@@ -36,11 +36,7 @@
     }
 
     /* ===== 主内容区域 ===== */
-    .container {
-      max-width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
 
     /* ===== 提示信息 ===== */
     .hint-bar {
@@ -69,7 +65,7 @@
 
     .file-card {
       background: white;
-      border-radius: 16px;
+      border-radius: var(--r-xl);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       display: flex;
@@ -97,7 +93,7 @@
     .pdf-icon {
       width: 48px;
       height: 48px;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -152,7 +148,7 @@
       align-items: center;
       gap: 6px;
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: var(--r-md);
       color: white;
       text-decoration: none;
       font-size: 13px;
@@ -212,8 +208,6 @@
     @media (max-width: 768px) {
       .container {
         margin-top: 20px;
-        padding: 0 16px;
-        width: min(90%, 1200px);
       }
 
       .page-title {
@@ -260,13 +254,16 @@
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 14px; background: #111827; color: white;
-      text-decoration: none; border-radius: 6px;
+      text-decoration: none; border-radius: var(--r-sm);
       font-weight: 500; font-size: 13px;
       transition: background 0.3s ease;
       flex-shrink: 0; white-space: nowrap;
     }
     .back-link:hover { background: #374151; }
 </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>
@@ -456,10 +453,6 @@
     setInterval(updateTime, 1000);
 
     // ===== 移动端菜单（由 navbar.js 统一处理） =====
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {});
-    }
   </script>
 </body>
 </html>

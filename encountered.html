@@ -20,11 +20,7 @@
     }
 
     /* 卡片样式（与 trains.html 一致） */
-    .container {
-      width: min(90%, 1200px);
-      margin: 20px auto 40px;
-      padding: 0 20px;
-    }
+
 
     .page-title {
       font-size: 28px;
@@ -51,9 +47,9 @@
 
     .line-card {
       background: white;
-      border-radius: 12px;
+      border-radius: var(--r-lg);
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--sh-md);
     }
 
     .line-header {
@@ -173,7 +169,7 @@
       background: #111827;
       color: white;
       text-decoration: none;
-      border-radius: 6px;
+      border-radius: var(--r-sm);
       font-weight: 500;
       font-size: 13px;
       transition: background 0.3s ease;
@@ -189,9 +185,7 @@
     @media (max-width: 768px) {
       .container {
         margin-top: 20px;
-        padding: 0 16px;
-    width: min(90%, 1200px);
-}
+      }
       .page-title {
         font-size: 22px;
       }
@@ -214,6 +208,9 @@
       }
     }
   </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
 </head>
 <body>
   <script src="navbar.js"></script>
@@ -461,10 +458,6 @@
     // 实时时间（由 navbar.js 统一处理）
     function updateTime() {}
     // 移动端菜单（由 navbar.js 统一处理）
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {});
-    }
   </script>
 </body>
 </html>
