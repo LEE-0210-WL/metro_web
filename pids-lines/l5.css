@@ -1,0 +1,368 @@
+/* ============================================================
+   pids-lines/l5.css —— 5 号线专属微调
+   由 pids-line5.html 自动提取，仅包含与 7 号线基线的差异部分。
+   全部以 [data-line="5"] 限定作用域，不影响其它线路。
+   生成日期：2026-10-25
+   ============================================================ */
+
+/* 说明：7 号线基线在 _base.css；本文件只覆盖 5 号线不同之处 */
+
+
+[data-line="5"] select {
+  padding: 8px 12px;
+  border-radius: var(--r-md);
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #1f2937;
+  cursor: pointer;
+  font-family: 'Line5 MiSans', 'MiSans', 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 14px;
+}
+[data-line="5"] select option {
+  font-family: 'Line5 MiSans', 'MiSans', 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 14px;
+}
+
+[data-line="5"] .screen {
+  /* 线路字体配置：JS 会按线路覆盖这两个变量。 以后多线路合并时，只要换 --pids-zh-font / --pids-en-font 就能区分。 */ --pids-zh-font: 'PIDS PF', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', sans-serif;
+  --pids-en-font: 'Line5 Impact', 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+  font-family: var(--pids-zh-font);
+  width: 1200px;
+  height: 216px;
+  flex: 0 0 auto;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  display: flex;
+  background: linear-gradient(180deg, #f8faff 0%, #e9eefc 100%);
+  border: 3px solid #1a1a1a;
+  box-shadow: 0 10px 34px rgba(15,23,42,.18);
+  transform-origin: top center;
+  color: #111827;
+}
+
+[data-line="5"] .left {
+  width: calc(41% - 80px);
+  /* 5 号线：分割线左移 20px */ /* 532px → 492px，再收窄 40px */ padding: 12px 18px 10px 10px;
+  /* 左内边距 18 → 10，停靠站左移 */ display: flex;
+  flex-direction: column;
+  border-right: 3px solid #8d97aa;
+  /* 统一成粗的 */ position: relative;
+  background: linear-gradient(180deg, #fbfcff 0%, #eef2fd 100%);
+}
+
+[data-line="5"] .brand-row {
+  display: flex;
+  align-items: baseline;
+  /* 视觉基线对齐 */ gap: 12px;
+  background: #e8ecf3;
+  margin: -12px -18px 0 -10px;
+  /* 贴面板边缘，保持全宽 */ padding: 1px 18px 1px 10px;
+  /* 竖向 12/8 -> 3/3，整体变矮 */ border-bottom: 3px solid #8d97aa;
+}
+
+[data-line="5"] .metro-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+  position: relative;
+  top: -2px;
+}
+[data-line="5"] .metro-logo svg {
+  width: 24px;
+  height: 24px;
+  align-self: center;
+}
+[data-line="5"] .metro-logo .txt {
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f9d58;
+  letter-spacing: .02em;
+}
+[data-line="5"] .metro-logo .txt em {
+  font-style: normal;
+  font-size: 7.5px;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: .12em;
+  margin-top: 1px;
+}
+
+[data-line="5"] .line-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  height: 31px;
+  padding: 1px 4px;
+  border-radius: 0;
+  line-height: 1;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  white-space: nowrap;
+}
+[data-line="5"] .line-chip .d {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1;
+  margin-right: 0;
+  position: relative;
+  top: 1px;
+  /* Arial 视觉偏高，下移 1px */;
+}
+[data-line="5"] .line-chip .cn {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1;
+  position: relative;
+  top: -1px;
+  /* 视觉上移 2px */;
+}
+[data-line="5"] .line-chip em {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1;
+  letter-spacing: 0;
+  margin-left: 5px;
+  position: relative;
+  top: 1px;
+  /* Arial 视觉偏高，下移 1px */;
+}
+
+[data-line="5"] .exit-main {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  /* 左右各占一半，中间自适应 → 强制居中 */ align-items: center;
+  gap: 10px;
+}
+
+[data-line="5"] .exit-row {
+  width: 100%;
+}
+
+[data-line="5"] #exitRow {
+  width: 100%;
+  display: block;
+}
+
+[data-line="5"] .door-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+[data-line="5"] .car {
+  flex: 1 1 0;
+  height: 100%;
+  border-radius: var(--r-md) 8px 3px 3px;
+  background: linear-gradient(180deg, #fdfefe 0%, #eef3fa 28%, #ccd6e6 64%, #9dabc3 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.95), inset 0 -3px 4px rgba(15,23,42,.24), inset 2px 0 3px rgba(255,255,255,.60), inset -2px 0 3px rgba(15,23,42,.14), 0 2px 4px rgba(15,23,42,.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  /* 粗体 Arial */ color: #0b1220;
+  letter-spacing: -.01em;
+  position: relative;
+}
+
+[data-line="5"] .tr-label {
+  display: inline-flex;
+  align-items: baseline;
+  /* 中英文基线对齐（水平对齐） */ gap: 6px;
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  /* 粗体 Arial */ color: #4b5563;
+  /* 灰色 */;
+}
+[data-line="5"] .tr-label em {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #6b7280;
+  /* 英文浅一档的灰 */ margin-left: 0;
+  /* baseline 只对基线；CJK 字形在字框里偏上，英文视觉偏低，上移对齐 */ transform: translateY(-2px);
+}
+
+[data-line="5"] .tr-chip .num-wrap:has(> .num:not(.wide)) {
+  margin-right: 1px;
+}
+[data-line="5"] .tr-chip .num {
+  display: block;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: .82;
+  letter-spacing: 0;
+  font-family: 'Arial', Helvetica, sans-serif;
+  /* 只有这里用 Arial 常规 */;
+}
+[data-line="5"] .tr-chip .num.wide {
+  letter-spacing: -0.07em;
+  margin-left: -5px;
+  padding-right: 2px;
+}
+[data-line="5"] .tr-chip .txt i.cn {
+  font-style: normal;
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  /* 常规 */ line-height: 1.05;
+  display: block;
+  white-space: nowrap;
+}
+[data-line="5"] .tr-chip .en-wrap i.en {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  /* 基准字号，JS 会按「号线」宽度微调 */ font-weight: 400;
+  line-height: 1.05;
+  display: block;
+  white-space: nowrap;
+  transform-origin: left center;
+}
+
+[data-line="5"] .station-block {
+  margin-top: auto;
+  padding-bottom: 12px;
+  /* 下边留白 */ padding-left: 22px;
+  /* 左边留白 */ width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  column-gap: 0;
+  box-sizing: border-box;
+}
+
+[data-line="5"] #nameCol {
+  gap: 0;
+}
+
+[data-line="5"] .st-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  line-height: 1;
+  min-width: 0;
+}
+
+[data-line="5"] .st-cn {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  /* 微软雅黑 */ font-size: 40px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.04;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+[data-line="5"] .st-cn.big {
+  font-size: 40px;
+  line-height: 1.04;
+}
+
+[data-line="5"] .st-en {
+  font-family: var(--pids-en-font);
+  font-size: 17px;
+  font-weight: 400;
+  color: #111827;
+  line-height: 1.04;
+  white-space: nowrap;
+}
+
+[data-line="5"] .st-en.big {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.04;
+}
+
+[data-line="5"] .terminus {
+  align-self: flex-end;
+  margin-right: 0;
+  margin-top: 0;
+  height: 32px;
+  flex: 0 0 32px;
+  /* 条高收窄，上下留白减少 */ width: 420px;
+  /* 终点站条宽度 */ box-sizing: border-box;
+  padding: 0 5px;
+  /* 内边距收紧 */ display: flex;
+  align-items: center;
+  gap: 0;
+  /* ← 间距由各组固定宽度控制 */ white-space: nowrap;
+  /* 只允许一行，绝不换行 */ background: #3b4150;
+}
+[data-line="5"] .terminus .t-label {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+[data-line="5"] .terminus .t-label,
+[data-line="5"] .terminus .t-name b {
+  font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  /* 中黑加粗（Semibold）*/ letter-spacing: .02em;
+  color: #fff;
+}
+[data-line="5"] .terminus .t-label em,
+[data-line="5"] .terminus .t-name em {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  /* Bold */ color: #fff;
+}
+[data-line="5"] .terminus .t-label em {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+
+[data-line="5"] .mm-en {
+  font-family: var(--pids-en-font);
+  font-weight: 400;
+  font-size: 17px;
+  color: #111827;
+  line-height: 1.1;
+  letter-spacing: .01em;
+}
+
+[data-line="5"] .mm-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  font-size: 30px;
+  letter-spacing: -.05em;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+[data-line="5"] .mm-next-tag i {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  /* 常规 Arial */ font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: .01em;
+}
