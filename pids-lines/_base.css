@@ -785,4 +785,4 @@
 }
 
 /* 闪灯图容器隐藏时必须压过 #lmWrap{display:flex} */
-#lmWrap[hidden] { display: none !important; }
+.lm-scope[hidden], #lmWrap[hidden] { display: none !important; }

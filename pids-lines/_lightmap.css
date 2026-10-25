@@ -1,29 +1,29 @@
 /* ============================================================
    pids-lines/_lightmap.css —— 闪灯图模式样式
-   从 lightmap-line1.html 提取，全部作用域到 #lmWrap，
-   与 PIDS 模式的 .stage / .screen 等类名互不干扰。
+   从 lightmap-line1.html 提取，作用域用 **class** .lm-scope（优先级 0,1,0），
+   而不是 id #lmWrap（1,0,0）——后者会让 .lm-scope * 之类的通配规则
+   压过组件自身的 margin/padding，导致换乘徽标被压扁。
    生成日期：2026-10-25
    ============================================================ */
 
-#lmWrap *{ margin: 0; padding: 0; box-sizing: border-box; }#lmWrap{
+.lm-scope, .lm-scope *{ margin: 0; padding: 0; box-sizing: border-box; }.lm-scope{
     font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
     background: #eef1f6;
-    /* 原来是 body 的规则；嵌进页面后不能占满视口 */
-    min-height: 0;
+    /* 原来是 body：嵌进页面后不能占满视口 */ min-height: 0;
     display: flex; flex-direction: column; align-items: center;
     padding: 20px; gap: 14px;
     overflow-x: hidden;
     min-width: 0;              /* flex 容器关键：允许收缩 */
-  }#lmWrap .controls{
+  }.lm-scope .controls{
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     padding: 10px 16px; background: #fff; border-radius: var(--r-lg);
     box-shadow: 0 2px 10px rgba(15,23,42,.08);
     font-size: 14px; color: #1f2937;
-  }#lmWrap .controls select{
+  }.lm-scope .controls select{
     padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid #cbd5e1;
     background: #fff; color: #1f2937; cursor: pointer;
     font-family: inherit; font-size: 14px;
-  }#lmWrap .controls button{
+  }.lm-scope .controls button{
     padding: 7px 16px;
     border-radius: var(--r-md);
     border: 1px solid #cbd5e1;
@@ -33,18 +33,18 @@
     font-size: 14px;
     cursor: pointer;
     transition: background .12s;
-  }#lmWrap .controls button:hover{ background: #f1f5f9; }#lmWrap .controls button.on{
+  }.lm-scope .controls button:hover{ background: #f1f5f9; }.lm-scope .controls button.on{
     background: #00B140;
     border-color: #00B140;
     color: #fff;
-  }#lmWrap .controls label{ color: #475569; }#lmWrap .stage{
+  }.lm-scope .controls label{ color: #475569; }.lm-scope .stage{
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     overflow: hidden;
     min-width: 0;              /* flex 子项关键：允许缩到内容宽度以下 */
-  }#lmWrap .scaler{
+  }.lm-scope .scaler{
     position: relative;
     flex: 0 1 auto;
     min-width: 0;
@@ -52,7 +52,7 @@
     width: 100px;
     height: 20px;
     overflow: hidden;
-  }#lmWrap .lightmap{
+  }.lm-scope .lightmap{
     position: absolute;
     top: 0;
     left: 0;
@@ -62,7 +62,7 @@
     border: 3px solid #2f3a4a;
     border-radius: 10px;
     transform-origin: top left;
-  }#lmWrap .track{
+  }.lm-scope .track{
     position: absolute;
     left: 150px;
     right: 190px;
@@ -71,19 +71,19 @@
     margin-top: -7.5px;
     background: #00B140;
     border-radius: 7.5px;
-  }#lmWrap .light{
+  }.lm-scope .light{
     position: absolute;
     top: 50%;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-  }#lmWrap .light.big{ width: 22px; height: 22px; margin-top: 0; }#lmWrap .light.small{ width: 15px; height: 15px; margin-top: 0; }#lmWrap .light.red{
+  }.lm-scope .light.big{ width: 22px; height: 22px; margin-top: 0; }.lm-scope .light.small{ width: 15px; height: 15px; margin-top: 0; }.lm-scope .light.red{
     background: #e8342a;
     box-shadow:
       0 0 5px 2px rgba(232,52,42,.85),
       0 0 11px 4px rgba(232,52,42,.45),
       0 0 18px 7px rgba(232,52,42,.18),
       inset 0 0 3px 1px rgba(255,150,140,.9);
-  }#lmWrap .light.yellow{
+  }.lm-scope .light.yellow{
     background: #ffd200;
     box-shadow:
       0 0 5px 2px rgba(255,210,0,.9),
@@ -94,25 +94,25 @@
   }@keyframes blinkYellow{
     0%, 49.9%   { opacity: 1; }
     50%, 100%   { opacity: .12; }
-  }#lmWrap .lightmap.mode-stop .light.yellow{
+  }.lm-scope .lightmap.mode-stop .light.yellow{
     animation: none !important;
-  }#lmWrap .light.dim{
+  }.lm-scope .light.dim{
     background: #9aa3b0 !important;
     box-shadow: none !important;
     opacity: 1;
     transition: none !important;
-  }#lmWrap .light.yellow.dim{
+  }.lm-scope .light.yellow.dim{
     animation: none;
     background: #9aa3b0 !important;
     box-shadow: none !important;
-  }#lmWrap .light.green{
+  }.lm-scope .light.green{
     background: #35d24a;
     box-shadow:
       0 0 5px 2px rgba(53,210,74,.85),
       0 0 11px 4px rgba(53,210,74,.45),
       0 0 18px 7px rgba(53,210,74,.18),
       inset 0 0 3px 1px rgba(190,255,200,.9);
-  }#lmWrap .station{
+  }.lm-scope .station{
     position: absolute;
     transform: translateX(-50%);
     display: flex;
@@ -120,30 +120,30 @@
     align-items: center;
     pointer-events: none;
     white-space: nowrap;
-  }#lmWrap .station.up{ bottom: calc(50% + 38px); }#lmWrap .station.down{ top:    calc(50% + 38px); }#lmWrap .station .nm{ display: flex; flex-direction: column; align-items: center; gap: 1px; }#lmWrap .station .cn{
+  }.lm-scope .station.up{ bottom: calc(50% + 38px); }.lm-scope .station.down{ top:    calc(50% + 38px); }.lm-scope .station .nm{ display: flex; flex-direction: column; align-items: center; gap: 1px; }.lm-scope .station .cn{
     font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
     font-weight: 700;
     font-size: 29px;
     color: #101828;
     line-height: 1.1;
-  }#lmWrap .station .en{
+  }.lm-scope .station .en{
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 400;
     font-size: 18px;
     color: #344054;
     line-height: 1.1;
     letter-spacing: .01em;
-  }#lmWrap .station .bds{
+  }.lm-scope .station .bds{
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0;
     margin-top: 4px;
-  }#lmWrap .station.up .bds{
+  }.lm-scope .station.up .bds{
     order: -1;
     margin-top: 0;
     margin-bottom: 4px;
-  }#lmWrap .station .badge{
+  }.lm-scope .station .badge{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -156,9 +156,13 @@
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
-  }#lmWrap .station .badge *{
+    /* 原本多个徽标（如车公庙 7/9/11）会被 flex 压成 20px 高，
+       导致「号线」被裁；这里禁止压缩并给出足高（容纳 34px 数字） */
+    flex: 0 0 auto;
+    min-height: 40px;
+  }.lm-scope .station .badge *{
     color: inherit !important;
-  }#lmWrap .station .badge .num{
+  }.lm-scope .station .badge .num{
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 400;
     font-size: 34px;
@@ -166,37 +170,37 @@
     letter-spacing: -.10em;
     padding-right: 4px;
     flex: 0 0 auto;
-  }#lmWrap .station .badge .tx{
+  }.lm-scope .station .badge .tx{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 1px;
     flex: 0 0 auto;
-  }#lmWrap .station .badge .tx .cn{
+  }.lm-scope .station .badge .tx .cn{
     font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
     font-style: normal;
     font-size: 20px;
     font-weight: 400;
     line-height: 1.05;
-  }#lmWrap .station .badge .tx .en{
+  }.lm-scope .station .badge .tx .en{
     font-family: Arial, Helvetica, sans-serif;
     font-style: normal;
     font-size: 12px;
     font-weight: 400;
     line-height: 1.05;
     margin-left: 3px;
-  }#lmWrap .station.down .nm{ flex-direction: column; }#lmWrap .door-arrow{
+  }.lm-scope .station.down .nm{ flex-direction: column; }.lm-scope .door-arrow{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     width: 76px; height: 76px;
     color: #9aa3b0;                 /* 默认灰色（不亮）*/
     transition: color .15s, filter .15s;
-  }#lmWrap .door-arrow.left{ left: 12px; }#lmWrap .door-arrow.right{ right: 12px; }#lmWrap .door-arrow svg{ width: 100%; height: 100%; }#lmWrap .door-arrow.active{
+  }.lm-scope .door-arrow.left{ left: 12px; }.lm-scope .door-arrow.right{ right: 12px; }.lm-scope .door-arrow svg{ width: 100%; height: 100%; }.lm-scope .door-arrow.active{
     color: #35d24a;                 /* 本侧：绿色荧光 */
     filter: drop-shadow(0 0 6px rgba(53,210,74,.85))
             drop-shadow(0 0 14px rgba(53,210,74,.45));
-  }#lmWrap .door-label{
+  }.lm-scope .door-label{
     position: absolute;
     top: calc(50% - 96px);              /* 箭头上方 */
     font-family: Arial, Helvetica, sans-serif;
@@ -207,14 +211,14 @@
     line-height: 1.3;
     white-space: nowrap;
     letter-spacing: .02em;
-  }#lmWrap .door-label.left{ left: 0;   width: 100px; }#lmWrap .door-label.right{ right: 0;  width: 100px; }#lmWrap .door-label .en{
+  }.lm-scope .door-label.left{ left: 0;   width: 100px; }.lm-scope .door-label.right{ right: 0;  width: 100px; }.lm-scope .door-label .en{
     display: block;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: .02em;
-  }#lmWrap .door-label .cn{
+  }.lm-scope .door-label .cn{
     display: block;
     font-family: 'SimHei', '黑体', 'Microsoft YaHei', sans-serif;
     font-size: 15px;

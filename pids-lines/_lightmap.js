@@ -397,13 +397,19 @@
     show: function () {
       const w = document.getElementById('lmWrap');
       if (w) w.hidden = false;
-      /* 显示后元素才有尺寸，重新适配 */
+      /* 闪灯图模式下整页背景跟原版一致（原来 body 就是 #eef1f6） */
+      document.body.style.background = '#eef1f6';
+      /* 强制重算：清掉宽度缓存，否则隐藏时算出的 stage=0 会一直留着 */
+      try { _lastFitW = -1; } catch (e) {}
       try { fit(); } catch (e) {}
-      requestAnimationFrame(function () { try { fit(); } catch (e) {} });
+      requestAnimationFrame(function () {
+        try { _lastFitW = -1; fit(); } catch (e) {}
+      });
     },
     hide: function () {
       const w = document.getElementById('lmWrap');
       if (w) w.hidden = true;
+      document.body.style.background = '';
     }
   };
 })();
