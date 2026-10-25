@@ -12,8 +12,8 @@ const articleList = [
     desc: '选择大运站作为开篇很简单，它承载了我太多的回忆。从幼儿园跟老爸坐3号线经过，到14/16号线开通后的巨变，这座站陪我走过了整个学生时代。' 
   },
   { id: 'article 03', title: '摄站系列 · EP01：梨园站', series: '摄站系列', date: '2025.12.26', subtitle: '深圳地铁全网"最后的高架站"，阳光+低碳的绿色标杆', images: [], desc: '作为3号线四期的一个站点，同时也是深圳地铁全网最后的高架站，它的设计充满了独特性。这种"最后"的身份，让我格外想记录下它。' },
-  { id: 'article 01', title: '探站系列 · EP02：大剧院站', series: '探站系列', date: '2026.1.11', subtitle: '5号线西延段终点，1、2号线超级枢纽', images: ['图文1-1.jpg', '图文1-2.jpg', '图文1-3.jpg'], desc: '上一站，我定格了远郊梨园站——那座安静伫立的"最后高架站"。这一次，我一头扎进城市的喧嚣几何中心，落脚于5号线西延段的崭新终点...' },
-  { id: 'article 02', title: '技术解密 · EP01 - 资产编号小秘密', series: '技术解密', date: '2026.8.7', subtitle: '从罗宝线到32号线，编码背后的逻辑', images: ['图文2-1.jpg'], desc: '在深圳地铁的庞大网络中，每一条线路、每一组道岔、每一列电客车，都有其独一无二的"身份编码"。这些看似晦涩的数字与字母组合...' },
+  { id: 'article 01', title: '探站系列 · EP02：大剧院站', series: '探站系列', date: '2026.1.11', subtitle: '5号线西延段终点，1、2号线超级枢纽', images: ['图文1-1.jpg', '图文1-2.jpg', '图文1-3.jpg', '图文1-4.jpg', '图文1-5.jpg', '图文1-6.jpg', '图文1-7.jpg', '图文1-8.jpg', '图文1-9.jpg', '图文1-10.jpg'], desc: '上一站，我定格了远郊梨园站——那座安静伫立的"最后高架站"。这一次，我一头扎进城市的喧嚣几何中心，落脚于5号线西延段的崭新终点...' },
+  { id: 'article 02', title: '技术解密 · EP01 - 资产编号小秘密', series: '技术解密', date: '2026.8.7', subtitle: '从罗宝线到32号线，编码背后的逻辑', images: ['图文2-1.jpg', '图文2-2.jpg'], desc: '在深圳地铁的庞大网络中，每一条线路、每一组道岔、每一列电客车，都有其独一无二的"身份编码"。这些看似晦涩的数字与字母组合...' },
   { 
     id: 'article 05', 
     title: '运营观察 · EP01：2号线大站快车——存活不足24小时', 
@@ -112,11 +112,25 @@ function renderArticlesIndex() {
   let html = '';
   articleList.slice().reverse().forEach(article => {
     const color = getSeriesColor(article.series);
-    const imgHtml = article.images.map(img => '<img src="' + img + '" alt="' + article.title + '" class="carousel-image">').join('');
-    html += '<a href="' + article.id + '" class="article-card">';
-    html += '<div class="carousel" data-carousel="' + article.id + '">';
-    html += '<div class="carousel-images">' + imgHtml + '</div>';
-    html += '</div>';
+    /* 只有确实有配图时才渲染轮播图；没配图的文章不占那块高度 */
+    const imgs = Array.isArray(article.images) ? article.images : [];
+    const hasImgs = imgs.length > 0;
+    html += '<a href="' + article.id + '" class="article-card' + (hasImgs ? ' has-cover' : ' no-cover') + '">';
+    if (hasImgs) {
+      const imgHtml = imgs.map(img => '<img src="' + img + '" alt="' + article.title + '" class="carousel-image">').join('');
+      html += '<div class="carousel" data-carousel="' + article.id + '">';
+      html += '<div class="carousel-images">' + imgHtml + '</div>';
+      if (imgs.length > 1) {
+        html += '<button class="carousel-arrow prev" type="button" aria-label="上一张">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>';
+        html += '<button class="carousel-arrow next" type="button" aria-label="下一张">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>';
+        html += '<div class="carousel-nav">';
+        imgs.forEach((_, k) => { html += '<span class="carousel-dot' + (k === 0 ? ' active' : '') + '" data-index="' + k + '"></span>'; });
+        html += '</div>';
+      }
+      html += '</div>';
+    }
     html += '<div class="article-content">';
     html += '<div class="article-series-badge" style="display:inline-block;background:linear-gradient(135deg,' + color.from + ',' + color.to + ');color:white;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;margin-bottom:10px;">' + article.series + '</div>';
     html += '<h2 class="article-title">' + article.title + '</h2>';
@@ -131,6 +145,33 @@ function renderArticlesIndex() {
   });
   container.innerHTML = html;
   initCarousels();
+  /* 图片是异步加载的，高度会变；先排一次，等图片都 load 完再排一次 */
+  layoutMasonry();
+  const imgs = container.querySelectorAll('img');
+  let pending = imgs.length;
+  if (pending === 0) return;
+  imgs.forEach(img => {
+    const done = () => { if (--pending === 0) layoutMasonry(); };
+    if (img.complete) done(); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+  });
+}
+
+/* ==================== 瀑布流：按卡片实际高度计算 grid-row span ====================
+   不用 column-count 是为了保持「新→旧」的阅读顺序；
+   grid-auto-rows 固定 8px，每张卡片 span = ceil((高度+间距)/8)。 */
+function layoutMasonry() {
+  const grid = document.getElementById('articlesIndex');
+  if (!grid) return;
+  const ROW = 8;      /* 与 CSS 的 grid-auto-rows 保持一致 */
+  const GAP = 24;     /* 与 .article-card 的 margin-bottom 保持一致 */
+  const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+  /* 单列时不需要 span，直接让卡片自然排列 */
+  for (const card of grid.children) {
+    if (cols <= 1) { card.style.gridRowEnd = ''; continue; }
+    card.style.gridRowEnd = 'auto';
+    const h = card.getBoundingClientRect().height;
+    card.style.gridRowEnd = 'span ' + Math.max(1, Math.ceil((h + GAP) / ROW));
+  }
 }
 
 // ==================== 辅助函数 ====================
@@ -183,6 +224,12 @@ function init() {
   renderArticleNav();
   renderArticleList();
   renderArticlesIndex();
+  /* 窗口尺寸变化时重排瀑布流（列数可能从 2 变 1） */
+  let rzTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(rzTimer);
+    rzTimer = setTimeout(layoutMasonry, 150);
+  });
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);

@@ -85,17 +85,19 @@
       margin-bottom: 32px;
     }
     
-    /* 双列卡片墙：宽屏并排两列，窄屏（≤768px）回落单列 */
+    /* 瀑布流卡片墙：宽屏两列、窄屏单列，每张卡片按自身内容决定高度，
+       不再强制等高（grid-auto-rows 配合 JS 计算 span 实现真瀑布流） */
     .articles-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-      align-items: stretch;
+      grid-auto-rows: 8px;
+      column-gap: 24px;
+      row-gap: 0;
+      align-items: start;
     }
-    
+
     .article-card {
-      /* flex 纵向：卡片作为网格项撑满整行高度，内部内容区再 flex:1 填满，
-         这样同一排两张卡片的「阅读全文」会对齐到底部 */
+      /* 每张卡片高度由内容决定；grid-row-end 的 span 由 JS 按实际高度算 */
       display: flex;
       flex-direction: column;
       background: white;
@@ -105,6 +107,13 @@
       transition: all 0.3s ease;
       text-decoration: none;
       color: inherit;
+      margin-bottom: 24px;
+      align-self: start;
+    }
+
+    /* 没配图的卡片：内容区多给一点上内边距，视觉上不空 */
+    .article-card.no-cover .article-content {
+      padding-top: 26px;
     }
     
     .article-card:hover {
@@ -279,7 +288,9 @@
       /* 手机上双列太窄，回落单列 */
       .articles-list {
         grid-template-columns: 1fr;
-        gap: 20px;
+        grid-auto-rows: auto;   /* 单列时取消 8px 行高，否则卡片会溢出重叠 */
+        column-gap: 0;
+        row-gap: 0;
       }.current-time {
         display: none;
       }
