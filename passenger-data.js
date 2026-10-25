@@ -1,5 +1,5 @@
 const passengerData = {
-"2026-07-10": {
+  "2026-07-10": {
     date: "2026-07-10",
     weekday: "星期五",
     total: 1005.20,
@@ -19,10 +19,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 65.02 },
       { key: "14", name: "14号线", passengers: 67.32 },
       { key: "16", name: "16号线", passengers: 27.10 },
-      { key: "20", name: "20号线", passengers: 1.36 },
+      { key: "20", name: "20号线", passengers: 1.36 }
     ]
   },
-      "2026-07-11": {
+  "2026-07-11": {
     date: "2026-07-11",
     weekday: "星期六",
     total: 844.06,
@@ -38,11 +38,11 @@ const passengerData = {
       { key: "8", name: "8号线", passengers: 20.95 },
       { key: "9", name: "9号线", passengers: 49.13 },
       { key: "10", name: "10号线", passengers: 45.36 },
-      { key: "11", name: "11号线", passengers: 90.9 },
+      { key: "11", name: "11号线", passengers: 90.90 },
       { key: "12", name: "12号线", passengers: 56.55 },
-      { key: "14", name: "14号线", passengers: 54.9 },
+      { key: "14", name: "14号线", passengers: 54.90 },
       { key: "16", name: "16号线", passengers: 25.84 },
-      { key: "20", name: "20号线", passengers: 1.08 },
+      { key: "20", name: "20号线", passengers: 1.08 }
     ]
   },
   "2026-07-12": {
@@ -51,7 +51,7 @@ const passengerData = {
     total: 778.77,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 93.1 },
+      { key: "1", name: "1号线", passengers: 93.10 },
       { key: "2", name: "2号线", passengers: 60.47 },
       { key: "3", name: "3号线", passengers: 78.95 },
       { key: "5", name: "5号线", passengers: 120.76 },
@@ -59,13 +59,13 @@ const passengerData = {
       { key: "6z", name: "6号线支线", passengers: 4.74 },
       { key: "7", name: "7号线", passengers: 48.03 },
       { key: "8", name: "8号线", passengers: 20.99 },
-      { key: "9", name: "9号线", passengers: 44.3 },
+      { key: "9", name: "9号线", passengers: 44.30 },
       { key: "10", name: "10号线", passengers: 38.95 },
       { key: "11", name: "11号线", passengers: 83.68 },
       { key: "12", name: "12号线", passengers: 52.55 },
       { key: "14", name: "14号线", passengers: 50.22 },
       { key: "16", name: "16号线", passengers: 24.48 },
-      { key: "20", name: "20号线", passengers: 1.06 },
+      { key: "20", name: "20号线", passengers: 1.06 }
     ]
   },
   "2026-07-13": {
@@ -79,7 +79,7 @@ const passengerData = {
       { key: "3", name: "3号线", passengers: 95.95 },
       { key: "5", name: "5号线", passengers: 155.95 },
       { key: "6", name: "6号线", passengers: 60.23 },
-      { key: "6z", name: "6号线支线", passengers: 3.5 },
+      { key: "6z", name: "6号线支线", passengers: 3.50 },
       { key: "7", name: "7号线", passengers: 61.97 },
       { key: "8", name: "8号线", passengers: 15.48 },
       { key: "9", name: "9号线", passengers: 63.21 },
@@ -88,10 +88,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 61.48 },
       { key: "14", name: "14号线", passengers: 64.44 },
       { key: "16", name: "16号线", passengers: 25.05 },
-      { key: "20", name: "20号线", passengers: 1.36 },
+      { key: "20", name: "20号线", passengers: 1.36 }
     ]
   },
-"2026-07-14": {
+  "2026-07-14": {
     date: "2026-07-14",
     weekday: "星期二",
     total: 919.44,
@@ -108,13 +108,13 @@ const passengerData = {
       { key: "9", name: "9号线", passengers: 61.07 },
       { key: "10", name: "10号线", passengers: 54.59 },
       { key: "11", name: "11号线", passengers: 108.47 },
-      { key: "12", name: "12号线", passengers: 59.6 },
+      { key: "12", name: "12号线", passengers: 59.60 },
       { key: "14", name: "14号线", passengers: 60.61 },
       { key: "16", name: "16号线", passengers: 22.93 },
-      { key: "20", name: "20号线", passengers: 1.3 },
+      { key: "20", name: "20号线", passengers: 1.30 }
     ]
   },
-"2026-07-15": {
+  "2026-07-15": {
     date: "2026-07-15",
     weekday: "星期三",
     total: 893.67,
@@ -134,7 +134,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.04 },
       { key: "14", name: "14号线", passengers: 59.52 },
       { key: "16", name: "16号线", passengers: 22.33 },
-      { key: "20", name: "20号线", passengers: 1.24 },
+      { key: "20", name: "20号线", passengers: 1.24 }
     ]
   },
   "2026-07-16": {
@@ -157,7 +157,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 59.44 },
       { key: "14", name: "14号线", passengers: 59.54 },
       { key: "16", name: "16号线", passengers: 23.07 },
-      { key: "20", name: "20号线", passengers: 1.28 },
+      { key: "20", name: "20号线", passengers: 1.28 }
     ]
   },
   "2026-07-17": {
@@ -180,7 +180,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.14 },
       { key: "14", name: "14号线", passengers: 63.83 },
       { key: "16", name: "16号线", passengers: 25.14 },
-      { key: "20", name: "20号线", passengers: 1.37 },
+      { key: "20", name: "20号线", passengers: 1.37 }
     ]
   },
   "2026-07-18": {
@@ -203,19 +203,19 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 55.92 },
       { key: "14", name: "14号线", passengers: 52.71 },
       { key: "16", name: "16号线", passengers: 25.80 },
-      { key: "20", name: "20号线", passengers: 1.35 },
+      { key: "20", name: "20号线", passengers: 1.35 }
     ]
   },
-    "2026-07-19": {
+  "2026-07-19": {
     date: "2026-07-19",
     weekday: "星期日",
     total: 814.82,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 95.4 },
+      { key: "1", name: "1号线", passengers: 95.40 },
       { key: "2", name: "2号线", passengers: 62.79 },
       { key: "3", name: "3号线", passengers: 83.04 },
-      { key: "5", name: "5号线", passengers: 122.4 },
+      { key: "5", name: "5号线", passengers: 122.40 },
       { key: "6", name: "6号线", passengers: 58.34 },
       { key: "6z", name: "6号线支线", passengers: 5.32 },
       { key: "7", name: "7号线", passengers: 48.65 },
@@ -226,10 +226,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 54.84 },
       { key: "14", name: "14号线", passengers: 54.95 },
       { key: "16", name: "16号线", passengers: 32.07 },
-      { key: "20", name: "20号线", passengers: 1.22 },
+      { key: "20", name: "20号线", passengers: 1.22 }
     ]
   },
-"2026-07-20": {
+  "2026-07-20": {
     date: "2026-07-20",
     weekday: "星期一",
     total: 942.03,
@@ -249,10 +249,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 60.87 },
       { key: "14", name: "14号线", passengers: 63.22 },
       { key: "16", name: "16号线", passengers: 24.75 },
-      { key: "20", name: "20号线", passengers: 1.28 },
+      { key: "20", name: "20号线", passengers: 1.28 }
     ]
   },
-    "2026-07-21": {
+  "2026-07-21": {
     date: "2026-07-21",
     weekday: "星期二",
     total: 941.02,
@@ -272,7 +272,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 60.82 },
       { key: "14", name: "14号线", passengers: 62.39 },
       { key: "16", name: "16号线", passengers: 23.94 },
-      { key: "20", name: "20号线", passengers: 1.33 },
+      { key: "20", name: "20号线", passengers: 1.33 }
     ]
   },
   "2026-07-22": {
@@ -286,7 +286,7 @@ const passengerData = {
       { key: "3", name: "3号线", passengers: 95.66 },
       { key: "5", name: "5号线", passengers: 154.27 },
       { key: "6", name: "6号线", passengers: 60.24 },
-      { key: "6z", name: "6号线支线", passengers: 3.7 },
+      { key: "6z", name: "6号线支线", passengers: 3.70 },
       { key: "7", name: "7号线", passengers: 61.98 },
       { key: "8", name: "8号线", passengers: 17.04 },
       { key: "9", name: "9号线", passengers: 63.64 },
@@ -295,10 +295,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 62.13 },
       { key: "14", name: "14号线", passengers: 63.67 },
       { key: "16", name: "16号线", passengers: 24.68 },
-      { key: "20", name: "20号线", passengers: 1.36 },
+      { key: "20", name: "20号线", passengers: 1.36 }
     ]
   },
-"2026-07-23": {
+  "2026-07-23": {
     date: "2026-07-23",
     weekday: "星期四",
     total: 960.20,
@@ -318,7 +318,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 62.12 },
       { key: "14", name: "14号线", passengers: 63.10 },
       { key: "16", name: "16号线", passengers: 24.29 },
-      { key: "20", name: "20号线", passengers: 1.37 },
+      { key: "20", name: "20号线", passengers: 1.37 }
     ]
   },
   "2026-07-24": {
@@ -327,7 +327,7 @@ const passengerData = {
     total: 1014.86,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 120.4 },
+      { key: "1", name: "1号线", passengers: 120.40 },
       { key: "2", name: "2号线", passengers: 75.59 },
       { key: "3", name: "3号线", passengers: 98.84 },
       { key: "5", name: "5号线", passengers: 164.33 },
@@ -338,24 +338,24 @@ const passengerData = {
       { key: "9", name: "9号线", passengers: 66.04 },
       { key: "10", name: "10号线", passengers: 59.18 },
       { key: "11", name: "11号线", passengers: 121.87 },
-      { key: "12", name: "12号线", passengers: 65.0 },
-      { key: "14", name: "14号线", passengers: 66.9 },
+      { key: "12", name: "12号线", passengers: 65.00 },
+      { key: "14", name: "14号线", passengers: 66.90 },
       { key: "16", name: "16号线", passengers: 25.87 },
-      { key: "20", name: "20号线", passengers: 1.41 },
+      { key: "20", name: "20号线", passengers: 1.41 }
     ]
   },
   "2026-07-25": {
     date: "2026-07-25",
     weekday: "星期六",
-    total: 718.4,
+    total: 718.40,
     unit: "万人次",
     lines: [
       { key: "1", name: "1号线", passengers: 89.09 },
       { key: "2", name: "2号线", passengers: 53.07 },
-      { key: "3", name: "3号线", passengers: 72.9 },
+      { key: "3", name: "3号线", passengers: 72.90 },
       { key: "5", name: "5号线", passengers: 112.05 },
       { key: "6", name: "6号线", passengers: 49.78 },
-      { key: "6z", name: "6号线支线", passengers: 3.9 },
+      { key: "6z", name: "6号线支线", passengers: 3.90 },
       { key: "7", name: "7号线", passengers: 46.93 },
       { key: "8", name: "8号线", passengers: 13.45 },
       { key: "9", name: "9号线", passengers: 41.25 },
@@ -364,10 +364,10 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 48.97 },
       { key: "14", name: "14号线", passengers: 47.16 },
       { key: "16", name: "16号线", passengers: 20.19 },
-      { key: "20", name: "20号线", passengers: 1.06 },
+      { key: "20", name: "20号线", passengers: 1.06 }
     ]
   },
-"2026-07-26": {
+  "2026-07-26": {
     date: "2026-07-26",
     weekday: "星期日",
     total: 349.27,
@@ -381,243 +381,243 @@ const passengerData = {
       { key: "6z", name: "6号线支线", passengers: 1.92 },
       { key: "7", name: "7号线", passengers: 24.23 },
       { key: "8", name: "8号线", passengers: 4.59 },
-      { key: "9", name: "9号线", passengers: 20.9 },
+      { key: "9", name: "9号线", passengers: 20.90 },
       { key: "10", name: "10号线", passengers: 18.63 },
       { key: "11", name: "11号线", passengers: 37.17 },
       { key: "12", name: "12号线", passengers: 27.35 },
       { key: "14", name: "14号线", passengers: 20.79 },
-      { key: "16", name: "16号线", passengers: 11.52 },
-      { key: "20", name: "20号线", passengers: 0.71 },
+      { key: "16", name: "16号线", passengers: 9.69 },
+      { key: "20", name: "20号线", passengers: 0.54 }
     ]
   },
-"2026-07-27": {
+  "2026-07-27": {
     date: "2026-07-27",
     weekday: "星期一",
-    total: 953.72,
+    total: 940.40,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 113.86 },
-      { key: "2", name: "2号线", passengers: 71.05 },
-      { key: "3", name: "3号线", passengers: 93.96 },
-      { key: "5", name: "5号线", passengers: 153.42 },
-      { key: "6", name: "6号线", passengers: 58.78 },
-      { key: "6z", name: "6号线支线", passengers: 3.44 },
-      { key: "7", name: "7号线", passengers: 60.32 },
-      { key: "8", name: "8号线", passengers: 17.89 },
-      { key: "9", name: "9号线", passengers: 62.34 },
-      { key: "10", name: "10号线", passengers: 55.12 },
-      { key: "11", name: "11号线", passengers: 114.56 },
-      { key: "12", name: "12号线", passengers: 61.23 },
-      { key: "14", name: "14号线", passengers: 63.45 },
-      { key: "16", name: "16号线", passengers: 24.12 },
-      { key: "20", name: "20号线", passengers: 1.38 },
+      { key: "1", name: "1号线", passengers: 108.95 },
+      { key: "2", name: "2号线", passengers: 67.69 },
+      { key: "3", name: "3号线", passengers: 93.80 },
+      { key: "5", name: "5号线", passengers: 154.21 },
+      { key: "6", name: "6号线", passengers: 59.29 },
+      { key: "6z", name: "6号线支线", passengers: 3.43 },
+      { key: "7", name: "7号线", passengers: 60.59 },
+      { key: "8", name: "8号线", passengers: 14.18 },
+      { key: "9", name: "9号线", passengers: 62.28 },
+      { key: "10", name: "10号线", passengers: 55.33 },
+      { key: "11", name: "11号线", passengers: 111.37 },
+      { key: "12", name: "12号线", passengers: 61.06 },
+      { key: "14", name: "14号线", passengers: 62.39 },
+      { key: "16", name: "16号线", passengers: 24.46 },
+      { key: "20", name: "20号线", passengers: 1.37 }
     ]
   },
-"2026-07-28": {
+  "2026-07-28": {
     date: "2026-07-28",
     weekday: "星期二",
-    total: 958.34,
+    total: 924.93,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 114.23 },
-      { key: "2", name: "2号线", passengers: 71.42 },
-      { key: "3", name: "3号线", passengers: 94.35 },
-      { key: "5", name: "5号线", passengers: 154.12 },
-      { key: "6", name: "6号线", passengers: 59.01 },
-      { key: "6z", name: "6号线支线", passengers: 3.48 },
-      { key: "7", name: "7号线", passengers: 60.67 },
-      { key: "8", name: "8号线", passengers: 17.95 },
-      { key: "9", name: "9号线", passengers: 62.56 },
-      { key: "10", name: "10号线", passengers: 55.38 },
-      { key: "11", name: "11号线", passengers: 115.02 },
-      { key: "12", name: "12号线", passengers: 61.45 },
-      { key: "14", name: "14号线", passengers: 63.67 },
-      { key: "16", name: "16号线", passengers: 24.23 },
-      { key: "20", name: "20号线", passengers: 1.40 },
+      { key: "1", name: "1号线", passengers: 107.83 },
+      { key: "2", name: "2号线", passengers: 66.70 },
+      { key: "3", name: "3号线", passengers: 92.50 },
+      { key: "5", name: "5号线", passengers: 149.82 },
+      { key: "6", name: "6号线", passengers: 58.76 },
+      { key: "6z", name: "6号线支线", passengers: 3.59 },
+      { key: "7", name: "7号线", passengers: 60.50 },
+      { key: "8", name: "8号线", passengers: 12.87 },
+      { key: "9", name: "9号线", passengers: 60.95 },
+      { key: "10", name: "10号线", passengers: 54.69 },
+      { key: "11", name: "11号线", passengers: 109.84 },
+      { key: "12", name: "12号线", passengers: 60.29 },
+      { key: "14", name: "14号线", passengers: 61.60 },
+      { key: "16", name: "16号线", passengers: 23.65 },
+      { key: "20", name: "20号线", passengers: 1.34 }
     ]
   },
-"2026-07-29": {
+  "2026-07-29": {
     date: "2026-07-29",
     weekday: "星期三",
-    total: 961.45,
+    total: 908.10,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 114.56 },
-      { key: "2", name: "2号线", passengers: 71.68 },
-      { key: "3", name: "3号线", passengers: 94.67 },
-      { key: "5", name: "5号线", passengers: 154.56 },
-      { key: "6", name: "6号线", passengers: 59.12 },
-      { key: "6z", name: "6号线支线", passengers: 3.52 },
-      { key: "7", name: "7号线", passengers: 60.89 },
-      { key: "8", name: "8号线", passengers: 18.02 },
-      { key: "9", name: "9号线", passengers: 62.78 },
-      { key: "10", name: "10号线", passengers: 55.56 },
-      { key: "11", name: "11号线", passengers: 115.34 },
-      { key: "12", name: "12号线", passengers: 61.67 },
-      { key: "14", name: "14号线", passengers: 63.89 },
-      { key: "16", name: "16号线", passengers: 24.34 },
-      { key: "20", name: "20号线", passengers: 1.42 },
+      { key: "1", name: "1号线", passengers: 107.03 },
+      { key: "2", name: "2号线", passengers: 65.00 },
+      { key: "3", name: "3号线", passengers: 91.48 },
+      { key: "5", name: "5号线", passengers: 147.60 },
+      { key: "6", name: "6号线", passengers: 57.09 },
+      { key: "6z", name: "6号线支线", passengers: 3.38 },
+      { key: "7", name: "7号线", passengers: 59.57 },
+      { key: "8", name: "8号线", passengers: 11.76 },
+      { key: "9", name: "9号线", passengers: 60.04 },
+      { key: "10", name: "10号线", passengers: 54.31 },
+      { key: "11", name: "11号线", passengers: 106.92 },
+      { key: "12", name: "12号线", passengers: 59.41 },
+      { key: "14", name: "14号线", passengers: 59.88 },
+      { key: "16", name: "16号线", passengers: 23.32 },
+      { key: "20", name: "20号线", passengers: 1.31 }
     ]
   },
-"2026-07-30": {
+  "2026-07-30": {
     date: "2026-07-30",
     weekday: "星期四",
-    total: 964.56,
+    total: 929.92,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 114.89 },
-      { key: "2", name: "2号线", passengers: 71.95 },
-      { key: "3", name: "3号线", passengers: 94.98 },
-      { key: "5", name: "5号线", passengers: 154.89 },
-      { key: "6", name: "6号线", passengers: 59.34 },
-      { key: "6z", name: "6号线支线", passengers: 3.56 },
-      { key: "7", name: "7号线", passengers: 61.12 },
-      { key: "8", name: "8号线", passengers: 18.09 },
-      { key: "9", name: "9号线", passengers: 63.01 },
-      { key: "10", name: "10号线", passengers: 55.78 },
-      { key: "11", name: "11号线", passengers: 115.67 },
-      { key: "12", name: "12号线", passengers: 61.89 },
-      { key: "14", name: "14号线", passengers: 64.12 },
-      { key: "16", name: "16号线", passengers: 24.45 },
-      { key: "20", name: "20号线", passengers: 1.43 },
+      { key: "1", name: "1号线", passengers: 109.43 },
+      { key: "2", name: "2号线", passengers: 68.14 },
+      { key: "3", name: "3号线", passengers: 93.12 },
+      { key: "5", name: "5号线", passengers: 150.07 },
+      { key: "6", name: "6号线", passengers: 58.18 },
+      { key: "6z", name: "6号线支线", passengers: 3.51 },
+      { key: "7", name: "7号线", passengers: 60.01 },
+      { key: "8", name: "8号线", passengers: 14.32 },
+      { key: "9", name: "9号线", passengers: 60.82 },
+      { key: "10", name: "10号线", passengers: 54.97 },
+      { key: "11", name: "11号线", passengers: 109.66 },
+      { key: "12", name: "12号线", passengers: 59.87 },
+      { key: "14", name: "14号线", passengers: 62.28 },
+      { key: "16", name: "16号线", passengers: 24.16 },
+      { key: "20", name: "20号线", passengers: 1.38 }
     ]
   },
-"2026-07-31": {
+  "2026-07-31": {
     date: "2026-07-31",
     weekday: "星期五",
-    total: 1018.23,
+    total: 947.10,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 121.12 },
-      { key: "2", name: "2号线", passengers: 76.23 },
-      { key: "3", name: "3号线", passengers: 99.45 },
-      { key: "5", name: "5号线", passengers: 165.34 },
-      { key: "6", name: "6号线", passengers: 63.78 },
-      { key: "6z", name: "6号线支线", passengers: 4.01 },
-      { key: "7", name: "7号线", passengers: 63.89 },
-      { key: "8", name: "8号线", passengers: 19.23 },
-      { key: "9", name: "9号线", passengers: 66.45 },
-      { key: "10", name: "10号线", passengers: 59.12 },
-      { key: "11", name: "11号线", passengers: 122.34 },
-      { key: "12", name: "12号线", passengers: 65.67 },
-      { key: "14", name: "14号线", passengers: 67.23 },
-      { key: "16", name: "16号线", passengers: 26.12 },
-      { key: "20", name: "20号线", passengers: 1.45 },
+      { key: "1", name: "1号线", passengers: 114.09 },
+      { key: "2", name: "2号线", passengers: 67.05 },
+      { key: "3", name: "3号线", passengers: 92.53 },
+      { key: "5", name: "5号线", passengers: 156.04 },
+      { key: "6", name: "6号线", passengers: 60.44 },
+      { key: "6z", name: "6号线支线", passengers: 3.81 },
+      { key: "7", name: "7号线", passengers: 59.92 },
+      { key: "8", name: "8号线", passengers: 12.79 },
+      { key: "9", name: "9号线", passengers: 61.15 },
+      { key: "10", name: "10号线", passengers: 55.90 },
+      { key: "11", name: "11号线", passengers: 112.11 },
+      { key: "12", name: "12号线", passengers: 62.08 },
+      { key: "14", name: "14号线", passengers: 63.39 },
+      { key: "16", name: "16号线", passengers: 24.42 },
+      { key: "20", name: "20号线", passengers: 1.38 }
     ]
   },
-"2026-08-01": {
+  "2026-08-01": {
     date: "2026-08-01",
     weekday: "星期六",
-    total: 876.45,
+    total: 804.29,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 106.45 },
-      { key: "2", name: "2号线", passengers: 70.12 },
-      { key: "3", name: "3号线", passengers: 86.23 },
-      { key: "5", name: "5号线", passengers: 134.56 },
-      { key: "6", name: "6号线", passengers: 57.89 },
-      { key: "6z", name: "6号线支线", passengers: 4.23 },
-      { key: "7", name: "7号线", passengers: 53.45 },
-      { key: "8", name: "8号线", passengers: 27.89 },
-      { key: "9", name: "9号线", passengers: 50.67 },
-      { key: "10", name: "10号线", passengers: 46.56 },
-      { key: "11", name: "11号线", passengers: 97.23 },
-      { key: "12", name: "12号线", passengers: 59.45 },
-      { key: "14", name: "14号线", passengers: 55.89 },
-      { key: "16", name: "16号线", passengers: 26.34 },
-      { key: "20", name: "20号线", passengers: 1.30 },
+      { key: "1", name: "1号线", passengers: 100.27 },
+      { key: "2", name: "2号线", passengers: 60.35 },
+      { key: "3", name: "3号线", passengers: 82.34 },
+      { key: "5", name: "5号线", passengers: 125.15 },
+      { key: "6", name: "6号线", passengers: 54.96 },
+      { key: "6z", name: "6号线支线", passengers: 4.37 },
+      { key: "7", name: "7号线", passengers: 50.84 },
+      { key: "8", name: "8号线", passengers: 16.39 },
+      { key: "9", name: "9号线", passengers: 45.61 },
+      { key: "10", name: "10号线", passengers: 42.53 },
+      { key: "11", name: "11号线", passengers: 87.92 },
+      { key: "12", name: "12号线", passengers: 56.37 },
+      { key: "14", name: "14号线", passengers: 51.52 },
+      { key: "16", name: "16号线", passengers: 24.48 },
+      { key: "20", name: "20号线", passengers: 1.19 }
     ]
   },
-"2026-08-02": {
+  "2026-08-02": {
     date: "2026-08-02",
     weekday: "星期日",
-    total: 825.67,
+    total: 724.88,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 100.67 },
-      { key: "2", name: "2号线", passengers: 67.89 },
-      { key: "3", name: "3号线", passengers: 81.34 },
-      { key: "5", name: "5号线", passengers: 123.67 },
-      { key: "6", name: "6号线", passengers: 58.12 },
-      { key: "6z", name: "6号线支线", passengers: 4.67 },
-      { key: "7", name: "7号线", passengers: 48.23 },
-      { key: "8", name: "8号线", passengers: 30.12 },
-      { key: "9", name: "9号线", passengers: 45.78 },
-      { key: "10", name: "10号线", passengers: 41.12 },
-      { key: "11", name: "11号线", passengers: 90.67 },
-      { key: "12", name: "12号线", passengers: 56.23 },
-      { key: "14", name: "14号线", passengers: 52.34 },
-      { key: "16", name: "16号线", passengers: 25.78 },
-      { key: "20", name: "20号线", passengers: 1.35 },
+      { key: "1", name: "1号线", passengers: 90.50 },
+      { key: "2", name: "2号线", passengers: 52.43 },
+      { key: "3", name: "3号线", passengers: 73.81 },
+      { key: "5", name: "5号线", passengers: 111.11 },
+      { key: "6", name: "6号线", passengers: 54.57 },
+      { key: "6z", name: "6号线支线", passengers: 4.83 },
+      { key: "7", name: "7号线", passengers: 44.49 },
+      { key: "8", name: "8号线", passengers: 13.89 },
+      { key: "9", name: "9号线", passengers: 40.02 },
+      { key: "10", name: "10号线", passengers: 36.32 },
+      { key: "11", name: "11号线", passengers: 81.26 },
+      { key: "12", name: "12号线", passengers: 53.54 },
+      { key: "14", name: "14号线", passengers: 45.30 },
+      { key: "16", name: "16号线", passengers: 21.52 },
+      { key: "20", name: "20号线", passengers: 1.29 }
     ]
   },
-"2026-08-03": {
+  "2026-08-03": {
     date: "2026-08-03",
     weekday: "星期一",
-    total: 962.34,
+    total: 944.76,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 114.67 },
-      { key: "2", name: "2号线", passengers: 71.56 },
+      { key: "1", name: "1号线", passengers: 111.47 },
+      { key: "2", name: "2号线", passengers: 68.41 },
       { key: "3", name: "3号线", passengers: 94.45 },
-      { key: "5", name: "5号线", passengers: 154.23 },
-      { key: "6", name: "6号线", passengers: 59.23 },
-      { key: "6z", name: "6号线支线", passengers: 3.56 },
-      { key: "7", name: "7号线", passengers: 60.89 },
-      { key: "8", name: "8号线", passengers: 18.23 },
-      { key: "9", name: "9号线", passengers: 62.78 },
-      { key: "10", name: "10号线", passengers: 55.67 },
-      { key: "11", name: "11号线", passengers: 115.12 },
-      { key: "12", name: "12号线", passengers: 62.12 },
-      { key: "14", name: "14号线", passengers: 64.23 },
-      { key: "16", name: "16号线", passengers: 24.67 },
-      { key: "20", name: "20号线", passengers: 1.48 },
+      { key: "5", name: "5号线", passengers: 152.77 },
+      { key: "6", name: "6号线", passengers: 59.71 },
+      { key: "6z", name: "6号线支线", passengers: 3.77 },
+      { key: "7", name: "7号线", passengers: 60.73 },
+      { key: "8", name: "8号线", passengers: 14.67 },
+      { key: "9", name: "9号线", passengers: 61.93 },
+      { key: "10", name: "10号线", passengers: 55.30 },
+      { key: "11", name: "11号线", passengers: 112.00 },
+      { key: "12", name: "12号线", passengers: 61.32 },
+      { key: "14", name: "14号线", passengers: 62.54 },
+      { key: "16", name: "16号线", passengers: 24.26 },
+      { key: "20", name: "20号线", passengers: 1.43 }
     ]
   },
-"2026-08-04": {
+  "2026-08-04": {
     date: "2026-08-04",
     weekday: "星期二",
-    total: 965.45,
+    total: 965.46,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 115.12 },
-      { key: "2", name: "2号线", passengers: 71.89 },
-      { key: "3", name: "3号线", passengers: 94.78 },
-      { key: "5", name: "5号线", passengers: 154.67 },
-      { key: "6", name: "6号线", passengers: 59.45 },
-      { key: "6z", name: "6号线支线", passengers: 3.59 },
-      { key: "7", name: "7号线", passengers: 61.12 },
-      { key: "8", name: "8号线", passengers: 18.34 },
-      { key: "9", name: "9号线", passengers: 63.01 },
-      { key: "10", name: "10号线", passengers: 55.89 },
-      { key: "11", name: "11号线", passengers: 115.45 },
-      { key: "12", name: "12号线", passengers: 62.34 },
-      { key: "14", name: "14号线", passengers: 64.45 },
-      { key: "16", name: "16号线", passengers: 24.78 },
-      { key: "20", name: "20号线", passengers: 1.49 },
+      { key: "1", name: "1号线", passengers: 113.73 },
+      { key: "2", name: "2号线", passengers: 72.20 },
+      { key: "3", name: "3号线", passengers: 95.80 },
+      { key: "5", name: "5号线", passengers: 153.42 },
+      { key: "6", name: "6号线", passengers: 60.41 },
+      { key: "6z", name: "6号线支线", passengers: 3.99 },
+      { key: "7", name: "7号线", passengers: 61.31 },
+      { key: "8", name: "8号线", passengers: 17.02 },
+      { key: "9", name: "9号线", passengers: 63.91 },
+      { key: "10", name: "10号线", passengers: 56.20 },
+      { key: "11", name: "11号线", passengers: 115.26 },
+      { key: "12", name: "12号线", passengers: 62.51 },
+      { key: "14", name: "14号线", passengers: 63.46 },
+      { key: "16", name: "16号线", passengers: 24.83 },
+      { key: "20", name: "20号线", passengers: 1.41 }
     ]
   },
-"2026-08-05": {
+  "2026-08-05": {
     date: "2026-08-05",
     weekday: "星期三",
-    total: 968.56,
+    total: 988.19,
     unit: "万人次",
     lines: [
-      { key: "1", name: "1号线", passengers: 115.45 },
-      { key: "2", name: "2号线", passengers: 72.12 },
-      { key: "3", name: "3号线", passengers: 95.12 },
-      { key: "5", name: "5号线", passengers: 155.12 },
-      { key: "6", name: "6号线", passengers: 59.67 },
-      { key: "6z", name: "6号线支线", passengers: 3.62 },
-      { key: "7", name: "7号线", passengers: 61.34 },
-      { key: "8", name: "8号线", passengers: 18.45 },
-      { key: "9", name: "9号线", passengers: 63.23 },
-      { key: "10", name: "10号线", passengers: 56.12 },
-      { key: "11", name: "11号线", passengers: 115.78 },
-      { key: "12", name: "12号线", passengers: 62.56 },
-      { key: "14", name: "14号线", passengers: 64.67 },
-      { key: "16", name: "16号线", passengers: 24.89 },
-      { key: "20", name: "20号线", passengers: 1.50 },
+      { key: "1", name: "1号线", passengers: 116.67 },
+      { key: "2", name: "2号线", passengers: 73.96 },
+      { key: "3", name: "3号线", passengers: 97.20 },
+      { key: "5", name: "5号线", passengers: 156.53 },
+      { key: "6", name: "6号线", passengers: 61.24 },
+      { key: "6z", name: "6号线支线", passengers: 4.06 },
+      { key: "7", name: "7号线", passengers: 62.68 },
+      { key: "8", name: "8号线", passengers: 18.64 },
+      { key: "9", name: "9号线", passengers: 65.55 },
+      { key: "10", name: "10号线", passengers: 57.11 },
+      { key: "11", name: "11号线", passengers: 118.78 },
+      { key: "12", name: "12号线", passengers: 64.08 },
+      { key: "14", name: "14号线", passengers: 64.63 },
+      { key: "16", name: "16号线", passengers: 25.59 },
+      { key: "20", name: "20号线", passengers: 1.47 }
     ]
   },
   "2026-08-06": {
@@ -640,7 +640,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.38 },
       { key: "14", name: "14号线", passengers: 64.10 },
       { key: "16", name: "16号线", passengers: 25.22 },
-      { key: "20", name: "20号线", passengers: 1.41 },
+      { key: "20", name: "20号线", passengers: 1.41 }
     ]
   },
   "2026-08-07": {
@@ -663,7 +663,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 65.95 },
       { key: "14", name: "14号线", passengers: 66.69 },
       { key: "16", name: "16号线", passengers: 26.21 },
-      { key: "20", name: "20号线", passengers: 1.44 },
+      { key: "20", name: "20号线", passengers: 1.44 }
     ]
   },
   "2026-08-08": {
@@ -686,7 +686,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 59.23 },
       { key: "14", name: "14号线", passengers: 55.62 },
       { key: "16", name: "16号线", passengers: 26.17 },
-      { key: "20", name: "20号线", passengers: 1.28 },
+      { key: "20", name: "20号线", passengers: 1.28 }
     ]
   },
   "2026-08-09": {
@@ -709,7 +709,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 55.94 },
       { key: "14", name: "14号线", passengers: 51.96 },
       { key: "16", name: "16号线", passengers: 25.60 },
-      { key: "20", name: "20号线", passengers: 1.34 },
+      { key: "20", name: "20号线", passengers: 1.34 }
     ]
   },
   "2026-08-10": {
@@ -732,7 +732,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 61.99 },
       { key: "14", name: "14号线", passengers: 64.14 },
       { key: "16", name: "16号线", passengers: 24.50 },
-      { key: "20", name: "20号线", passengers: 1.47 },
+      { key: "20", name: "20号线", passengers: 1.47 }
     ]
   },
   "2026-08-11": {
@@ -755,7 +755,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 62.04 },
       { key: "14", name: "14号线", passengers: 63.08 },
       { key: "16", name: "16号线", passengers: 24.71 },
-      { key: "20", name: "20号线", passengers: 1.44 },
+      { key: "20", name: "20号线", passengers: 1.44 }
     ]
   },
   "2026-08-12": {
@@ -772,13 +772,13 @@ const passengerData = {
       { key: "6z", name: "6号线支线", passengers: 3.83 },
       { key: "7", name: "7号线", passengers: 61.16 },
       { key: "8", name: "8号线", passengers: 17.17 },
-      { key: "9", name: "9号线", passengers: 63.16 },
+      { key: "9", name: "9号线", passengers: 63.06 },
       { key: "10", name: "10号线", passengers: 55.64 },
       { key: "11", name: "11号线", passengers: 114.29 },
       { key: "12", name: "12号线", passengers: 62.37 },
       { key: "14", name: "14号线", passengers: 62.84 },
       { key: "16", name: "16号线", passengers: 24.55 },
-      { key: "20", name: "20号线", passengers: 1.52 },
+      { key: "20", name: "20号线", passengers: 1.52 }
     ]
   },
   "2026-08-13": {
@@ -801,7 +801,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 61.73 },
       { key: "14", name: "14号线", passengers: 62.22 },
       { key: "16", name: "16号线", passengers: 24.21 },
-      { key: "20", name: "20号线", passengers: 1.43 },
+      { key: "20", name: "20号线", passengers: 1.43 }
     ]
   },
   "2026-08-14": {
@@ -824,7 +824,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.42 },
       { key: "14", name: "14号线", passengers: 64.34 },
       { key: "16", name: "16号线", passengers: 25.31 },
-      { key: "20", name: "20号线", passengers: 1.43 },
+      { key: "20", name: "20号线", passengers: 1.43 }
     ]
   },
   "2026-08-15": {
@@ -847,7 +847,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.47 },
       { key: "14", name: "14号线", passengers: 53.81 },
       { key: "16", name: "16号线", passengers: 26.10 },
-      { key: "20", name: "20号线", passengers: 1.21 },
+      { key: "20", name: "20号线", passengers: 1.21 }
     ]
   },
   "2026-08-16": {
@@ -870,147 +870,147 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.27 },
       { key: "14", name: "14号线", passengers: 53.09 },
       { key: "16", name: "16号线", passengers: 27.58 },
-      { key: "20", name: "20号线", passengers: 1.30 },
+      { key: "20", name: "20号线", passengers: 1.30 }
     ]
   },
-"2026-08-17": {
-  date: "2026-08-17",
-  weekday: "星期一",
-  total: 946.89,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 113.26 },
-    { key: "2", name: "2号线", passengers: 68.46 },
-    { key: "3", name: "3号线", passengers: 93.12 },
-    { key: "5", name: "5号线", passengers: 153.46 },
-    { key: "6", name: "6号线", passengers: 60.05 },
-    { key: "6z", name: "6号线支线", passengers: 3.86 },
-    { key: "7", name: "7号线", passengers: 60.12 },
-    { key: "8", name: "8号线", passengers: 15.12 },
-    { key: "9", name: "9号线", passengers: 61.39 },
-    { key: "10", name: "10号线", passengers: 55.18 },
-    { key: "11", name: "11号线", passengers: 113.31 },
-    { key: "12", name: "12号线", passengers: 61.55 },
-    { key: "14", name: "14号线", passengers: 63.12 },
-    { key: "16", name: "16号线", passengers: 23.49 },
-    { key: "20", name: "20号线", passengers: 1.40 },
-  ]
-},
-"2026-08-18": {
-  date: "2026-08-18",
-  weekday: "星期二",
-  total: 961.99,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 113.69 },
-    { key: "2", name: "2号线", passengers: 70.67 },
-    { key: "3", name: "3号线", passengers: 96.28 },
-    { key: "5", name: "5号线", passengers: 154.50 },
-    { key: "6", name: "6号线", passengers: 60.53 },
-    { key: "6z", name: "6号线支线", passengers: 3.95 },
-    { key: "7", name: "7号线", passengers: 61.71 },
-    { key: "8", name: "8号线", passengers: 16.23 },
-    { key: "9", name: "9号线", passengers: 62.86 },
-    { key: "10", name: "10号线", passengers: 55.80 },
-    { key: "11", name: "11号线", passengers: 113.89 },
-    { key: "12", name: "12号线", passengers: 62.24 },
-    { key: "14", name: "14号线", passengers: 63.37 },
-    { key: "16", name: "16号线", passengers: 24.90 },
-    { key: "20", name: "20号线", passengers: 1.37 },
-  ]
-},
-"2026-08-19": {
-  date: "2026-08-19",
-  weekday: "星期三",
-  total: 992.90,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 118.02 },
-    { key: "2", name: "2号线", passengers: 72.00 },
-    { key: "3", name: "3号线", passengers: 98.57 },
-    { key: "5", name: "5号线", passengers: 159.71 },
-    { key: "6", name: "6号线", passengers: 62.25 },
-    { key: "6z", name: "6号线支线", passengers: 4.03 },
-    { key: "7", name: "7号线", passengers: 62.71 },
-    { key: "8", name: "8号线", passengers: 16.78 },
-    { key: "9", name: "9号线", passengers: 64.72 },
-    { key: "10", name: "10号线", passengers: 57.72 },
-    { key: "11", name: "11号线", passengers: 118.29 },
-    { key: "12", name: "12号线", passengers: 64.91 },
-    { key: "14", name: "14号线", passengers: 65.15 },
-    { key: "16", name: "16号线", passengers: 26.63 },
-    { key: "20", name: "20号线", passengers: 1.41 },
-  ]
-},
-"2026-08-20": {
-  date: "2026-08-20",
-  weekday: "星期四",
-  total: 949.57,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 112.55 },
-    { key: "2", name: "2号线", passengers: 68.88 },
-    { key: "3", name: "3号线", passengers: 94.26 },
-    { key: "5", name: "5号线", passengers: 153.20 },
-    { key: "6", name: "6号线", passengers: 59.86 },
-    { key: "6z", name: "6号线支线", passengers: 3.81 },
-    { key: "7", name: "7号线", passengers: 60.48 },
-    { key: "8", name: "8号线", passengers: 14.84 },
-    { key: "9", name: "9号线", passengers: 61.89 },
-    { key: "10", name: "10号线", passengers: 55.52 },
-    { key: "11", name: "11号线", passengers: 113.14 },
-    { key: "12", name: "12号线", passengers: 61.78 },
-    { key: "14", name: "14号线", passengers: 62.94 },
-    { key: "16", name: "16号线", passengers: 25.02 },
-    { key: "20", name: "20号线", passengers: 1.40 },
-  ]
-},
-"2026-08-21": {
-  date: "2026-08-21",
-  weekday: "星期五",
-  total: 1017.43,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 119.19 },
-    { key: "2", name: "2号线", passengers: 72.50 },
-    { key: "3", name: "3号线", passengers: 99.15 },
-    { key: "5", name: "5号线", passengers: 164.75 },
-    { key: "6", name: "6号线", passengers: 63.81 },
-    { key: "6z", name: "6号线支线", passengers: 4.31 },
-    { key: "7", name: "7号线", passengers: 62.97 },
-    { key: "8", name: "8号线", passengers: 16.29 },
-    { key: "9", name: "9号线", passengers: 64.80 },
-    { key: "10", name: "10号线", passengers: 58.50 },
-    { key: "11", name: "11号线", passengers: 121.25 },
-    { key: "12", name: "12号线", passengers: 65.75 },
-    { key: "14", name: "14号线", passengers: 70.05 },
-    { key: "16", name: "16号线", passengers: 32.70 },
-    { key: "20", name: "20号线", passengers: 1.41 },
-  ]
-},
-"2026-08-22": {
-  date: "2026-08-22",
-  weekday: "星期六",
-  total: 836.02,
-  unit: "万人次",
-  lines: [
-    { key: "1", name: "1号线", passengers: 102.45 },
-    { key: "2", name: "2号线", passengers: 61.99 },
-    { key: "3", name: "3号线", passengers: 84.32 },
-    { key: "5", name: "5号线", passengers: 127.51 },
-    { key: "6", name: "6号线", passengers: 54.72 },
-    { key: "6z", name: "6号线支线", passengers: 4.32 },
-    { key: "7", name: "7号线", passengers: 52.43 },
-    { key: "8", name: "8号线", passengers: 18.15 },
-    { key: "9", name: "9号线", passengers: 46.58 },
-    { key: "10", name: "10号线", passengers: 44.36 },
-    { key: "11", name: "11号线", passengers: 90.96 },
-    { key: "12", name: "12号线", passengers: 56.55 },
-    { key: "14", name: "14号线", passengers: 57.91 },
-    { key: "16", name: "16号线", passengers: 32.61 },
-    { key: "20", name: "20号线", passengers: 1.16 },
-  ]
-},
+  "2026-08-17": {
+    date: "2026-08-17",
+    weekday: "星期一",
+    total: 946.89,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 113.26 },
+      { key: "2", name: "2号线", passengers: 68.46 },
+      { key: "3", name: "3号线", passengers: 93.12 },
+      { key: "5", name: "5号线", passengers: 153.46 },
+      { key: "6", name: "6号线", passengers: 60.05 },
+      { key: "6z", name: "6号线支线", passengers: 3.86 },
+      { key: "7", name: "7号线", passengers: 60.12 },
+      { key: "8", name: "8号线", passengers: 15.12 },
+      { key: "9", name: "9号线", passengers: 61.39 },
+      { key: "10", name: "10号线", passengers: 55.18 },
+      { key: "11", name: "11号线", passengers: 113.31 },
+      { key: "12", name: "12号线", passengers: 61.55 },
+      { key: "14", name: "14号线", passengers: 63.12 },
+      { key: "16", name: "16号线", passengers: 23.49 },
+      { key: "20", name: "20号线", passengers: 1.40 }
+    ]
+  },
+  "2026-08-18": {
+    date: "2026-08-18",
+    weekday: "星期二",
+    total: 961.99,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 113.69 },
+      { key: "2", name: "2号线", passengers: 70.67 },
+      { key: "3", name: "3号线", passengers: 96.28 },
+      { key: "5", name: "5号线", passengers: 154.50 },
+      { key: "6", name: "6号线", passengers: 60.53 },
+      { key: "6z", name: "6号线支线", passengers: 3.95 },
+      { key: "7", name: "7号线", passengers: 61.71 },
+      { key: "8", name: "8号线", passengers: 16.23 },
+      { key: "9", name: "9号线", passengers: 62.86 },
+      { key: "10", name: "10号线", passengers: 55.80 },
+      { key: "11", name: "11号线", passengers: 113.89 },
+      { key: "12", name: "12号线", passengers: 62.24 },
+      { key: "14", name: "14号线", passengers: 63.37 },
+      { key: "16", name: "16号线", passengers: 24.90 },
+      { key: "20", name: "20号线", passengers: 1.37 }
+    ]
+  },
+  "2026-08-19": {
+    date: "2026-08-19",
+    weekday: "星期三",
+    total: 992.90,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 118.02 },
+      { key: "2", name: "2号线", passengers: 72.00 },
+      { key: "3", name: "3号线", passengers: 98.57 },
+      { key: "5", name: "5号线", passengers: 159.71 },
+      { key: "6", name: "6号线", passengers: 62.25 },
+      { key: "6z", name: "6号线支线", passengers: 4.03 },
+      { key: "7", name: "7号线", passengers: 62.71 },
+      { key: "8", name: "8号线", passengers: 16.78 },
+      { key: "9", name: "9号线", passengers: 64.72 },
+      { key: "10", name: "10号线", passengers: 57.72 },
+      { key: "11", name: "11号线", passengers: 118.29 },
+      { key: "12", name: "12号线", passengers: 64.91 },
+      { key: "14", name: "14号线", passengers: 65.15 },
+      { key: "16", name: "16号线", passengers: 26.63 },
+      { key: "20", name: "20号线", passengers: 1.41 }
+    ]
+  },
+  "2026-08-20": {
+    date: "2026-08-20",
+    weekday: "星期四",
+    total: 949.57,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 112.55 },
+      { key: "2", name: "2号线", passengers: 68.88 },
+      { key: "3", name: "3号线", passengers: 94.26 },
+      { key: "5", name: "5号线", passengers: 153.20 },
+      { key: "6", name: "6号线", passengers: 59.86 },
+      { key: "6z", name: "6号线支线", passengers: 3.81 },
+      { key: "7", name: "7号线", passengers: 60.48 },
+      { key: "8", name: "8号线", passengers: 14.84 },
+      { key: "9", name: "9号线", passengers: 61.89 },
+      { key: "10", name: "10号线", passengers: 55.52 },
+      { key: "11", name: "11号线", passengers: 113.14 },
+      { key: "12", name: "12号线", passengers: 61.78 },
+      { key: "14", name: "14号线", passengers: 62.94 },
+      { key: "16", name: "16号线", passengers: 25.02 },
+      { key: "20", name: "20号线", passengers: 1.40 }
+    ]
+  },
+  "2026-08-21": {
+    date: "2026-08-21",
+    weekday: "星期五",
+    total: 1017.43,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 119.19 },
+      { key: "2", name: "2号线", passengers: 72.50 },
+      { key: "3", name: "3号线", passengers: 99.15 },
+      { key: "5", name: "5号线", passengers: 164.75 },
+      { key: "6", name: "6号线", passengers: 63.81 },
+      { key: "6z", name: "6号线支线", passengers: 4.31 },
+      { key: "7", name: "7号线", passengers: 62.97 },
+      { key: "8", name: "8号线", passengers: 16.29 },
+      { key: "9", name: "9号线", passengers: 64.80 },
+      { key: "10", name: "10号线", passengers: 58.50 },
+      { key: "11", name: "11号线", passengers: 121.25 },
+      { key: "12", name: "12号线", passengers: 65.75 },
+      { key: "14", name: "14号线", passengers: 70.05 },
+      { key: "16", name: "16号线", passengers: 32.70 },
+      { key: "20", name: "20号线", passengers: 1.41 }
+    ]
+  },
+  "2026-08-22": {
+    date: "2026-08-22",
+    weekday: "星期六",
+    total: 836.02,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 102.45 },
+      { key: "2", name: "2号线", passengers: 61.99 },
+      { key: "3", name: "3号线", passengers: 84.32 },
+      { key: "5", name: "5号线", passengers: 127.51 },
+      { key: "6", name: "6号线", passengers: 54.72 },
+      { key: "6z", name: "6号线支线", passengers: 4.32 },
+      { key: "7", name: "7号线", passengers: 52.43 },
+      { key: "8", name: "8号线", passengers: 18.15 },
+      { key: "9", name: "9号线", passengers: 46.58 },
+      { key: "10", name: "10号线", passengers: 44.36 },
+      { key: "11", name: "11号线", passengers: 90.96 },
+      { key: "12", name: "12号线", passengers: 56.55 },
+      { key: "14", name: "14号线", passengers: 57.91 },
+      { key: "16", name: "16号线", passengers: 32.61 },
+      { key: "20", name: "20号线", passengers: 1.16 }
+    ]
+  },
   "2026-08-23": {
     date: "2026-08-23",
     weekday: "星期日",
@@ -1031,7 +1031,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 54.38 },
       { key: "14", name: "14号线", passengers: 54.56 },
       { key: "16", name: "16号线", passengers: 32.82 },
-      { key: "20", name: "20号线", passengers: 1.13 },
+      { key: "20", name: "20号线", passengers: 1.13 }
     ]
   },
   "2026-08-24": {
@@ -1054,7 +1054,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 61.87 },
       { key: "14", name: "14号线", passengers: 64.86 },
       { key: "16", name: "16号线", passengers: 25.96 },
-      { key: "20", name: "20号线", passengers: 1.44 },
+      { key: "20", name: "20号线", passengers: 1.44 }
     ]
   },
   "2026-08-25": {
@@ -1077,7 +1077,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 61.85 },
       { key: "14", name: "14号线", passengers: 62.91 },
       { key: "16", name: "16号线", passengers: 25.26 },
-      { key: "20", name: "20号线", passengers: 1.49 },
+      { key: "20", name: "20号线", passengers: 1.49 }
     ]
   },
   "2026-08-26": {
@@ -1100,7 +1100,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.75 },
       { key: "14", name: "14号线", passengers: 61.77 },
       { key: "16", name: "16号线", passengers: 24.51 },
-      { key: "20", name: "20号线", passengers: 2.96 },
+      { key: "20", name: "20号线", passengers: 2.96 }
     ]
   },
   "2026-08-27": {
@@ -1123,7 +1123,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 62.20 },
       { key: "14", name: "14号线", passengers: 61.99 },
       { key: "16", name: "16号线", passengers: 28.04 },
-      { key: "20", name: "20号线", passengers: 2.78 },
+      { key: "20", name: "20号线", passengers: 2.78 }
     ]
   },
   "2026-08-28": {
@@ -1146,7 +1146,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 65.93 },
       { key: "14", name: "14号线", passengers: 70.43 },
       { key: "16", name: "16号线", passengers: 32.56 },
-      { key: "20", name: "20号线", passengers: 2.16 },
+      { key: "20", name: "20号线", passengers: 2.16 }
     ]
   },
   "2026-08-29": {
@@ -1169,7 +1169,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 53.58 },
       { key: "14", name: "14号线", passengers: 55.28 },
       { key: "16", name: "16号线", passengers: 30.35 },
-      { key: "20", name: "20号线", passengers: 1.01 },
+      { key: "20", name: "20号线", passengers: 1.01 }
     ]
   },
   "2026-08-30": {
@@ -1192,7 +1192,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 45.13 },
       { key: "14", name: "14号线", passengers: 50.39 },
       { key: "16", name: "16号线", passengers: 30.19 },
-      { key: "20", name: "20号线", passengers: 0.91 },
+      { key: "20", name: "20号线", passengers: 0.91 }
     ]
   },
   "2026-08-31": {
@@ -1215,7 +1215,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.90 },
       { key: "14", name: "14号线", passengers: 61.76 },
       { key: "16", name: "16号线", passengers: 24.63 },
-      { key: "20", name: "20号线", passengers: 1.23 },
+      { key: "20", name: "20号线", passengers: 1.23 }
     ]
   },
   "2026-09-01": {
@@ -1238,7 +1238,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.43 },
       { key: "14", name: "14号线", passengers: 58.32 },
       { key: "16", name: "16号线", passengers: 22.55 },
-      { key: "20", name: "20号线", passengers: 1.23 },
+      { key: "20", name: "20号线", passengers: 1.23 }
     ]
   },
   "2026-09-02": {
@@ -1261,7 +1261,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.32 },
       { key: "14", name: "14号线", passengers: 59.74 },
       { key: "16", name: "16号线", passengers: 22.95 },
-      { key: "20", name: "20号线", passengers: 1.24 },
+      { key: "20", name: "20号线", passengers: 1.24 }
     ]
   },
   "2026-09-03": {
@@ -1284,7 +1284,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.03 },
       { key: "14", name: "14号线", passengers: 59.58 },
       { key: "16", name: "16号线", passengers: 22.44 },
-      { key: "20", name: "20号线", passengers: 1.25 },
+      { key: "20", name: "20号线", passengers: 1.25 }
     ]
   },
   "2026-09-04": {
@@ -1307,7 +1307,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.81 },
       { key: "14", name: "14号线", passengers: 69.10 },
       { key: "16", name: "16号线", passengers: 28.88 },
-      { key: "20", name: "20号线", passengers: 1.31 },
+      { key: "20", name: "20号线", passengers: 1.31 }
     ]
   },
   "2026-09-05": {
@@ -1330,7 +1330,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 54.37 },
       { key: "14", name: "14号线", passengers: 52.03 },
       { key: "16", name: "16号线", passengers: 26.22 },
-      { key: "20", name: "20号线", passengers: 0.98 },
+      { key: "20", name: "20号线", passengers: 0.98 }
     ]
   },
   "2026-09-06": {
@@ -1353,7 +1353,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 47.31 },
       { key: "14", name: "14号线", passengers: 48.43 },
       { key: "16", name: "16号线", passengers: 25.25 },
-      { key: "20", name: "20号线", passengers: 0.98 },
+      { key: "20", name: "20号线", passengers: 0.98 }
     ]
   },
   "2026-09-07": {
@@ -1376,7 +1376,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.65 },
       { key: "14", name: "14号线", passengers: 59.87 },
       { key: "16", name: "16号线", passengers: 22.53 },
-      { key: "20", name: "20号线", passengers: 1.35 },
+      { key: "20", name: "20号线", passengers: 1.35 }
     ]
   },
   "2026-09-08": {
@@ -1399,7 +1399,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.52 },
       { key: "14", name: "14号线", passengers: 58.96 },
       { key: "16", name: "16号线", passengers: 22.37 },
-      { key: "20", name: "20号线", passengers: 1.55 },
+      { key: "20", name: "20号线", passengers: 1.55 }
     ]
   },
   "2026-09-09": {
@@ -1422,7 +1422,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.25 },
       { key: "14", name: "14号线", passengers: 59.17 },
       { key: "16", name: "16号线", passengers: 22.24 },
-      { key: "20", name: "20号线", passengers: 3.54 },
+      { key: "20", name: "20号线", passengers: 3.54 }
     ]
   },
   "2026-09-10": {
@@ -1445,7 +1445,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 64.04 },
       { key: "14", name: "14号线", passengers: 58.83 },
       { key: "16", name: "16号线", passengers: 22.02 },
-      { key: "20", name: "20号线", passengers: 3.79 },
+      { key: "20", name: "20号线", passengers: 3.79 }
     ]
   },
   "2026-09-11": {
@@ -1468,7 +1468,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 67.21 },
       { key: "14", name: "14号线", passengers: 71.71 },
       { key: "16", name: "16号线", passengers: 33.09 },
-      { key: "20", name: "20号线", passengers: 2.64 },
+      { key: "20", name: "20号线", passengers: 2.64 }
     ]
   },
   "2026-09-12": {
@@ -1491,7 +1491,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 54.56 },
       { key: "14", name: "14号线", passengers: 54.89 },
       { key: "16", name: "16号线", passengers: 29.96 },
-      { key: "20", name: "20号线", passengers: 1.04 },
+      { key: "20", name: "20号线", passengers: 1.04 }
     ]
   },
   "2026-09-13": {
@@ -1514,7 +1514,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 49.02 },
       { key: "14", name: "14号线", passengers: 53.73 },
       { key: "16", name: "16号线", passengers: 30.97 },
-      { key: "20", name: "20号线", passengers: 0.99 },
+      { key: "20", name: "20号线", passengers: 0.99 }
     ]
   },
   "2026-09-14": {
@@ -1537,7 +1537,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 55.33 },
       { key: "14", name: "14号线", passengers: 59.43 },
       { key: "16", name: "16号线", passengers: 22.22 },
-      { key: "20", name: "20号线", passengers: 1.23 },
+      { key: "20", name: "20号线", passengers: 1.23 }
     ]
   },
   "2026-09-15": {
@@ -1560,7 +1560,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.29 },
       { key: "14", name: "14号线", passengers: 58.32 },
       { key: "16", name: "16号线", passengers: 22.11 },
-      { key: "20", name: "20号线", passengers: 1.28 },
+      { key: "20", name: "20号线", passengers: 1.28 }
     ]
   },
   "2026-09-16": {
@@ -1583,7 +1583,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 58.80 },
       { key: "14", name: "14号线", passengers: 59.56 },
       { key: "16", name: "16号线", passengers: 22.39 },
-      { key: "20", name: "20号线", passengers: 1.78 },
+      { key: "20", name: "20号线", passengers: 1.78 }
     ]
   },
   "2026-09-17": {
@@ -1606,7 +1606,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 57.51 },
       { key: "14", name: "14号线", passengers: 58.84 },
       { key: "16", name: "16号线", passengers: 22.35 },
-      { key: "20", name: "20号线", passengers: 1.63 },
+      { key: "20", name: "20号线", passengers: 1.63 }
     ]
   },
   "2026-09-18": {
@@ -1629,7 +1629,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 63.56 },
       { key: "14", name: "14号线", passengers: 67.00 },
       { key: "16", name: "16号线", passengers: 27.35 },
-      { key: "20", name: "20号线", passengers: 1.58 },
+      { key: "20", name: "20号线", passengers: 1.58 }
     ]
   },
   "2026-09-19": {
@@ -1652,7 +1652,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 51.32 },
       { key: "14", name: "14号线", passengers: 54.64 },
       { key: "16", name: "16号线", passengers: 30.52 },
-      { key: "20", name: "20号线", passengers: 1.02 },
+      { key: "20", name: "20号线", passengers: 1.02 }
     ]
   },
   "2026-09-20": {
@@ -1675,7 +1675,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.64 },
       { key: "14", name: "14号线", passengers: 61.44 },
       { key: "16", name: "16号线", passengers: 27.73 },
-      { key: "20", name: "20号线", passengers: 1.22 },
+      { key: "20", name: "20号线", passengers: 1.22 }
     ]
   },
   "2026-09-21": {
@@ -1698,7 +1698,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.09 },
       { key: "14", name: "14号线", passengers: 59.42 },
       { key: "16", name: "16号线", passengers: 22.29 },
-      { key: "20", name: "20号线", passengers: 1.23 },
+      { key: "20", name: "20号线", passengers: 1.23 }
     ]
   },
   "2026-09-22": {
@@ -1721,7 +1721,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.41 },
       { key: "14", name: "14号线", passengers: 59.09 },
       { key: "16", name: "16号线", passengers: 22.31 },
-      { key: "20", name: "20号线", passengers: 1.22 },
+      { key: "20", name: "20号线", passengers: 1.22 }
     ]
   },
   "2026-09-23": {
@@ -1744,7 +1744,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 56.55 },
       { key: "14", name: "14号线", passengers: 59.33 },
       { key: "16", name: "16号线", passengers: 22.60 },
-      { key: "20", name: "20号线", passengers: 1.19 },
+      { key: "20", name: "20号线", passengers: 1.19 }
     ]
   },
   "2026-09-24": {
@@ -1767,7 +1767,7 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 65.81 },
       { key: "14", name: "14号线", passengers: 75.54 },
       { key: "16", name: "16号线", passengers: 30.83 },
-      { key: "20", name: "20号线", passengers: 1.36 },
+      { key: "20", name: "20号线", passengers: 1.36 }
     ]
   },
   "2026-09-25": {
@@ -1790,20 +1790,687 @@ const passengerData = {
       { key: "12", name: "12号线", passengers: 58.88 },
       { key: "14", name: "14号线", passengers: 59.56 },
       { key: "16", name: "16号线", passengers: 33.87 },
-      { key: "20", name: "20号线", passengers: 1.10 },
+      { key: "20", name: "20号线", passengers: 1.10 }
+    ]
+  },
+  "2026-09-26": {
+    date: "2026-09-26",
+    weekday: "星期六",
+    total: 761.23,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 89.22 },
+      { key: "2", name: "2号线", passengers: 60.09 },
+      { key: "3", name: "3号线", passengers: 77.69 },
+      { key: "5", name: "5号线", passengers: 112.93 },
+      { key: "6", name: "6号线", passengers: 50.71 },
+      { key: "6z", name: "6号线支线", passengers: 4.57 },
+      { key: "7", name: "7号线", passengers: 46.53 },
+      { key: "8", name: "8号线", passengers: 21.30 },
+      { key: "9", name: "9号线", passengers: 42.26 },
+      { key: "10", name: "10号线", passengers: 37.98 },
+      { key: "11", name: "11号线", passengers: 82.77 },
+      { key: "12", name: "12号线", passengers: 51.35 },
+      { key: "14", name: "14号线", passengers: 51.87 },
+      { key: "16", name: "16号线", passengers: 31.00 },
+      { key: "20", name: "20号线", passengers: 0.96 }
+    ]
+  },
+  "2026-09-27": {
+    date: "2026-09-27",
+    weekday: "星期日",
+    total: 682.25,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 75.67 },
+      { key: "2", name: "2号线", passengers: 49.02 },
+      { key: "3", name: "3号线", passengers: 70.30 },
+      { key: "5", name: "5号线", passengers: 108.05 },
+      { key: "6", name: "6号线", passengers: 46.85 },
+      { key: "6z", name: "6号线支线", passengers: 3.82 },
+      { key: "7", name: "7号线", passengers: 42.90 },
+      { key: "8", name: "8号线", passengers: 13.79 },
+      { key: "9", name: "9号线", passengers: 37.47 },
+      { key: "10", name: "10号线", passengers: 33.42 },
+      { key: "11", name: "11号线", passengers: 72.67 },
+      { key: "12", name: "12号线", passengers: 45.00 },
+      { key: "14", name: "14号线", passengers: 51.96 },
+      { key: "16", name: "16号线", passengers: 30.44 },
+      { key: "20", name: "20号线", passengers: 0.89 }
+    ]
+  },
+  "2026-09-28": {
+    date: "2026-09-28",
+    weekday: "星期一",
+    total: 803.68,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 90.74 },
+      { key: "2", name: "2号线", passengers: 59.13 },
+      { key: "3", name: "3号线", passengers: 79.85 },
+      { key: "5", name: "5号线", passengers: 130.23 },
+      { key: "6", name: "6号线", passengers: 49.95 },
+      { key: "6z", name: "6号线支线", passengers: 2.96 },
+      { key: "7", name: "7号线", passengers: 53.22 },
+      { key: "8", name: "8号线", passengers: 11.53 },
+      { key: "9", name: "9号线", passengers: 52.87 },
+      { key: "10", name: "10号线", passengers: 47.19 },
+      { key: "11", name: "11号线", passengers: 95.67 },
+      { key: "12", name: "12号线", passengers: 51.43 },
+      { key: "14", name: "14号线", passengers: 56.17 },
+      { key: "16", name: "16号线", passengers: 21.58 },
+      { key: "20", name: "20号线", passengers: 1.16 }
+    ]
+  },
+  "2026-09-29": {
+    date: "2026-09-29",
+    weekday: "星期二",
+    total: 807.82,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 91.76 },
+      { key: "2", name: "2号线", passengers: 59.43 },
+      { key: "3", name: "3号线", passengers: 80.15 },
+      { key: "5", name: "5号线", passengers: 131.35 },
+      { key: "6", name: "6号线", passengers: 51.01 },
+      { key: "6z", name: "6号线支线", passengers: 2.99 },
+      { key: "7", name: "7号线", passengers: 53.20 },
+      { key: "8", name: "8号线", passengers: 11.69 },
+      { key: "9", name: "9号线", passengers: 52.85 },
+      { key: "10", name: "10号线", passengers: 47.16 },
+      { key: "11", name: "11号线", passengers: 95.63 },
+      { key: "12", name: "12号线", passengers: 51.85 },
+      { key: "14", name: "14号线", passengers: 55.70 },
+      { key: "16", name: "16号线", passengers: 21.87 },
+      { key: "20", name: "20号线", passengers: 1.18 }
+    ]
+  },
+  "2026-09-30": {
+    date: "2026-09-30",
+    weekday: "星期三",
+    total: 922.04,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 100.72 },
+      { key: "2", name: "2号线", passengers: 65.13 },
+      { key: "3", name: "3号线", passengers: 90.70 },
+      { key: "5", name: "5号线", passengers: 153.60 },
+      { key: "6", name: "6号线", passengers: 63.29 },
+      { key: "6z", name: "6号线支线", passengers: 4.24 },
+      { key: "7", name: "7号线", passengers: 57.22 },
+      { key: "8", name: "8号线", passengers: 14.59 },
+      { key: "9", name: "9号线", passengers: 55.07 },
+      { key: "10", name: "10号线", passengers: 50.54 },
+      { key: "11", name: "11号线", passengers: 108.25 },
+      { key: "12", name: "12号线", passengers: 59.11 },
+      { key: "14", name: "14号线", passengers: 69.07 },
+      { key: "16", name: "16号线", passengers: 29.22 },
+      { key: "20", name: "20号线", passengers: 1.29 }
+    ]
+  },
+  "2026-10-01": {
+    date: "2026-10-01",
+    weekday: "星期四",
+    total: 805.50,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 94.78 },
+      { key: "2", name: "2号线", passengers: 64.74 },
+      { key: "3", name: "3号线", passengers: 81.74 },
+      { key: "5", name: "5号线", passengers: 115.95 },
+      { key: "6", name: "6号线", passengers: 55.64 },
+      { key: "6z", name: "6号线支线", passengers: 5.27 },
+      { key: "7", name: "7号线", passengers: 43.66 },
+      { key: "8", name: "8号线", passengers: 27.36 },
+      { key: "9", name: "9号线", passengers: 42.10 },
+      { key: "10", name: "10号线", passengers: 39.29 },
+      { key: "11", name: "11号线", passengers: 94.20 },
+      { key: "12", name: "12号线", passengers: 51.73 },
+      { key: "14", name: "14号线", passengers: 56.81 },
+      { key: "16", name: "16号线", passengers: 30.98 },
+      { key: "20", name: "20号线", passengers: 1.25 }
+    ]
+  },
+  "2026-10-02": {
+    date: "2026-10-02",
+    weekday: "星期五",
+    total: 739.59,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 89.51 },
+      { key: "2", name: "2号线", passengers: 62.94 },
+      { key: "3", name: "3号线", passengers: 75.02 },
+      { key: "5", name: "5号线", passengers: 101.53 },
+      { key: "6", name: "6号线", passengers: 48.99 },
+      { key: "6z", name: "6号线支线", passengers: 4.73 },
+      { key: "7", name: "7号线", passengers: 40.29 },
+      { key: "8", name: "8号线", passengers: 27.87 },
+      { key: "9", name: "9号线", passengers: 39.59 },
+      { key: "10", name: "10号线", passengers: 34.34 },
+      { key: "11", name: "11号线", passengers: 86.55 },
+      { key: "12", name: "12号线", passengers: 48.78 },
+      { key: "14", name: "14号线", passengers: 50.01 },
+      { key: "16", name: "16号线", passengers: 28.15 },
+      { key: "20", name: "20号线", passengers: 1.29 }
+    ]
+  },
+  "2026-10-03": {
+    date: "2026-10-03",
+    weekday: "星期六",
+    total: 719.43,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 88.58 },
+      { key: "2", name: "2号线", passengers: 61.42 },
+      { key: "3", name: "3号线", passengers: 73.33 },
+      { key: "5", name: "5号线", passengers: 99.00 },
+      { key: "6", name: "6号线", passengers: 47.22 },
+      { key: "6z", name: "6号线支线", passengers: 4.72 },
+      { key: "7", name: "7号线", passengers: 40.49 },
+      { key: "8", name: "8号线", passengers: 24.53 },
+      { key: "9", name: "9号线", passengers: 40.64 },
+      { key: "10", name: "10号线", passengers: 34.90 },
+      { key: "11", name: "11号线", passengers: 86.20 },
+      { key: "12", name: "12号线", passengers: 47.60 },
+      { key: "14", name: "14号线", passengers: 46.04 },
+      { key: "16", name: "16号线", passengers: 23.52 },
+      { key: "20", name: "20号线", passengers: 1.24 }
+    ]
+  },
+  "2026-10-04": {
+    date: "2026-10-04",
+    weekday: "星期日",
+    total: 694.12,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 83.54 },
+      { key: "2", name: "2号线", passengers: 58.77 },
+      { key: "3", name: "3号线", passengers: 69.73 },
+      { key: "5", name: "5号线", passengers: 97.67 },
+      { key: "6", name: "6号线", passengers: 45.56 },
+      { key: "6z", name: "6号线支线", passengers: 4.47 },
+      { key: "7", name: "7号线", passengers: 39.66 },
+      { key: "8", name: "8号线", passengers: 23.68 },
+      { key: "9", name: "9号线", passengers: 38.82 },
+      { key: "10", name: "10号线", passengers: 33.28 },
+      { key: "11", name: "11号线", passengers: 78.98 },
+      { key: "12", name: "12号线", passengers: 45.10 },
+      { key: "14", name: "14号线", passengers: 46.92 },
+      { key: "16", name: "16号线", passengers: 26.90 },
+      { key: "20", name: "20号线", passengers: 1.04 }
+    ]
+  },
+  "2026-10-05": {
+    date: "2026-10-05",
+    weekday: "星期一",
+    total: 688.91,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 78.03 },
+      { key: "2", name: "2号线", passengers: 55.82 },
+      { key: "3", name: "3号线", passengers: 70.54 },
+      { key: "5", name: "5号线", passengers: 102.67 },
+      { key: "6", name: "6号线", passengers: 45.85 },
+      { key: "6z", name: "6号线支线", passengers: 4.27 },
+      { key: "7", name: "7号线", passengers: 39.96 },
+      { key: "8", name: "8号线", passengers: 21.50 },
+      { key: "9", name: "9号线", passengers: 37.86 },
+      { key: "10", name: "10号线", passengers: 34.17 },
+      { key: "11", name: "11号线", passengers: 76.80 },
+      { key: "12", name: "12号线", passengers: 44.29 },
+      { key: "14", name: "14号线", passengers: 47.92 },
+      { key: "16", name: "16号线", passengers: 28.24 },
+      { key: "20", name: "20号线", passengers: 0.99 }
+    ]
+  },
+  "2026-10-06": {
+    date: "2026-10-06",
+    weekday: "星期二",
+    total: 693.32,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 77.61 },
+      { key: "2", name: "2号线", passengers: 53.55 },
+      { key: "3", name: "3号线", passengers: 72.06 },
+      { key: "5", name: "5号线", passengers: 109.80 },
+      { key: "6", name: "6号线", passengers: 47.47 },
+      { key: "6z", name: "6号线支线", passengers: 4.19 },
+      { key: "7", name: "7号线", passengers: 42.53 },
+      { key: "8", name: "8号线", passengers: 17.71 },
+      { key: "9", name: "9号线", passengers: 38.46 },
+      { key: "10", name: "10号线", passengers: 36.17 },
+      { key: "11", name: "11号线", passengers: 76.14 },
+      { key: "12", name: "12号线", passengers: 45.63 },
+      { key: "14", name: "14号线", passengers: 47.19 },
+      { key: "16", name: "16号线", passengers: 23.87 },
+      { key: "20", name: "20号线", passengers: 0.94 }
+    ]
+  },
+  "2026-10-07": {
+    date: "2026-10-07",
+    weekday: "星期三",
+    total: 663.76,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 72.53 },
+      { key: "2", name: "2号线", passengers: 46.47 },
+      { key: "3", name: "3号线", passengers: 68.32 },
+      { key: "5", name: "5号线", passengers: 111.38 },
+      { key: "6", name: "6号线", passengers: 47.93 },
+      { key: "6z", name: "6号线支线", passengers: 3.74 },
+      { key: "7", name: "7号线", passengers: 41.78 },
+      { key: "8", name: "8号线", passengers: 12.80 },
+      { key: "9", name: "9号线", passengers: 36.02 },
+      { key: "10", name: "10号线", passengers: 34.81 },
+      { key: "11", name: "11号线", passengers: 70.88 },
+      { key: "12", name: "12号线", passengers: 43.45 },
+      { key: "14", name: "14号线", passengers: 48.66 },
+      { key: "16", name: "16号线", passengers: 24.10 },
+      { key: "20", name: "20号线", passengers: 0.89 }
+    ]
+  },
+  "2026-10-08": {
+    date: "2026-10-08",
+    weekday: "星期四",
+    total: 841.21,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 94.50 },
+      { key: "2", name: "2号线", passengers: 60.62 },
+      { key: "3", name: "3号线", passengers: 82.17 },
+      { key: "5", name: "5号线", passengers: 139.28 },
+      { key: "6", name: "6号线", passengers: 53.26 },
+      { key: "6z", name: "6号线支线", passengers: 3.13 },
+      { key: "7", name: "7号线", passengers: 54.98 },
+      { key: "8", name: "8号线", passengers: 11.22 },
+      { key: "9", name: "9号线", passengers: 55.78 },
+      { key: "10", name: "10号线", passengers: 50.02 },
+      { key: "11", name: "11号线", passengers: 100.58 },
+      { key: "12", name: "12号线", passengers: 53.65 },
+      { key: "14", name: "14号线", passengers: 58.57 },
+      { key: "16", name: "16号线", passengers: 22.26 },
+      { key: "20", name: "20号线", passengers: 1.19 }
+    ]
+  },
+  "2026-10-09": {
+    date: "2026-10-09",
+    weekday: "星期五",
+    total: 856.49,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 97.40 },
+      { key: "2", name: "2号线", passengers: 62.29 },
+      { key: "3", name: "3号线", passengers: 83.89 },
+      { key: "5", name: "5号线", passengers: 139.15 },
+      { key: "6", name: "6号线", passengers: 53.08 },
+      { key: "6z", name: "6号线支线", passengers: 3.06 },
+      { key: "7", name: "7号线", passengers: 56.77 },
+      { key: "8", name: "8号线", passengers: 11.32 },
+      { key: "9", name: "9号线", passengers: 57.66 },
+      { key: "10", name: "10号线", passengers: 51.64 },
+      { key: "11", name: "11号线", passengers: 102.77 },
+      { key: "12", name: "12号线", passengers: 55.14 },
+      { key: "14", name: "14号线", passengers: 59.05 },
+      { key: "16", name: "16号线", passengers: 22.05 },
+      { key: "20", name: "20号线", passengers: 1.22 }
+    ]
+  },
+  "2026-10-10": {
+    date: "2026-10-10",
+    weekday: "星期六",
+    total: 930.91,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 105.52 },
+      { key: "2", name: "2号线", passengers: 68.38 },
+      { key: "3", name: "3号线", passengers: 90.36 },
+      { key: "5", name: "5号线", passengers: 150.45 },
+      { key: "6", name: "6号线", passengers: 59.23 },
+      { key: "6z", name: "6号线支线", passengers: 3.65 },
+      { key: "7", name: "7号线", passengers: 60.56 },
+      { key: "8", name: "8号线", passengers: 13.30 },
+      { key: "9", name: "9号线", passengers: 60.75 },
+      { key: "10", name: "10号线", passengers: 53.92 },
+      { key: "11", name: "11号线", passengers: 110.02 },
+      { key: "12", name: "12号线", passengers: 61.07 },
+      { key: "14", name: "14号线", passengers: 65.64 },
+      { key: "16", name: "16号线", passengers: 26.76 },
+      { key: "20", name: "20号线", passengers: 1.30 }
+    ]
+  },
+  "2026-10-11": {
+    date: "2026-10-11",
+    weekday: "星期日",
+    total: 672.13,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 74.79 },
+      { key: "2", name: "2号线", passengers: 50.46 },
+      { key: "3", name: "3号线", passengers: 70.44 },
+      { key: "5", name: "5号线", passengers: 102.03 },
+      { key: "6", name: "6号线", passengers: 47.25 },
+      { key: "6z", name: "6号线支线", passengers: 4.00 },
+      { key: "7", name: "7号线", passengers: 45.64 },
+      { key: "8", name: "8号线", passengers: 13.81 },
+      { key: "9", name: "9号线", passengers: 40.04 },
+      { key: "10", name: "10号线", passengers: 34.12 },
+      { key: "11", name: "11号线", passengers: 72.31 },
+      { key: "12", name: "12号线", passengers: 46.68 },
+      { key: "14", name: "14号线", passengers: 46.22 },
+      { key: "16", name: "16号线", passengers: 23.37 },
+      { key: "20", name: "20号线", passengers: 0.97 }
+    ]
+  },
+  "2026-10-12": {
+    date: "2026-10-12",
+    weekday: "星期一",
+    total: 870.76,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 97.60 },
+      { key: "2", name: "2号线", passengers: 63.07 },
+      { key: "3", name: "3号线", passengers: 85.24 },
+      { key: "5", name: "5号线", passengers: 140.55 },
+      { key: "6", name: "6号线", passengers: 53.72 },
+      { key: "6z", name: "6号线支线", passengers: 3.12 },
+      { key: "7", name: "7号线", passengers: 59.80 },
+      { key: "8", name: "8号线", passengers: 11.60 },
+      { key: "9", name: "9号线", passengers: 58.63 },
+      { key: "10", name: "10号线", passengers: 52.23 },
+      { key: "11", name: "11号线", passengers: 104.86 },
+      { key: "12", name: "12号线", passengers: 56.27 },
+      { key: "14", name: "14号线", passengers: 60.30 },
+      { key: "16", name: "16号线", passengers: 22.37 },
+      { key: "20", name: "20号线", passengers: 1.40 }
+    ]
+  },
+  "2026-10-13": {
+    date: "2026-10-13",
+    weekday: "星期二",
+    total: 870.16,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 97.62 },
+      { key: "2", name: "2号线", passengers: 62.72 },
+      { key: "3", name: "3号线", passengers: 84.72 },
+      { key: "5", name: "5号线", passengers: 139.70 },
+      { key: "6", name: "6号线", passengers: 52.99 },
+      { key: "6z", name: "6号线支线", passengers: 2.98 },
+      { key: "7", name: "7号线", passengers: 60.44 },
+      { key: "8", name: "8号线", passengers: 11.58 },
+      { key: "9", name: "9号线", passengers: 58.62 },
+      { key: "10", name: "10号线", passengers: 52.11 },
+      { key: "11", name: "11号线", passengers: 104.94 },
+      { key: "12", name: "12号线", passengers: 58.45 },
+      { key: "14", name: "14号线", passengers: 58.97 },
+      { key: "16", name: "16号线", passengers: 21.98 },
+      { key: "20", name: "20号线", passengers: 2.34 }
+    ]
+  },
+  "2026-10-14": {
+    date: "2026-10-14",
+    weekday: "星期三",
+    total: 878.26,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 99.33 },
+      { key: "2", name: "2号线", passengers: 63.36 },
+      { key: "3", name: "3号线", passengers: 85.43 },
+      { key: "5", name: "5号线", passengers: 140.69 },
+      { key: "6", name: "6号线", passengers: 53.59 },
+      { key: "6z", name: "6号线支线", passengers: 3.03 },
+      { key: "7", name: "7号线", passengers: 60.91 },
+      { key: "8", name: "8号线", passengers: 11.57 },
+      { key: "9", name: "9号线", passengers: 58.87 },
+      { key: "10", name: "10号线", passengers: 52.43 },
+      { key: "11", name: "11号线", passengers: 106.10 },
+      { key: "12", name: "12号线", passengers: 58.92 },
+      { key: "14", name: "14号线", passengers: 59.41 },
+      { key: "16", name: "16号线", passengers: 22.21 },
+      { key: "20", name: "20号线", passengers: 2.41 }
+    ]
+  },
+  "2026-10-15": {
+    date: "2026-10-15",
+    weekday: "星期四",
+    total: 878.85,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 99.52 },
+      { key: "2", name: "2号线", passengers: 63.81 },
+      { key: "3", name: "3号线", passengers: 85.72 },
+      { key: "5", name: "5号线", passengers: 140.80 },
+      { key: "6", name: "6号线", passengers: 53.60 },
+      { key: "6z", name: "6号线支线", passengers: 3.11 },
+      { key: "7", name: "7号线", passengers: 61.33 },
+      { key: "8", name: "8号线", passengers: 11.64 },
+      { key: "9", name: "9号线", passengers: 59.29 },
+      { key: "10", name: "10号线", passengers: 52.49 },
+      { key: "11", name: "11号线", passengers: 105.57 },
+      { key: "12", name: "12号线", passengers: 58.07 },
+      { key: "14", name: "14号线", passengers: 59.62 },
+      { key: "16", name: "16号线", passengers: 22.34 },
+      { key: "20", name: "20号线", passengers: 1.94 }
+    ]
+  },
+  "2026-10-16": {
+    date: "2026-10-16",
+    weekday: "星期五",
+    total: 988.48,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 108.06 },
+      { key: "2", name: "2号线", passengers: 69.90 },
+      { key: "3", name: "3号线", passengers: 96.20 },
+      { key: "5", name: "5号线", passengers: 159.82 },
+      { key: "6", name: "6号线", passengers: 62.03 },
+      { key: "6z", name: "6号线支线", passengers: 3.84 },
+      { key: "7", name: "7号线", passengers: 66.37 },
+      { key: "8", name: "8号线", passengers: 13.16 },
+      { key: "9", name: "9号线", passengers: 63.72 },
+      { key: "10", name: "10号线", passengers: 57.12 },
+      { key: "11", name: "11号线", passengers: 117.77 },
+      { key: "12", name: "12号线", passengers: 64.18 },
+      { key: "14", name: "14号线", passengers: 72.20 },
+      { key: "16", name: "16号线", passengers: 32.64 },
+      { key: "20", name: "20号线", passengers: 1.47 }
+    ]
+  },
+  "2026-10-17": {
+    date: "2026-10-17",
+    weekday: "星期六",
+    total: 826.64,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 92.12 },
+      { key: "2", name: "2号线", passengers: 60.80 },
+      { key: "3", name: "3号线", passengers: 84.81 },
+      { key: "5", name: "5号线", passengers: 126.80 },
+      { key: "6", name: "6号线", passengers: 54.08 },
+      { key: "6z", name: "6号线支线", passengers: 4.29 },
+      { key: "7", name: "7号线", passengers: 59.86 },
+      { key: "8", name: "8号线", passengers: 16.35 },
+      { key: "9", name: "9号线", passengers: 48.75 },
+      { key: "10", name: "10号线", passengers: 44.39 },
+      { key: "11", name: "11号线", passengers: 89.57 },
+      { key: "12", name: "12号线", passengers: 56.62 },
+      { key: "14", name: "14号线", passengers: 56.35 },
+      { key: "16", name: "16号线", passengers: 30.69 },
+      { key: "20", name: "20号线", passengers: 1.16 }
+    ]
+  },
+  "2026-10-18": {
+    date: "2026-10-18",
+    weekday: "星期日",
+    total: 787.96,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 86.25 },
+      { key: "2", name: "2号线", passengers: 58.22 },
+      { key: "3", name: "3号线", passengers: 80.88 },
+      { key: "5", name: "5号线", passengers: 117.93 },
+      { key: "6", name: "6号线", passengers: 55.16 },
+      { key: "6z", name: "6号线支线", passengers: 4.82 },
+      { key: "7", name: "7号线", passengers: 57.26 },
+      { key: "8", name: "8号线", passengers: 16.98 },
+      { key: "9", name: "9号线", passengers: 45.42 },
+      { key: "10", name: "10号线", passengers: 39.48 },
+      { key: "11", name: "11号线", passengers: 83.30 },
+      { key: "12", name: "12号线", passengers: 52.73 },
+      { key: "14", name: "14号线", passengers: 56.17 },
+      { key: "16", name: "16号线", passengers: 32.15 },
+      { key: "20", name: "20号线", passengers: 1.21 }
+    ]
+  },
+  "2026-10-19": {
+    date: "2026-10-19",
+    weekday: "星期一",
+    total: 899.40,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 104.16 },
+      { key: "2", name: "2号线", passengers: 65.82 },
+      { key: "3", name: "3号线", passengers: 87.66 },
+      { key: "5", name: "5号线", passengers: 143.41 },
+      { key: "6", name: "6号线", passengers: 54.70 },
+      { key: "6z", name: "6号线支线", passengers: 3.20 },
+      { key: "7", name: "7号线", passengers: 62.65 },
+      { key: "8", name: "8号线", passengers: 12.21 },
+      { key: "9", name: "9号线", passengers: 60.31 },
+      { key: "10", name: "10号线", passengers: 53.49 },
+      { key: "11", name: "11号线", passengers: 107.85 },
+      { key: "12", name: "12号线", passengers: 58.00 },
+      { key: "14", name: "14号线", passengers: 61.42 },
+      { key: "16", name: "16号线", passengers: 22.90 },
+      { key: "20", name: "20号线", passengers: 1.62 }
+    ]
+  },
+  "2026-10-20": {
+    date: "2026-10-20",
+    weekday: "星期二",
+    total: 880.40,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 98.89 },
+      { key: "2", name: "2号线", passengers: 63.78 },
+      { key: "3", name: "3号线", passengers: 85.94 },
+      { key: "5", name: "5号线", passengers: 140.95 },
+      { key: "6", name: "6号线", passengers: 53.70 },
+      { key: "6z", name: "6号线支线", passengers: 3.10 },
+      { key: "7", name: "7号线", passengers: 61.13 },
+      { key: "8", name: "8号线", passengers: 11.65 },
+      { key: "9", name: "9号线", passengers: 59.25 },
+      { key: "10", name: "10号线", passengers: 52.46 },
+      { key: "11", name: "11号线", passengers: 105.87 },
+      { key: "12", name: "12号线", passengers: 59.45 },
+      { key: "14", name: "14号线", passengers: 59.52 },
+      { key: "16", name: "16号线", passengers: 22.28 },
+      { key: "20", name: "20号线", passengers: 2.43 }
+    ]
+  },
+  "2026-10-21": {
+    date: "2026-10-21",
+    weekday: "星期三",
+    total: 882.62,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 99.04 },
+      { key: "2", name: "2号线", passengers: 63.86 },
+      { key: "3", name: "3号线", passengers: 86.25 },
+      { key: "5", name: "5号线", passengers: 141.39 },
+      { key: "6", name: "6号线", passengers: 53.92 },
+      { key: "6z", name: "6号线支线", passengers: 3.09 },
+      { key: "7", name: "7号线", passengers: 61.14 },
+      { key: "8", name: "8号线", passengers: 11.58 },
+      { key: "9", name: "9号线", passengers: 59.54 },
+      { key: "10", name: "10号线", passengers: 52.59 },
+      { key: "11", name: "11号线", passengers: 106.51 },
+      { key: "12", name: "12号线", passengers: 59.62 },
+      { key: "14", name: "14号线", passengers: 59.61 },
+      { key: "16", name: "16号线", passengers: 22.20 },
+      { key: "20", name: "20号线", passengers: 2.28 }
+    ]
+  },
+  "2026-10-22": {
+    date: "2026-10-22",
+    weekday: "星期四",
+    total: 880.91,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 99.11 },
+      { key: "2", name: "2号线", passengers: 63.97 },
+      { key: "3", name: "3号线", passengers: 86.15 },
+      { key: "5", name: "5号线", passengers: 140.91 },
+      { key: "6", name: "6号线", passengers: 53.67 },
+      { key: "6z", name: "6号线支线", passengers: 3.07 },
+      { key: "7", name: "7号线", passengers: 61.03 },
+      { key: "8", name: "8号线", passengers: 11.85 },
+      { key: "9", name: "9号线", passengers: 59.47 },
+      { key: "10", name: "10号线", passengers: 52.36 },
+      { key: "11", name: "11号线", passengers: 105.96 },
+      { key: "12", name: "12号线", passengers: 58.92 },
+      { key: "14", name: "14号线", passengers: 59.55 },
+      { key: "16", name: "16号线", passengers: 22.32 },
+      { key: "20", name: "20号线", passengers: 2.57 }
+    ]
+  },
+  "2026-10-23": {
+    date: "2026-10-23",
+    weekday: "星期五",
+    total: 983.09,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 108.16 },
+      { key: "2", name: "2号线", passengers: 70.17 },
+      { key: "3", name: "3号线", passengers: 95.48 },
+      { key: "5", name: "5号线", passengers: 159.75 },
+      { key: "6", name: "6号线", passengers: 62.06 },
+      { key: "6z", name: "6号线支线", passengers: 3.88 },
+      { key: "7", name: "7号线", passengers: 66.35 },
+      { key: "8", name: "8号线", passengers: 13.29 },
+      { key: "9", name: "9号线", passengers: 64.38 },
+      { key: "10", name: "10号线", passengers: 56.63 },
+      { key: "11", name: "11号线", passengers: 117.54 },
+      { key: "12", name: "12号线", passengers: 65.41 },
+      { key: "14", name: "14号线", passengers: 69.31 },
+      { key: "16", name: "16号线", passengers: 28.18 },
+      { key: "20", name: "20号线", passengers: 2.50 }
+    ]
+  },
+  "2026-10-24": {
+    date: "2026-10-24",
+    weekday: "星期六",
+    total: 836.16,
+    unit: "万人次",
+    lines: [
+      { key: "1", name: "1号线", passengers: 96.12 },
+      { key: "2", name: "2号线", passengers: 62.18 },
+      { key: "3", name: "3号线", passengers: 85.84 },
+      { key: "5", name: "5号线", passengers: 128.05 },
+      { key: "6", name: "6号线", passengers: 55.29 },
+      { key: "6z", name: "6号线支线", passengers: 4.41 },
+      { key: "7", name: "7号线", passengers: 61.20 },
+      { key: "8", name: "8号线", passengers: 16.39 },
+      { key: "9", name: "9号线", passengers: 50.42 },
+      { key: "10", name: "10号线", passengers: 44.51 },
+      { key: "11", name: "11号线", passengers: 90.19 },
+      { key: "12", name: "12号线", passengers: 57.31 },
+      { key: "14", name: "14号线", passengers: 55.94 },
+      { key: "16", name: "16号线", passengers: 26.18 },
+      { key: "20", name: "20号线", passengers: 2.13 }
     ]
   }
 };
 
 // 线路色号（与 line-colors.html 保持一致）
 const lineColors = {
-  '1': '#00B140', '2': '#B94700', '3': '#00A9E0', '4': '#DA291C',
-  '5': '#A05EB5', '6': '#00C7B1', '6z': '#008578', '7': '#0032A0',
-  '8': '#B94700', '9': '#7B6469', '10': '#F67599', '11': '#672146',
-  '12': '#A192B2', '13': '#DE7C00', '14': '#F2C75C', '15': '#84BD00',
-  '16': '#1E22AA', '17': '#D3C0CD', '19': '#BB16A3', '20': '#88D8DF',
-  '22': '#FBE122', '25': '#FEAD77', '27': '#4F868E', '29': '#91D6AC',
-  '32': '#744F28',
+  '1': '#01AF55', '2': '#B95800', '3': '#00A9DF', '4': '#D42E0F',
+  '5': '#9E4DAA', '6': '#01C4B7', '6z': '#027776', '7': '#0131AC',
+  '8': '#B95800', '9': '#896B70', '10': '#F67599', '11': '#672146',
+  '12': '#A092B2', '13': '#F6AD2D', '14': '#F4CB67', '15': '#86BE00',
+  '16': '#181BA5', '17': '#D2C0CD', '19': '#BA16A4', '20': '#87DBDF',
+  '22': '#F5E524', '25': '#FDAD76', '27': '#4E8D8E', '29': '#92D6AC',
+  '32': '#735128',
 };
 
 // 线路排序权重（用于"按线路"排序）
