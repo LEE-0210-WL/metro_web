@@ -11,18 +11,25 @@
      <link rel="stylesheet" href="page-header.css">
    ============================================================ */
 
-/* ---------- 标题行：标题在左，返回按钮靠右 ---------- */
+/* ---------- 标题行 ----------
+   基础规则只设字体，不设 display —— 各页面自己的 .page-title 布局照常生效。
+   只有当标题里确实有返回按钮时，才升级成 flex 两端对齐；
+   像首页这种没有返回按钮的 .page-title 不会被推到左边。 */
 .page-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px 16px;
   font-size: 28px;
   font-weight: 700;
   color: #111827;
   line-height: 1.35;
   margin: 0 0 8px;
+}
+
+.page-title:has(.back-link),
+.page-title:has(.back-btn) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
 }
 
 /* 标题文字不被按钮挤压：非按钮的子节点可伸缩 */
