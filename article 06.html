@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>运营观察 · EP02 - 走进新天地·Railway</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font);
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }.logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }.container {
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: var(--r-sm);
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #00A9E0, #0077b3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: var(--r-xl);
+      padding: 32px;
+      box-shadow: var(--sh-lg);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    /* 引用块（本文新增：站台广播 / 同好吐槽 / 官方公告原文） */
+    .article-content blockquote {
+      margin: 24px 0;
+      padding: 16px 20px;
+      border-left: 4px solid #2563eb;
+      background: #f8fafc;
+      border-radius: 0 8px 8px 0;
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    /* 文末致谢 / 记录时间 */
+    .article-ack {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+      line-height: 1.9;
+      margin-bottom: 6px;
+    }
+
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: var(--r-md);
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: var(--c-text-3);
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: var(--sh-sm);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: var(--fs-sm);
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: var(--fs-xs);
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {.current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>运营观察 · EP02：一份 PIDS 诉求，和一份“符合规范”的回复</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">运营观察 · EP02</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.10.26
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+      <p>2026年10月13日傍晚，大运站3号线站台上，一份关于 PIDS 的诉求被提交。</p>
+
+      <p>十天后的10月23日，回复来了。</p>
+
+      <p>这一来一回，大概是今年深圳地铁「乘客信息系统」被掰扯得最细的一次。</p>
+
+      <h2>一、诉求里指出了什么</h2>
+
+      <p>诉求编号 472610131846231399801，10月13日18:46 提交，涉事地点是大运站3号线站台。核心指向一句话：<strong>车内 LCD 与站台 PIDS 存在逻辑混乱、设计倒退和故障敷衍</strong>。</p>
+
+      <p><strong>车内 LCD，四条：</strong></p>
+      <ul>
+        <li><strong>切站逻辑没有统一标准。</strong>各车型切站时机不一，有的停稳开门才切，有的刚进站就切。乘客在进站减速时反而无法确认当前站。</li>
+        <li><strong>排版与色彩存在缺陷。</strong>字体空间预留不足，长站名（如「园山西坑 Yuanshan Xikeng」）被横向挤压粘连；「下一站」与「终点站」同时标红，容易误导。</li>
+        <li><strong>硬件故障处理敷衍。</strong>11号线部分车厢屏幕损坏后，只贴了一张 A4 纸打印的「此屏幕故障」。</li>
+        <li><strong>信息「开倒车」。</strong>新车屏幕很大，却只显示 5 站，全线线路图严重缺失；座椅上方小屏几乎全部播放广告，核心行车信息被边缘化。</li>
+      </ul>
+
+      <p><strong>站台 PIDS 与广播，三条：</strong></p>
+      <ul>
+        <li><strong>广告挤压行车信息。</strong>站台 PIDS 右上角广告占比高，压缩了预计到达时间、终点站等核心信息的位置。</li>
+        <li><strong>广播与屏幕不同步。</strong>大运站的广播要等前置商业广告播完才报方向，此时列车进站啸叫已起。</li>
+        <li><strong>大站快车提示形同虚设。</strong>站台没有醒目的跳站提示，广播只说「部分站点不停靠」；车内 LCD 对跳站的显示方式也不统一，有的标「不停靠」，有的直接灰显，与普通车无异。</li>
+      </ul>
+
+      <h2>二、提出的四条改进建议</h2>
+
+      <p><strong>一是统一视觉规范。</strong>由集团统一制定 PIDS 标准，废除各分公司独立 UI 权限；强制使用等宽字体并预留长站名空间；规范色彩语义——终点站高亮，下一站黑色，不随意标红。</p>
+
+      <p><strong>二是强制保留全线图。</strong>所有车型 LCD 以「5站 / 全线线路图」轮切方式显示全网信息；座椅上方小屏广告占比设上限。</p>
+
+      <p><strong>三是规范故障与广播。</strong>屏幕故障改用人工播报并张贴官方统一贴纸；严禁站台广告在列车进站前播报，确保广播与 PIDS 同步；大站快车必须醒目滚动播报完整跳站名单。</p>
+
+      <p><strong>四是优化应急显示。</strong>黑屏或故障时，必须提供静态备用贴纸或人工播报，确保乘客能获取基础站点信息。</p>
+
+      <h2>三、十天后的回复</h2>
+
+      <p>10月23日16:27，深圳市交通运输局给出处置意见，落款为深圳市地铁集团有限公司。逐条看：</p>
+
+      <p><strong>关于切站逻辑</strong>——「列车的到站地图调用符合规范，列车停靠时显示停靠站信息。列车车厢到站广播也会播放停靠的站点信息。」</p>
+
+      <p><strong>关于字体大小</strong>——「由于显示屏需要显示中文和英文两种字体。技术人员通过多次不断的优化以及版面字体的调整后目前播放效果已基本达到最优状态，符合运营需求。」</p>
+
+      <p><strong>关于统一视觉规范</strong>——已制定统一标准，「但由于不同时期标准不一样，标准也在修订和完善的过程中，同时不同时期的列车信号触发会有所不同，屏幕和控制系统硬件限制，无法完全统一前期购买的列车。」</p>
+
+      <p><strong>关于全线图</strong>——现行规范是「5站 / 全线线路图」轮切；个别线路因屏幕较大可以完整显示线路图，门板已无足够位置，因此未贴单线图。「我单位已在后续考虑在适合位置增加单线图，让乘客在『5站』界面方便查阅全线图，<strong>但目前需求人群并不大</strong>，会综合各项因素后确定。」</p>
+
+      <p><strong>关于故障处理</strong>——「单个动态地图故障，乘客可查看旁边的屏幕，且有广播报站，按应急规范为重启无效后，回库后更换。」至于那张 A4 纸——「工作人员善意维护乘客利益做了临时应急，临时用 A4 纸打印故障贴，我单位后续会规范故障后临时处置制度。」</p>
+
+      <p><strong>关于大站快车</strong>——「目前『大站快车』属于试验阶段，并未列入前期制定的显示规范内，因此不同线路，不同厂家，不同的屏幕尺寸会采用不同的显示方式。我单位会根据试验情况，选取较优方式，后续进行统一。」</p>
+
+      <p><strong>关于站台 PIDS 广告占比</strong>——「经核实，该 PIDS 屏是经过地铁严格核准，部分区域作为地铁到站播放，部分作为公益及商业广告宣传使用。」</p>
+
+      <h2>四、读完之后</h2>
+
+      <p>这份回复有一个很清晰的结构：<strong>每条诉求都被回应了，但回应的落点基本都是「符合规范」。</strong></p>
+
+      <p>切站逻辑——「调用符合规范」。<br>
+      字体大小——「已基本达到最优状态」。<br>
+      故障贴纸——「善意维护乘客利益」。<br>
+      广告占比——「经过严格核准」。</p>
+
+      <p>唯一带明确后续动作的，是 A4 纸故障贴那一条：后续会规范故障后的临时处置制度。</p>
+
+      <p>全线图那条，「目前需求人群并不大」这个判断，大概最值得商榷。对第一次来深圳、第一次坐这条线的乘客来说，全线图的价值不在于「需求人群有多大」，而在于「需要的那一刻它在不在」。</p>
+
+      <p>至于大站快车，「试验阶段」确实可以理解。只是试验的成本，最终还是在站台上等车的人来承担。</p>
+
+      <p>当然，一份诉求换来一份逐条落字的书面回复，本身也是一种进步。至少现在，这些问题被白纸黑字地记录下来了。</p>
+
+      <hr>
+
+      <p class="article-ack">素材来源：深圳市民生诉求平台，诉求编号 472610131846231399801，2026年10月13日提交、10月23日办结。</p>
+      <p class="article-ack">记录时间：2026年10月26日　·　首发于：走进新天地·Railway</p>
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>
