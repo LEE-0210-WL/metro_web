@@ -205,33 +205,22 @@
       height: 300px;
     }
 
-    /* ===== 本页专用：照片要完整展示罪状，不做任何裁切 ===== */
-    .article-content .gallery-item img {
+    /* 长图（社交平台讨论截图）三列并排，手机上回落单列 */
+    .gallery-grid.three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .gallery-grid.three-col .gallery-item {
+      grid-column: auto;
+    }
+    .gallery-grid.three-col .gallery-item img {
       height: auto;
-      max-height: none;
       object-fit: contain;
       background: #f3f4f6;
     }
-    /* 竖长截图（社交平台讨论）单独处理：单列居中，可读 */
-    .article-content .gallery-item.tall {
-      grid-column: 1 / -1;
-      max-width: 760px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .article-content .gallery-item.tall img {
-      height: auto;
-      max-height: none;
-    }
-    /* 说明文字压在图片上会挡住内容，本页改成图片下方独立显示 */
-    .article-content .gallery-item .gallery-caption {
-      position: static;
-      background: #f8fafc;
-      color: #475569;
-      padding: 10px 14px;
-      font-size: 13px;
-      line-height: 1.6;
-      border-top: 1px solid #e5e7eb;
+    @media (max-width: 768px) {
+      .gallery-grid.three-col {
+        grid-template-columns: 1fr;
+      }
     }
     
     .gallery-caption {
@@ -539,7 +528,7 @@
 
       <p><strong>注意第 6、7 张。</strong>车内的屏幕不是没有，是有的——只是用来播「广深城际 1 小时」的广告，和「为鸟熄灯」的公益宣传。</p>
 
-      <p>而那份 10 月的诉求里写着：「新车屏幕巨大却仅显示 5 站，全线线路图严重缺失……座椅上方小屏 100% 播放广告，核心行车信息被完全边缘化。」</p>
+      <p>而本站此前公开发出的那份 10 月诉求里写着：「新车屏幕巨大却仅显示 5 站，全线线路图严重缺失……座椅上方小屏 100% 播放广告，核心行车信息被完全边缘化。」</p>
 
       <p>照片和这句话，对得上。</p>
 
@@ -708,16 +697,16 @@
       <p>帖子里举了六张例子，其中至少三张拍摄于深圳地铁站内。</p>
 
       <div class="image-gallery">
-        <div class="gallery-grid">
-          <div class="gallery-item tall" onclick="openModal('图文7-19.jpg')">
+        <div class="gallery-grid three-col">
+          <div class="gallery-item" onclick="openModal('图文7-19.jpg')">
             <img src="图文7-19.jpg" alt="社交平台关于 AI 广告的讨论（第一部分）" loading="lazy">
             <div class="gallery-caption">帖子原文第一部分：AI 只是工具，丑的是使用者的审美。配图为两张 AI 生成的商业广告</div>
           </div>
-          <div class="gallery-item tall" onclick="openModal('图文7-20.jpg')">
+          <div class="gallery-item" onclick="openModal('图文7-20.jpg')">
             <img src="图文7-20.jpg" alt="社交平台关于 AI 广告的讨论（第二部分）" loading="lazy">
             <div class="gallery-caption">帖子原文第二部分：地铁站内的 AI 广告实例——扶梯旁的小男孩、站台屏上的「星品牌周年庆」双人像</div>
           </div>
-          <div class="gallery-item tall" onclick="openModal('图文7-21.jpg')">
+          <div class="gallery-item" onclick="openModal('图文7-21.jpg')">
             <img src="图文7-21.jpg" alt="社交平台关于 AI 广告的讨论（第三部分）" loading="lazy">
             <div class="gallery-caption">帖子原文第三部分：深圳地铁官方小程序海报（客服形象为 AI 生成）、以及另一处 AI 人像广告</div>
           </div>
@@ -768,8 +757,7 @@
 
       <hr>
 
-      <p class="article-ack">图片说明：本文 18 张照片均为 2026 年 7 月至 10 月期间在深圳地铁多个车站实地拍摄，涵盖车公庙、六约北等站点，原图未作压缩处理。</p>
-      <p class="article-ack">相关阅读：<a href="article%2006">运营观察 · EP02：一份 PIDS 诉求，和一份「符合规范」的回复</a></p>
+      <p class="article-ack">图片来源：本文 21 张现场照片由同好实地拍摄并提供，时间跨度 2026 年 7 月至 10 月，涵盖车公庙、六约北等多个车站，原图未作压缩处理。</p>
       <p class="article-ack">记录时间：2026年10月26日　·　首发于：走进新天地·Railway</p>
     </article>
 
