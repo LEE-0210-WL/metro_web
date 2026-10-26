@@ -77,9 +77,9 @@ function renderArticleNav() {
   let html = '';
   if (currentIndex > 0) {
     const prev = articleList[currentIndex - 1];
-    html += '<a href="' + prev.id + '"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>上一篇：' + prev.title + '</a>';
+    html += '<a href="' + prev.id + '"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>上一篇：' + prev.title + '</a>';
   } else {
-    html += '<a href="#" class="disabled"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>上一篇：无</a>';
+    html += '<a href="#" class="disabled"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>上一篇：无</a>';
   }
   if (currentIndex >= 0 && currentIndex < articleList.length - 1) {
     const next = articleList[currentIndex + 1];
