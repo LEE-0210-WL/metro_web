@@ -123,7 +123,8 @@
     .carousel {
       position: relative;
       width: 100%;
-      height: 240px;
+      /* 封面统一按「标准图文封面」比例 3.412:1（图文2-1.jpg 9591×2811） */
+      aspect-ratio: 9591 / 2811;
       overflow: hidden;
       background: #e5e7eb;
     }
@@ -142,26 +143,34 @@
     
     .carousel-nav {
       position: absolute;
-      bottom: 12px;
+      bottom: 4px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 3;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0);
     }
     
+    /* 指示条样式与首页 banner 轮播保持一致 */
     .carousel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
+      width: 20px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.35);
       cursor: pointer;
       transition: all 0.3s ease;
+      border: none;
+      padding: 0;
     }
     
     .carousel-dot.active {
-      background: white;
-      width: 24px;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      width: 28px;
+      height: 6px;
     }
     
     .carousel-arrow {
@@ -302,7 +311,7 @@
         flex-wrap: wrap;
       }
       .carousel {
-        height: 180px;
+        height: auto;   /* 保持 3.412:1 标准封面比例，不覆盖 aspect-ratio */
       }
       .back-to-top {
         bottom: 20px;

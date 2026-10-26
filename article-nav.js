@@ -13,7 +13,7 @@ const articleList = [
   },
   { id: 'article 03', title: '摄站系列 · EP01：梨园站', series: '摄站系列', date: '2025.12.26', subtitle: '深圳地铁全网"最后的高架站"，阳光+低碳的绿色标杆', images: [], desc: '作为3号线四期的一个站点，同时也是深圳地铁全网最后的高架站，它的设计充满了独特性。这种"最后"的身份，让我格外想记录下它。' },
   { id: 'article 01', title: '探站系列 · EP02：大剧院站', series: '探站系列', date: '2026.1.11', subtitle: '5号线西延段终点，1、2号线超级枢纽', images: ['图文1-1.jpg', '图文1-2.jpg', '图文1-3.jpg', '图文1-4.jpg', '图文1-5.jpg', '图文1-6.jpg', '图文1-7.jpg', '图文1-8.jpg', '图文1-9.jpg', '图文1-10.jpg'], desc: '上一站，我定格了远郊梨园站——那座安静伫立的"最后高架站"。这一次，我一头扎进城市的喧嚣几何中心，落脚于5号线西延段的崭新终点...' },
-  { id: 'article 02', title: '技术解密 · EP01 - 资产编号小秘密', series: '技术解密', date: '2026.8.7', subtitle: '从罗宝线到32号线，编码背后的逻辑', images: ['图文2-1.jpg', '图文2-2.jpg'], desc: '在深圳地铁的庞大网络中，每一条线路、每一组道岔、每一列电客车，都有其独一无二的"身份编码"。这些看似晦涩的数字与字母组合...' },
+  { id: 'article 02', title: '技术解密 · EP01 - 资产编号小秘密', series: '技术解密', date: '2026.8.7', subtitle: '从罗宝线到32号线，编码背后的逻辑', images: ['图文2-1.jpg'], desc: '在深圳地铁的庞大网络中，每一条线路、每一组道岔、每一列电客车，都有其独一无二的"身份编码"。这些看似晦涩的数字与字母组合...' },
   { 
     id: 'article 05', 
     title: '运营观察 · EP01：2号线大站快车——存活不足24小时', 
@@ -120,15 +120,9 @@ function renderArticlesIndex() {
       const imgHtml = imgs.map(img => '<img src="' + img + '" alt="' + article.title + '" class="carousel-image">').join('');
       html += '<div class="carousel" data-carousel="' + article.id + '">';
       html += '<div class="carousel-images">' + imgHtml + '</div>';
-      if (imgs.length > 1) {
-        html += '<button class="carousel-arrow prev" type="button" aria-label="上一张">' +
-                '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>';
-        html += '<button class="carousel-arrow next" type="button" aria-label="下一张">' +
-                '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>';
-        html += '<div class="carousel-nav">';
-        imgs.forEach((_, k) => { html += '<span class="carousel-dot' + (k === 0 ? ' active' : '') + '" data-index="' + k + '"></span>'; });
-        html += '</div>';
-      }
+      /* 左右箭头 + 指示条由 initCarousels() 统一创建：
+         它内部已有「images.length <= 1 时直接 return」的逻辑，
+         所以单图卡片不会有任何多余控件。 */
       html += '</div>';
     }
     html += '<div class="article-content">';
