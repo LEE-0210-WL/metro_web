@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>运营观察 · EP03 - 走进新天地·Railway</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font);
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }.logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }.container {
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: var(--r-sm);
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #00A9E0, #0077b3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: var(--r-xl);
+      padding: 32px;
+      box-shadow: var(--sh-lg);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    /* 引用块（本文新增：站台广播 / 同好吐槽 / 官方公告原文） */
+    .article-content blockquote {
+      margin: 24px 0;
+      padding: 16px 20px;
+      border-left: 4px solid #2563eb;
+      background: #f8fafc;
+      border-radius: 0 8px 8px 0;
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    /* 文末致谢 / 记录时间 */
+    .article-ack {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+      line-height: 1.9;
+      margin-bottom: 6px;
+    }
+
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+
+    /* ===== 本页专用：照片要完整展示罪状，不做任何裁切 ===== */
+    .article-content .gallery-item img {
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+      background: #f3f4f6;
+    }
+    /* 竖长截图（社交平台讨论）单独处理：单列居中，可读 */
+    .article-content .gallery-item.tall {
+      grid-column: 1 / -1;
+      max-width: 760px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .article-content .gallery-item.tall img {
+      height: auto;
+      max-height: none;
+    }
+    /* 说明文字压在图片上会挡住内容，本页改成图片下方独立显示 */
+    .article-content .gallery-item .gallery-caption {
+      position: static;
+      background: #f8fafc;
+      color: #475569;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: var(--r-md);
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: var(--c-text-3);
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .article-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .article-list-item {
+      display: block;
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 16px 20px;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid transparent;
+      box-shadow: var(--sh-sm);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .article-list-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      border-color: #d1d5db;
+    }
+    
+    .article-list-series {
+      font-size: var(--fs-sm);
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    
+    .article-list-date {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+    }
+    
+    .article-list-item.current {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .article-list-item.current .article-list-title {
+      color: #1d4ed8;
+    }
+    
+    .article-list-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: var(--fs-xs);
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {.current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>运营观察 · EP03：广告围城——当站台只剩下广告可以看</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">运营观察 · EP03</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.10.26
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+      <p>在深圳地铁站里站上五分钟，你会发现一个事实：<strong>你能看到的东西，绝大部分是广告。</strong></p>
+
+      <p>指示牌、行车信息、站名，都被挤到了边角。而广告，是满的。</p>
+
+      <p>2026年7月，因为广告「太密集」「辣眼睛」，深圳地铁发过一篇《听劝！马上改！》，说自己虚心接受。三个月后，APEC 期间，我又走了一遍十几个站。</p>
+
+      <p>下面这 18 张照片，是这两个月在不同站点拍的。不评价，先看。</p>
+
+      <h2>一、广告长在哪儿了</h2>
+
+      <h3>① 闸机——三面包裹，连刷卡屏都在播广告</h3>
+
+      <p>进出站必经的闸机，被广告包裹成一个个立体的箱子。左右两侧、正面、甚至上方，全是画面。刷卡时那块屏幕——本可以显示余额、扣费、进出站信息的那块屏——播的也是广告。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-1.jpg')">
+            <img src="图文7-1.jpg" alt="闸机被三面广告包裹，红褐色画面从地面延伸到箱体顶部" loading="lazy">
+            <div class="gallery-caption">闸机被三面广告包裹，红褐色画面从地面延伸到箱体顶部</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-2.jpg')">
+            <img src="图文7-2.jpg" alt="闸机刷卡屏：通行提示之外，屏上是广告" loading="lazy">
+            <div class="gallery-caption">闸机刷卡屏：通行提示之外，屏上是广告</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>② 车厢——车窗、吊环、大小屏，一个都不放过</h3>
+
+      <p>进了车厢，情况并没有好转。车窗上贴着整幅广告，遮住了本来可以看见窗外的那部分视野；扶手吊环的吊牌上是广告；车厢顶部的大屏、座椅上方的小屏，播的也大多是广告。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-3.jpg')">
+            <img src="图文7-3.jpg" alt="车窗被「跨境物流用菜鸟 全球三日达」整幅覆盖" loading="lazy">
+            <div class="gallery-caption">车窗被「跨境物流用菜鸟 全球三日达」整幅覆盖</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-5.jpg')">
+            <img src="图文7-5.jpg" alt="车窗上的迪士尼度假区合作广告" loading="lazy">
+            <div class="gallery-caption">车窗上的迪士尼度假区合作广告</div>
+          </div>
+          <div class="gallery-item full-width" onclick="openModal('图文7-4.jpg')">
+            <img src="图文7-4.jpg" alt="车厢吊环的吊牌，也是广告位" loading="lazy">
+            <div class="gallery-caption">车厢吊环的吊牌，也是广告位</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-6.jpg')">
+            <img src="图文7-6.jpg" alt="车内大屏：「广深城际 1 小时」" loading="lazy">
+            <div class="gallery-caption">车内大屏：「广深城际 1 小时」</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-7.jpg')">
+            <img src="图文7-7.jpg" alt="车内小屏：「为鸟熄灯 是另一种照亮」+ 反诈宣传" loading="lazy">
+            <div class="gallery-caption">车内小屏：「为鸟熄灯 是另一种照亮」+ 反诈宣传</div>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>注意第 6、7 张。</strong>车内的屏幕不是没有，是有的——只是用来播「广深城际 1 小时」的广告，和「为鸟熄灯」的公益宣传。</p>
+
+      <p>而那份 10 月的诉求里写着：「新车屏幕巨大却仅显示 5 站，全线线路图严重缺失……座椅上方小屏 100% 播放广告，核心行车信息被完全边缘化。」</p>
+
+      <p>照片和这句话，对得上。</p>
+
+      <h3>③ 一封一封地贴满：一整列的小广告</h3>
+
+      <p>这张更直接——一列竖排的框架广告，从下往上排满。每一格都不大，但连起来就是一整面墙。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-8.jpg')">
+            <img src="图文7-8.jpg" alt="一整列竖排框架广告，密密麻麻" loading="lazy">
+            <div class="gallery-caption">一整列竖排框架广告，密密麻麻</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>④ 站厅与站台：柱子全被包成广告</h3>
+
+      <p>站厅的立柱被包成「麻辣王子」的红色方柱，站台的立柱被包成整排红柱。本来用于视觉定位、帮助判断方位的结构柱，变成了广告载体。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-9.jpg')">
+            <img src="图文7-9.jpg" alt="站厅立柱：「年轻就吃麻辣王子」" loading="lazy">
+            <div class="gallery-caption">站厅立柱：「年轻就吃麻辣王子」</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-10.jpg')">
+            <img src="图文7-10.jpg" alt="站厅立柱：京东 11.11 大红柱，背景还有 APEC 大屏" loading="lazy">
+            <div class="gallery-caption">站厅立柱：京东 11.11 大红柱，背景还有 APEC 大屏</div>
+          </div>
+          <div class="gallery-item full-width" onclick="openModal('图文7-11.jpg')">
+            <img src="图文7-11.jpg" alt="站台整排红色广告柱" loading="lazy">
+            <div class="gallery-caption">站台整排红色广告柱</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>⑤ 屏蔽门：每一扇都贴，尺寸越来越大</h3>
+
+      <p>屏蔽门是站台上面积最大、位置最显眼的载体。现在，从「每一扇门都贴一张」，到「一整面墙做成巨幅」。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-12.jpg')">
+            <img src="图文7-12.jpg" alt="每一扇屏蔽门上都贴了广告（六约北站）" loading="lazy">
+            <div class="gallery-caption">每一扇屏蔽门上都贴了广告（六约北站）</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-13.jpg')">
+            <img src="图文7-13.jpg" alt="屏蔽门巨幅「龙凤床垫」广告，旁边「请勿倚靠」安全标识只有它的十几分之一大" loading="lazy">
+            <div class="gallery-caption">屏蔽门巨幅「龙凤床垫」广告，旁边「请勿倚靠」安全标识只有它的十几分之一大</div>
+          </div>
+        </div>
+      </div>
+
+      <p>第 13 张值得多看两眼。<strong>同一面墙上，「请勿倚靠 Don't lean on doors」的安全提示，是一块 A4 大小的红白标牌；旁边「龙凤床垫」的广告，占了整面墙。</strong></p>
+
+      <p>安全信息的面积，是广告的十几分之一。</p>
+
+      <h3>⑥ 扶梯与通道：整面横幅、整排侧墙</h3>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-14.jpg')">
+            <img src="图文7-14.jpg" alt="扶梯上方整面墙：「东鹏饮料 无糖茶就喝」" loading="lazy">
+            <div class="gallery-caption">扶梯上方整面墙：「东鹏饮料 无糖茶就喝」</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-15.jpg')">
+            <img src="图文7-15.jpg" alt="扶梯侧墙：「潮发 潮汕牛肉店」" loading="lazy">
+            <div class="gallery-caption">扶梯侧墙：「潮发 潮汕牛肉店」</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>⑦ 站台中央：一块挡视线的独立巨幅</h3>
+
+      <p>这是最夸张的一处。站台中央立着一块「格伦菲尔口腔」的竖幅广告，高度接近三层楼，宽度几乎占满立柱间距。站在它后面，看不到对面的站台，也看不到远处的站名。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文7-16.jpg')">
+            <img src="图文7-16.jpg" alt="站台中央的巨幅竖排广告，视线被完全遮挡" loading="lazy">
+            <div class="gallery-caption">站台中央的巨幅竖排广告，视线被完全遮挡</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>⑧ PIDS：半屏给了 APEC 广告</h3>
+
+      <p>最后这一张，是 2026 年 10 月 26 日 14:21 拍的站台 PIDS 屏。</p>
+
+      <p><strong>左半屏</strong>：日期时间、本趟车 5 分钟、下一站宝安、终点站红岭南、下一趟开往红岭南 11 分钟、8 节车厢位置。</p>
+
+      <p><strong>右半屏</strong>：APEC CHINA 2026 宣传画面，「共赴深圳之约 共创美好亚太」。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item full-width" onclick="openModal('图文7-17.jpg')">
+            <img src="图文7-17.jpg" alt="站台 PIDS：左半屏行车信息，右半屏 APEC 宣传画面" loading="lazy">
+            <div class="gallery-caption">站台 PIDS：左半屏行车信息，右半屏 APEC 宣传画面</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文7-18.jpg')">
+            <img src="图文7-18.jpg" alt="另一处 APEC 大屏：「当好东道主 喜迎 APEC」" loading="lazy">
+            <div class="gallery-caption">另一处 APEC 大屏：「当好东道主 喜迎 APEC」</div>
+          </div>
+        </div>
+      </div>
+
+      <p>这块屏的设计逻辑很清楚：把一半面积让给宣传，另一半塞行车信息。</p>
+
+      <h2>二、这不是「广告多」，是「只剩广告」</h2>
+
+      <p>把 18 张照片连起来看，问题不在于「广告多」——地铁要商业化，这可以理解。问题在于：</p>
+
+      <p><strong>广告不是「附加」在公共信息之上，而是「替换」了公共信息。</strong></p>
+
+      <p>车窗本来是给你看窗外的。吊环本来是给你扶的。立柱本来是给你定位方向的。闸机屏本来是给你看进出站和扣费的。车厢屏本来是给你看下一站的。PIDS 本来是给你看车什么时候来、下一站是哪。</p>
+
+      <p>现在这些位置上，大部分是广告。</p>
+
+      <p>诉求里写「信息开倒车」，说的就是这个——<strong>硬件越来越好，屏幕越来越大，但屏幕上真正对乘客有用的信息，占比越来越小。</strong></p>
+
+      <h2>三、三个月前那次「听劝」，到底改了没改</h2>
+
+      <p>2026 年 7 月 15 日，深圳地铁发《听劝！马上改！》，承认三件事：后海站的高饱和度广告、车公庙和高新园的「视觉轰炸」、以及<strong>「部分闸机口被广告堵得严严实实」</strong>。</p>
+
+      <p>并承诺：后海站包柱换画、换乘通道广告 7 至 9 月下刊、岗厦北广告启动更新优化、15 条线路逐站排查、研究建立「广告内容美学准入标准」。</p>
+
+      <p>三个月后，10 月 26 日，我拍到的闸机是这样——三面包裹，刷卡屏还在播广告。</p>
+
+      <p>「闸机口被广告堵得严严实实」这件事，7 月是<b>要马上改</b>的；10 月在一份 PIDS 诉求的回复里，PIDS 屏上高占比的广告变成了<b>「经过地铁严格核准」</b>。</p>
+
+      <p>同一个问题，两种说法。</p>
+
+      <p>而且，那次整改的范围写得很明确——是「视觉舒适度」「审美体验」。说白了，改的是<strong>丑不丑</strong>。</p>
+
+      <p>但这次的问题不是丑不丑。<strong>是行车信息被挤掉了。</strong></p>
+
+      <p>「辣眼睛」可以连夜改。「看不见下一站」是「符合规范」。</p>
+
+      <h2>四、APEC 期间的双重标准</h2>
+
+      <p>第 17、18 张照片拍的是 APEC 宣传。这本身没有问题——办大事，宣传是应该的。</p>
+
+      <p>但有一件事值得说：</p>
+
+      <p>2026 年 7 月，为了 APEC，深圳地铁加强了安检，结果入闸排队半小时，被媒体广泛报道、市民集中吐槽，随后很快优化提速。</p>
+
+      <p>而那份 10 月诉求的开篇第一句，就是「<strong>APEC 会议临近</strong>，深圳地铁车内 LCD 与站台 PIDS 仍存在严重的逻辑混乱、设计倒退及故障敷衍问题，严重影响乘车体验与城市形象」。</p>
+
+      <p>回复里，APEC 一个字都没有出现。</p>
+
+      <p>安检排队半小时，是「城市形象」问题，所以要快改。</p>
+
+      <p>外地游客站在站台上，抬头看见半屏广告、找不着下一站，就不是「城市形象」问题。</p>
+
+      <h2>五、还有一层：这些广告，是 AI 生成的</h2>
+
+      <p>广告多是第一层问题。广告本身是怎么来的，是第二层。</p>
+
+      <p>2026 年，社交平台上有一条关于地铁广告的帖子传得很广（页面显示阅读 7.5 万），它的核心观点只有一句话：</p>
+
+      <blockquote>
+        <p><strong>不反对用 AI 做广告，但反对使用 AI 的人没品味。</strong></p>
+      </blockquote>
+
+      <p>帖子里举了六张例子，其中至少三张拍摄于深圳地铁站内。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item tall" onclick="openModal('图文7-19.jpg')">
+            <img src="图文7-19.jpg" alt="社交平台关于 AI 广告的讨论（第一部分）" loading="lazy">
+            <div class="gallery-caption">帖子原文第一部分：AI 只是工具，丑的是使用者的审美。配图为两张 AI 生成的商业广告</div>
+          </div>
+          <div class="gallery-item tall" onclick="openModal('图文7-20.jpg')">
+            <img src="图文7-20.jpg" alt="社交平台关于 AI 广告的讨论（第二部分）" loading="lazy">
+            <div class="gallery-caption">帖子原文第二部分：地铁站内的 AI 广告实例——扶梯旁的小男孩、站台屏上的「星品牌周年庆」双人像</div>
+          </div>
+          <div class="gallery-item tall" onclick="openModal('图文7-21.jpg')">
+            <img src="图文7-21.jpg" alt="社交平台关于 AI 广告的讨论（第三部分）" loading="lazy">
+            <div class="gallery-caption">帖子原文第三部分：深圳地铁官方小程序海报（客服形象为 AI 生成）、以及另一处 AI 人像广告</div>
+          </div>
+        </div>
+      </div>
+
+      <p>其中一张尤其值得多看两眼：<strong>「欢迎使用 深圳地铁小程序」——这是深圳地铁自己的官方海报</strong>，而画面上那位客服的皮肤质感、手指结构，都是典型的 AI 生成痕迹。</p>
+
+      <p>帖子里的判断很直接：</p>
+
+      <blockquote>
+        <p>AI 可以快速生成画面，却没法读懂节日背后的情感重量。机器不知道重阳节代表敬老，分辨不出人脸和狗脸的巨大差别，<strong>最后的审核环节，更是完全失守</strong>。</p>
+        <p>AI 产出的图文，常常看着精致，细看冰冷空洞，缺少人的温度。</p>
+      </blockquote>
+
+      <p>还有一句更硬的：</p>
+
+      <blockquote>
+        <p>营销可以追求效率，但是<strong>底线不能外包给 AI</strong>。一张敬老海报，创意、生成、校对，每一步都需要人把关。省掉人工审核的成本，最后换来全网群嘲，这笔账明显亏大。</p>
+        <p>一味追求低成本，省略人工校验，下一张翻车海报，可能很快就会再来。</p>
+      </blockquote>
+
+      <p>这里最值得说的其实是这句话：</p>
+
+      <p><strong>AI 生成广告本身不是原罪，省掉人工审核才是。</strong></p>
+
+      <p>一张海报从创意到上刊，中间有设计、审核、投放三道关。AI 把「出图」这一步的成本压到了接近零——但如果后面两道关也跟着省了，那结果就是前面 18 张照片里看到的那些：精致、冰冷、没有人味的画面，铺满每一面墙。</p>
+
+      <p>而这恰好解释了「广告为什么这么多」——<strong>当一张海报的生产成本趋近于零，铺得越多就越"划算"。</strong></p>
+
+      <p>于是矛盾出现了：广告的生产成本无限趋近于零，而乘客真正需要的行车信息，却在同一块屏幕上被挤掉。</p>
+
+      <p>广告可以外包给 AI，但审美不能；效率可以提，但审核的底线不能省。</p>
+
+      <h2>六、写在最后</h2>
+
+      <p>这些照片，不是要证明「深圳地铁很糟」。</p>
+
+      <p>恰恰相反——深圳地铁在全国范围内，运营水平、准点率、设备维护都是靠前的。这也是为什么，一份专业的诉求能换来一份逐条编号的书面回复。</p>
+
+      <p>正因为它的底子足够好，这些照片才更让人觉得可惜。</p>
+
+      <p>一个每天运送几百万人次、代表着这座城市形象的系统，乘客在站台上最想看见的东西，应该是「下一站是哪」「车什么时候来」——<strong>而不是一整面墙的床垫、口腔门诊和饮料广告。</strong></p>
+
+      <p>2026 年 7 月，深圳地铁说「听劝！马上改！」</p>
+
+      <p>这次，我们不要求「马上改」。只希望有一天，站台上那块 PIDS 屏，能把右半屏还给乘客。</p>
+
+      <hr>
+
+      <p class="article-ack">图片说明：本文 18 张照片均为 2026 年 7 月至 10 月期间在深圳地铁多个车站实地拍摄，涵盖车公庙、六约北等站点，原图未作压缩处理。</p>
+      <p class="article-ack">相关阅读：<a href="article%2006">运营观察 · EP02：一份 PIDS 诉求，和一份「符合规范」的回复</a></p>
+      <p class="article-ack">记录时间：2026年10月26日　·　首发于：走进新天地·Railway</p>
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+</body>
+</html>
