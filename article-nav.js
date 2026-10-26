@@ -25,6 +25,13 @@ const articleList = [
   }
 ];
 
+/* 按发布日期升序排序：保证「上一篇 / 下一篇」是真实时间顺序，
+   以后新增文章只要把条目丢进数组，不用管摆放位置。 */
+articleList.sort((a, b) => {
+  const toNum = s => String(s).split('.').reduce((acc, n) => acc * 100 + (parseInt(n, 10) || 0), 0);
+  return toNum(a.date) - toNum(b.date);
+});
+
 // ==================== 系列配色配置 ====================
 const seriesColors = {
   '摄站系列': { from: '#F59E0B', to: '#D97706' },
@@ -89,7 +96,7 @@ function renderArticleList() {
   if (!container) return;
   const currentPath = decodeURIComponent(window.location.pathname);
   const currentIndex = articleList.findIndex(a => currentPath.includes(a.id));
-  let html = '<h2 class="section-title">📚 文章列表</h2><div class="article-list">';
+  let html = '<h2 class="section-title">文章列表</h2><div class="article-list">';
   articleList.forEach((article, i) => {
     const isCurrent = i === currentIndex;
     const color = getSeriesColor(article.series);
