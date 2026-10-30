@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7号线 PIDS 2016 初版 · 走进新天地·Railway</title>
+<script src="all-lines-enhanced.js"></script>
+<script src="pids-en.js"></script>
+<!-- 站内统一字体（与 pids-line7.html 同一份） -->
+<link rel="stylesheet" href="../fonts/misans/misans.css">
+<style>
+/* 左栏字体：中文黑体、英文 Arial */
+:root {
+  --ui-zh: 'SimHei', 'Heiti SC', 'STHeiti', 'Microsoft YaHei', sans-serif;
+  --ui-en: Arial, Helvetica, 'Helvetica Neue', sans-serif;
+}
+@font-face { font-family: 'PIDS PF'; src: url('pf-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'PIDS PF'; src: url('pf-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'PIDS PF'; src: url('pf-600.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'PIDS ZH7'; src: url('pids-zh.woff2') format('woff2'); font-weight: 100 500; font-display: swap; }
+@font-face { font-family: 'PIDS ZH7'; src: url('pids-zh-bold.woff2') format('woff2'); font-weight: 600 900; font-display: swap; }
+@font-face { font-family: 'PIDS EN'; src: url('pids-en.woff2') format('woff2'); font-weight: 100 500; font-display: swap; }
+@font-face { font-family: 'PIDS EN'; src: url('pids-en-bold.woff2') format('woff2'); font-weight: 600 900; font-display: swap; }
+</style>
+<style>
+/* ============================================================
+   深圳地铁 7号线 PIDS —— 2016 年开通初期版（复刻）
+   屏幕尺寸复用现行 7 号线 PIDS：1200 × 216（50:9）
+   比例按原照片实测：左侧信息块 21%，U 型线路图 79%
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e8ebf0; font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  min-height: 100vh; padding: 22px 12px 44px; gap: 13px;
+}
+.page-title { font-size: 17px; font-weight: 700; color: #1f2937; margin: 0; }
+.page-note { font-size: 12.5px; color: #6b7280; margin: -5px 0 0; text-align: center; line-height: 1.6; }
+
+.ctrl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.ctrl button, .ctrl select {
+  font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 12.5px; padding: 7px 13px; border-radius: 8px;
+  border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; transition: .18s;
+}
+.ctrl button:hover, .ctrl select:hover { border-color: #94a3b8; background: #f8fafc; }
+.ctrl button.on { background: #1f6b3f; border-color: #1f6b3f; color: #fff; }
+.ctrl label { font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+  font-size: 12.5px; color: #475569; display: flex; align-items: center; gap: 6px; }
+
+.stage { width: 100%; max-width: 1280px; display: flex; justify-content: center; overflow: hidden; }
+
+.screen {
+  --led-zh: 'PIDS ZH7', 'Microsoft YaHei', sans-serif;
+  --led-en: 'PIDS EN', 'Helvetica', Arial, sans-serif;
+  width: 1200px; height: 216px; flex: 0 0 auto; position: relative; overflow: hidden;
+  display: flex; border-radius: 6px; border: 3px solid #16181c;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, .22);
+  transform-origin: top center;
+  background: #eef7f0;
+}
+
+/* ============================================================
+   左侧绿色信息块（按原照片 4 块结构）
+   ① 顶部：logo + 深圳地铁 + 日期时间 + 星期
+   ② 白色圆角框：下一站态=终点站 / 当前站态=本侧开门
+   ③ 方向行：西丽湖 ◀ 太安
+   ④ 浅色块：下一站态=下一站 / 当前站态=当前站
+   ============================================================ */
+.left {
+  width: 20.4%;
+  flex: 0 0 20.4%;
+  padding: 4px 7px 4px 6px;
+  display: flex; flex-direction: column;
+  gap: 3px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #14611c 0%, #22802a 38%, #3aa53a 70%, #5cc452 100%);
+  color: #12310f;
+  border-right: 2px solid #17551f;
+  /* 独立合成层，避免跑马灯频繁重绘在圆角/接缝处漏出底色 */
+  isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 左栏四块严格等高：flex 平分 + max-height 硬限，内容多的也压平 */
+.left > *:not(.hide) {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  max-height: calc((100% - 9px) / 4) !important;
+  backface-visibility: hidden;
+}
+/* 只有带背景的卡片需要裁内容；方向行要露出箭头阴影 */
+.card, .door-card, .info-card, .brand-row { overflow: hidden; }
+.dir-row { overflow: visible !important; }
+
+/* ① 顶部 */
+.brand-row { display: flex; align-items: center; gap: 6px; flex: 1 1 0; min-height: 0; }
+.brand-logo { width: 26px; height: 26px; flex: 0 0 auto; }
+.brand-name { display: flex; flex-direction: column; line-height: 1.05; flex: 0 0 auto; min-width: 0; }
+.brand-zh {
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-weight: 400; font-size: 16px; color: #0b2d0a; white-space: nowrap;
+}
+.brand-en {
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; font-weight: 400; font-size: 6.5px; color: #0b2d0a;
+  opacity: .85; margin-top: 1px; white-space: nowrap;
+}
+.brand-time {
+  margin-left: auto; text-align: right; line-height: 1.12;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  color: #0b2d0a;
+}
+.brand-time .dt {
+  font-size: 14px; font-weight: 400; white-space: nowrap; letter-spacing: .3px;
+  font-variant-numeric: tabular-nums;
+}
+.brand-time .dt #clockTime { margin-left: 6px; }
+.brand-time .w { font-size: 12px; font-weight: 400; margin-top: 1px; letter-spacing: .3px; }
+
+/* ② 白色圆角框（终点站 / 本侧开门） */
+.card {
+  flex: 1 1 0; min-height: 0;
+  background: #eef4ee;
+  border-radius: 6px;
+  padding: 4px 7px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18);
+}
+.card .tag { line-height: 1.05; flex: 0 0 auto; min-width: 58px; text-align: center; }
+.card .tag .zh { font-family: var(--ui-zh); font-weight: 400; font-size: 17px; color: #cf3a1c; display: block; line-height: 1.05; }
+.card .tag .en { font-family: var(--ui-en); font-weight: 600; font-size: 9px; color: #cf3a1c; display: block; margin-top: 1px; }
+.card .val-wrap { display: flex; flex-direction: column; align-items: center; line-height: 1; flex: 0 0 auto; min-width: 142px; }
+.card .val-zh { font-family: var(--ui-zh); font-weight: 400; font-size: 27px; color: #cf3a1c; line-height: 1; }
+.card .val-en { font-family: var(--ui-en); font-weight: 600; font-size: 10px; color: #cf3a1c; margin-top: 2px; }
+
+/* 本侧开门卡（当前站态） */
+.door-card { background: #eef4ee; border-radius: 6px; padding: 3px 7px; display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1 1 0; min-height: 0; box-shadow: 0 1px 2px rgba(0,0,0,.18); }
+.door-card.hide, .card.hide { display: none; }
+.door-visual { position: relative; flex: 0 0 auto; display: flex; align-items: center; }
+.door-icons { display: flex; align-items: center; gap: 0; flex: 0 0 auto; width: auto; }
+
+/* 对侧开门：两扇门拼成一整块，门缝融合 */
+.door-card.opposite .door-icons { gap: 0; }
+.door-card.opposite .door-unit:first-child { border-radius: 4px 0 0 4px; }
+.door-card.opposite .door-unit:last-child  { border-radius: 0 4px 4px 0; }
+.door-card.opposite .door-arrows { display: none; }
+
+/* 红色禁止牌（SVG：闭合圆环 + 左下→右上斜杠），压在两扇门上 */
+.door-ban { display: none; }
+.door-card.opposite .door-ban {
+  display: block;
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 33px; height: 33px;          /* 小于门高 36，不超出门 */
+  margin-left: -16.5px; margin-top: -16.5px;
+  pointer-events: none;
+}
+.door-unit { width: 26px; height: 36px; position: relative; border-radius: 4px; background: #e2621f; }
+.door-unit::after { content: ''; position: absolute; left: 3px; right: 3px; top: 3px; height: 12px; background: #f7f7f0; border-radius: 2px; }
+.door-arrows { display: flex; flex-direction: column; gap: 1px; margin: 0 3px; width: 9px; flex: 0 0 9px; justify-content: center; }
+/* 箭头：带柄、直角（无圆角），绿色；默认熄灭，靠 JS 硬切点亮 */
+.door-arrows i {
+  width: 9px; height: 11px; display: block;
+  background: #3aa03f;
+  clip-path: polygon(50% 0%, 100% 42%, 72% 42%, 72% 100%, 28% 100%, 28% 42%, 0% 42%);
+  opacity: 0;
+  /* 纯 CSS 硬切跑马灯：避免 JS 逐帧改 opacity 造成的重绘白线 */
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: step-end;
+  will-change: opacity;
+}
+/* HTML 顺序：第1个=顶，第3个=底。从下往上逐个亮，然后一起灭 */
+.door-arrows i:nth-child(1) { animation-name: doorArrowTop; }
+.door-arrows i:nth-child(2) { animation-name: doorArrowMid; }
+.door-arrows i:nth-child(3) { animation-name: doorArrowBot; }
+
+@keyframes doorArrowBot {
+  0%,   20%  { opacity: 0; }
+  20%,  80%  { opacity: 1; }
+  80%, 100%  { opacity: 0; }
+}
+@keyframes doorArrowMid {
+  0%,   40%  { opacity: 0; }
+  40%,  80%  { opacity: 1; }
+  80%, 100%  { opacity: 0; }
+}
+@keyframes doorArrowTop {
+  0%,   60%  { opacity: 0; }
+  60%,  80%  { opacity: 1; }
+  80%, 100%  { opacity: 0; }
+}
+.door-text { line-height: 1.05; flex: 0 0 auto; text-align: center; }
+.door-text .zh { font-family: var(--ui-zh); font-weight: 400; font-size: 23px; color: #2b3a2b; display: block; line-height: 1.1; white-space: nowrap; }
+.door-text .en { font-family: var(--ui-en); font-weight: 600; font-size: 10px; color: #2b3a2b; display: block; margin-top: 2px; white-space: nowrap; }
+
+/* ③ 方向行 */
+.dir-row {
+  display: grid;
+  grid-template-columns: 1fr 38px 1fr;   /* 中列固定 = 箭头宽，箭头位置写死不随文字移动 */
+  align-items: center;
+  flex: 1 1 0; min-height: 0;
+  padding: 0 4px;
+}
+.dir-st { justify-self: center; }
+.dir-st { display: flex; flex-direction: column; align-items: center; line-height: 1.05; }
+.dir-st .zh { font-family: var(--ui-zh); font-weight: 400; font-size: 20px; color: #0b2d0a; white-space: nowrap; }
+.dir-st .en { font-family: var(--ui-en); font-weight: 600; font-size: 11px; color: #0b2d0a; margin-top: 2px; white-space: nowrap; }
+.dir-arrow {
+  width: 38px; height: 39px; flex: 0 0 auto;
+  /* 注意：filter 先于 clip-path 应用，阴影放外层、裁剪放内层 <i>，
+     否则 drop-shadow 的阴影会被 clip-path 一起裁掉（看不到） */
+  /* 只用带模糊的阴影：blur 不能为 0，否则会投出一个实色副本（像第二个箭头） */
+  filter:
+    drop-shadow(1px 2px 2px rgba(9,42,25,.55))
+    drop-shadow(3px 4px 5px rgba(0,0,0,.4));
+}
+.dir-arrow > i {
+  display: block; width: 100%; height: 100%;
+  background: linear-gradient(180deg, #ffb45a 0%, #f57c1f 52%, #cf5807 100%);
+  /* 圆角右箭头：箭杆 x3~17.4(14.4px) y12~27(15px)；尖端 (31.9,19.5)、上下肩 (17.4,5)/(17.4,34)、高29 → 顶角 90° */
+  clip-path: path('M 6.5 12 L 17.4 12 L 17.4 8 Q 17.4 5 19.8 6.6 L 29.4 16.75 Q 31.9 19.5 29.4 22.25 L 19.8 31.4 Q 17.4 34 17.4 31 L 17.4 27 L 6.5 27 Q 3 27 3 23.5 L 3 15.5 Q 3 12 6.5 12 Z');
+}
+
+/* ④ 浅色信息块 */
+.info-card {
+  flex: 1 1 0; min-height: 0;
+  background: #a8cf7a;
+  border-radius: 6px;
+  padding: 4px 7px 5px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 6px;
+}
+.info-card .val-wrap { display: flex; flex-direction: column; align-items: center; line-height: 1; flex: 0 0 auto; min-width: 142px; }
+.info-card .tag { line-height: 1.05; flex: 0 0 auto; min-width: 58px; text-align: center; }
+.info-card .tag .zh { font-family: var(--ui-zh); font-weight: 400; font-size: 18px; color: #cf3a1c; display: block; line-height: 1.05; }
+.info-card .tag .en { font-family: var(--ui-en); font-weight: 600; font-size: 9px; color: #cf3a1c; display: block; margin-top: 1px; }
+.info-card .val-zh { font-family: var(--ui-zh); font-weight: 400; font-size: 29px; color: #cf3a1c; line-height: 1; }
+.info-card .val-en { font-family: var(--ui-en); font-weight: 600; font-size: 10px; color: #cf3a1c; margin-top: 2px; }
+
+/* ============================================================
+   右侧 U 型线路图 —— 占 79%（约 948px）
+   ============================================================ */
+.right {
+  flex: 1; position: relative; min-width: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 62% 10%, rgba(255,255,255,.82), transparent 70%),
+    linear-gradient(180deg, #eefaf2 0%, #dcf2e3 55%, #d3ecdc 100%);
+}
+.map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.st-layer { position: absolute; inset: 0; pointer-events: none; }
+
+.st { position: absolute; text-align: center; white-space: nowrap; line-height: 1; display: flex; flex-direction: column; align-items: center; }
+.st .zh { font-family: var(--ui-zh); font-weight: 700; color: #000000; line-height: 1.05; }
+.st .en { font-family: var(--ui-en); font-weight: 600; color: #000000; line-height: 1.1; }
+/* 已过站：统一深灰，两个都用同一个色号，不加 opacity */
+.st.passed .zh, .st.passed .en { color: #5a5a5a; }
+
+.tf {
+  font-family: var(--ui-zh); font-weight: 700; font-size: 7.5px; line-height: 1;
+  color: #fff; padding: 2.48px 3px 0; border-radius: 0; white-space: nowrap;
+  height: 17px; box-sizing: border-box;
+  /* flex 竖向居中，避免 line-height/margin 造成文字偏上 */
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  /* 统一宽度：所有徽标固定 30px，一位数和两位数一样宽 */
+  box-sizing: border-box;
+  width: 30px;
+  min-width: 30px;
+  max-width: 30px;
+}
+/* 英文与中文同色，不加透明度、不加 margin */
+.tf .zh { display: block; line-height: 1; }
+.tf .en { display: block; font-family: var(--ui-en); font-size: 5px; font-weight: 600; color: inherit; line-height: 1; margin: 0; }
+
+/* 车公庙特例：高度只有常规的 2/3，宽度不变，字号同步缩到 2/3 */
+.tf.compact {
+  height: 11px; min-height: 11px; max-height: 11px;
+  padding: 1.35px 3px 0;
+  font-size: 5px;
+}
+.tf.compact .en { font-size: 3.3px; }
+
+/* 橙珠脉冲由 SVG SMIL <animate> 驱动（见 drawMap），不用 CSS 动画。
+   SMIL 由 SVG 渲染器直接驱动属性，不产生合成层重绘白线；
+   保留正常抗锯齿，边缘保持平滑。 */
+
+/* ============================================================
+   当前站态：中间区域「本侧开门」（左右两侧信息保留）
+   ============================================================ */
+
+</style>
+</head>
+<body>
+
+<h1 class="page-title">7 号线 PIDS · 2016 开通初期版</h1>
+<p class="page-note">依据 2016 年 10 月开通初期的实测照片复刻</p>
+
+<div class="ctrl">
+  <button id="btnCar" class="on">下一站</button>
+  <button id="btnStation">当前站</button>
+  <label>站点 <select id="selStation"></select></label>
+  <label>开门
+    <select id="selDoor">
+      <option value="this">本侧开门</option>
+      <option value="opposite">对侧开门</option>
+    </select>
+  </label>
+  <label>方向
+    <select id="selDir">
+      <option value="xili">往西丽湖</option>
+      <option value="taian">往太安</option>
+    </select>
+  </label>
+  <button id="btnNext">前进</button>
+  <button id="btnAuto">自动播放</button>
+</div>
+
+<div class="stage">
+  <div class="screen" id="screen">
+
+    <!-- 左侧绿色信息块（按原照片 4 块结构） -->
+    <div class="left">
+      <!-- ① 顶部：logo + 品牌 + 日期时间 + 星期 -->
+      <div class="brand-row">
+        <img class="brand-logo" src="logo-szmetro-old.png" alt="深圳地铁">
+        <div class="brand-name">
+          <span class="brand-zh">深圳地铁</span>
+          <span class="brand-en">SHENZHEN METRO</span>
+        </div>
+        <div class="brand-time">
+          <div class="dt"><span id="clockDate">2016.10.30</span><span id="clockTime">13:53</span></div>
+          <div class="w" id="clockWeek">星期五 Friday</div>
+        </div>
+      </div>
+
+      <!-- ② 下一站态：终点站（浅蓝白圆角框） -->
+      <div class="card term" id="cardTerm">
+        <div class="tag">
+          <span class="zh">终点站</span>
+          <span class="en">Destination</span>
+        </div>
+        <div class="val-wrap">
+          <div class="val-zh" id="termZh">西丽湖</div>
+          <div class="val-en" id="termEn">Xili Lake</div>
+        </div>
+      </div>
+
+      <!-- ② 当前站态：本侧开门（白色圆角框） -->
+      <div class="door-card hide" id="cardDoor">
+        <div class="door-visual">
+          <div class="door-icons">
+            <div class="door-unit"></div>
+            <div class="door-arrows"><i></i><i></i><i></i></div>
+            <div class="door-unit"></div>
+          </div>
+          <svg class="door-ban" viewBox="0 0 36 36" aria-hidden="true">
+            <circle cx="18" cy="18" r="15.4" fill="none" stroke="#e02020" stroke-width="3.6"/>
+            <line x1="7.5" y1="28.5" x2="28.5" y2="7.5" stroke="#e02020" stroke-width="3.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="door-text">
+          <span class="zh" id="doorZh">本侧开门</span>
+          <span class="en" id="doorEn">Get away from this side</span>
+        </div>
+      </div>
+
+      <!-- ③ 方向行：西丽湖 ◀ 太安 -->
+      <div class="dir-row">
+        <div class="dir-st"><span class="zh" id="dirFromZh">西丽湖</span><span class="en" id="dirFromEn">Xili Lake</span></div>
+        <div class="dir-arrow"><i></i></div>
+        <div class="dir-st"><span class="zh" id="dirToZh">太安</span><span class="en" id="dirToEn">Taian</span></div>
+      </div>
+
+      <!-- ④ 浅色块：下一站态=下一站 / 当前站态=当前站 -->
+      <div class="info-card" id="cardInfo">
+        <div class="tag">
+          <span class="zh" id="infoLabelZh">下一站</span>
+          <span class="en" id="infoLabelEn">Next Station</span>
+        </div>
+        <div class="val-wrap">
+          <div class="val-zh" id="infoValZh">赤尾</div>
+          <div class="val-en" id="infoValEn">Chiwei</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧 U 型线路图 -->
+    <div class="right">
+      <svg class="map-svg" id="mapSvg" viewBox="0 0 948 216" preserveAspectRatio="none"></svg>
+      <div class="st-layer" id="stLayer"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   2016 年 7 号线（一期）—— 按【行车顺序】排列（太安 → 西丽湖）
+   视觉：前 13 站在上排（左→右），后 14 站在下排（右→左）
+   ============================================================ */
+/* ============================================================
+   站点数据：直接复用全站数据源 all-lines-enhanced.js（与 pids-line7 同源）
+   - stationList 顺序：深大丽湖 → 北大 → 西丽湖 → … → 太安
+   - 2016 一期 = 去掉前两个（深大丽湖、北大）后的 27 站，西丽湖 ↔ 太安
+   ============================================================ */
+const LINE7_DATA = ALL_LINES_ENHANCED.find(l => l.id === '7');
+if (!LINE7_DATA) throw new Error('找不到 7 号线数据');
+
+/* 2016-10-28 当天已经开通、可以换乘的线路（其余是后来才通的） */
+const OPened2016 = new Set(['1', '2', '3', '5', '9', '11']);
+
+/* 英文站名：pids-en.js 的 window.PIDS_EN 是扁平映射 {中文: "English"} */
+const EN_OF = window.PIDS_EN || {};
+
+const ALL7 = LINE7_DATA.stationList;
+const STATIONS_2016 = ALL7.slice(2);          // 西丽湖 … 太安（27 站）
+
+/* 组站点对象：zh/en/transfers(仅 2016 已开通) */
+const ST = {};
+STATIONS_2016.forEach(zh => {
+  const tf = (LINE7_DATA.transfers && LINE7_DATA.transfers[zh] || [])
+              .map(String).filter(x => OPened2016.has(x));
+  ST[zh] = { zh, en: EN_OF[zh] || '', tf };
+});
+
+/* ============================================================
+   视觉顺序（按原照片）
+   上排（左→右）：太安 | 田贝 洪湖 笋岗 红岭北 八卦岭 黄木岗 华新 华强北 华强南 赤尾 皇岗口岸 福民
+   下排（左→右）：西丽湖 | 西丽 茶光 珠光 龙井 桃源村 深云 安托山 农林 车公庙 上沙 沙尾 石厦 皇岗村
+   ============================================================ */
+const UP_ROW = ['太安', '田贝', '洪湖', '笋岗', '红岭北', '八卦岭', '黄木岗', '华新',
+                '华强北', '华强南', '赤尾', '皇岗口岸', '福民'];
+const DN_ROW = ['西丽湖', '西丽', '茶光', '珠光', '龙井', '桃源村', '深云', '安托山',
+                '农林', '车公庙', '上沙', '沙尾', '石厦', '皇岗村'];
+
+/* ORDER：行车顺序（西丽湖 → 太安），用于「下一站」和当前站索引 */
+const ORDER = STATIONS_2016.map(zh => ST[zh]);
+
+const TF_COLORS = { '1': '#00B140', '2': '#B94700', '3': '#00A9E0', '5': '#A05EB5', '9': '#7B6469', '11': '#672146' };
+const TF_NAMES  = { '1': '1号线',  '2': '2号线',  '3': '3号线',  '5': '5号线',  '9': '9号线',  '11': '11号线' };
+
+const C_PASSED = '#3fc34a', C_FUTURE = '#7d8c90', C_CURRENT = '#e8352c', C_NEXT = '#f0932b', C_LINE = '#125138';
+
+/* ============================================================
+   几何布局（按原照片实测）
+   上排横线：田贝 → 福民 12 点，y = 67
+   下排横线：西丽 → 皇岗村 13 点，y = 165
+   两个终点站在横线外侧，各通过一段小圆角连到横线端头
+   ============================================================ */
+const MAP_W = 948, MAP_H = 216;
+const ROW_UP_Y = 56, ROW_DOWN_Y = 168;    // 拉高：间距 112px
+const TERM_UP_Y = ROW_UP_Y + 14, TERM_DN_Y = ROW_DOWN_Y - 14;   // 两端竖段等长 14px（原图太安低 13）
+
+const PAD_L_UP = 81,  PAD_R_UP = 888;
+const PAD_L_DN = 86,  PAD_R_DN = 882;
+const TERM_UP_X = 27, TERM_DN_X = 30;
+
+const UP_LINE = UP_ROW.slice(1);   // 田贝 … 福民（12）
+const DN_LINE = DN_ROW.slice(1);   // 西丽 … 皇岗村（13）
+
+const upX = i => PAD_L_UP + i * (PAD_R_UP - PAD_L_UP) / (UP_LINE.length - 1);
+const dnX = i => PAD_L_DN + i * (PAD_R_DN - PAD_L_DN) / (DN_LINE.length - 1);
+
+/* 站名 → 位置/视觉序号 */
+const POS = {};
+UP_LINE.forEach((zh, i) => { POS[zh] = { x: upX(i), y: ROW_UP_Y, row: 'up', visual: i }; });
+DN_LINE.forEach((zh, i) => { POS[zh] = { x: dnX(i), y: ROW_DOWN_Y, row: 'down', visual: i }; });
+POS['太安']   = { x: TERM_UP_X, y: TERM_UP_Y, row: 'up',   visual: -1, term: true };
+POS['西丽湖'] = { x: TERM_DN_X, y: TERM_DN_Y, row: 'down', visual: -1, term: true };
+
+/* 视觉绘制顺序：太安 → 上排 → 下排 → 西丽湖 */
+const DRAW_ORDER = ['太安', ...UP_LINE, ...DN_LINE, '西丽湖'];
+const posOfName = zh => POS[zh];
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const mapSvg = document.getElementById('mapSvg');
+const stLayer = document.getElementById('stLayer');
+/* 初始状态对齐原照片（下一站态 06:49：下一站赤尾、往太安方向） */
+let state = { screen: 'car', doorSide: 'this', cur: 15, dir: 'taian', auto: null };
+
+const el = (tag, attrs) => {
+  const e = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+};
+
+/* ---------- U 型线路 ---------- */
+function drawMap() {
+  mapSvg.innerHTML = '';
+
+  /* ============================================================
+     玻璃珠质感：外光晕 + 径向渐变主体 + 顶部高光 + 底部反光 + 内描边
+     原版是「高透玻璃珠 + 上下双打光」，不是纯色圆
+     ============================================================ */
+  const defs = document.createElementNS(SVG_NS, 'defs');
+
+  /* 每种状态 6 段色阶：顶端亮 → 主体 → 底部暗 → 底缘反光 */
+  const BEAD = {
+    /* passed = 已过的站 → 画纯深灰实心圆，不经渐变（色阶仅占位） */
+    passed:  { stops: ['#5a5a5a', '#5a5a5a', '#5a5a5a', '#5a5a5a', '#5a5a5a', '#5a5a5a'],
+               glow:  'rgba(0,0,0,0)', rim: '#5a5a5a', edge: 'rgba(0,0,0,0)' },
+    /* future = 还没到的站 → 明亮的浅草绿（青青草原感） */
+    future:  { stops: ['#eaffda', '#bdf79a', '#7cdb4e', '#4fbe2c', '#2f9a1c', '#63dd42'],
+               glow:  'rgba(120,220,110,.45)', rim: '#a8ff86', edge: 'rgba(20,80,20,.55)' },
+    current: { stops: ['#fff0ee', '#ffb0a8', '#ef4136', '#c92217', '#8d1009', '#f0554a'],
+               glow:  'rgba(240,70,58,.6)', rim: '#ff9f96', edge: 'rgba(90,10,6,.55)' },
+    next:    { stops: ['#ffedd2', '#ffcf85', '#f0900f', '#cc6d05', '#8f4300', '#e89a22'],
+               glow:  'rgba(250,170,50,.65)', rim: '#ffe3ad', edge: 'rgba(110,60,0,.5)' },
+  };
+
+  for (const k in BEAD) {
+    /* 主体径向渐变：光源在上方（cy 18%） */
+    const g = document.createElementNS(SVG_NS, 'radialGradient');
+    g.setAttribute('id', 'bead-' + k);
+    g.setAttribute('cx', '38%'); g.setAttribute('cy', '30%'); g.setAttribute('r', '74%');
+    const OFFS = [0, 16, 38, 60, 82, 100];
+    BEAD[k].stops.forEach((col, i) => {
+      const s = document.createElementNS(SVG_NS, 'stop');
+      s.setAttribute('offset', OFFS[i] + '%');
+      s.setAttribute('stop-color', col);
+      g.appendChild(s);
+    });
+    defs.appendChild(g);
+
+    /* 顶部高光（白色椭圆，柔和衰减） */
+    const gh = document.createElementNS(SVG_NS, 'radialGradient');
+    gh.setAttribute('id', 'hi-' + k);
+    gh.setAttribute('cx', '50%'); gh.setAttribute('cy', '50%'); gh.setAttribute('r', '50%');
+    [[0, 'rgba(255,255,255,.72)'], [55, 'rgba(255,255,255,.32)'], [100, 'rgba(255,255,255,0)']]
+      .forEach(([off, col]) => {
+        const s = document.createElementNS(SVG_NS, 'stop');
+        s.setAttribute('offset', off + '%');
+        s.setAttribute('stop-color', col);
+        gh.appendChild(s);
+      });
+    defs.appendChild(gh);
+
+    /* 底部反光弧（下打光形成的一道上亮边） */
+    const gr = document.createElementNS(SVG_NS, 'radialGradient');
+    gr.setAttribute('id', 'rim-' + k);
+    gr.setAttribute('cx', '50%'); gr.setAttribute('cy', '85%'); gr.setAttribute('r', '60%');
+    [[0, 'rgba(255,255,255,.62)'], [60, 'rgba(255,255,255,.24)'], [100, 'rgba(255,255,255,0)']]
+      .forEach(([off, col]) => {
+        const s = document.createElementNS(SVG_NS, 'stop');
+        s.setAttribute('offset', off + '%');
+        s.setAttribute('stop-color', col);
+        gr.appendChild(s);
+      });
+    defs.appendChild(gr);
+
+    /* 外光晕 */
+    const gg = document.createElementNS(SVG_NS, 'radialGradient');
+    gg.setAttribute('id', 'glow-' + k);
+    gg.setAttribute('cx', '50%'); gg.setAttribute('cy', '50%'); gg.setAttribute('r', '50%');
+    [[0, BEAD[k].glow], [100, 'rgba(0,0,0,0)']].forEach(([off, col]) => {
+      const s = document.createElementNS(SVG_NS, 'stop');
+      s.setAttribute('offset', off + '%');
+      s.setAttribute('stop-color', col);
+      gg.appendChild(s);
+    });
+    defs.appendChild(gg);
+  }
+  mapSvg.appendChild(defs);
+
+  /* ---------- U 型线路（直线 + 圆弧倒角 + 直线）----------
+     左下：太安 ─竖─ 圆弧倒角 R8 ─横─ 田贝 … 福民
+     右上：福民 ─圆弧 R24─ 皇岗村 … 西丽 ─横─ 圆弧倒角 R8 ─竖─ 西丽湖
+     -------------------------------------------- */
+  const RX = 934;             // 右侧竖段（往回挪 10px，别太贴边）
+  const RC = 15;              // 右侧圆角半径
+  const RF = 8;               // 两端圆角倒角半径
+
+  const d = [
+    /* 从 太安 向上 ─→ 倒角 ─→ 向右 */
+    `M ${TERM_UP_X} ${TERM_UP_Y}`,
+    `L ${TERM_UP_X} ${ROW_UP_Y + RF}`,
+    `A ${RF} ${RF} 0 0 1 ${TERM_UP_X + RF} ${ROW_UP_Y}`,
+    `L ${PAD_L_UP} ${ROW_UP_Y}`,
+    /* 上排一行到 福民，再向右到倒角起点 */
+    `L ${PAD_R_UP} ${ROW_UP_Y}`,
+    `L ${RX - RC} ${ROW_UP_Y}`,
+    `A ${RC} ${RC} 0 0 1 ${RX} ${ROW_UP_Y + RC}`,
+    `L ${RX} ${ROW_DOWN_Y - RC}`,
+    `A ${RC} ${RC} 0 0 1 ${RX - RC} ${ROW_DOWN_Y}`,
+    /* 下排一行到 西丽，再向左到倒角起点 */
+    `L ${PAD_L_DN} ${ROW_DOWN_Y}`,
+    `L ${TERM_DN_X + RF} ${ROW_DOWN_Y}`,
+    `A ${RF} ${RF} 0 0 1 ${TERM_DN_X} ${ROW_DOWN_Y - RF}`,
+    `L ${TERM_DN_X} ${TERM_DN_Y}`,
+  ].join(' ');
+
+  const mainPath = el('path', {
+    d, fill: 'none', stroke: C_LINE, 'stroke-width': 2.1,
+    'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+  });
+  mapSvg.appendChild(mainPath);
+
+  /* 已过段用深灰覆盖：找当前站在路径上的长度，用 dasharray 只显示已过那一截 */
+  try {
+    const totalLen = mainPath.getTotalLength();
+    const cp = posOfName(ORDER[state.cur].zh);
+    let bestT = 0, bestD = Infinity;
+    for (let i = 0; i <= 800; i++) {
+      const tt = totalLen * i / 800;
+      const pt = mainPath.getPointAtLength(tt);
+      const dx = pt.x - cp.x, dy = pt.y - cp.y;
+      const dd = dx * dx + dy * dy;
+      if (dd < bestD) { bestD = dd; bestT = tt; }
+    }
+    let dash, offset;
+    if (state.dir === 'taian') {
+      /* 路径顺序：太安→…→西丽湖；往太安时已过段在路径末尾 */
+      dash = (totalLen - bestT) + ' ' + bestT;
+      offset = -bestT;
+    } else {
+      /* 往西丽湖时已过段在路径起始 */
+      dash = bestT + ' ' + (totalLen - bestT);
+      offset = 0;
+    }
+    mapSvg.appendChild(el('path', {
+      d, fill: 'none', stroke: '#5a5a5a', 'stroke-width': 2.1,
+      'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+      'stroke-dasharray': dash, 'stroke-dashoffset': offset,
+    }));
+  } catch (e) {
+    console.warn('已过段绘制失败', e);
+  }
+
+  /* ---------- 玻璃珠圆点 ---------- */
+  const R_BEAD = 8.6;
+  const curName = ORDER[state.cur].zh;
+  const nextName = ORDER[state.cur + (state.dir === 'xili' ? -1 : 1)];
+  const curIdx = state.cur;
+
+  DRAW_ORDER.forEach(zh => {
+    const p = posOfName(zh);
+    const oi = ORDER.findIndex(s => s.zh === zh);
+    /* 已过 = 比当前站更早的站（按行进方向），用严格比较把当前站排除出去 */
+    let kind = 'future';
+    const step = state.dir === 'xili' ? -1 : 1;
+    const isPlatformMode = (state.screen === 'platform');
+    const passedCond = state.dir === 'xili' ? (oi > curIdx) : (oi < curIdx);
+    if (passedCond) kind = 'passed';
+
+    if (isPlatformMode) {
+      /* 当前站态：停靠站 = 橙色 */
+      if (oi === curIdx) kind = 'next';
+    } else {
+      /* 下一站态：当前位置(刚出发那站) = 红色，下一站 = 橙色 */
+      if (nextName && oi === curIdx + step) kind = 'next';
+      if (oi === curIdx) kind = 'current';
+    }
+    const B = BEAD[kind];
+
+    /* 每颗珠子包进 <g class="bead">：脉冲动画整体缩放，站名/徽标在另一层不受影响 */
+    const stopMark = (isPlatformMode && oi === curIdx) ? ' bead-stop' : '';
+    const g = el('g', { 'class': 'bead bead-' + kind + stopMark });
+
+    /* 已过站：纯深灰实心圆，没有任何光影/体积 */
+    if (kind === 'passed') {
+      g.appendChild(el('circle', {
+        cx: p.x, cy: p.y, r: R_BEAD, fill: '#5a5a5a',
+      }));
+      mapSvg.appendChild(g);
+      return;
+    }
+    /* 下一站态（非停靠）的橙珠：整颗做 10% 脉冲。
+       用 SVG 原生 SMIL 逐属性驱动（不用 CSS 动画、不用 transform），
+       这样高光/反光会跟着主体一起缩放，且不会产生合成层重绘白线。 */
+    const pulsing = (kind === 'next' && !isPlatformMode);
+    const P_SCALE = 1.2;
+    /* 当前站态停靠的橙珠：直接按放大态尺寸绘制（与脉冲峰值一致），静态不脉冲 */
+    const IS_STOP = (kind === 'next' && isPlatformMode);
+    const R = IS_STOP ? (R_BEAD * P_SCALE) : R_BEAD;
+    /* base = 起始值，to = 峰值；缺省时按 P_SCALE 缩放。
+       尺寸类（r/rx/ry）直接乘倍数；
+       坐标类（cx/cy）必须绕珠子中心缩放，不能直接乘。 */
+    function addPulse(node, attr, base, to) {
+      const peak = (to === undefined) ? (base * P_SCALE) : to;
+      const an = document.createElementNS(SVG_NS, 'animate');
+      an.setAttribute('attributeName', attr);
+      an.setAttribute('values', base + ';' + peak + ';' + base);
+      an.setAttribute('dur', '2.5s');
+      an.setAttribute('repeatCount', 'indefinite');
+      an.setAttribute('calcMode', 'spline');
+      an.setAttribute('keyTimes', '0; 0.5; 1');
+      an.setAttribute('keySplines', '0.42 0 0.58 1; 0.42 0 0.58 1');
+      node.appendChild(an);
+    }
+    /* 以珠子中心为原点缩放某个坐标 */
+    const sy = v => p.y + (v - p.y) * P_SCALE;
+    const sx = v => p.x + (v - p.x) * P_SCALE;
+
+    /* ① 主体：无描边、无外晕、无落地阴影 */
+    const body = el('circle', {
+      cx: p.x, cy: p.y, r: R,
+      fill: 'url(#bead-' + kind + ')',
+    });
+    if (pulsing) addPulse(body, 'r', R_BEAD);
+    g.appendChild(body);
+
+    /* ② 顶部柔光（大而散，不要小圆点） */
+    const hiCx = p.x - R * 0.14, hiCy = p.y - R * 0.32;
+    const hiRx = R * 0.66, hiRy = R * 0.46;
+    const hi = el('ellipse', {
+      cx: hiCx, cy: hiCy, rx: hiRx, ry: hiRy,
+      fill: 'url(#hi-' + kind + ')',
+      opacity: kind === 'future' ? .10 : .5,
+    });
+    if (pulsing) {
+      addPulse(hi, 'cx', hiCx, sx(hiCx));
+      addPulse(hi, 'cy', hiCy, sy(hiCy));
+      addPulse(hi, 'rx', hiRx);
+      addPulse(hi, 'ry', hiRy);
+    }
+    g.appendChild(hi);
+    mapSvg.appendChild(g);
+  });
+
+  drawTrainArrow();
+}
+
+/* 生成「橙色扫光」裁剪区：矩形从尾端向箭头端匀速扩展，填满后复位循环。
+   用 clipPath + rect 的几何动画（Firefox 里 <stop> 的 offset 动画不可靠）。 */
+function makeSweepClip(xTail, xTip, yTop, yBottom, vertical) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const id = 'arrowClip' + Math.floor(Math.random() * 1e9);
+  const cp = document.createElementNS(NS, 'clipPath');
+  cp.setAttribute('id', id);
+  cp.setAttribute('clipPathUnits', 'userSpaceOnUse');
+  const rect = document.createElementNS(NS, 'rect');
+
+  if (!vertical) {
+    /* 水平：矩形右边缘固定在尾端，宽度从 0 扩到全长（向箭头端生长） */
+    const fullW = Math.abs(xTail - xTip);
+    const leftMost = Math.min(xTail, xTip);
+    rect.setAttribute('x', xTail === leftMost ? xTail : xTail);
+    rect.setAttribute('x', leftMost);
+    rect.setAttribute('y', yTop);
+    rect.setAttribute('height', yBottom - yTop);
+    rect.setAttribute('width', 0);
+    const anW = document.createElementNS(NS, 'animate');
+    anW.setAttribute('attributeName', 'width');
+    anW.setAttribute('values', '0;' + fullW + ';' + fullW);
+    anW.setAttribute('keyTimes', '0;0.72;1');
+    anW.setAttribute('dur', '2s');
+    anW.setAttribute('repeatCount', 'indefinite');
+    anW.setAttribute('calcMode', 'linear');
+    rect.appendChild(anW);
+    if (xTail > xTip) {
+      /* 尾端在右：矩形左边缘跟着右边缘走 —— 用 x 动画维持右边界固定 */
+      const anX = document.createElementNS(NS, 'animate');
+      anX.setAttribute('attributeName', 'x');
+      anX.setAttribute('values', xTail + ';' + xTip + ';' + xTip);
+      anX.setAttribute('keyTimes', '0;0.72;1');
+      anX.setAttribute('dur', '2s');
+      anX.setAttribute('repeatCount', 'indefinite');
+      anX.setAttribute('calcMode', 'linear');
+      rect.appendChild(anX);
+    }
+  } else {
+    const fullH = Math.abs(yBottom - yTop);
+    const topMost = Math.min(yTop, yBottom);
+    rect.setAttribute('x', xTail);
+    rect.setAttribute('y', topMost);
+    rect.setAttribute('width', xTip - xTail);
+    rect.setAttribute('height', 0);
+    const anH = document.createElementNS(NS, 'animate');
+    anH.setAttribute('attributeName', 'height');
+    anH.setAttribute('values', '0;' + fullH + ';' + fullH);
+    anH.setAttribute('keyTimes', '0;0.72;1');
+    anH.setAttribute('dur', '2s');
+    anH.setAttribute('repeatCount', 'indefinite');
+    anH.setAttribute('calcMode', 'linear');
+    rect.appendChild(anH);
+    if (yTop > yBottom) {
+      const anY = document.createElementNS(NS, 'animate');
+      anY.setAttribute('attributeName', 'y');
+      anY.setAttribute('values', yTop + ';' + yBottom + ';' + yBottom);
+      anY.setAttribute('keyTimes', '0;0.72;1');
+      anY.setAttribute('dur', '2s');
+      anY.setAttribute('repeatCount', 'indefinite');
+      anY.setAttribute('calcMode', 'linear');
+      rect.appendChild(anY);
+    }
+  }
+  cp.appendChild(rect);
+  const defs = document.querySelector('#mapSvg defs') || (function () {
+    const d = document.createElementNS(NS, 'defs');
+    document.getElementById('mapSvg').insertBefore(d, document.getElementById('mapSvg').firstChild);
+    return d;
+  })();
+  defs.appendChild(cp);
+  return 'url(#' + id + ')';
+}
+
+/* 列车方向箭头：只出现在「下一站态」，
+   位置在红珠与橙珠之间的中点、线路外侧（上排在线之上，下排在线之下）。
+   指向行进方向；后面跟三根等距瘦矩形做拖尾。 */
+function drawTrainArrow() {
+  if (state.screen !== 'car') return;
+  const step = state.dir === 'xili' ? -1 : 1;
+  const nextIdx = state.cur + step;
+  if (nextIdx < 0 || nextIdx > ORDER.length - 1) return;   // 尽头没下一站
+
+  const redP = posOfName(ORDER[state.cur].zh);
+  const orgP = posOfName(ORDER[nextIdx].zh);
+  if (!redP || !orgP) return;
+
+  const midX = (redP.x + orgP.x) / 2;
+  /* 跨上/下排（即 U 型右侧竖段，福民↔皇岗村）：箭头改为竖直，放在竖线左侧 */
+  const isVertical = (redP.row !== orgP.row);
+  if (isVertical) {
+    drawTrainArrowVertical(redP, orgP);
+    return;
+  }
+  const onUpperRow = redP.row === 'up';
+  /* 线路外侧：上排在线上方，下排在线下方 */
+  const y = onUpperRow ? (ROW_UP_Y - 11) : (ROW_DOWN_Y + 11);
+  const flip = (orgP.x < redP.x);        // 往左走则水平翻转
+
+  const AW = 13.5, AH = 7.5;             // 箭头本体尺寸（再缩到 75%）
+  const TIP = 4.5;                        // 箭头尖端的水平长度
+  /* 不用 transform 翻转（transform 会触发合成层重绘，留下白线），
+     直接把 X 坐标按方向求出来 */
+  const S = flip ? -1 : 1;                // 方向符号
+  const X = v => midX + S * v;            // 局部 x → 绝对 x
+  const Y = v => y + v;                   // 局部 y → 绝对 y
+  /* 箭头：无圆角，尖端角度不受 90° 限制 */
+  const SHAFT_H = AH * 0.62;              // 箭杆总高（拖尾高度与它保持一致）
+  const bar = SHAFT_H / 2;                // 箭杆半高
+  const bodyPath =
+    'M ' + X(0) + ' ' + Y(AH / 2 - bar) +
+    ' L ' + X(AW - TIP) + ' ' + Y(AH / 2 - bar) +
+    ' L ' + X(AW - TIP) + ' ' + Y(0) +
+    ' L ' + X(AW) + ' ' + Y(AH / 2) +
+    ' L ' + X(AW - TIP) + ' ' + Y(AH) +
+    ' L ' + X(AW - TIP) + ' ' + Y(AH / 2 + bar) +
+    ' L ' + X(0) + ' ' + Y(AH / 2 + bar) + ' Z';
+
+  /* 拖尾几何 */
+  const tailW = 1.5, tailH = SHAFT_H;   // 与箭杆等高
+  const firstGap = 1.2;                  // 第一根距箭杆近端的距离
+  const spacing = 1.1;                   // 拖尾之间的净间距
+  const tailFar = firstGap + 2 * (tailW + spacing) + tailW;   // 最远端距箭杆的距离
+
+  /* 扫光裁剪区：从尾端向箭头端匀速扩张 */
+  const tailEndX = X(-tailFar);
+  const tipX = X(AW);
+  const clipUrl = makeSweepClip(tailEndX, tipX, y, y + AH, false);
+
+  const gEl = el('g', { 'class': 'train-arrow' });
+
+  /* ① 底层：原色墨绿 */
+  gEl.appendChild(el('path', { d: bodyPath, fill: '#125138' }));
+  for (let i = 0; i < 3; i++) {
+    const near = firstGap + i * (tailW + spacing);
+    gEl.appendChild(el('rect', {
+      x: X(-near), y: Y((AH - tailH) / 2),
+      width: tailW, height: tailH, rx: 0, fill: '#125138',
+    }));
+  }
+
+  /* ② 上层：橙色，被裁剪区切出硬边（不是渐变过渡） */
+  gEl.appendChild(el('path', { d: bodyPath, fill: '#f0900f', 'clip-path': clipUrl }));
+  for (let i = 0; i < 3; i++) {
+    const near = firstGap + i * (tailW + spacing);
+    gEl.appendChild(el('rect', {
+      x: X(-near), y: Y((AH - tailH) / 2),
+      width: tailW, height: tailH, rx: 0,
+      fill: '#f0900f', 'clip-path': clipUrl,
+    }));
+  }
+  mapSvg.appendChild(gEl);
+}
+
+/* 跨竖段（福民↔皇岗村）时的竖直箭头：放在 U 型右侧竖线的左侧 */
+function drawTrainArrowVertical(redP, orgP) {
+  const RX_LINE = 934;                    // 右侧竖线 x（与地图路径一致）
+  const yMid = (redP.y + orgP.y) / 2;
+  const goingUp = (orgP.y < redP.y);      // 目标站在上方 → 箭头朝上
+  const S = goingUp ? -1 : 1;             // 局部 +y 的实际方向
+
+  /* 放在竖线左侧，箭头尖贴着线 */
+  const x = RX_LINE - 14;
+  const AW = 13.5, AH = 7.5;              // 与水平版一致的尺寸
+  const TIP = 4.5;
+  const SHAFT_W = AH * 0.62;              // 箭杆宽度（=水平版的箭杆高）
+
+  const X = v => x + v;                   // 局部 x（水平方向，始终向右）
+  const Y = v => yMid + S * v;            // 局部 y（沿行进方向）
+
+  const gEl = el('g', { 'class': 'train-arrow train-arrow-v' });
+
+  /* 箭头主体：把水平版的 x/y 互换 */
+  const half = SHAFT_W / 2;
+  const bodyPath =
+    'M ' + X(AH / 2 - half) + ' ' + Y(0) +
+    ' L ' + X(AH / 2 - half) + ' ' + Y(AW - TIP) +
+    ' L ' + X(0) + ' ' + Y(AW - TIP) +
+    ' L ' + X(AH / 2) + ' ' + Y(AW) +
+    ' L ' + X(AH) + ' ' + Y(AW - TIP) +
+    ' L ' + X(AH / 2 + half) + ' ' + Y(AW - TIP) +
+    ' L ' + X(AH / 2 + half) + ' ' + Y(0) + ' Z';
+  /* 拖尾几何 */
+  const tailH = 1.5, tailW = SHAFT_W;
+  const firstGap = 1.2, spacing = 1.1;
+  const tailFar = firstGap + 2 * (tailH + spacing) + tailH;
+
+  /* 扫光裁剪区：沿 Y 轴从尾端向箭头端扩张。
+     竖直版里前两个参数是矩形的水平范围（左/右），后两个是垂直两端（尾端/箭头端）。 */
+  const tailEndY = Y(-tailFar);
+  const tipY = Y(AW);
+  const clipUrl = makeSweepClip(X(0), X(AH), tailEndY, tipY, true);
+
+  /* ① 底层：原色墨绿 */
+  gEl.appendChild(el('path', { d: bodyPath, fill: '#125138' }));
+  for (let i = 0; i < 3; i++) {
+    const near = firstGap + i * (tailH + spacing);
+    gEl.appendChild(el('rect', {
+      x: X((AH - tailW) / 2), y: Y(-near - tailH),
+      width: tailW, height: tailH, rx: 0, fill: '#125138',
+    }));
+  }
+
+  /* ② 上层：橙色 + 裁剪硬边 */
+  gEl.appendChild(el('path', { d: bodyPath, fill: '#f0900f', 'clip-path': clipUrl }));
+  for (let i = 0; i < 3; i++) {
+    const near = firstGap + i * (tailH + spacing);
+    gEl.appendChild(el('rect', {
+      x: X((AH - tailW) / 2), y: Y(-near - tailH),
+      width: tailW, height: tailH, rx: 0,
+      fill: '#f0900f', 'clip-path': clipUrl,
+    }));
+  }
+  mapSvg.appendChild(gEl);
+}
+
+/* ---------- 站名 + 换乘标签 ---------- */
+function drawLabels() {
+  stLayer.innerHTML = '';
+
+  DRAW_ORDER.forEach(zh => {
+    const s = ST[zh];
+    if (!s) return;
+    const p = posOfName(zh);
+    const isUp = p.row === 'up';
+
+    /* 站名上下：太安在下、西丽湖在上；上排田贝起「上、下、上…」；下排西丽起「下、上、下…」 */
+    let above;
+    if (p.term) {
+      above = (zh === '西丽湖');
+    } else {
+      above = isUp ? (p.visual % 2 === 0) : (p.visual % 2 === 1);
+    }
+
+    /* 已过站 → 站名统一深灰 */
+    const step2 = state.dir === 'xili' ? -1 : 1;
+    const oi2 = ORDER.findIndex(s => s.zh === zh);
+    /* 已过 = 严格早于当前站；当前站本身保持黑色/彩色 */
+    const isPassed = (state.dir === 'xili') ? (oi2 > state.cur) : (oi2 < state.cur);
+    const node = document.createElement('div');
+    node.className = 'st' + (isPassed ? ' passed' : '');
+    node.style.left = (p.x / MAP_W * 100) + '%';
+    node.style.top = (p.y / MAP_H * 100) + '%';
+    node.style.transform = above
+      ? 'translate(-50%, calc(-100% - 10px))'
+      : 'translate(-50%, 10px)';
+    node.innerHTML =
+      '<span class="zh" style="font-size:' + (isUp ? 15 : 14) + 'px">' + s.zh + '</span>' +
+      '<span class="en" style="font-size:' + (isUp ? 7 : 6.4) + 'px">' + (s.en || '') + '</span>';
+    stLayer.appendChild(node);
+
+    /* 换乘标签（放圆点另一侧） */
+    if (s.tf && s.tf.length) {
+      const wrap = document.createElement('div');
+      wrap.style.position = 'absolute';
+      wrap.style.left = (p.x / MAP_W * 100) + '%';
+      wrap.style.top = (p.y / MAP_H * 100) + '%';
+      wrap.style.display = 'flex';
+      wrap.style.gap = '1px';
+      /* 车公庙转 1/9/11 三条线，原版是竖着一行一个 */
+      wrap.style.flexDirection = (zh === '车公庙') ? 'column' : 'row';
+      if (zh === '车公庙') wrap.style.alignItems = 'center';
+      /* 西丽湖：标签放上方（同站名侧）；太安：标签也放上方但离点更远（原版约 50px） */
+      /* 徽标放在站名对侧。普通单线路 gap=15；太安与车公庙是特例 */
+      let labAbove = !above;
+      let gap = 12;
+      if (zh === '西丽湖') { labAbove = true; gap = 12; }
+      if (zh === '太安')   { labAbove = true; gap = 22; }   // 特例：原图实测 22px，别动
+      if (zh === '车公庙') { gap = 10; }                    // 特例：三条线竖排
+      wrap.style.transform = labAbove
+        ? 'translate(-50%, calc(-100% - ' + gap + 'px))'
+        : 'translate(-50%, ' + gap + 'px)';
+      s.tf.forEach(id => {
+        const b = document.createElement('div');
+        /* 车公庙三条线竖排，徽标高度只有 2/3（宽度不变） */
+        b.className = 'tf' + (zh === '车公庙' ? ' compact' : '');
+        /* 已过站的徽标一起变深灰 */
+        b.style.background = isPassed ? '#5a5a5a' : (TF_COLORS[id] || '#666');
+        b.innerHTML = '<span class="zh">' + TF_NAMES[id] + '</span><span class="en">Line ' + id + '</span>';
+        wrap.appendChild(b);
+      });
+      stLayer.appendChild(wrap);
+    }
+
+  });
+}
+
+/* ---------- 左侧信息 ---------- */
+function updateLeft() {
+  const cur = ORDER[state.cur];
+  /* 方向行：左 = 前进方向终点站，右 = 另一端；箭头始终向右
+     往西丽湖 → 西丽湖 ▶ 太安
+     往太安   → 太安 ▶ 西丽湖 */
+  const west = ORDER[0];                     // 西丽湖
+  const east = ORDER[ORDER.length - 1];      // 太安
+  const heading = (state.dir === 'xili') ? west : east;   // 前进方向终点
+  const other   = (state.dir === 'xili') ? east : west;   // 另一端
+  const from = heading;   // 左
+  const to   = other;     // 右
+  document.getElementById('dirFromZh').textContent = from.zh;
+  document.getElementById('dirFromEn').textContent = from.en;
+  document.getElementById('dirToZh').textContent = to.zh;
+  document.getElementById('dirToEn').textContent = to.en;
+
+  const step = state.dir === 'xili' ? -1 : 1;
+  const ni = Math.max(0, Math.min(ORDER.length - 1, state.cur + step));
+  const next = ORDER[ni];
+
+  /* 下一站态：终点站 = 前进方向终点 */
+  document.getElementById('termZh').textContent = heading.zh;
+  document.getElementById('termEn').textContent = heading.en;
+
+  /* ④ 号框：下一站态=下一站 / 当前站态=当前站 */
+  const isPlatform = state.screen === 'platform';
+  const shown = isPlatform ? cur : next;
+  const v = document.getElementById('infoValZh');
+  v.textContent = shown.zh;
+  document.getElementById('infoValEn').textContent = shown.en;
+}
+
+/* 切换 下一站态 / 当前站态 */
+function applyScreenType() {
+  const isPlatform = state.screen === 'platform';
+  document.getElementById('cardTerm').classList.toggle('hide', isPlatform);
+  const doorCard = document.getElementById('cardDoor');
+  doorCard.classList.toggle('hide', !isPlatform);
+
+  /* 本侧 / 对侧开门：切文案 + 切样式 */
+  const opposite = (state.doorSide === 'opposite');
+  doorCard.classList.toggle('opposite', opposite);
+  const dz = document.getElementById('doorZh');
+  const de = document.getElementById('doorEn');
+  if (dz) dz.textContent = opposite ? '对侧开门' : '本侧开门';
+  if (de) de.textContent = opposite ? 'Get away from the other side' : 'Get away from this side';
+  document.getElementById('infoLabelZh').textContent = isPlatform ? '当前站' : '下一站';
+  document.getElementById('infoLabelEn').textContent = isPlatform ? 'The Station' : 'Next Station';
+
+}
+
+/* 2016 年复刻：日期/星期固定在 2016.10.28（星期五），只有时分走真实时钟
+   两个模式共用同一套日期显示，避免切换时不一致 */
+/* 两个模式共用同一个日期（统一显示）：2016-10-28 星期五 */
+const FIXED_DATE = {
+  car:      new Date(2016, 9, 28),
+  platform: new Date(2016, 9, 28),
+};
+const WEEK_ZH = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+const WEEK_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function tickClock() {
+  const dEl = document.getElementById('clockDate');
+  const tEl = document.getElementById('clockTime');
+  const wEl = document.getElementById('clockWeek');
+  if (!dEl) return;
+  const pad = n => String(n).padStart(2, '0');
+  const now = new Date();
+  const base = FIXED_DATE[state.screen] || FIXED_DATE.car;
+  const wd = base.getDay();
+  dEl.textContent = base.getFullYear() + '.' + pad(base.getMonth() + 1) + '.' + pad(base.getDate());
+  tEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  wEl.textContent = WEEK_ZH[wd] + ' ' + WEEK_EN[wd];
+}
+
+function startClock() {
+  tickClock();
+  setInterval(tickClock, 1000);
+}
+
+function render() {
+  applyScreenType();
+  if (typeof tickClock === 'function') tickClock();
+  drawMap();
+  drawLabels();
+  updateLeft();
+}
+
+/* ---------- 控件 ---------- */
+const selStation = document.getElementById('selStation');
+ORDER.forEach((s, i) => {
+  const o = document.createElement('option');
+  o.value = i; o.textContent = s.zh + ' ' + s.en;
+  selStation.appendChild(o);
+});
+selStation.value = state.cur;
+selStation.addEventListener('change', e => { state.cur = +e.target.value; render(); });
+document.getElementById('selDir').addEventListener('change', e => { state.dir = e.target.value; render(); });
+
+document.getElementById('btnCar').addEventListener('click', () => {
+  state.screen = 'car';
+  document.getElementById('btnCar').classList.add('on');
+  document.getElementById('btnStation').classList.remove('on');
+  render();
+});
+document.getElementById('selDoor').addEventListener('change', (e) => {
+  state.doorSide = e.target.value;
+  render();
+});
+document.getElementById('btnStation').addEventListener('click', () => {
+  state.screen = 'platform';
+  document.getElementById('btnStation').classList.add('on');
+  document.getElementById('btnCar').classList.remove('on');
+  render();
+});
+/* 前进状态机：
+   当前站态（停靠） → 下一站态（出发，站号不变）
+   下一站态（运行） → 当前站态（到站，站号 +step；到尽头自动掉头） */
+function stepForward() {
+  const LAST = ORDER.length - 1;
+  if (state.screen === 'platform') {
+    /* 停靠中 → 出发，站号不变。
+       但如果当前站正好是「该方向的终点站」（再往前就越界），
+       必须先掉头，否则下一站会越界、被 clamp 成自己。 */
+    const curStep = state.dir === 'xili' ? -1 : 1;
+    const ahead = state.cur + curStep;
+    if (ahead < 0 || ahead > LAST) {
+      state.dir = (state.dir === 'taian') ? 'xili' : 'taian';
+    }
+    state.screen = 'car';
+  } else {
+    /* 运行中 → 到站 */
+    let step = state.dir === 'xili' ? -1 : 1;
+    let next = state.cur + step;
+    if (next < 0 || next > LAST) {
+      /* 到尽头：掉头，再从当前站往新方向走一站 */
+      state.dir = (state.dir === 'taian') ? 'xili' : 'taian';
+      step = state.dir === 'xili' ? -1 : 1;
+      next = state.cur + step;
+      if (next < 0 || next > LAST) next = state.cur;   // 兜底
+    }
+    state.cur = next;
+    state.screen = 'platform';
+  }
+  document.getElementById('btnCar').classList.toggle('on', state.screen === 'car');
+  document.getElementById('btnStation').classList.toggle('on', state.screen === 'platform');
+  if (typeof selStation !== 'undefined' && selStation) selStation.value = state.cur;
+  const selDirEl = document.getElementById('selDir');
+  if (selDirEl) selDirEl.value = state.dir;
+  render();
+}
+
+document.getElementById('btnNext').addEventListener('click', stepForward);
+
+document.getElementById('btnAuto').addEventListener('click', function () {
+  if (state.auto) {
+    clearInterval(state.auto); state.auto = null; this.classList.remove('on'); this.textContent = '自动播放';
+  } else {
+    this.classList.add('on'); this.textContent = '暂停';
+    state.auto = setInterval(stepForward, 2800);
+  }
+});
+
+/* ---------- 自适应 ---------- */
+function fit() {
+  const screen = document.getElementById('screen');
+  const stage = document.querySelector('.stage');
+  /* 允许外部强制关闭缩放：?nofit=1（用于排查渲染伪影） */
+  if (location.search.indexOf('nofit=1') >= 0) {
+    screen.style.zoom = '';
+    screen.style.transform = '';
+    stage.style.height = '';
+    return;
+  }
+  const scale = Math.min(1, stage.clientWidth / 1200);
+  if (scale >= 0.999) {
+    screen.style.zoom = '';
+    screen.style.transform = '';
+    stage.style.height = '';
+    return;
+  }
+  /* 用 zoom 而不是 transform:scale —— 前者改布局尺寸，不会引入
+     非整数缩放采样，避免 overflow:hidden + border-radius 容器
+     在重绘时沿子像素边界出现贯穿式白条 */
+  screen.style.zoom = scale;
+  screen.style.transform = '';
+  stage.style.height = '';
+}
+window.addEventListener('resize', fit);
+
+startClock();
+selStation.value = state.cur;
+selDir.value = state.dir;
+render();
+fit();
+</script>
+</body>
+</html>

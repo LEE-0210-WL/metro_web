@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>深圳地铁 PIDS 还原 - 走进新天地·Railway</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===== 页面标题行（与 tools 一致） ===== */
+    .page-header {
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-subtitle-wrapper {
+      margin-top: 0;
+      margin-bottom: 32px;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    /* ===== 卡片网格（与 tools 一致） ===== */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: white;
+      border-radius: var(--r-lg);
+      padding: 20px;
+      box-shadow: var(--sh-md);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .tool-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .tool-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tool-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-title svg {
+      width: 16px;
+      height: 16px;
+      color: var(--c-text-3);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .tool-card:hover .tool-title svg {
+      opacity: 1;
+    }
+
+    .tool-description {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .tool-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tool-type {
+      font-size: var(--fs-sm);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .tool-type-testing { background: #fef3c7; color: #92400e; }
+    .tool-type-beta { background: #dbeafe; color: #1e40af; }
+    .tool-type-stable { background: #dcfce7; color: #166534; }
+    .tool-type-archived { background: #f3e8ff; color: #6b28d9; }
+
+    .tool-date {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+    }
+
+    /* ===== 提示框（与 tools 一致） ===== */
+    .info-box {
+      background: #f3e8ff;
+      border-radius: var(--r-lg);
+      padding: 16px 20px;
+      margin-top: 32px;
+    }
+
+    .info-box p {
+      color: #7c3aed;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* ===== 返回按钮（与 tools 一致） ===== */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: #111827; color: white;
+      text-decoration: none; border-radius: var(--r-sm);
+      font-weight: 500; font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .back-link:hover { background: #374151; }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 20px;
+      }
+
+      .page-header {
+        flex-wrap: wrap;
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-title {
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 10px;
+        font-size: 22px;
+      }
+      .page-title .back-link {
+        margin-left: auto;
+        font-size: 13px;
+        padding: 6px 12px;
+      }
+      .page-title .back-link svg { width: 15px; height: 15px; }
+    }
+  </style>
+  <link rel="stylesheet" href="page-header.css">
+  <link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <!-- ===== 标题行 ===== -->
+    <div class="page-header">
+      <h1 class="page-title">
+        深圳地铁 PIDS 还原
+        <a href="index" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回首页
+        </a>
+      </h1>
+    </div>
+
+    <!-- ===== 副标题 ===== -->
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">按实车照片 1:1 还原的深圳地铁列车乘客信息显示屏（PIDS）</p>
+    </div>
+
+    <!-- ===== 卡片网格 ===== -->
+    <div class="tools-grid">
+
+      <!-- 1 号线 -->
+      <a href="pids/line1.html" class="tool-card">
+        <div class="tool-icon" style="background: #dcfce7; color: #166534;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="16" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="10" y1="14" x2="10" y2="18"></line>
+            <line x1="14" y1="14" x2="14" y2="18"></line>
+            <path d="M18 8l-4 4-4-4-4 4"></path>
+          </svg>
+        </div>
+        <div class="tool-content">
+          <h3 class="tool-title">
+            1 号线 车内 PIDS
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </h3>
+          <p class="tool-description">深圳地铁 1 号线列车乘客信息显示屏，还原全线线路图、下一站提示与开门方向。</p>
+          <div class="tool-meta">
+            <span class="tool-type tool-type-beta">Beta</span>
+            <span class="tool-date">车内屏</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5 号线 -->
+      <a href="pids/line5.html" class="tool-card">
+        <div class="tool-icon" style="background: #f3e8ff; color: #6b28d9;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="16" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="10" y1="14" x2="10" y2="18"></line>
+            <line x1="14" y1="14" x2="14" y2="18"></line>
+            <path d="M18 8l-4 4-4-4-4 4"></path>
+          </svg>
+        </div>
+        <div class="tool-content">
+          <h3 class="tool-title">
+            5 号线 车内 PIDS
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </h3>
+          <p class="tool-description">深圳地铁 5 号线列车乘客信息显示屏，含换乘徽标、跑马灯开门提示与站点状态切换。</p>
+          <div class="tool-meta">
+            <span class="tool-type tool-type-beta">Beta</span>
+            <span class="tool-date">车内屏</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 7 号线（现行） -->
+      <a href="pids/line7.html" class="tool-card">
+        <div class="tool-icon" style="background: #dbeafe; color: #1e40af;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="16" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="10" y1="14" x2="10" y2="18"></line>
+            <line x1="14" y1="14" x2="14" y2="18"></line>
+            <path d="M18 8l-4 4-4-4-4 4"></path>
+          </svg>
+        </div>
+        <div class="tool-content">
+          <h3 class="tool-title">
+            7 号线 车内 PIDS
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </h3>
+          <p class="tool-description">深圳地铁 7 号线列车乘客信息显示屏现行版，按实车照片 1:1 还原停靠站态与下一站态。</p>
+          <div class="tool-meta">
+            <span class="tool-type tool-type-beta">Beta</span>
+            <span class="tool-date">车内屏</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 7 号线 2016 开通初期版 -->
+      <a href="pids/line7-2016.html" class="tool-card">
+        <div class="tool-icon" style="background: #fef3c7; color: #92400e;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="16" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="10" y1="14" x2="10" y2="18"></line>
+            <line x1="14" y1="14" x2="14" y2="18"></line>
+            <path d="M18 8l-4 4-4-4-4 4"></path>
+          </svg>
+        </div>
+        <div class="tool-content">
+          <h3 class="tool-title">
+            7 号线 2016 开通初期版
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </h3>
+          <p class="tool-description">2016 年 10 月 28 日 7 号线开通初期（西丽湖 ↔ 太安）的车内 PIDS 复刻，含旧版深铁标识与初代换乘样式。</p>
+          <div class="tool-meta">
+            <span class="tool-type tool-type-archived">历史版本</span>
+            <span class="tool-date">2016.10.28</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ===== 提示框 ===== -->
+    <div class="info-box">
+      <p>所有 PIDS 均按实车照片逐项核对还原，字体来自线路原厂字形，持续校对中。</p>
+    </div>
+  </main>
+</body>
+</html>

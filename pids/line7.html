@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../fonts/misans/misans.css">
+  <link rel="stylesheet" href="theme.css">
+<title>7号线 车内屏 PIDS</title>
+<style>
+  /* ===== 7 号线 PIDS 专用子集字体（自托管，避免回退到系统字体）=====
+     中文：Noto Sans SC（SIL OFL）子集，264 字（7 号线站名 + 福邻 + 号线 + 页面文案）
+     英文：TeX Gyre Heros（GUST Font License，Helvetica 的度量兼容克隆）子集，ASCII 0x20–0x7E */
+  /* 苹方 PingFang SC：只保留实际用到的 3 个字重（400/500/600）*/
+  @font-face { font-family: 'PIDS PF'; src: url('pf-400.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'PIDS PF'; src: url('pf-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+  @font-face { font-family: 'PIDS PF'; src: url('pf-600.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+  @font-face {
+    font-family: 'PIDS ZH7';
+    src: url('pids-zh.woff2') format('woff2');
+    font-weight: 100 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'PIDS ZH7';
+    src: url('pids-zh-bold.woff2') format('woff2');
+    font-weight: 600 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'PIDS EN';
+    src: url('pids-en.woff2') format('woff2');
+    font-weight: 100 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'PIDS EN';
+    src: url('pids-en-bold.woff2') format('woff2');
+    font-weight: 600 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+    background: #eef1f6; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px; gap: 14px;
+  }
+  .ctrl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1280px; }
+  .ctrl select, .ctrl button {
+    padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1;
+    background: #fff; font-family: inherit; font-size: 14px; color: #1f2937; cursor: pointer;
+  }/* 下拉框：跟站内同款 MiSans */
+  select {
+    padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1;
+    background: #fff; color: #1f2937; cursor: pointer;
+    font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    font-size: 14px;
+  }
+  select option {
+    font-family: 'MiSans', 'Noto Sans SC', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    font-size: 14px;
+  }
+  .ctrl button { background: #1e3a8a; color: #fff; border-color: #1e3a8a; font-weight: 600; }
+  .ctrl button.ghost { background: #fff; color: #1e3a8a; }
+  .ctrl button.on { background: #16a34a; border-color: #16a34a; }
+
+  .stage { width: 100%; max-width: 1280px; display: flex; justify-content: center; overflow: hidden; }
+
+  /* ===== 屏幕：1200 x 216（≈5.55:1，按实拍推算）===== */
+  .screen {
+    /* 线路字体配置：JS 会按线路覆盖这两个变量。
+       以后多线路合并时，只要换 --pids-zh-font / --pids-en-font 就能区分。 */
+    --pids-zh-font: 'PIDS PF', 'Microsoft YaHei', '微软雅黑', 'PingFang SC', sans-serif;
+    --pids-en-font: 'PIDS EN', 'Helvetica', Arial, 'Microsoft YaHei', sans-serif;
+    font-family: var(--pids-zh-font);
+    width: 1200px; height: 216px;
+    flex: 0 0 auto;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    background: linear-gradient(180deg, #f8faff 0%, #e9eefc 100%);
+    border: 3px solid #1a1a1a;
+    box-shadow: 0 10px 34px rgba(15,23,42,.18);
+    transform-origin: top center;
+    color: #111827;
+  }
+
+  /* ===== 左 1/3 ===== */
+  .left {
+    width: 41%;      /* 532px → 492px，再收窄 40px */
+    padding: 12px 18px 10px 10px;   /* 左内边距 18 → 10，停靠站左移 */
+    display: flex; flex-direction: column;
+    border-right: 2px solid #8d97aa;
+      position: relative;
+    background: linear-gradient(180deg, #fbfcff 0%, #eef2fd 100%);
+  }
+
+
+    /* 左面板与右侧信息区的分割线：与横向分割线同色 #8d97aa，右侧带轻微阴影 */
+/* 顶部品牌栏：浅灰底，底部深灰分割线（抵消左面板 padding 让底色和线贯穿整行） */
+  .brand-row {
+    display: flex; align-items: center; gap: 14px;
+    background: #e8ecf3;
+    margin: -12px -18px 0 -10px;
+    padding: 12px 18px 8px 10px;
+    border-bottom: 2px solid #8d97aa;
+  }
+  .metro-logo { display: flex; align-items: center; gap: 6px; line-height: 1; }
+  .metro-logo svg { width: 34px; height: 34px; }
+  .metro-logo .txt { display: flex; flex-direction: column; font-size: 17px; font-weight: 800; color: #0f9d58; letter-spacing: .02em; }
+  .metro-logo .txt em { font-style: normal; font-size: 8.5px; font-weight: 600; color: #6b7280; letter-spacing: .12em; margin-top: 2px; }
+  /* 主线路徽标：中文 微软雅黑 Bold，英文 Helvetica Bold（按实拍确认） */
+  /* 线路徽标：直角、无圆角；竖向加高、横向收窄；中英文之间无空格；文字视觉居中 */
+  .line-chip {
+    font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+    padding: 0 9px;
+    border-radius: 0;          /* 直角，无圆角 */
+    height: 38px;
+    box-sizing: border-box;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;       /* 视觉居中 */
+    justify-content: center;
+    gap: 0;                    /* 中英文之间无空格 */
+    color: #fff;
+  }
+  .line-chip .d {
+    font-style: normal;
+    font-family: var(--pids-en-font);   /* 中文部分的数字也用 Helvetica */
+    font-size: 23px;
+    font-weight: 700;
+    margin-right: 0;
+  }
+  .line-chip em {
+    font-style: normal;
+    font-family: var(--pids-en-font);   /* Helvetica 克隆 */
+    font-size: 23px;
+    font-weight: 700;                   /* 英文粗体 */
+    letter-spacing: .01em;
+    margin-left: 6px;                   /* 中英文之间留一个空格 */
+  }
+
+
+/* ===== 出口信息：左右分列 + 中间本侧开门 + 站厅线 ===== */
+    .exit-area { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: flex-end; margin-top: auto; padding-top: 2px; padding-bottom: 2px; min-height: 0; }
+
+    .exit-main {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px;
+    }
+    .exit-side { display: flex; flex-direction: column; gap: 4px; }
+    .exit-side.left  { align-items: flex-start; }
+    .exit-side.right { align-items: flex-end; }   /* 整体右对齐 */
+    .exit-side
+
+    .exit-line {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Microsoft YaHei Light', 'Microsoft YaHei', '微软雅黑', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      color: #374151;
+      white-space: nowrap;
+    }
+    .exit-tag {
+      width: 40px; box-sizing: border-box; text-align: center;
+      padding: 1px 0; border-radius: 3px;
+      background: #f0a500; color: #ffffff;
+      font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+      font-size: 12.5px; font-weight: 700;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+/* 中间：本侧开门（浅灰底板 + 两扇门 + 开门动画）*/
+    .door-info { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; }
+
+    .door-plate {
+      position: relative;
+      background: #dfe4ec;
+      border-radius: 5px;
+      width: 152px; box-sizing: border-box;
+      padding: 42px 8px 4px;      /* 顶部留给门 */
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+    }
+    .door-pair {
+      position: absolute;
+      left: 50%; top: 3px;
+      transform: translateX(-50%);
+      display: flex;
+      height: 34px;
+      align-items: flex-start;
+    }
+    .door {
+      width: 17px; height: 30px;
+      background: #1e5aa8;
+      position: relative;
+      overflow: hidden;
+    }
+    .door.d-l { border-radius: 3px 0 0 3px; animation: doorSlideL 2.6s linear infinite; }
+    .door.d-r { border-radius: 0 3px 3px 0; animation: doorSlideR 2.6s linear infinite; }
+    .door .win {
+      position: absolute; left: 3px; right: 3px; top: 4px; height: 9px;
+      background: #ffffff;
+      border-radius: 1px;
+    }
+
+    .door-cn {
+      font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+      font-weight: 700; font-size: 15px; color: #111827; line-height: 1.1;
+    }
+    .door-en {
+      font-family: var(--pids-en-font);
+      font-weight: 400; font-size: 10px; color: #374151;
+      line-height: 1.1; margin-top: -1px; text-align: center;
+    }
+
+    /* 开门动画：滑开到位置 → 停 0.5s → 瞬间切回（无返程动画）*/
+    @keyframes doorSlideL {
+      0%          { transform: translateX(0); }
+      30%         { transform: translateX(-9px); }
+      49%         { transform: translateX(-9px); }
+      49.01%,100% { transform: translateX(0); }
+    }
+    @keyframes doorSlideR {
+      0%          { transform: translateX(0); }
+      30%         { transform: translateX(9px); }
+      49%         { transform: translateX(9px); }
+      49.01%,100% { transform: translateX(0); }
+    }
+
+    /* 站厅横线 */
+    .concourse-line {
+      height: 2px;
+      background: #9aa3b2;
+      margin: 16px 0 2px;
+      flex: 0 0 auto;
+    }
+
+    /* ===== 站台 + 3D 风格列车（6 与 1 为车头）===== */
+    .car-guide { position: relative; margin-top: 6px; height: 76px; }
+
+  /* 车头方向箭头：深灰，2 个，指向右边 */
+  .head-arrows {
+    position: absolute;
+    top: 70%;
+    right: 2px;
+    transform: translateY(-50%);
+    z-index: 5;
+    pointer-events: none;
+    line-height: 0;
+  }
+  .head-arrows svg { display: block; }
+
+    /* 站台地板：大的圆角梯形（用 perspective + rotateX 把圆角矩形压成梯形，透视感）*/
+    .platform-floor {
+      position: absolute;
+      left: -8px; right: -8px; bottom: 28px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f2f6fc 0%, #dae3f1 55%, #b9c6da 100%);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,.95), inset 0 -3px 6px rgba(15,23,42,.10);
+      z-index: 1;
+      transform: perspective(240px) rotateX(60deg);
+      transform-origin: 50% 100%;
+    }
+
+    /* 站台正面：狭长矩形，作为站台的「高度」*/
+    .platform-face {
+      position: absolute;
+      left: -2px; right: -2px; bottom: 0;
+      height: 30px;
+      border-radius: 5px;
+      background: linear-gradient(180deg, #cdd8e8 0%, #b4c1d6 46%, #95a3bc 100%);
+      z-index: 2;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.65),
+        inset 0 -3px 5px rgba(15,23,42,.20),
+        0 2px 6px rgba(15,23,42,.24);
+    }
+
+    .train {
+      position: absolute; left: 36px; right: 36px; bottom: 0;   /* 底部与站台高度底边平齐 */
+      z-index: 3;                       /* 列车在最上层 */
+      display: flex; align-items: flex-end; gap: 3px; height: 42px;
+    }
+
+    .car {
+      flex: 1 1 0;
+      height: 100%;
+      border-radius: 8px 8px 3px 3px;
+      background: linear-gradient(180deg,
+        #fdfefe 0%, #eef3fa 28%, #ccd6e6 64%, #9dabc3 100%);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.95),
+        inset 0 -3px 4px rgba(15,23,42,.24),
+        inset 2px 0 3px rgba(255,255,255,.60),
+        inset -2px 0 3px rgba(15,23,42,.14),
+        0 2px 4px rgba(15,23,42,.24);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--pids-en-font);   /* 车厢编号 Helvetica Bold */
+      font-size: 22px; font-weight: 700;
+      color: #0b1220;
+      letter-spacing: -.01em;
+      position: relative;
+    }
+    /* 车头：6 在左（左上大圆角），1 在右（右上大圆角），左右对称 */
+    /* 当前车厢：两态硬切换（step-end 无过渡），慢速闪烁 */
+    .car.current {
+      animation: carBlink 2.6s step-end infinite;   /* step-end = 直接跳变，无渐变 */
+      z-index: 4;
+    }    @keyframes carBlink {
+      0%, 50% {                     /* 状态一：逐字复制 .car 的样式，与普通车厢像素级一致 */
+        font-size: 22px;
+        background-image: linear-gradient(180deg,
+          #fdfefe 0%, #eef3fa 28%, #ccd6e6 64%, #9dabc3 100%);
+        background-color: transparent;
+        color: #0b1220;
+        box-shadow:
+          inset 0 2px 0 rgba(255,255,255,.95),
+          inset 0 -3px 4px rgba(15,23,42,.24),
+          inset 2px 0 3px rgba(255,255,255,.60),
+          inset -2px 0 3px rgba(15,23,42,.14),
+          0 2px 4px rgba(15,23,42,.24);
+      }
+      50.01%, 100% {                /* 状态二：整个形状深灰，编号白色 */
+        font-size: 32px;   /* 状态二字号大于状态一 */
+        background-image: none;
+        background-color: #3b4150;
+        color: #ffffff;
+        box-shadow:
+          inset 0 2px 0 rgba(255,255,255,.20),
+          inset 0 -3px 4px rgba(0,0,0,.30),
+          0 2px 4px rgba(15,23,42,.24);
+      }
+    }    .car.head-left  { border-radius: 42px 8px 3px 3px; }
+    .car.head-right { border-radius: 8px 42px 3px 3px; }
+
+  .transfer-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; min-height: 34px; }
+  /* 可换乘行：全部苹方 Regular，灰色；中英文基线对齐 */
+  .tr-label {
+    display: inline-flex;
+    align-items: baseline;      /* 中英文基线对齐（水平对齐） */
+    gap: 6px;
+    font-family: var(--pids-zh-font);
+    font-size: 21px;
+    font-weight: 400;
+    color: #4b5563;             /* 灰色 */
+  }
+  .tr-label em {
+    font-style: normal;
+    font-family: var(--pids-zh-font);
+    font-size: 15px;
+    font-weight: 400;
+    color: #6b7280;             /* 英文浅一档的灰 */
+    margin-left: 0;
+    /* baseline 只对基线；CJK 字形在字框里偏上，英文视觉偏低，上移对齐 */
+    transform: translateY(-2px);
+  }
+  .tr-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+  /* 换乘徽标：紧凑两行（大数字 + 号线 / LineN，后两者同字号） */
+  /* 换乘徽标：紧凑两行，内容紧贴矩形四边 */
+  .tr-chip {
+    padding: 1px 4px 1px 3px;
+    border-radius: 3px;   /* 原图圆角很小，放大才看得清 */
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    line-height: 1;
+      height: 34px;               /* 写死高度，双位线路也不变矮 */
+      box-sizing: border-box;
+    color: #fff;
+    overflow: hidden;
+  }
+  /* 数字外包定宽容器：scaleX 只改视觉不改布局宽，需要把容器宽度同步收窄，保持紧凑 */
+  .tr-chip .num-wrap {
+    display: block;
+    overflow: hidden;
+    flex: 0 0 auto;
+    margin-right: -1.6px; /* 正好抵消数字字形自带的右侧边距，净间距 = 0 */
+  }
+  .tr-chip .num {
+    display: block;
+    font-size: 34px;
+    font-weight: 700;
+    -webkit-text-stroke: 0.42px currentColor;   /* 加半档粗 */
+    line-height: .82;
+    letter-spacing: -.02em;
+    transform: scaleX(0.82);          /* 横向压扁 */
+    transform-origin: left center;
+    /* 大数字：苹方加粗 */
+    font-family: var(--pids-zh-font);
+  }
+  .tr-chip .txt {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+  }
+  .tr-chip .txt i.cn {
+    font-style: normal;
+    font-family: var(--pids-zh-font);   /* 苹方 */
+    font-size: 17px;
+    font-weight: 400;                   /* 常规 */
+    line-height: 1.05;
+    display: block;
+    white-space: nowrap;
+  }
+  /* 英文：放进定宽裁切容器，避免 scaleX 压缩后布局宽度残留造成右侧空白 */
+  .tr-chip .en-wrap {
+    display: flex;
+    justify-content: center;   /* LineN 在「号线」下方居中 */
+    align-items: center;
+    overflow: hidden;
+    line-height: 1.05;
+  }
+  .tr-chip .en-wrap i.en {
+    font-style: normal;
+    font-family: var(--pids-zh-font);   /* 英文也用苹方的拉丁 */
+    font-size: 13px;                    /* 基准字号，JS 会按「号线」宽度微调 */
+    font-weight: 400;
+    line-height: 1.05;
+    display: block;
+    white-space: nowrap;
+    transform-origin: left center;
+  }
+  .tr-none { font-size: 12px; color: #9ca3af; font-weight: 600; }
+
+  /* 两列：状态 + 站名，各列中文上、英文下、各自居中 */
+  /* 停靠站列贴左（英文 T 贴边），站名列占剩余空间并居中 */
+  .station-block {
+    margin-top: auto; padding-bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    column-gap: 0;
+    box-sizing: border-box;
+  }
+  #stateCol {
+    flex: 0 0 auto;          /* 按内容宽度，贴在左边 */
+    align-items: center;      /* 中文/英文互相居中 → 英文 T 突到最左 */
+  }
+  #nameCol {
+    flex: 1 1 auto;           /* 占剩余全部空间 */
+    align-items: center;      /* 站名在剩余空间里居中 */
+  }
+  .st-col { display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 0; }
+  /* 田贝那列中英文行距更大（实拍如此） */
+  #nameCol { gap: 7px; }
+  #stateCol { gap: 0; }
+  /* 「停靠站 / 田贝」这一排：微软雅黑，两列同字号
+     原图实测：停靠站墨迹高 104px、田贝 107px、每亩字宽 133px vs 127px → 同字号 */
+  .st-cn {
+    font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;   /* 微软雅黑 */
+    font-size: 44px; font-weight: 700; color: #111827;
+    line-height: 1.04; letter-spacing: 0; white-space: nowrap;
+  }
+  .st-cn.big { font-size: 44px; }
+  /* 英文统一常规字重 */
+  /* 英文：Helvetica 克隆没有 Medium 字重（只有 400/700），
+     用 text-stroke 描边模拟「中粗」，否则 500 会回退成常规、600 会跳成粗体 */
+  .st-en {
+    font-family: var(--pids-en-font);
+    font-size: 27px; font-weight: 400;
+    -webkit-text-stroke: 0.34px currentColor;
+    color: #111827; line-height: 1.03; white-space: nowrap;
+  }
+  .st-en.big { font-size: 27px; font-weight: 400; -webkit-text-stroke: 0.34px currentColor; }
+
+  /* ===== 右 2/3 ===== */
+  .right { flex: 1; display: flex; flex-direction: column; min-width: 0; background: linear-gradient(180deg, #fbfcff 0%, #eef2fd 100%); }
+
+  /* 终点站条：贴屏幕顶边，右侧留一点距离，深灰底，全白字 */
+    /* 终点站条：固定长度，不随文字变化；内部各组固定位置，左对齐 */
+    .terminus {
+      align-self: flex-end;
+      margin-right: 12px;
+      margin-top: 0;
+      height: 44px; flex: 0 0 44px;   /* 条高收窄，上下留白减少 */
+      width: 500px;                    /* ← 固定长度（右侧留约 3px 余量）*/
+      box-sizing: border-box;
+      padding: 0 8px;                  /* ← 内边距再收窄，文字周围留白更少 */
+      display: flex; align-items: center;
+      gap: 0;                          /* ← 间距由各组固定宽度控制 */
+      white-space: nowrap;          /* 只允许一行，绝不换行 */
+      background: #3b4150;
+    }
+    /* 「终点站 Terminus」固定占位，让站名起点位置恒定 */
+    .terminus .t-label { flex: 0 0 200px; }   /* 固定占位，与站名组之间留出间隔 */
+    .terminus .t-name  { flex: 1 1 auto; white-space: nowrap; min-width: 0; }
+  .terminus .t-group { display: flex; align-items: baseline; gap: 7px;
+    white-space: nowrap;             /* 组内也禁换行 */
+    flex-wrap: nowrap; }
+    /* 强制单行：终点站条内所有元素都不许换行（含 CJK 断字） */
+    .terminus, .terminus * {
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      overflow-wrap: normal !important;
+      word-wrap: normal !important;
+      flex-wrap: nowrap !important;
+    }
+  /* 中文字号两处一致 */
+  .terminus .t-label,
+  .terminus .t-name b {
+    font-family: var(--pids-zh-font);   /* 苹方 */
+    font-size: 24px;
+    font-weight: 600;                   /* 中黑加粗（Semibold）*/
+    letter-spacing: .02em;
+    color: #fff;
+  }
+  /* 英文只比中文小一点点 */
+  .terminus .t-label em,
+  .terminus .t-name em {
+    font-style: normal;
+    font-family: var(--pids-en-font);   /* Helvetica */
+    font-size: 20px;
+    font-weight: 700;                   /* Bold */
+    color: #fff;
+  }
+  /* 「终点站 / Terminus」标签组：同步加大加粗 */
+  .terminus .t-label {
+    font-family: var(--pids-zh-font);
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .terminus .t-label em {
+    font-style: normal;
+    font-family: var(--pids-en-font);
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ===== 下一站态：局部线路图 ===== */
+  .body { flex: 1; position: relative; overflow: hidden; }
+  #bodyNext { padding: 3px 14px 2px; display: flex; align-items: stretch; }
+
+    /* 当前站：黄色圆角药丸 + 深色加号 */
+
+    /* 已过站：灰色实心圆 */
+
+    /* 未到站：白底彩色圆环（可含换乘加号） */
+
+    /* 站点徽标容器 */
+
+    /* 当前站站名更大 */
+
+
+
+    /* ===== 局部线路图 · 第二步：线路色粗线 + 放大圆点（位置锁死） ===== */
+    /* ================= 局部线路图（下一站态） ================= */
+
+    /* 一条整线路横条 */
+
+    /* 5 等分站位列 */
+
+    /* ===== 站点标记 ===== */
+
+    /* 换乘站药丸 */
+
+    /* 药丸内横线：当前线路色，压在竖线之上 */
+    /* 药丸内竖线：每条对应一条换乘线路 */
+    /* 已过换乘站：横线深灰 */
+
+    /* ===== 站名 ===== */
+    /* minimap：只有已过站的英文是深灰，其余全黑 */
+
+    /* ===== 换乘线路数字徽标 ===== */
+    /* 双位线路：收紧字距 + 右 padding 补偿，视觉居中 */
+
+    /* ===== 「下一站 Next Station」标签（仅普通站当前站显示）===== */
+
+    /* ===== 黄色箭头（SVG 90° chevron，两端水平切面）===== */
+    @keyframes chevBlink {
+      0%, 49.9% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* ===== 停靠站态：出口 + 车厢导引 ===== */
+  #bodyStop {
+      padding: 0 16px 8px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;  /* 出口区占剩余空间居中，列车自然在下方 */
+      position: relative;          /* 给 .exit-row 的绝对定位做参照 */
+    }
+
+
+  .info { font-size: 12.5px; color: #6b7280; text-align: center; line-height: 1.7; }
+  .info b { color: #1f2937; }
+
+    /* ================= 局部线路图（下一站态） ================= */
+    .mini-map { position: relative; width: 100%; height: 100%; }
+
+    .mm-track {
+      position: absolute; top: 50%; height: 18px;
+      transform: translateY(-50%);
+      border: 0; border-radius: 0; box-shadow: none;
+    }
+
+    .mm-row { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; }
+    .mm-node { position: relative; flex: 1 1 0; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+
+    .mm-dot {
+      flex: 0 0 40px; width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #d9dfee;
+      border: 4px solid #b3bcd2;
+      box-sizing: border-box;
+      box-shadow: none;
+      z-index: 2;
+    }
+    .mm-dot.c-yellow { flex: 0 0 46px; width: 46px; height: 46px; background: #ffd84d; }
+    .mm-dot.c-green  { background: #7cdd6a; }
+
+    .mm-dot.xfer {
+      flex: 0 0 70px; width: 70px; height: 40px;
+      border-radius: 20px;
+      background: #d9dfee;
+      border: 4px solid #b3bcd2;
+      box-sizing: border-box;
+      box-shadow: none;
+      position: relative;
+      z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px;
+    }
+    .mm-dot.xfer.c-yellow { flex: 0 0 80px; width: 80px; height: 46px; background: #ffd84d; border-radius: 23px; }
+    .mm-dot.xfer.c-green  { background: #7cdd6a; }
+
+    .mm-dot.xfer::before {
+      content: '';
+      position: absolute;
+      left: 9px; right: 9px; top: 50%;
+      height: 6px; margin-top: -3px;
+      background: var(--c-line, #0032A0);
+      border-radius: 0;
+      z-index: 2;
+    }
+    .mm-dot.xfer i {
+      display: block; width: 6px; height: 26px;
+      border-radius: 0;
+      position: relative; z-index: 1;
+    }
+    .mm-node.passed .mm-dot.xfer::before { background: #6b7280; }
+
+    .mm-name {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      bottom: calc(50% + 26px);
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      white-space: nowrap; text-align: center;
+      pointer-events: none; z-index: 3;
+    }
+    .mm-cn {
+      font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+      font-weight: 700; font-size: 28px; color: #111827; line-height: 1.1;
+    }
+    .mm-en {
+      font-family: var(--pids-en-font);
+      font-weight: 400;
+      -webkit-text-stroke: 0.34px currentColor;
+      font-size: 17px; color: #111827; line-height: 1.1; letter-spacing: .01em;
+    }
+        /* minimap：已过站的站名（中英）都变深灰 */
+  .mm-node.passed .mm-cn,
+  .mm-node.passed .mm-en { color: #6b7280; }
+
+    .mm-badges {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: calc(50% + 26px);
+      display: flex; gap: 4px;
+      white-space: nowrap; pointer-events: none; z-index: 3;
+    }
+    .mm-badge {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 3px;
+      font-family: var(--pids-zh-font);
+      font-weight: 500; font-size: 30px;
+      letter-spacing: -.05em; line-height: 1;
+      box-sizing: border-box;
+    }
+
+    /* 当前站下方的「下一站 Next Station」深灰标签（仅普通站显示）*/
+    .mm-next-tag {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: calc(50% + 9px);    /* 上边与线路横线下边重合（线路 18px → 下沿 +9）*/
+      display: flex; flex-direction: column; align-items: center;
+      background: #3b4150;
+      border-radius: 4px;
+      padding: 3px 14px 4px;
+      white-space: nowrap;
+      color: #ffffff;
+      z-index: 1;              /* 在圆点(2)之下，圆点压住标签顶部 */
+      pointer-events: none;
+    }
+    .mm-next-tag b {
+      font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: .02em;
+    }
+    .mm-next-tag i {
+      font-style: normal;
+      font-family: var(--pids-en-font);
+      font-weight: 400;
+            font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: .01em;
+    }
+    /* 双位线路（10/11/14…）：缩小字号 + 收紧字距，避免右侧溢出 */
+    .mm-badge.wide {
+      font-size: 30px;          /* 与个位数一致，视觉大小相同 */
+      letter-spacing: -.12em;   /* 收紧字距（约 -3.6px），两位数挤进 32px */
+      /* 负字距让文字盒比字形窄 → 字形视觉偏右；用右侧 padding 把内容推左回来 */
+      padding-left: 0;
+      padding-right: 5.4px;
+    }
+    /* 「11」两个字都是窄字，占宽小，保持原来的补偿量 */
+    .mm-badge.wide.x11 { padding-right: 3.6px; }
+
+  /* 当前（黄色）站徽标：等比放大 1.14 倍（黄药丸 80x46 vs 灰药丸 70x40）*/
+  .mm-badge.cur {
+    width: 36.5px; height: 36.5px;
+    font-size: 34px;
+    border-radius: 3.4px;
+  }
+  .mm-badge.cur.wide {
+    font-size: 34px;
+    letter-spacing: -.12em;
+    padding-right: 6.2px;
+  }
+  .mm-badge.cur.wide.x11 {
+    padding-right: 4.1px;
+  }
+
+    .mm-chev {
+      position: absolute; top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5; pointer-events: none;
+      animation: chevBlink 1s steps(1, end) infinite;
+    }
+    .mm-chev svg { display: block; }
+    @keyframes chevBlink {
+      0%, 49.9% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+  
+
+
+
+
+  /* 出口区：子元素一律无边框/无轮廓（防止残留竖线）*/
+  .exit-area, .exit-row, .exit-main, .exit-side, .exit-line, .door-info {
+    border: 0 !important;
+    outline: 0 !important;
+    background: none !important;      /* 全透明，只显示面板本身的背景 */
+    box-shadow: none !important;
+  }
+  /* 对侧开门：灰色门 + 红色禁止符号 */
+  .door-pair.is-gray .door { background: #98a2b3; animation: none; }
+  .door-pair.is-gray .win  { background: #f0f2f5; }
+  .door-pair .no-open {
+    position: absolute;
+    left: 50%; top: 15px;
+    width: 28px; height: 28px;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* 门底板保持浅灰 */
+  .door-plate {
+    border: 0 !important;
+    outline: 0 !important;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="ctrl">
+  
+  
+  <select id="stSel" onchange="render()"></select>
+  <select id="dirSel" onchange="render()">
+    <option value="-1">往 深大丽湖</option>
+    <option value="1">往 太安</option>
+  </select>
+    <select id="carSel" onchange="onCarChange()" title="当前车厢"></select>
+  <select id="doorSideSel" onchange="onDoorSideChange()" title="开门方向">
+    <option value="1">本侧开门</option>
+    <option value="0">对侧开门</option>
+  </select>
+  <button onclick="prev()">上一站</button>
+  <button onclick="next()">下一站</button>
+  <button id="modeBtn" class="ghost" onclick="toggleMode()">切换：停靠站态</button>
+  <button id="autoBtn" class="ghost" onclick="toggleAuto()">自动</button>
+</div>
+
+<div class="stage">
+  <div class="screen" id="screen">
+    <div class="left">
+      <div class="brand-row">
+        <span class="metro-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0f9d58" stroke-width="2.4" stroke-linecap="round">
+            <path d="M6 4v16M18 4v16M6 12h12"/><path d="M3 8h3M3 16h3M18 8h3M18 16h3"/>
+          </svg>
+          <span class="txt">深圳地铁<em>SHENZHEN METRO</em></span>
+        </span>
+        <span class="line-chip" id="lineChip"><i class="d">7</i>号线<em>Line7</em></span>
+      </div>
+
+      <div class="transfer-row" id="transferRow"></div>
+
+      <div class="station-block">
+        <div class="st-col" id="stateCol">
+          <span class="st-cn" id="stateCn">停靠站</span>
+          <span class="st-en" id="stateEn">This Station</span>
+        </div>
+        <div class="st-col" id="nameCol">
+          <span class="st-cn big" id="stCn">田贝</span>
+          <span class="st-en big" id="stEn">Tianbei</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="terminus">
+        <span class="t-group t-label">终点站<em>Terminus</em></span>
+        <span class="t-group t-name"><b id="termCn">深大丽湖</b><em id="termEn">SZU Lihu Campus</em></span>
+      </div>
+      <div class="body" id="bodyNext"><div class="mini-map" id="miniMap"></div></div>
+      <div class="body" id="bodyStop">
+        <div class="exit-area"><div class="exit-row" id="exitRow"></div></div>
+        <div class="car-guide" id="carGuide"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="info" id="infoBar">—</div>
+
+<script src="all-lines-enhanced.js"></script>
+<script src="pids-en.js"></script>
+<script>
+const LINE_ID = '7';
+const EN = window.PIDS_EN || {};
+
+/* 线路编组（几 A）：决定车厢数量。7 号线 = 6A 编组 */
+const TRAIN_FORMATION = { '7': 6 };
+let currentCar = 1;                 // 当前车厢，默认 1
+let doorSide = 1;                  // 1 = 本侧开门，0 = 对侧开门
+
+function onDoorSideChange() {
+  const sel = document.getElementById('doorSideSel');
+  doorSide = parseInt(sel && sel.value, 10);
+  renderExits();
+}
+
+function onCarChange() {
+  const sel = document.getElementById('carSel');
+  currentCar = parseInt(sel && sel.value, 10) || 0;
+  renderCarGuide();
+}
+
+
+// 已开通线路白名单（截至 2026-10）。五期未开通线路不在实物屏幕上显示
+const OPENED_LINES = new Set(['1','2','3','4','5','6','6z','7','8','9','10','11','12','13','14','16','20']);
+const isOpenedLine = lid => OPENED_LINES.has(String(lid).toLowerCase());
+
+/* ===== 各线路 PIDS 视觉配置 =====
+   以后把多条线路的 PIDS 合并成一个页面时，靠这里的配置区分各自的字体等风格。
+   fonts.zh = 中文站名/标签字体，fonts.en = 英文/数字字体。 */
+/* 候选字体（都是系统字体，无版权问题） */
+const FONT_OPTIONS = {
+  zh: {
+    pf:         "'PIDS PF', 'PingFang SC', 'PingFang SC Medium', 'Microsoft YaHei', sans-serif",
+    heiti7:     "'PIDS ZH7H', 'PIDS ZH7', 'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    pids7:      "'PIDS ZH7', 'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    heiti:      "'Heiti SC', 'Heiti SC Medium', 'STHeiti', 'STHeitiSC-Medium', '华文黑体', 'Microsoft YaHei', sans-serif",
+    heiti_l:    "'Heiti SC Light', 'STHeitiSC-Light', 'Heiti SC', '华文黑体', 'Microsoft YaHei', sans-serif",
+    harmony_m:  "'HarmonyOS Sans SC Medium', 'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    harmony:    "'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif",
+    harmony_l:  "'HarmonyOS Sans SC Light', 'Noto Sans SC', 'Microsoft YaHei', sans-serif",
+    noto:       "'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif",
+    pingfang:   "'PingFang SC', '苹方-简', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif",
+    dengxian_l: "'DengXian Light', 'DengXian', 'Microsoft YaHei', sans-serif",
+    dengxian:   "DengXian, '等线', 'Microsoft YaHei', sans-serif",
+    simhei:     "SimHei, '黑体', 'Microsoft YaHei', sans-serif",
+    yahei:      "'Microsoft YaHei', '微软雅黑', sans-serif",
+    song:       "SimSun, '宋体', serif"
+  },
+  en: {
+    pids_en:   "'PIDS EN', Helvetica, 'Helvetica Neue', Arial, sans-serif",
+    helvetica: "Helvetica, 'Helvetica Neue', Arial, sans-serif",
+    arial:     "Arial, 'Helvetica Neue', sans-serif",
+    segoe:     "'Segoe UI', Tahoma, Arial, sans-serif",
+    yahei:     "'Microsoft YaHei', Arial, sans-serif"
+  }
+};
+
+/* 各线路 PIDS 的默认字体（线路合并后靠这里区分） */
+const LINE_STYLE = {
+  '7': { fonts: { zh: 'pf', en: 'pids_en' } }
+  /* '1': { fonts: { zh: 'yahei', en: 'arial' } }, */
+};
+
+function applyLineStyle() {
+  const cfg = LINE_STYLE[LINE_ID] || {};
+  const f = cfg.fonts || {};
+  const zs = document.getElementById('zhFontSel');
+  const es = document.getElementById('enFontSel');
+  if (zs && f.zh) zs.value = f.zh;
+  if (es && f.en) es.value = f.en;
+
+  const screen = document.getElementById('screen');
+  screen.dataset.line = LINE_ID;
+  applyFonts();
+}
+
+function applyFonts() {
+  const zs = document.getElementById('zhFontSel');
+  const es = document.getElementById('enFontSel');
+  const screen = document.getElementById('screen');
+  // 字体下拉已移除，固定用苹方 + TeX Gyre Heros
+  const zh = FONT_OPTIONS.zh[(zs && zs.value) || 'pf'] || FONT_OPTIONS.zh.pf;
+  const en = FONT_OPTIONS.en[(es && es.value) || 'pids_en'] || FONT_OPTIONS.en.pids_en;
+  screen.style.setProperty('--pids-zh-font', zh);
+  screen.style.setProperty('--pids-en-font', en);
+}
+
+function onFontChange() {
+  applyFonts();
+  fitChipText();
+}
+
+/* ===== 对比色（与主页 / 百科页同一算法）===== */
+function getContrastText(hex) {
+  let r, g, b;
+  hex = String(hex || '').trim();
+  let m6 = /^#?([a-f\d]{6})$/i.exec(hex);
+  let m3 = /^#?([a-f\d]{3})$/i.exec(hex);
+  if (m6) { r = parseInt(m6[1].slice(0,2),16); g = parseInt(m6[1].slice(2,4),16); b = parseInt(m6[1].slice(4,6),16); }
+  else if (m3) { r = parseInt(m3[1][0]+m3[1][0],16); g = parseInt(m3[1][1]+m3[1][1],16); b = parseInt(m3[1][2]+m3[1][2],16); }
+  else { return '#ffffff'; }
+  const brightness = 0.299*r + 0.587*g + 0.114*b;
+  return brightness > 130 ? '#111827' : '#ffffff';
+}
+
+/* ===== 出口信息（目前仅田贝站有实拍数据）===== */
+const EXITS = {
+  '田贝': [
+    { id: 'A', dest: '翠竹公园', stair: true },
+    { id: 'B', dest: '太安路', stair: true },
+    { id: 'E', dest: '深圳市翠北实验小学', stair: false },
+    { id: 'F', dest: '阳光天地家园', stair: false }
+  ]
+};
+
+const ICON = {
+  stairs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h4v-4h4v-4h4V8h4"/><circle cx="17" cy="4" r="1.6"/><path d="M17 6v2"/></svg>',
+  escalator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h4l9-11h5"/><circle cx="17" cy="4.5" r="1.5"/></svg>',
+  elevator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 3v18"/><path d="M8.5 8l1.2-1.6L10.9 8"/><path d="M15.5 16l-1.2 1.6L13.1 16"/></svg>',
+  wc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="4" r="1.6"/><path d="M8 6.5v6m-2 0v6m2-6v6m2-12h-4"/><circle cx="17" cy="4" r="1.6"/><path d="M17 6.5v5m-2 7l1.5-6h1L19 18"/></svg>',
+  exitArrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h13"/><path d="M12 7l5 5-5 5"/></svg>'
+};
+
+let lineData, stations, color, dir = -1, idx = 27, mode = 'stop', autoTimer = null;
+
+function init() {
+  lineData = getEnhancedLineData(LINE_ID);
+  stations = lineData.stationList;
+  color = lineData.color;
+
+  const chip = document.getElementById('lineChip');
+  chip.style.background = color;
+  chip.style.color = getContrastText(color);
+
+  const sel = document.getElementById('stSel');
+  sel.innerHTML = '';
+  stations.forEach((n, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = n;
+    sel.appendChild(o);
+  });
+  sel.value = idx;
+  document.getElementById('dirSel').value = dir;
+  applyLineStyle();
+  // 填充车厢下拉（按编组数量）
+  const carSelEl = document.getElementById('carSel');
+  if (carSelEl) {
+    const n = TRAIN_FORMATION[LINE_ID] || 6;
+    let opts = '';
+    for (let c = n; c >= 1; c--) opts += '<option value="' + c + '">车厢 ' + c + '</option>';
+    carSelEl.innerHTML = opts;
+    carSelEl.value = currentCar;
+  }
+  render();
+  fitScreen();
+}
+
+function render() {
+  idx = parseInt(document.getElementById('stSel').value);
+  dir = parseInt(document.getElementById('dirSel').value);
+  const name = stations[idx];
+  const en = EN[name] || '';
+  const termIdx = dir === -1 ? 0 : stations.length - 1;
+  const termName = stations[termIdx];
+
+  /* 左：状态 + 站名（两列） */
+  document.getElementById('stateCn').textContent = mode === 'stop' ? '停靠站' : '下一站';
+  document.getElementById('stateEn').textContent = mode === 'stop' ? 'This Station' : 'Next Station';
+  document.getElementById('stCn').textContent = name;
+  document.getElementById('stEn').textContent = en;
+  // 字号完全由 CSS 控制，不随站名长度缩放（缩放会破坏与实物的一致性）
+
+  /* 右：终点站 */
+  document.getElementById('termCn').textContent = termName;
+  document.getElementById('termEn').textContent = EN[termName] || '';
+
+  /* 左：可换乘 */
+  const tr = ((lineData.transfers && lineData.transfers[name]) || []).filter(isOpenedLine);
+  const trRow = document.getElementById('transferRow');
+  if (tr.length) {
+    trRow.innerHTML = '<span class="tr-label">可换乘<em>Transfer to</em></span><span class="tr-chips">' +
+      tr.map(lid => {
+        const c = getLineColorEnhanced ? getLineColorEnhanced(lid) : '#888';
+        return '<span class="tr-chip" style="background:' + c + ';color:' + getContrastText(c) + '">' +
+               '<span class="num-wrap"><b class="num">' + lid + '</b></span>' +
+               '<span class="txt"><i class="cn">号线</i>' +
+               '<span class="en-wrap"><i class="en">Line' + lid + '</i></span></span></span>';
+      }).join('') + '</span>';
+  } else {
+    // 普通站（无可换乘线路）：只保留「可换乘 Transfer to」标签，不显示徽标也不写「本线内换乘」
+    trRow.innerHTML = '<span class="tr-label">可换乘<em>Transfer to</em></span>';
+  }
+
+  /* 右：主体 */
+  const bodyNext = document.getElementById('bodyNext');
+  const bodyStop = document.getElementById('bodyStop');
+  if (mode === 'stop') {
+    bodyNext.style.display = 'none';
+    bodyStop.style.display = 'flex';
+    renderExits(name);
+    renderCarGuide(name);
+  } else {
+    bodyNext.style.display = 'flex';
+    bodyStop.style.display = 'none';
+    renderMiniMap();
+  }
+
+  document.getElementById('modeBtn').textContent =
+    mode === 'stop' ? '切换：下一站态' : '切换：停靠站态';
+  fitChipText();
+
+  document.getElementById('infoBar').innerHTML =
+    '<b>' + LINE_ID + '号线 Line7</b>　' + name + ' ' + (en || '') +
+    '　｜　' + (mode === 'stop' ? '停靠站态' : '下一站态') +
+    '　｜　往 <b>' + termName + '</b>';
+}
+
+/* 局部线路图：当前站前后各 2 站 */
+function renderMiniMap() {
+  const wrap = document.getElementById('miniMap');
+  const color = lineData.color || '#0032A0';
+  const N = 5;
+  const total = stations.length;
+  wrap.style.setProperty('--c-line', color);
+
+  // ── 窗口：永远固定 5 站，到端点时整体平移（不减少站数）
+  const mk = o => {
+    const a = [];
+    for (let n = 0; n < N; n++) a.push(idx + (o + n) * dir);
+    return a;
+  };
+  // 穷举合法偏移：保证 5 个索引全部在 [0, total-1] 内（到端点时整体平移）
+  // 候选偏移按「离理想位置 -2 的距离」排序，优先不动，只在不合法时才平移
+  const CANDS = [-2, -1, -3, 0, -4, 1, -5, 2, -6, 3, -7, 4, -8];
+  let items = null;
+  for (let ci = 0; ci < CANDS.length; ci++) {
+    const arr = mk(CANDS[ci]);
+    if (Math.min.apply(null, arr) >= 0 && Math.max.apply(null, arr) <= total - 1) {
+      items = arr;
+      break;
+    }
+  }
+  if (!items) {                       // 兜底：站数不足 5 时取全部
+    items = [];
+    for (let n = 0; n < Math.min(N, total); n++) items.push(n);
+  }
+
+  const count = items.length;
+  const curPos = items.indexOf(idx);
+
+  // ── 轨道两端：起点站在窗口内时左边不伸出；终点站同理右边不伸出
+  const centerPct = n => ((n + 0.5) / count) * 100;
+  // 线路首站(0)、末站(total-1) 可能出现在窗口任意一侧（与行车方向有关）
+  const firstPos = items.indexOf(0);
+  const lastPos  = items.indexOf(total - 1);
+  const leftInset  = (firstPos === 0 || lastPos === 0) ? centerPct(0) : 2;
+  const rightInset = (firstPos === count - 1 || lastPos === count - 1)
+                     ? 100 - centerPct(count - 1) : 2;
+
+  // ── 置灰段：到「最后一个已过站的中心」为止（按实际站点判断）
+  let splitPct = 0;
+  if (curPos > 0) {
+    const cssSplit = centerPct(curPos - 1);          // 相对整行
+    const w = 100 - leftInset - rightInset;
+    splitPct = w > 0 ? ((cssSplit - leftInset) / w) * 100 : 0;
+    splitPct = Math.max(0, Math.min(100, splitPct));
+  }
+  const bg = 'linear-gradient(90deg, #6f7990 0 ' + splitPct.toFixed(2) + '%, ' +
+             color + ' ' + splitPct.toFixed(2) + '% 100%)';
+
+  let html = '<div class="mm-track" style="left:' + leftInset.toFixed(2) + '%;right:' +
+             rightInset.toFixed(2) + '%;background:' + bg + '"></div>';
+  html += '<div class="mm-row">';
+  items.forEach((si, pos) => {
+    const nm = stations[si];
+    const isCur = si === idx;
+    const isPassed = pos < curPos;
+    const trs = ((lineData.transfers && lineData.transfers[nm]) || []).filter(isOpenedLine);
+
+    let fill = '';
+    if (isCur) fill = ' c-yellow';
+    else if (!isPassed) fill = ' c-green';
+
+    let dotCls, inner = '';
+    if (trs.length) {
+      dotCls = 'mm-dot xfer' + fill;
+      trs.forEach(lid => {
+        const c = isPassed ? '#6b7280' : (getLineColorEnhanced ? getLineColorEnhanced(lid) : '#888');
+        inner += '<i style="background:' + c + '"></i>';
+      });
+    } else {
+      dotCls = 'mm-dot' + fill;
+    }
+
+    let badges = '';
+    // 当前站且不是换乘站 → 圆点下方显示「下一站 Next Station」深灰标签
+    if (isCur && !trs.length) {
+      badges = '<div class="mm-next-tag"><b>下一站</b><i>Next Station</i></div>';
+    }
+    if (trs.length) {
+      let bh = '';
+      trs.forEach(lid => {
+        const c = isPassed ? '#6b7280' : (getLineColorEnhanced ? getLineColorEnhanced(lid) : '#888');
+        const wideCls = String(lid).length > 1 ? (' wide' + (String(lid) === '11' ? ' x11' : '')) : '';
+        bh += '<span class="mm-badge' + wideCls + (isCur ? ' cur' : '') + '" style="background:' + c + ';color:' + getContrastText(c) + '">' + lid + '</span>';
+      });
+      badges = '<div class="mm-badges">' + bh + '</div>';
+    }
+
+    html += '<div class="mm-node' + (isPassed ? ' passed' : '') + '">' +
+            '<div class="mm-name">' +
+              '<span class="mm-cn">' + nm + '</span>' +
+              '<span class="mm-en">' + (EN[nm] || '') + '</span>' +
+            '</div>' +
+            '<div class="' + dotCls + '">' + inner + '</div>' +
+            badges +
+            '</div>';
+  });
+  html += '</div>';
+  // 黄色箭头：位置 = 两标记「内侧边缘」的中点（几何计算，各种组合都正确）
+  if (curPos > 0) {
+    const prevIdx = items[curPos - 1];
+    const markerWidth = (si, isCur, isXfer) => {
+      if (isXfer) return isCur ? 80 : 70;
+      return isCur ? 46 : 40;
+    };
+    const xferOf = si => {
+      const nm2 = stations[si];
+      return ((lineData.transfers && lineData.transfers[nm2]) || []).filter(isOpenedLine).length > 0;
+    };
+    const wPrev = markerWidth(prevIdx, false, xferOf(prevIdx));
+    const wCur  = markerWidth(idx, true, xferOf(idx));
+    // 圆心中点 + (前站半宽 - 当前站半宽) / 2，换算成百分比
+    const mapW = wrap.clientWidth || 700;
+    // 空隙中心 − 圆心中点 = (w1 − w2) / 4（推导见注释）
+    const shiftPct = ((wPrev - wCur) / 4) / mapW * 100;
+    const mid = (centerPct(curPos - 1) + centerPct(curPos)) / 2 + shiftPct;
+
+    const CHEV = '<svg width="56" height="18" viewBox="0 0 56 18">' +
+      '<path d="M0 0 L9 9 L0 18 L9 18 L18 9 L9 0 Z" fill="#f7b91b"/>' +
+      '<path d="M19 0 L28 9 L19 18 L28 18 L37 9 L28 0 Z" fill="#f7b91b"/>' +
+      '<path d="M38 0 L47 9 L38 18 L47 18 L56 9 L47 0 Z" fill="#f7b91b"/>' +
+      '</svg>';
+    html += '<div class="mm-chev" style="left:' + mid.toFixed(2) + '%">' + CHEV + '</div>';
+  }
+
+  wrap.innerHTML = html;
+}
+
+
+/* 把换乘徽标里的英文横向压到与上方「号线」等宽，实现图二那种紧凑观感 */
+function fitChipText() {
+  const chips = document.querySelectorAll('.tr-chip');
+  chips.forEach(function (chip) {
+    const cn = chip.querySelector('.txt i.cn');
+    const en = chip.querySelector('.txt i.en');
+    if (!cn || !en) return;
+    // 不再横向压扁 LineN，改为迭代缩小字号，让它的宽度等于「号线」的宽度
+    // → 保持字母正常比例，同时「号线」和「LineN」左右两端都对齐
+    en.style.transform = 'none';
+    en.style.fontSize = '';
+    // 数字被 scaleX 压扁后，把外层容器宽度同步收窄 → 保持紧凑，不白留空间
+    const num = chip.querySelector('.num');
+    const nw = num && num.parentElement;
+    if (num && nw) {
+      nw.style.width = 'auto';
+      // offsetWidth 是 layout 宽度（不含 transform），才是压扁前的真实宽度
+      const nwRaw = num.offsetWidth || num.getBoundingClientRect().width;
+      if (nwRaw > 0) nw.style.width = Math.ceil(nwRaw * 0.82) + 'px';
+    }
+    // LineN 拟合到「号线」宽度的 88%（略小一点，保持紧凑）
+    // en-wrap 定宽 = 「号线」宽度，Line3 在其中居中
+    const wrap = en.parentElement;
+    const cnW = cn.getBoundingClientRect().width;
+    if (wrap && cnW > 0) wrap.style.width = cnW.toFixed(1) + 'px';
+    // Line3 字号拟合到「号线」宽度的 88%（略小、居中）
+    const target = cnW * 0.88;
+    let fs = parseFloat(getComputedStyle(en).fontSize) || 13;
+    for (let i = 0; i < 14; i++) {
+      const w2 = en.getBoundingClientRect().width;
+      if (w2 <= 0 || target <= 0) break;
+      if (Math.abs(target - w2) < 0.35) break;
+      fs = fs * (target / w2);
+      en.style.fontSize = fs.toFixed(2) + 'px';
+    }
+  });
+}
+
+/* 出口信息 */
+function renderExits(name) {
+  const row = document.getElementById('exitRow');
+  const TEXT = '以实为准';
+
+  const isNear = doorSide === 1;   // 本侧开门？
+
+  // 禁止符号：红圆环 + 45° 斜线
+  const NOOPEN = '<svg class="no-open" viewBox="0 0 30 30" fill="none">' +
+    '<circle cx="15" cy="15" r="11.5" stroke="#e61919" stroke-width="3.6"/>' +
+    '<line x1="7.6" y1="22.4" x2="22.4" y2="7.6" stroke="#e61919" stroke-width="3.6" stroke-linecap="round"/>' +
+    '</svg>';
+
+  const DOOR = '<div class="door-plate">' +
+      '<div class="door-pair' + (isNear ? '' : ' is-gray') + '">' +
+        '<div class="door d-l"><span class="win"></span></div>' +
+        '<div class="door d-r"><span class="win"></span></div>' +
+        (isNear ? '' : NOOPEN) +
+      '</div>' +
+      '<div class="door-cn">' + (isNear ? '本侧开门' : '对侧开门') + '</div>' +
+      '<div class="door-en">' + (isNear ? 'Doors open on this side' : 'Doors open on the other side') + '</div>' +
+    '</div>';
+
+  const mkLine = e =>
+    '<div class="exit-line"><span class="exit-tag">' + e.id + '口</span>' +
+    '<span>' + TEXT + '</span></div>';
+
+  const LEFT  = ['A', 'B'].map(id => ({ id: id }));
+  const RIGHT = ['C', 'D'].map(id => ({ id: id }));
+
+  row.innerHTML =
+    '<div class="exit-main">' +
+      '<div class="exit-side left">'  + LEFT.map(mkLine).join('')  + '</div>' +
+      '<div class="door-info">' + DOOR + '</div>' +
+      '<div class="exit-side right">' + RIGHT.map(mkLine).join('') + '</div>' +
+    '</div>' +
+    '<div class="concourse-line"></div>';
+}
+
+/* 车厢导引（临时固定示意，待真实数据补齐）*/
+function renderCarGuide(name) {
+  const box = document.getElementById('carGuide');
+  const CARS = TRAIN_FORMATION[LINE_ID] || 6;    // 编组车厢数
+  const lineColor = getLineColorEnhanced ? getLineColorEnhanced(LINE_ID) : '#0032A0';
+  box.style.setProperty('--c-line', lineColor);
+
+  // 行车方向决定车头与车厢编号顺序：
+  //   往深大丽湖（dir=-1）→ 1 车为车头，编号 6→1 从左到右
+  //   往太安（dir=1）   → 6 车为车头，编号反转为 1→6 从左到右
+  const headCar = dir === -1 ? 1 : CARS;
+  const rev = dir === 1;
+
+  // 车头方向箭头：深灰，2 个 90° chevron，指向右
+  // 车头方向箭头：深灰，2 个 90° chevron，指向右
+  const HEAD_ARROW = '<div class="head-arrows">' +
+    '<svg width="27" height="16" viewBox="0 0 27 16">' +
+      '<path d="M0 0 L7 8 L0 16 L5.5 16 L12.5 8 L5.5 0 Z" fill="#3b4150"/>' +
+      '<path d="M14 0 L21 8 L14 16 L19.5 16 L26.5 8 L19.5 0 Z" fill="#3b4150"/>' +
+    '</svg></div>';
+
+  // 层序（DOM 顺序 = 叠放顺序）：梯形地板 → 站台正面 → 列车
+  let html = '<div class="platform-floor"></div><div class="platform-face"></div><div class="train">';
+
+  const order = [];
+  for (let c = CARS; c >= 1; c--) order.push(c);
+  if (rev) order.reverse();
+
+  order.forEach((c, i) => {
+    const isHead = c === headCar;
+    const isEnd = i === 0 || i === order.length - 1;
+    // 最右那节 = 车头（圆角车头朝右）；最左那节 = 车尾
+    const cls = (i === order.length - 1 ? ' head-right' : (i === 0 ? ' head-left' : '')) + (c === currentCar ? ' current' : '');
+    html += '<div class="car' + cls + '">' + c + '</div>';
+  });
+
+  html += '</div>' + HEAD_ARROW;
+  box.innerHTML = html;
+}
+
+/* 统一状态机：下一站态 → 停靠站态 → 前进一站 → 下一站态 … */
+function stepForward() {
+  if (mode === 'next') {
+    mode = 'stop';                       /* 下一站态 → 停靠站态（同一站）*/
+  } else {
+    const lim = dir === -1 ? 0 : stations.length - 1;
+    if (idx !== lim) {
+      idx += dir;
+      document.getElementById('stSel').value = idx;
+    }
+    mode = 'next';                       /* 停靠站态 → 前进一站 → 下一站态 */
+  }
+  render();
+}
+
+/* 反向：停靠站态 → 下一站态 → 后退一站 → 停靠站态 … */
+function stepBackward() {
+  if (mode === 'stop') {
+    mode = 'next';                       /* 停靠站态 → 下一站态（同一站）*/
+  } else {
+    const lim = dir === -1 ? stations.length - 1 : 0;
+    if (idx !== lim) {
+      idx -= dir;
+      document.getElementById('stSel').value = idx;
+    }
+    mode = 'stop';
+  }
+  render();
+}
+
+function next() { stepForward(); }
+function prev() { stepBackward(); }
+
+function toggleMode() {
+  mode = mode === 'stop' ? 'next' : 'stop';
+  render();
+}
+/* 自动播放：与手动「下一站」完全同一套状态机 */
+function autoTick() { stepForward(); }
+
+function toggleAuto() {
+  const b = document.getElementById('autoBtn');
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; b.classList.remove('on'); b.textContent = '自动'; }
+  else { autoTimer = setInterval(autoTick, 2600); b.classList.add('on'); b.textContent = '停止'; }
+}
+
+/* 等比缩放屏幕本体，保持 1200:216 比例 */
+function fitScreen() {
+  const stage = document.querySelector('.stage');
+  const screen = document.getElementById('screen');
+  const avail = stage.clientWidth;
+  const k = Math.min(1, avail / 1200);
+  screen.style.transform = 'scale(' + k + ')';
+  stage.style.height = (216 * k) + 'px';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  else if (e.key.toLowerCase() === 'd') { toggleMode(); }
+});
+window.addEventListener('resize', function () { fitScreen(); fitChipText(); });
+init();
+</script>
+</body>
+</html>
