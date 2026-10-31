@@ -95,21 +95,22 @@ const PROGRESS_DATA = [
         '南头古城': 'capped'
       },
       segments: {
+        '深大-南头古城': { l: 'wip', r: 'wip' },        // 深南区间：2026-04-01 盾构组装下井
+        '南头古城-中山公园西': { l: 'todo', r: 'wip' },  // 南中区间：2026-07-09 右线始发
         '狮子山公园-机场东': { l: 'wip', r: 'wip' },
-        '西乡公园-文汇': { l: 'wip', r: 'todo' },
-        '深大-高新园': { l: 'wip', r: 'todo' }
+        '西乡公园-文汇': { l: 'wip', r: 'todo' }
       },
-      overall: '三座全预制装配式车站全部封顶（甲岸站 9-17 最后一块预制构件拼装完成）；全线一半车站已封顶，盾构累计始发 20 台次。文汇站主体结构封顶（4-07）。下一阶段重点推进关键换乘车站与盾构区间',
+      overall: '多线同步盾构掘进中：南头古城—中山公园西右线（7-09 始发）、航城大道东—中间风井左线（7-13 始发）、深大—南头古城（4-01 盾构下井）。三座全预制装配式车站全部封顶（甲岸站 9-17 最后一块预制构件拼装完成）；全线一半车站已封顶，盾构累计始发 20 台次。文汇站主体结构封顶（4-07）。下一阶段重点推进关键换乘车站与盾构区间',
       dataDate: '2026-09-17',
       bars: [
-        { k: '围护结构', v: 99 }, { k: '土方开挖', v: 82 },
-        { k: '主体结构', v: 63 }, { k: '盾构掘进', v: 14 }
+        { k: '围护结构', v: 98 }, { k: '土方开挖', v: 70 },
+        { k: '主体结构', v: 53 }, { k: '盾构掘进', v: 5.9 }
       ],
       segStat: '掘进 18 台 · 下井 1 台 · 未施工 9',
       staStat: '封顶 5 座 · 土建 6 座',
       summary: { capped: 5, shield: 18 },
-      footnote: '线路起自 20 号线一期机场北站（不含），途经福永、航城、西乡、新安街道，终至南山区白石洲站；全长 24.8 km，全地下敷设，设 11 座地下车站（换乘站 9 座），平均站间距约 2.23 km，设计最高运行时速 120 km/h，为全自动驾驶市域快线，力争 2029 年建成。三座全预制装配式车站为中山公园西站、甲岸站、狮子山公园站，采用矩形平顶结构体系，是深圳地铁五期 20 座装配式车站的组成部分；首座为狮子山公园站，其不换撑拼装工艺被深铁建设作为典型优秀案例在五期线路推广。文汇站（原上川一路站）位于 107 国道与上川二路交叉口，车站总长 248.5 米、标准段宽 20.1 米、基坑深约 17.1 米，为地下二层单柱双跨结构，明挖法施工，设 4 个出入口、2 组外挂风亭。另注：早期资料中的「航城站」「航城医院站」为旧站名，现行站名为狮子山公园站、航城大道东站。',
-      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/gqdt/content/post_12988267.html" target="_blank" rel="noopener noreferrer">深圳政府在线（宝安区）2026-09-17：三座装配式车站封顶、一半车站封顶、盾构始发 20 台次</a>；<a href="https://static.nfnews.com/content/202505/07/c11263430.html" target="_blank" rel="noopener noreferrer">南方+（转深圳交通、深圳地铁）2025-05-07：全长 24.8 km、11 站、9 换乘、平均站间距 2.23 km，文汇站参数</a>；<a href="https://www.dutenews.com/n/article/10568473" target="_blank" rel="noopener noreferrer">深圳商报·读创 2026-04-07：文汇站主体结构封顶、力争 2029 年建成</a>；<a href="https://www.dutenews.com/n/ctmedia/60085680" target="_blank" rel="noopener noreferrer">深圳地铁 2026-09-13：中山公园西站、甲岸站、狮子山公园站三座装配式车站全部封顶（9-09），南头古城站/深大站/西乡公园站换乘说明</a>；<a href="https://www.chinametro.net/index.php?m=newscon&id=539&aid=65174" target="_blank" rel="noopener noreferrer">深圳地铁 2026-06-08：南头古城站、中山公园西站相继完成主体封顶</a>。'
+      footnote: '线路起自 20 号线一期机场北站（不含），途经福永、航城、西乡、新安街道，终至南山区白石洲站；全长 24.8 km，全地下敷设，设 11 座地下车站（换乘站 9 座），平均站间距约 2.23 km，设计最高运行时速 120 km/h，为全自动驾驶市域快线，力争 2029 年建成。三座全预制装配式车站为中山公园西站、甲岸站、狮子山公园站，采用矩形平顶结构体系，是深圳地铁五期 20 座装配式车站的组成部分；首座为狮子山公园站，其不换撑拼装工艺被深铁建设作为典型优秀案例在五期线路推广。文汇站（原上川一路站）位于 107 国道与上川二路交叉口，车站总长 248.5 米、标准段宽 20.1 米、基坑深约 17.1 米，为地下二层单柱双跨结构，明挖法施工，设 4 个出入口、2 组外挂风亭。盾构区间：深南区间（深大—南头古城）为全线核心控制性工程，采用土压平衡式盾构机，2026-04-01 完成组装下井；南中区间（南头古城—中山公园西）右线盾构 2026-07-09 始发；航城大道东—中间风井区间左线盾构 2026-07-13 通过始发条件验收并开始掘进。进度条数据为 2026-07-18 口径。另注：早期资料中的「航城站」「航城医院站」为旧站名，现行站名为狮子山公园站、航城大道东站。',
+      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/gqdt/content/post_12988267.html" target="_blank" rel="noopener noreferrer">深圳政府在线（宝安区）2026-09-17：三座装配式车站封顶、一半车站封顶、盾构始发 20 台次</a>；<a href="https://static.nfnews.com/content/202505/07/c11263430.html" target="_blank" rel="noopener noreferrer">南方+（转深圳交通、深圳地铁）2025-05-07：全长 24.8 km、11 站、9 换乘、平均站间距 2.23 km，文汇站参数</a>；<a href="https://www.dutenews.com/n/article/10568473" target="_blank" rel="noopener noreferrer">深圳商报·读创 2026-04-07：文汇站主体结构封顶、力争 2029 年建成</a>；<a href="https://www.dutenews.com/n/ctmedia/60085680" target="_blank" rel="noopener noreferrer">深圳地铁 2026-09-13：中山公园西站、甲岸站、狮子山公园站三座装配式车站全部封顶（9-09），南头古城站/深大站/西乡公园站换乘说明</a>；<a href="https://www.chinametro.net/index.php?m=newscon&id=539&aid=65174" target="_blank" rel="noopener noreferrer">深圳地铁 2026-06-08：南头古城站、中山公园西站相继完成主体封顶</a>；<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/bmdt/content/post_12715903.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局）2026-04-01：深南区间盾构组装下井、中山公园西站装配式台车组装、围护 93%/土方 67%/主体 30%</a>；<a href="https://dutenews.com/n/article/60033615" target="_blank" rel="noopener noreferrer">深圳地铁 2026-07-18：南中区间右线（7-09）、航城大道东—中间风井左线（7-13）双盾构始发，围护 98%/土方 70%/主体 53%/盾构 5.9%</a>。'
     },
     { id: '17', name: '17 号线（平湖线）', color: '#D3C0CD', lengthKm: 18.63, stationCount: 18,
       transferCount: 9,
