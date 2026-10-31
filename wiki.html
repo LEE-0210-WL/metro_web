@@ -673,7 +673,7 @@
           const transfersStr = formatTransfers(line.transfers);
           const transferStationCount = visibleTransfers(line.transfers).length;
           const openDateFormatted = formatOpenDate(line.openDate);
-          const lengthDisplay = line.lengthKm ? line.lengthKm + ' km' : (line.lengthDesc || '');
+          const lengthDisplay = (line.lengthKm ? line.lengthKm + ' km' : (line.lengthDesc || '')) + (line.isLoop ? '（环形）' : '');
           const stationCount = line.stationCount || 0;
 
           let openInfo = '';
