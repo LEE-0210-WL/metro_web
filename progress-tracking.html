@@ -783,7 +783,7 @@
 
   function currentId() {
     const m = new URLSearchParams(location.search).get('line');
-    return m && LINES.some(l => l.id === m) ? m : LINES[0].id;
+    return m && LINES.some(l => l.id === m) ? m : '15';
   }
 
   function renderToolbar(activeId) {
