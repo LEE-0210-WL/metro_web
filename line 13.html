@@ -135,6 +135,33 @@
     // 设置 CSS 变量
     document.documentElement.style.setProperty('--line-color', COLOR);
 
+    /* ===== 按背景色亮度决定文字用黑还是白 =====
+       算法与主页 getTextColor 完全一致：brightness > 130 用黑字，否则白字。 */
+    function getContrastText(hex) {
+      var r, g, b, m6, m3;
+      hex = String(hex || '').trim();
+      m6 = /^#?([a-f\d]{6})$/i.exec(hex);
+      if (m6) {
+        r = parseInt(m6[1].substr(0, 2), 16);
+        g = parseInt(m6[1].substr(2, 2), 16);
+        b = parseInt(m6[1].substr(4, 2), 16);
+      } else {
+        m3 = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hex);
+        if (m3) {
+          r = parseInt(m3[1] + m3[1], 16);
+          g = parseInt(m3[2] + m3[2], 16);
+          b = parseInt(m3[3] + m3[3], 16);
+        } else {
+          return '#ffffff';
+        }
+      }
+      var brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+      return brightness > 130 ? '#111827' : '#ffffff';
+    }
+
+    // 页面主色对应的文字色（线路头、线路名、别名都继承这个）
+    document.documentElement.style.setProperty('--line-text', getContrastText(COLOR));
+
     // 设置 body data 属性（供加载动画使用）
     document.body.dataset.lineName = lineData.id;
     document.body.dataset.lineColor = COLOR;
@@ -226,7 +253,7 @@
       }
       if (number) {
         number.textContent = lineData.id;
-        number.style.color = COLOR;
+        number.style.color = getContrastText(COLOR);
       }
       if (name) name.textContent = lineData.alias ? lineData.name.split('（')[0].replace('深圳地铁', '') : lineData.name;
       if (alias) alias.textContent = lineData.alias || '';

@@ -79,6 +79,7 @@
     
     /* 窄屏：标题与返回按钮自动换行，按钮靠右 */
     @media (max-width: 640px) {
+      .lines-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
       .page-title {
         flex-wrap: wrap;
         align-items: center;
@@ -125,114 +126,224 @@
     /* 线路网格 */
     .lines-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 14px;
+      justify-items: center;
     }
     
     .line-card {
       border-radius: var(--r-lg);
-      padding: 20px 20px 16px;
+      padding: 5px 10px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: transform .2s ease, box-shadow .2s ease;
       position: relative;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .line-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-    }
-    
-    .line-card.active {
-      transform: scale(1.02);
-      z-index: 10;
-    }
-    
-    .line-header {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      justify-content: center;
+      width: 135px;
+      height: 60px;
+      box-sizing: border-box;
     }
-    
-    .line-number {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #ffffff;
+
+    .line-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    }
+
+    .line-card:active {
+      transform: translateY(0) scale(.99);
+    }
+
+    /* 徽标：常规字重（非加粗） */
+    .lb-badge {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      font-weight: 700;
-      box-shadow: none;
-      flex-shrink: 0;
+      gap: 5px;
+      line-height: 1;
+      pointer-events: none;
     }
-    
-    .line-title {
-      flex: 1;
+
+    .lb-num {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 54px;
+      font-weight: 400;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
     }
-    
-    .line-name {
-      font-size: 18px;
-      font-weight: 700;
+
+    /* 双位数线路（10/11/12…）字距更紧，避免过宽 */
+    .lb-num.is-2d {
+      letter-spacing: -0.04em;
+      font-size: 50px;
     }
-    
-    .line-alias {
-      font-size: 13px;
-      opacity: 0.8;
+
+    .lb-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+      padding: 0 0 0 1px;
     }
-    
-    .line-info {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease, opacity 0.3s ease;
+
+    .lb-cn {
+      font-family: "Microsoft YaHei", "PingFang SC", "Heiti SC", SimHei, sans-serif;
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    /* 长名线路（如 6 号线支线）：字号不变，横向压缩（与官方制图一致） */
+    /* 6 号线支线：字号与普通线一致，压缩比由 JS 按「= 英文宽度」计算 */
+    .line-card.is-long { padding-left: 6px; padding-right: 6px; }
+    .line-card.is-long .lb-cn {
+      display: inline-block;
+      transform-origin: left center;
+    }
+    .line-card.is-long .lb-en { font-size: 14px; }
+
+    .lb-en {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      white-space: nowrap;
+      font-weight: 400;
+      line-height: 1;
+      opacity: 0.92;
+      letter-spacing: 0;
+      padding-left: 1px;
+      margin-top: 3px;
+    }
+
+    .line-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       opacity: 0;
-      padding-top: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
     }
-    
-    .line-card.active .line-info {
-      max-height: 260px;
+
+    .line-modal-overlay.open {
       opacity: 1;
-      margin-top: 12px;
-      padding-top: 12px;
+      pointer-events: auto;
     }
-    
-    .info-row {
+
+    .line-modal {
+      width: 100%;
+      max-width: 430px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--c-surface, #fff);
+      border-radius: var(--r-xl, 16px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      transform: scale(.94) translateY(8px);
+      transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .line-modal-overlay.open .line-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .line-modal-head {
+      position: relative;
+      padding: 20px 52px 18px 22px;
+    }
+
+    .line-modal-head .m-cn {
+      font-family: "Microsoft YaHei", "PingFang SC", "Heiti SC", SimHei, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .line-modal-head .m-en {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 3px;
+    }
+
+    .line-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      color: inherit;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s ease;
+    }
+
+    .line-modal-close:hover { background: rgba(255, 255, 255, 0.38); }
+
+    .line-modal-body {
+      padding: 6px 22px 20px;
+      overflow-y: auto;
+    }
+
+    .line-modal-body .info-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 6px;
+      gap: 16px;
+      padding: 9px 0;
       font-size: 14px;
+      color: var(--c-text, #111827);
+      border-bottom: 1px solid var(--c-border, #e5e7eb);
     }
-    
-    .info-label {
-      opacity: 0.8;
+
+    .line-modal-body .info-row:last-child { border-bottom: 0; }
+    .line-modal-body .info-label { color: var(--c-text-3, #6b7280); flex-shrink: 0; }
+    .line-modal-body .info-value { font-weight: 500; text-align: right; }
+
+    .line-modal-body .info-value a {
+      color: var(--c-primary, #2563eb);
+      text-decoration: none;
     }
-    
-    .info-value {
-      font-weight: 500;
-    }
-    
-    .info-value a {
-      color: inherit;
-      text-decoration: underline;
-      opacity: 0.9;
-    }
-    .info-value a:hover {
-      opacity: 1;
-    }
-    
-    .transfers {
-      margin-top: 8px;
+
+    .line-modal-body .info-value a:hover { text-decoration: underline; }
+
+    .line-modal-body .transfers {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--c-border, #e5e7eb);
       font-size: 13px;
-      line-height: 1.6;
-      opacity: 0.9;
+      line-height: 1.7;
+      color: var(--c-text-2, #374151);
     }
-    
-    .transfers-label {
+
+    .line-modal-body .transfers-label {
       font-weight: 600;
-      margin-bottom: 2px;
+      color: var(--c-text-3, #6b7280);
+      margin-bottom: 3px;
+      font-size: 12.5px;
+    }
+
+    @media (max-width: 640px) {
+      .line-card { width: 120px; height: 68px; }
+      .lb-num { font-size: 46px; }
+      .lb-cn { font-size: 22px; }
+      .lb-en { font-size: 12px; }
+      .line-modal { max-width: 100%; }
     }
     
     /* 分区标题 */
@@ -446,7 +557,63 @@
       const sortedConstruction = sortLines(constructionLines);
 
       // 渲染函数
-      function renderCards(lines, containerId, isConstruction = false) {
+      /* ===== 线路详情弹窗 ===== */
+    let lineModalOverlay = null;
+
+    function ensureLineModal() {
+      if (lineModalOverlay) return lineModalOverlay;
+      const wrap = document.createElement('div');
+      wrap.className = 'line-modal-overlay';
+      wrap.innerHTML = `
+        <div class="line-modal" role="dialog" aria-modal="true">
+          <div class="line-modal-head">
+            <div class="m-cn"></div>
+            <div class="m-en"></div>
+            <button class="line-modal-close" type="button" aria-label="关闭">×</button>
+          </div>
+          <div class="line-modal-body"></div>
+        </div>
+      `;
+      document.body.appendChild(wrap);
+
+      const close = () => wrap.classList.remove('open');
+      wrap.addEventListener('click', function (e) {
+        // 点遮罩关闭；点内容区不关
+        if (e.target === wrap) close();
+      });
+      wrap.querySelector('.line-modal-close').addEventListener('click', close);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+
+      lineModalOverlay = wrap;
+      return wrap;
+    }
+
+    function openLineModal(card) {
+      const wrap = ensureLineModal();
+      const head = wrap.querySelector('.line-modal-head');
+      const body = wrap.querySelector('.line-modal-body');
+      const color = card.dataset.modalColor || '#2563eb';
+      const tc = card.dataset.modalTextColor || '#ffffff';
+
+      head.style.background = color;
+      head.style.color = tc;
+      head.querySelector('.m-cn').textContent = card.dataset.modalTitle || '';
+      head.querySelector('.m-en').textContent = card.dataset.modalEn || '';
+      body.innerHTML = decodeURIComponent(card.dataset.modalBody || '');
+
+      // 如果已经开着，再点同一个卡片则关闭
+      if (wrap.classList.contains('open') && wrap.dataset.openFor === card.dataset.modalTitle) {
+        wrap.classList.remove('open');
+        wrap.dataset.openFor = '';
+        return;
+      }
+      wrap.dataset.openFor = card.dataset.modalTitle || '';
+      wrap.classList.add('open');
+    }
+
+    function renderCards(lines, containerId, isConstruction = false) {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = '';
@@ -473,83 +640,58 @@
             openInfo = line.openDate || '预计2028年';
           }
 
-          const textColor = getTextColor(line.color);       // 卡片标题文字颜色
-          const numberColor = getTextColor(line.color) === 'black' ? 'black' : line.color;
-
-          let cardHTML = `
-            <div class="line-card" style="background-color: ${line.color}; color: ${textColor};">
-              <div class="line-header">
-                <div class="line-number" style="color: ${numberColor};">${displayId}</div>
-                <div class="line-title" style="color: ${textColor};">
-                  <div class="line-name" style="color: ${textColor};">${lineName}</div>
-                  <div class="line-alias" style="color: ${textColor};">${alias}</div>
-                </div>
-              </div>
-              <div class="line-info" style="color: ${textColor};">
-          `;
-
+          // 详情内容（放进弹窗）
+          let bodyHTML = '';
           if (isConstruction) {
-            cardHTML += `
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">线路长度</span>
-                  <span class="info-value" style="color: ${textColor};">${lengthDisplay}</span>
-                </div>
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">站点数量</span>
-                  <span class="info-value" style="color: ${textColor};">${stationCount}座</span>
-                </div>
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">预计开通</span>
-                  <span class="info-value" style="color: ${textColor};">${openInfo}</span>
-                </div>
+            bodyHTML += `
+              <div class="info-row"><span class="info-label">线路长度</span><span class="info-value">${lengthDisplay}</span></div>
+              <div class="info-row"><span class="info-label">站点数量</span><span class="info-value">${stationCount}座</span></div>
+              <div class="info-row"><span class="info-label">预计开通</span><span class="info-value">${openInfo}</span></div>
             `;
             const url = baikeUrls[line.id];
             if (url) {
-              cardHTML += `
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">百科链接</span>
-                  <span class="info-value" style="color: ${textColor};"><a href="${url}" target="_blank" style="color: ${textColor};">查看百度百科</a></span>
-                </div>
-              `;
+              bodyHTML += `<div class="info-row"><span class="info-label">百科链接</span><span class="info-value"><a href="${url}" target="_blank" rel="noopener">查看百度百科</a></span></div>`;
             }
             if (transfersStr) {
-              cardHTML += `
-                <div class="transfers" style="color: ${textColor};">
-                  <div class="transfers-label" style="color: ${textColor};">换乘（规划）</div>
-                  <div style="color: ${textColor};">${transfersStr}</div>
-                </div>
-              `;
+              bodyHTML += `<div class="transfers"><div class="transfers-label">换乘（规划）</div><div>${transfersStr}</div></div>`;
             }
           } else {
-            cardHTML += `
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">开通时间</span>
-                  <span class="info-value" style="color: ${textColor};">${openDateFormatted}</span>
-                </div>
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">线路长度</span>
-                  <span class="info-value" style="color: ${textColor};">${lengthDisplay}</span>
-                </div>
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">站点数量</span>
-                  <span class="info-value" style="color: ${textColor};">${stationCount}站</span>
-                </div>
-                <div class="info-row" style="color: ${textColor};">
-                  <span class="info-label" style="color: ${textColor};">换乘站点</span>
-                  <span class="info-value" style="color: ${textColor};">${transferStationCount}个</span>
-                </div>
+            bodyHTML += `
+              <div class="info-row"><span class="info-label">开通日期</span><span class="info-value">${openDateFormatted}</span></div>
+              <div class="info-row"><span class="info-label">线路长度</span><span class="info-value">${lengthDisplay}</span></div>
+              <div class="info-row"><span class="info-label">站点数量</span><span class="info-value">${stationCount}座</span></div>
+              <div class="info-row"><span class="info-label">换乘站点</span><span class="info-value">${transferStationCount}个</span></div>
             `;
+            const url = baikeUrls[line.id];
+            if (url) {
+              bodyHTML += `<div class="info-row"><span class="info-label">百科链接</span><span class="info-value"><a href="${url}" target="_blank" rel="noopener">查看百度百科</a></span></div>`;
+            }
             if (transfersStr) {
-              cardHTML += `
-                <div class="transfers" style="color: ${textColor};">
-                  <div class="transfers-label" style="color: ${textColor};">主要换乘站</div>
-                  <div style="color: ${textColor};">${transfersStr}</div>
-                </div>
-              `;
+              bodyHTML += `<div class="transfers"><div class="transfers-label">主要换乘站</div><div>${transfersStr}</div></div>`;
             }
           }
 
-          cardHTML += `
+          // 卡片底纹上的文字色（按亮度决定黑/白）
+          const textColor = getTextColor(line.color);
+
+          // 徽标拆分：大数字 + 右侧「号线 / LineN」
+          const isBranch = (displayId === '6Z');
+          const isLong = isBranch;   // 长名线路标记
+          const badgeNum = isBranch ? '6' : displayId;
+          const is2Digit = (!isBranch && String(displayId).length >= 2);
+          const badgeCn  = isBranch ? '号线支线' : '号线';
+          const badgeEn  = isBranch ? 'Branch Line 6' : ('Line ' + displayId);
+          const badgeTitle = isBranch ? '6号线支线' : (displayId + '号线');
+          const badgeFull  = isBranch ? 'Line 6Z' : ('Line ' + displayId);
+
+          let cardHTML = `
+            <div class="line-card${isLong ? ' is-long' : ''}" style="background-color: ${line.color}; color: ${textColor};">
+              <div class="lb-badge">
+                <span class="lb-num${is2Digit ? ' is-2d' : ''}">${badgeNum}</span>
+                <span class="lb-text">
+                  <span class="lb-cn">${badgeCn}</span>
+                  <span class="lb-en">${badgeEn}</span>
+                </span>
               </div>
             </div>
           `;
@@ -557,13 +699,14 @@
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = cardHTML;
           const cardElement = tempDiv.firstElementChild;
+          cardElement.dataset.modalTitle = badgeTitle;
+          cardElement.dataset.modalEn = badgeFull;
+          cardElement.dataset.modalColor = line.color;
+          cardElement.dataset.modalTextColor = textColor;
+          cardElement.dataset.modalBody = encodeURIComponent(bodyHTML);
 
-          cardElement.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') return;
-            document.querySelectorAll(`#${containerId} .line-card`).forEach(c => {
-              if (c !== this) c.classList.remove('active');
-            });
-            this.classList.toggle('active');
+          cardElement.addEventListener('click', function() {
+            openLineModal(this);
           });
 
           container.appendChild(cardElement);
@@ -572,6 +715,38 @@
 
       renderCards(sortedOperating, 'openedLinesGrid', false);
       renderCards(sortedConstruction, 'phase5LinesGrid', true);
+
+      // 长名线路：把中文横向压缩到与英文实际文字宽度一致
+      function textBoxWidth(el) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const r = range.getBoundingClientRect();
+        return r.width;
+      }
+
+      function alignLongNameText(card) {
+        const cn = card.querySelector('.lb-cn');
+        const en = card.querySelector('.lb-en');
+        if (!cn || !en) return;
+
+        cn.style.transform = 'none';
+        cn.style.marginRight = '0';
+
+        const natural = textBoxWidth(cn);
+        const target = textBoxWidth(en);
+        if (!natural || !target) return;
+
+        const scale = target / natural;
+        cn.style.transform = 'scaleX(' + scale.toFixed(4) + ')';
+        cn.style.marginRight = (-(natural * (1 - scale))).toFixed(2) + 'px';
+      }
+
+      document.querySelectorAll('.line-card.is-long').forEach(alignLongNameText);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () {
+          document.querySelectorAll('.line-card.is-long').forEach(alignLongNameText);
+        });
+      }
     })();
 
     // 实时时间

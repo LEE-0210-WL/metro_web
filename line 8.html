@@ -409,7 +409,7 @@
       }
       if (number) {
         number.textContent = lineData.id;
-        number.style.color = COLOR;
+        number.style.color = getContrastText(COLOR);
       }
       if (name) name.textContent = lineData.alias ? lineData.name.split('（')[0].replace('深圳地铁', '') : lineData.name;
       if (alias) alias.textContent = lineData.alias || '';

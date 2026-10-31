@@ -2254,7 +2254,7 @@ const ALL_LINES_ENHANCED = [
   {
     "id": "6z",
     "name": "深圳地铁6号线支线",
-    "alias": "Line 6Z / Line 6 Branch",
+    "alias": "Branch Line 6 / Line 6Z",
     "color": "#008578",
     "openDate": "一期：2022年11月28日；二期：2025年9月28日",
     "lengthDesc": "约 11.03 公里（一期6.13km，二期4.96km）",
