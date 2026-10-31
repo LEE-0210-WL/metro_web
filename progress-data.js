@@ -49,12 +49,13 @@ const PROGRESS_DATA = [
       isLoop: true,
       lengthKm: 32.21, stationCount: 24,
       stations: ['听海','铲湾南','铲湾中','金港','海城','坪洲','西乡公园','流塘','宝安公园','洪浪北','同乐关','打石山','西丽高铁站','朗山路','麻雀岭','深大北','深大南','名海','东滨路','四海','月亮湾公园','铁路公园','通港路','前保'],
+      stationStatus: { '洪浪北': 'capped' },
       // 区间状态按站序，"名海-深大南" 已贯通（2026-10-13）；"跨海区间" 贯通（2026-07-29）
       segments: {
         '听海-铲湾南': { l: 'done', r: 'done' },        // 跨海区间（官方名「铲湾—听海路区间」）：右线 7-21 贯通、左线 8-28 完成前海湾下穿
         '名海-深大南': { l: 'done', r: 'done' },        // 10-13 左线贯通
         '铲湾中-铲湾南': { l: 'done', r: 'done' },      // 9月右线贯通，该区间已双线贯通
-        '流塘-西乡公园': { l: 'done', r: 'done' },      // 9月左线贯通，该区间已双线贯通
+        '流塘-西乡公园': { l: 'done', r: 'done' },      // 9-28 双线贯通（中国电建南方公司），区间约 950m
         '朗山路-西丽高铁站': { l: 'wip', r: 'todo' },    // 9-29 左线盾构始发
         '打石山-同乐关': { l: 'wip', r: 'wip' }
       },
@@ -67,8 +68,8 @@ const PROGRESS_DATA = [
       segStat: '贯通 24 区间 · 掘进 20 台 · 未施工 7',
       staStat: '机电 3 座 · 封顶 16 座 · 土建 8 座',
       summary: { capped: 16, shield: 20, twin: 24 },
-      footnote: '15 号线为深圳首条环形地铁线路，串联前海、南山、宝安三大核心片区，线路全长 32.2 公里，设 24 座车站。跨海段：铲湾—听海路区间右线 2026-07-21 贯通、左线 8-28 掘进至 813 环完成前海湾海域段下穿，双线千米跨海掘进任务完成。同乐车辆段高压电力管线迁改工程线路总长 4.7 公里（4.4 公里新建电力隧道 + 0.3 公里架空线），配置 4 台盾构机、1 台顶管机，侧穿 22 座高压线塔，创下单日掘进 17 环。',
-      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/zwdt/content/post_13015890.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳特区报）2026-10-12：同乐车辆段电力管线迁改工程全线贯通、环形线 32.2km/24 站、围护 96%/土方 89%/主体 88%/盾构 61%</a>；<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12960983.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局）2026-08-31：铲湾—听海路区间双线千米跨海掘进完成</a>。'
+      footnote: '15 号线为深圳首条环形地铁线路，串联前海、南山、宝安三大核心片区，线路全长 32.2 公里，设 24 座车站。跨海段：铲湾—听海路区间右线 2026-07-21 贯通、左线 8-28 掘进至 813 环完成前海湾海域段下穿，双线千米跨海掘进任务完成。同乐车辆段高压电力管线迁改工程线路总长 4.7 公里（4.4 公里新建电力隧道 + 0.3 公里架空线），配置 4 台盾构机、1 台顶管机，侧穿 22 座高压线塔，创下单日掘进 17 环。洪浪北站位于城市建成核心区，周边建筑密集、交通流量大、施工场地狭小，场区燃气、电力、雨污水、通信等管线纵横交错，9 月 10 日完成主体结构封顶。流西区间（流塘—西乡公园）总长约 950 米。',
+      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/zwdt/content/post_13015890.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳特区报）2026-10-12：同乐车辆段电力管线迁改工程全线贯通、环形线 32.2km/24 站、围护 96%/土方 89%/主体 88%/盾构 61%</a>；<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12960983.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局）2026-08-31：铲湾—听海路区间双线千米跨海掘进完成</a>；<a href="https://14j.powerchina.cn/col/col809/art/2026/art_c228d1c7fde24fb8ace599cb8d09611c.html" target="_blank" rel="noopener noreferrer">中国电建水电十四局 2026-09-15：洪浪北站主体结构封顶</a>；<a href="https://tl.powerchina.cn/col/col9356/art/2026/art_22b5790e7f0147e293b8e4a2b103bfe5.html" target="_blank" rel="noopener noreferrer">中国电建南方公司 2026-09-30：流塘站至西乡公园站盾构区间 9-28 双线贯通、区间约 950 米</a>。'
     },
     {
       id: '22', name: '22 号线（中轴线）', color: '#FBE122',
@@ -107,9 +108,10 @@ const PROGRESS_DATA = [
         '深大-南头古城': { l: 'wip', r: 'wip' },        // 深南区间：2026-04-01 盾构组装下井
         '南头古城-中山公园西': { l: 'todo', r: 'wip' },  // 南中区间：2026-07-09 右线始发
         '狮子山公园-机场东': { l: 'wip', r: 'wip' },
-        '西乡公园-文汇': { l: 'wip', r: 'todo' }
+        '西乡公园-文汇': { l: 'wip', r: 'todo' },
+        '文汇-甲岸': { l: 'wip', r: 'todo' }        // 3-07 甲岸站～文汇站区间左线盾构在文汇站始发（区间左线约 1658.9 米）
       },
-      overall: '多线同步盾构掘进中：南头古城—中山公园西右线（7-09 始发）、航城大道东—中间风井左线（7-13 始发）、深大—南头古城（4-01 盾构下井）。三座全预制装配式车站全部封顶（甲岸站 9-17 最后一块预制构件拼装完成）；全线一半车站已封顶，盾构累计始发 20 台次。文汇站主体结构封顶（4-07）。下一阶段重点推进关键换乘车站与盾构区间',
+      overall: '多线同步盾构掘进中：南头古城—中山公园西右线（7-09 始发）、航城大道东—中间风井左线（7-13 始发）、深大—南头古城（4-01 盾构下井）。三座全预制装配式车站全部封顶（甲岸站 9-17 最后一块预制构件拼装完成）；全线一半车站已封顶，盾构累计始发 20 台次。文汇站主体结构封顶（4-07）。甲岸站～文汇站区间左线盾构于 3 月 7 日在文汇站始发，区间左线全长约 1658.9 米，沿 107 国道东侧向北敷设，由中交（广州）建设有限公司承建。下一阶段重点推进关键换乘车站与盾构区间',
       dataDate: '2026-09-17',
       bars: [
         { k: '围护结构', v: 98 }, { k: '土方开挖', v: 70 },
@@ -119,9 +121,9 @@ const PROGRESS_DATA = [
       staStat: '封顶 5 座 · 土建 6 座',
       summary: { capped: 5, shield: 18 },
       footnote: '线路起自 20 号线一期机场北站（不含），途经福永、航城、西乡、新安街道，终至南山区白石洲站；全长 24.8 km，全地下敷设，设 11 座地下车站（换乘站 9 座），平均站间距约 2.23 km，设计最高运行时速 120 km/h，为全自动驾驶市域快线，力争 2029 年建成。三座全预制装配式车站为中山公园西站、甲岸站、狮子山公园站，采用矩形平顶结构体系，是深圳地铁五期 20 座装配式车站的组成部分；首座为狮子山公园站，其不换撑拼装工艺被深铁建设作为典型优秀案例在五期线路推广。文汇站（原上川一路站）位于 107 国道与上川二路交叉口，车站总长 248.5 米、标准段宽 20.1 米、基坑深约 17.1 米，为地下二层单柱双跨结构，明挖法施工，设 4 个出入口、2 组外挂风亭。盾构区间：深南区间（深大—南头古城）为全线核心控制性工程，采用土压平衡式盾构机，2026-04-01 完成组装下井；南中区间（南头古城—中山公园西）右线盾构 2026-07-09 始发；航城大道东—中间风井区间左线盾构 2026-07-13 通过始发条件验收并开始掘进。进度条数据为 2026-07-18 口径。另注：早期资料中的「航城站」「航城医院站」为旧站名，现行站名为狮子山公园站、航城大道东站。',
-      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/gqdt/content/post_12988267.html" target="_blank" rel="noopener noreferrer">深圳政府在线（宝安区）2026-09-17：三座装配式车站封顶、一半车站封顶、盾构始发 20 台次</a>；<a href="https://static.nfnews.com/content/202505/07/c11263430.html" target="_blank" rel="noopener noreferrer">南方+（转深圳交通、深圳地铁）2025-05-07：全长 24.8 km、11 站、9 换乘、平均站间距 2.23 km，文汇站参数</a>；<a href="https://www.dutenews.com/n/article/10568473" target="_blank" rel="noopener noreferrer">深圳商报·读创 2026-04-07：文汇站主体结构封顶、力争 2029 年建成</a>；<a href="https://www.dutenews.com/n/ctmedia/60085680" target="_blank" rel="noopener noreferrer">深圳地铁 2026-09-13：中山公园西站、甲岸站、狮子山公园站三座装配式车站全部封顶（9-09），南头古城站/深大站/西乡公园站换乘说明</a>；<a href="https://www.chinametro.net/index.php?m=newscon&id=539&aid=65174" target="_blank" rel="noopener noreferrer">深圳地铁 2026-06-08：南头古城站、中山公园西站相继完成主体封顶</a>；<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/bmdt/content/post_12715903.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局）2026-04-01：深南区间盾构组装下井、中山公园西站装配式台车组装、围护 93%/土方 67%/主体 30%</a>；<a href="https://dutenews.com/n/article/60033615" target="_blank" rel="noopener noreferrer">深圳地铁 2026-07-18：南中区间右线（7-09）、航城大道东—中间风井左线（7-13）双盾构始发，围护 98%/土方 70%/主体 53%/盾构 5.9%</a>。'
+      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/gqdt/content/post_12988267.html" target="_blank" rel="noopener noreferrer">深圳政府在线（宝安区）2026-09-17：三座装配式车站封顶、一半车站封顶、盾构始发 20 台次</a>；<a href="https://static.nfnews.com/content/202505/07/c11263430.html" target="_blank" rel="noopener noreferrer">南方+（转深圳交通、深圳地铁）2025-05-07：全长 24.8 km、11 站、9 换乘、平均站间距 2.23 km，文汇站参数</a>；<a href="https://www.dutenews.com/n/article/10568473" target="_blank" rel="noopener noreferrer">深圳商报·读创 2026-04-07：文汇站主体结构封顶、力争 2029 年建成</a>；<a href="https://www.dutenews.com/n/ctmedia/60085680" target="_blank" rel="noopener noreferrer">深圳地铁 2026-09-13：中山公园西站、甲岸站、狮子山公园站三座装配式车站全部封顶（9-09），南头古城站/深大站/西乡公园站换乘说明</a>；<a href="https://www.chinametro.net/index.php?m=newscon&id=539&aid=65174" target="_blank" rel="noopener noreferrer">深圳地铁 2026-06-08：南头古城站、中山公园西站相继完成主体封顶</a>；<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/bmdt/content/post_12715903.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局）2026-04-01：深南区间盾构组装下井、中山公园西站装配式台车组装、围护 93%/土方 67%/主体 30%</a>；<a href="https://dutenews.com/n/article/60033615" target="_blank" rel="noopener noreferrer">深圳地铁 2026-07-18：南中区间右线（7-09）、航城大道东—中间风井左线（7-13）双盾构始发，围护 98%/土方 70%/主体 53%/盾构 5.9%</a>；<a href="https://m.dutenews.com/n/article/10514521" target="_blank" rel="noopener noreferrer">读创·深圳商报 2026-03-07：甲岸站～文汇站区间左线盾构在文汇站始发、区间左线约 1658.9 米</a>。'
     },
-    { id: '17', name: '17 号线（平湖线）', color: '#D3C0CD', lengthKm: 18.63, stationCount: 18,
+    { id: '17', name: '17 号线（平湖线）', color: '#D3C0CD', lengthKm: 18.62, stationCount: 18,
       transferCount: 9,
       stations: ['上李朗','深朗','下李朗','石芽岭','丹竹头','南岭北','南岭','求水山','百鸽笼','罗岗','德兴','罗湖北','笋岗北','笋岗','大塘龙','老街','嘉宾','侨社'],
       segments: {
@@ -131,16 +133,18 @@ const PROGRESS_DATA = [
         '求水山-南岭': { l: 'todo', r: 'wip' },     // 9月右线盾构施工
         '上李朗-深朗': { l: 'wip', r: 'wip' }      // 9月双线盾构施工
       },
-      overall: '罗湖北—德兴区间右线贯通（9-26，全线第 4 个贯通区间）；4 台盾构下井；施工期 2023-12 至 2029-05',
+      overall: '南岭北—丹竹头区间左线盾构贯通（约 745 米，EPB/TBM 双模，8 月中旬）；罗岗—百鸽笼区间（罗百区间）左线盾构始发（10 月下旬，全线地质最复杂的重点区间之一，土压平衡/TBM 双模盾构机）',
+      dataDate: '2026-10-23',
       bars: [], summary: {},
-      sources: '香港商报 2026-08-13；深圳市龙岗区布吉街道办事处 2026-04-08' },
+      footnote: '17 号线一期为服务深圳东部片区的骨干轨道线路，起于罗湖区侨社站（罗湖西站）、终至龙岗区上李朗站，全长约 18.62 公里，设 18 座地下车站。南岭北站至丹竹头站区间左线全长约 745 米，由中交二航局首台 EPB/TBM 双模盾构机承担掘进，施工中连续下穿多处房屋建筑群及管线，成功穿越地铁 3 号线丹竹头站、龙岗大道、恋珠小区及南芳学校操场等高危区域。罗岗站至百鸽笼站区间为全线地质最复杂的重点区间之一，采用土压平衡/TBM 双模盾构机，搭载超前地质预报、同步注浆、自动化监测等系统。',
+      sources: '主要依据：<a href="https://www.sztv.com.cn/ysz/zx/zw/83912866.shtml" target="_blank" rel="noopener noreferrer">深圳卫视·深视新闻 2026-10-23：罗百区间（罗岗～百鸽笼）左线盾构始发、18.62km/18 站</a>；<a href="http://hkcd.com/hkcdweb/content/2026/08/13/content_8769488.html" target="_blank" rel="noopener noreferrer">香港商报（转深圳特区报）2026-08-13：南岭北站至丹竹头站区间左线盾构贯通、区间约 745 米</a>。' },
     { id: '19', name: '19 号线（坪山线）', color: '#BB16A3', lengthKm: 14.79, stationCount: 12,
       stations: ['南塘围','人民医院','汤坑','锦龙','新围','宝山','新和','坪山剧院','坪山中心','燕子岭','南布','聚龙'],
       segments: {
         '汤坑-锦龙': { l: 'todo', r: 'wip' },       // 9月底起开展盾构施工
         '聚龙-南布': { l: 'wip', r: 'todo' }        // 聚龙站盾构下井一台
       },
-      overall: '汤坑站封顶（全预制装配式）；聚龙站盾构下井',
+      overall: '汤坑站全预制装配式主体结构封顶（9-11，全线重点科技创新示范站点，采用「工厂智造、现场装配」模式）；聚龙站盾构下井',
       dataDate: '2026-09-11',
       bars: [
         { k: '围护结构', v: 99 }, { k: '土方开挖', v: 76 },
@@ -149,7 +153,8 @@ const PROGRESS_DATA = [
       segStat: '掘进 4 台 · 下井 1 台 · 未施工 21',
       staStat: '封顶 2 座 · 土建 10 座',
       summary: { capped: 2, shield: 4 },
-      sources: '深圳市坪山区交通轨道管理中心 2026-10-12' },
+      footnote: '19 号线一期串联坪山核心片区，是完善深圳东部轨道交通网络、优化城市交通格局、助推片区产业升级的骨干线路。建成后可与地铁 14 号线、16 号线及深大城际无缝衔接。汤坑站为全线重点科技创新示范站点，采用全预制装配式施工模式。',
+      sources: '主要依据：<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12978717.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局，转深圳特区报）2026-09-11：汤坑站全预制装配式主体结构封顶</a>；<a href="https://sz.cnr.cn/gstjsz/20260912/t20260912_527811488.shtml" target="_blank" rel="noopener noreferrer">央广网 2026-09-12：19 号线建设提速、汤坑站主体封顶</a>。' },
     { id: '25', name: '25 号线（大浪线）', color: '#FEAD77', lengthKm: 16.5, stationCount: 14, transferCount: 5,
       stations: ['吉华医院','贝尔路','黄君山','上油松','松和','油福','景龙','龙华','龙华公园','华富','华昌','石凹','创意城','石龙'],
       segments: {
@@ -157,9 +162,11 @@ const PROGRESS_DATA = [
         '贝尔路-吉华医院': { l: 'todo', r: 'wip' },  // 2026-07 右线盾构始发
         '上油松-黄君山': { l: 'todo', r: 'wip' }    // 2026-07 右线盾构始发
       },
-      overall: '全线超一半车站已封顶；石凹站、华昌站核心工序完工；9-20 五工区第四台盾构始发，四台全部投入掘进',
+      overall: '石龙站—创意城站区间右线、华昌站—华富站区间右线、出入段线右线 3 台盾构机集中始发，线路进入攻坚阶段（6 月中旬）；全线超一半车站已封顶',
       bars: [], summary: {},
-      sources: '奥一新闻 2026-10-14；深圳地铁集团环评公告 2024-05-27' },
+      dataDate: '2026-06-16',
+      footnote: '25 号线西起宝安区石龙站，东至龙岗区吉华医院站，线路全长 16.5 公里，串联宝安、龙华、龙岗多个片区。盾构始发区间的官方表述为「华昌站—华富站」（非「华昌—石凹」）。',
+      sources: '主要依据：<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/tpxw/content/mpost_12846042.html" target="_blank" rel="noopener noreferrer">深圳政府在线（转深圳特区报）2026-06-16：石龙—创意城右线、华昌—华富右线、出入段线右线 3 台盾构集中始发、16.5km/石龙—吉华医院</a>；<a href="https://www.sz.gov.cn/cn/xxgk/zfxxgj/tpxw/content/mpost_12846042.html" target="_blank" rel="noopener noreferrer">同期线路走向表述</a>。' },
     { id: '27', name: '27 号线（前海线）', color: '#4F868E', lengthKm: 25, stationCount: 19,
       stations: ['松坪村','西丽高铁站','文光','西丽','丽山','丽水','深大丽湖','南科大','长岭陂','北站西广场','民丰路','白石龙','民康','民宝','华城','银泉','油福','富康','岗头西'],
       segments: {
@@ -169,6 +176,7 @@ const PROGRESS_DATA = [
       },
       overall: '丽山—丽水右线盾构始发（9-21）；长岭陂—北站西广场双线下穿既有地铁（9-26）；华城站封顶',
       bars: [], summary: {},
+      dataDate: '2026-10-14',
       sources: '奥一新闻 2026-10-14' },
     { id: '29', name: '29 号线（深超线）', color: '#91D6AC', lengthKm: 11.1, stationCount: 9,
       stations: ['红树湾南','白石洲','白石洲北','欧洲城','珠光','西丽东','西丽高铁站','西丽西','兴东'],
@@ -176,7 +184,7 @@ const PROGRESS_DATA = [
         '欧洲城-珠光': { l: 'wip', r: 'todo' },     // 珠光站现浇段为欧洲城—珠光区间盾构始发场地
         '珠光-西丽东': { l: 'wip', r: 'wip' }
       },
-      overall: '西兴区间风井封顶（9-7，全线首个封顶工点）；珠光站现浇结构封顶（9-21）',
+      overall: '西丽西站至兴东站区间风井顺利封顶，成为全线首个封顶工点（9-16）；珠光站现浇结构封顶（9-21）',
       dataDate: '2026-09-24',
       bars: [
         { k: '围护结构', v: 99.8 }, { k: '土方开挖', v: 65.7 },
@@ -185,8 +193,8 @@ const PROGRESS_DATA = [
       segStat: '掘进 2 台 · 未施工 18',
       staStat: '土建 9 座',
       summary: {},
-      sources: '深圳地铁 2026-10-04（经深圳本地宝整理）',
-      footnote: '29 号线站名为暂定名，正式站名以市政府批准公告为准。另：本站数按 2024 年交通详细规划调整公示的 9 座列示，深圳地铁 2026-10 施工通报称 7 座，两者存在差异，暂以规划公示为准。' },
+      sources: '主要依据：<a href="https://www.sztv.com.cn/ysz/zx/szdyxc/83890940.shtml" target="_blank" rel="noopener noreferrer">深圳卫视·第一现场 2026-09-16：西丽西站至兴东站区间风井封顶（全线首个封顶工点）、29 号线一期红树湾南—兴东 11.1km/7 站/4 换乘</a>。',
+      footnote: '西兴区间风井为地下三层结构，承担两次盾构始发、三次盾构接收任务，为全线控制性工程；9 月中旬封顶后，计划国庆节前完成西兴区间左线盾构机吊装下井。29 号线站名为暂定名，正式站名以市政府批准公告为准。另：本站数按 2024 年交通详细规划调整公示的 9 座列示，深圳地铁 2026-10 施工通报称 7 座，两者存在差异，暂以规划公示为准。' },
     { id: '32', name: '32 号线（大鹏线）', color: '#744F28', lengthKm: 9.53, stationCount: 5,
       stations: ['溪涌','上洞','土洋','葵涌','葵涌东'],
       segments: {
@@ -194,7 +202,9 @@ const PROGRESS_DATA = [
         '土洋-葵涌': { l: 'wip', r: 'todo' },       // 9月初葵涌东—葵涌右线盾构下井
         '葵涌-葵涌东': { l: 'todo', r: 'wip' }
       },
-      overall: '上洞站—工作井区间双线贯通（8-19）；9月初葵涌东—葵涌右线盾构下井；上洞站创 9 个月开工到封顶记录',
+      overall: '「鹏程跃」盾构机始发，溪涌站—上洞站区间右线盾构顺利始发，为全线首台始发的盾构机（3-13）；上洞站—工作井区间双线贯通（8-19）；9 月初葵涌东—葵涌右线盾构下井',
       bars: [], summary: {},
-      sources: '奥一新闻 2026-10-14' },
+      dataDate: '2026-09-10',
+      footnote: '32 号线一期起自 8 号线三期溪涌站（不含），终至葵涌东站，线路全长约 9.5 公里，设站 4 座，其中葵涌站与深惠城际大鹏支线换乘。「溪上区间」为全线控制性工程之一，左线长 1671 米、右线长 1711 米，隧道埋深 9.4 米至 146.1 米；「鹏程跃」号为土压+TBM 双模盾构机，整机长 119 米、开挖直径 6.58 米。',
+      sources: '主要依据：<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12686590.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局，转深圳特区报）2026-03-16：溪涌—上洞区间右线首台盾构始发、9.5km/4 站、溪上区间参数</a>；<a href="https://sz.cnr.cn/gstjsz/20260620/t20260620_527669093.shtml" target="_blank" rel="noopener noreferrer">央广网 2026-06-20：32 号线建设再提速</a>。' },
   ];
