@@ -522,18 +522,41 @@
       }
 
       // 格式化换乘信息
+      /* ===== 五期在建线路：不作为换乘站展示 ===== */
+      // 整条线路在建
+      const PHASE5_LINES = ['15', '17', '19', '22', '25', '27', '29', '32'];
+      // 仅部分车站在建（13 号线二期南延 / 20 号线二期）
+      const PHASE5_STATION_LINES = {
+        '东角头': ['13'],
+        '机场东': ['20'], '狮子山公园': ['20'], '航城大道东': ['20'],
+        '西乡公园': ['20'], '文汇': ['20'], '甲岸': ['20'],
+        '中山公园西': ['20'], '南头古城': ['20'], '深大': ['20'],
+        '高新园': ['20'], '白石洲': ['20']
+      };
+
+      // 过滤某站在建换乘线路，返回保留的线路 id
+      function keepTransferLines(station, lineIds) {
+        const localSkip = PHASE5_STATION_LINES[station] || [];
+        return lineIds.map(String).filter(id =>
+          PHASE5_LINES.indexOf(id) === -1 && localSkip.indexOf(id) === -1
+        );
+      }
+
+      // 过滤后仍有换乘的车站
+      function visibleTransfers(transfersObj) {
+        if (!transfersObj || typeof transfersObj !== 'object') return [];
+        return Object.entries(transfersObj)
+          .map(([station, lineIds]) => ({ station, ids: keepTransferLines(station, lineIds) }))
+          .filter(x => x.ids.length > 0);
+      }
+
       function formatTransfers(transfersObj) {
-        if (!transfersObj || typeof transfersObj !== 'object') return '';
-        const entries = Object.entries(transfersObj);
-        if (entries.length === 0) return '';
-        const parts = entries.map(([station, lineIds]) => {
-          const ids = lineIds.map(id => {
-            if (id === '6z') return '6Z';
-            return id;
-          }).join('/');
-          return `${station}(${ids})`;
-        });
-        return parts.join('、');
+        const list = visibleTransfers(transfersObj);
+        if (list.length === 0) return '';
+        return list.map(x => {
+          const ids = x.ids.map(id => (id === '6z' ? '6Z' : id)).join('/');
+          return `${x.station}(${ids})`;
+        }).join('、');
       }
 
       // 分类与排序
@@ -630,7 +653,7 @@
           }
 
           const transfersStr = formatTransfers(line.transfers);
-          const transferStationCount = line.transfers ? Object.keys(line.transfers).length : 0;
+          const transferStationCount = visibleTransfers(line.transfers).length;
           const openDateFormatted = formatOpenDate(line.openDate);
           const lengthDisplay = line.lengthKm ? line.lengthKm + ' km' : (line.lengthDesc || '');
           const stationCount = line.stationCount || 0;
