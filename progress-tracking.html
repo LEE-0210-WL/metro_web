@@ -512,8 +512,8 @@
     }
     .pg-box {
       z-index: 2;
-      min-width: 148px;
-      padding: 7px 18px;
+      min-width: 96px;
+      padding: 7px 14px;
       text-align: center;
       font-size: 13.5px;
       font-weight: 500;
@@ -530,7 +530,7 @@
       position: absolute;
       left: 0; top: 0; bottom: 0;
       width: 6px;
-      border-radius: 4px 0 0 4px;
+      border-radius: 0;   /* 圆角完全由 .pg-box 的 overflow:hidden 裁切，保证与矩形一致 */
     }
     .pg-box { position: relative; overflow: hidden; }
     .st-operating { background: #7E57C2; }
@@ -558,10 +558,10 @@
     }
     .pg-rail {
       position: absolute;
-      top: 0;
-      bottom: 0;
+      top: -6px;              /* 向上插进站点行，与矩形接头 */
+      bottom: -6px;           /* 向下插进站点行，与矩形接头 */
       width: 6px;
-      border-radius: 3px;
+      border-radius: 0;       /* 不要圆角 */
       background: #d1d5db;
     }
     .pg-rail.l { left: calc(50% - 16px); }
