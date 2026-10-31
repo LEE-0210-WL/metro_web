@@ -734,7 +734,7 @@ return`<span class="transfer-badge" style="background:${lc};color:${getContrastT
 return`
 <div class="transfer-card">
 <div>
-<div class="transfer-station-name">${station}站</div>
+<div class="transfer-station-name">${/站$/.test(station) ? station : station + '站'}</div>
 <div class="transfer-station-sub">可换乘 ${lines.length} 条线路</div></div>
 <div class="transfer-badges">${badges}</div></div>
 `;

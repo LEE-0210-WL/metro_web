@@ -512,7 +512,8 @@
     }
     .pg-box {
       z-index: 2;
-      min-width: 96px;
+      width: 112px;           /* 统一宽度：5 字站名 + 左侧状态条 */
+      box-sizing: border-box;
       padding: 7px 14px;
       text-align: center;
       font-size: 13.5px;
@@ -525,11 +526,11 @@
       white-space: nowrap;
     }
     /* 车站工序状态色条 */
-    .pg-box.has-st { padding-left: 22px; }
+    .pg-box.has-st { padding-left: 26px; }
     .pg-box .st {
       position: absolute;
       left: 0; top: 0; bottom: 0;
-      width: 6px;
+      width: 10px;
       border-radius: 0;   /* 圆角完全由 .pg-box 的 overflow:hidden 裁切，保证与矩形一致 */
     }
     .pg-box { position: relative; overflow: hidden; }

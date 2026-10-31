@@ -316,7 +316,7 @@
         }).join('');
         return `
           <div class="transfer-card">
-            <span class="transfer-station">${station}站</span>
+            <span class="transfer-station">${/站$/.test(station) ? station : station + '站'}</span>
             <div class="transfer-lines">${badges}</div>
           </div>
         `;
