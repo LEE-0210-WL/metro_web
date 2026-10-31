@@ -148,3 +148,120 @@
   color: var(--c-text-3, #6b7280);
   margin-top: var(--sp-1, 4px);
 }
+
+/* ---------- 目录式列表（与首页一致） ---------- */
+.idx-groups {
+  margin-top: 8px;
+  border-top: 1px solid var(--c-border, #e5e7eb);
+}
+.idx-group { border-bottom: 1px solid var(--c-border, #e5e7eb); }
+.idx-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 2px 10px;
+}
+.idx-group-head .no {
+  font-family: var(--font-num, inherit);
+  font-size: 13px;
+  color: var(--c-text-3, #6b7280);
+  letter-spacing: .06em;
+  font-variant-numeric: tabular-nums;
+}
+.idx-group-head .nm {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text, #111827);
+  letter-spacing: .01em;
+}
+.idx-group-head .cnt {
+  margin-left: auto;
+  font-family: var(--font-num, inherit);
+  font-size: 12px;
+  color: var(--c-text-3, #6b7280);
+  font-variant-numeric: tabular-nums;
+}
+.idx-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 24px;
+  padding-bottom: 10px;
+}
+@media (max-width: 900px) { .idx-list { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .idx-list { grid-template-columns: 1fr; } }
+
+.idx-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 2px;
+  text-decoration: none;
+  color: var(--c-text, #111827);
+  transition: color .16s ease, transform .16s ease;
+  will-change: transform;
+}
+.idx-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--c-primary, #2563eb);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+}
+.idx-item:hover {
+  color: var(--c-primary, #2563eb);
+  transform: translateX(3px) scale(1.015);
+  transform-origin: left center;
+}
+.idx-item:hover::after { transform: scaleX(1); }
+.idx-item:hover .nm { font-weight: 600; }
+.idx-item:hover .no { color: var(--c-primary, #2563eb); }
+.idx-item .no {
+  font-family: var(--font-num, inherit);
+  font-size: 13px;
+  color: var(--c-text-3, #6b7280);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+.idx-item .nm {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: font-weight .12s ease;
+}
+.idx-item .ds {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--c-text-3, #6b7280);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+.idx-item:hover .ds { color: var(--c-text-2, #374151); }
+
+/* 文章列表：标题较长，固定 2 列 */
+.idx-art .idx-list { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 640px) { .idx-art .idx-list { grid-template-columns: 1fr; } }
+
+
+/* 当前阅读标记 */
+.idx-item.is-current .nm { font-weight: 600; color: var(--c-primary, #2563eb); }
+.idx-cur {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: 999px;
+  line-height: 1.5;
+}

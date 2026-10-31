@@ -113,18 +113,45 @@ function renderArticleList() {
   const container = document.getElementById('articleListSection');
   if (!container) return;
   const currentPath = decodeURIComponent(window.location.pathname);
-  const currentIndex = articleList.findIndex(a => currentPath.includes(a.id));
-  let html = '<h2 class="section-title">文章列表</h2><div class="article-list">';
-  articleList.forEach((article, i) => {
-    const isCurrent = i === currentIndex;
-    const color = getSeriesColor(article.series);
-    const borderColor = color.from;
-    html += '<a href="' + article.id + '" class="article-list-item' + (isCurrent ? ' current' : '') + '" style="border-left-color:' + borderColor + '">';
-    html += '<div class="article-list-series" style="color:' + borderColor + '">' + article.series + '</div>';
-    html += '<div class="article-list-title">' + article.title + '</div>';
-    html += '<div class="article-list-date">' + article.date + '</div>';
-    if (isCurrent) html += '<div class="article-list-badge" style="background:' + borderColor + '">当前阅读</div>';
-    html += '</a>';
+
+  const pad2 = n => (n < 10 ? '0' + n : '' + n);
+  const dateNum = d => String(d).split('.').reduce((acc, n) => acc * 100 + (parseInt(n, 10) || 0), 0);
+  const epNum = t => { const m = /EP\s*(\d+)/i.exec(t || ''); return m ? parseInt(m[1], 10) : 999; };
+
+  /* 按系列分组 */
+  const groups = [];
+  articleList.forEach(a => {
+    let g = groups.find(x => x.series === a.series);
+    if (!g) { g = { series: a.series, items: [] }; groups.push(g); }
+    g.items.push(a);
+  });
+
+  /* 组内按 EP 编号排，组间按最早日期排 */
+  groups.forEach(g => g.items.sort((a, b) => epNum(a.title) - epNum(b.title)));
+  groups.sort((a, b) => Math.min.apply(null, a.items.map(x => dateNum(x.date)))
+                      - Math.min.apply(null, b.items.map(x => dateNum(x.date))));
+
+  let html = '<h2 class="section-title">文章列表</h2><div class="idx-groups idx-art">';
+  groups.forEach((g, gi) => {
+    const color = getSeriesColor(g.series);
+    html += '<div class="idx-group">';
+    html += '<div class="idx-group-head">';
+    html += '<span class="no">' + pad2(gi + 1) + '</span>';
+    html += '<span class="nm" style="color:' + color.from + '">' + g.series + '</span>';
+    html += '<span class="cnt">' + pad2(g.items.length) + '</span>';
+    html += '</div><div class="idx-list">';
+    g.items.forEach((article, i) => {
+      const isCurrent = currentPath.includes(article.id);
+      /* 去掉标题里的「系列名 · 」前缀，只留 EPxx：xxx */
+      const shortTitle = article.title.replace(article.series + ' · ', '');
+      html += '<a href="' + article.id + '" class="idx-item' + (isCurrent ? ' is-current' : '') + '" title="' + article.title + '">';
+      html += '<span class="no">' + pad2(i + 1) + '</span>';
+      html += '<span class="nm">' + shortTitle + '</span>';
+      html += '<span class="ds">' + article.date + '</span>';
+      if (isCurrent) html += '<span class="idx-cur" style="background:' + color.from + '">当前阅读</span>';
+      html += '</a>';
+    });
+    html += '</div></div>';
   });
   html += '</div>';
   container.innerHTML = html;
