@@ -169,6 +169,104 @@
   text-align: center;
 }
 
+    /* ===== 首页 Hero ===== */
+    .home-hero {
+      position: relative;
+      text-align: center;
+      padding: 8px 0 4px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--c-text-4);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      width: 28px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--c-border-2));
+    }
+    .hero-eyebrow::after {
+      background: linear-gradient(90deg, var(--c-border-2), transparent);
+    }
+    .home-hero .page-title {
+      font-size: 34px;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+    }
+    .home-hero .page-subtitle {
+      margin-bottom: 26px;
+      letter-spacing: .01em;
+    }
+    .hero-stats {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 0 auto 34px;
+      padding: 0;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-sm);
+      overflow: hidden;
+      text-align: left;
+    }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 12px 18px;
+    }
+    .stat-row + .stat-row {
+      border-top: 1px solid var(--c-border);
+    }
+    .stat-k {
+      font-size: 12px;
+      color: var(--c-text-3);
+      letter-spacing: .04em;
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+    .stat-cell {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      padding: 0 18px;
+    }
+    .stat-cell + .stat-cell {
+      border-left: 1px solid var(--c-border);
+    }
+    .hero-stats dt {
+      font-size: 12px;
+      color: var(--c-text-3);
+      margin: 0;
+      white-space: nowrap;
+    }
+    .hero-stats dd {
+      font-family: var(--font-num);
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--c-text);
+      line-height: 1;
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+      min-width: 2.6em;
+      text-align: right;
+    }
+    .stat-row:last-child dd { color: var(--c-text-2); }
+    @media (max-width: 640px) {
+      .home-hero .page-title { font-size: 26px; }
+      .hero-stats > div { padding: 12px 14px; min-width: 0; }
+      .hero-stats dd { font-size: 19px; }
+      .hero-stats dt { font-size: 11px; }
+    }
+
     .section-title {
       font-size: 20px;
       font-weight: 600;
@@ -421,42 +519,105 @@
     }
 
     /* 快捷入口 */
-    .quick-links {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: 20px;
+    /* ===== 目录式快捷入口 ===== */
+    .idx-groups {
+      margin-top: 8px;
+      border-top: 1px solid var(--c-border);
     }
-
-    .quick-link {
+    .idx-group { border-bottom: 1px solid var(--c-border); }
+    .idx-group-head {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      border-radius: var(--r-lg);
+      align-items: baseline;
+      gap: 10px;
+      padding: 14px 2px 10px;
+    }
+    .idx-group-head .no {
+      font-family: var(--font-num);
+      font-size: 13px;
+      color: var(--c-text-3);
+      letter-spacing: .06em;
+      font-variant-numeric: tabular-nums;
+    }
+    .idx-group-head .nm {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--c-text);
+      letter-spacing: .01em;
+    }
+    .idx-group-head .cnt {
+      margin-left: auto;
+      font-family: var(--font-num);
+      font-size: 12px;
+      color: var(--c-text-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .idx-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0 24px;
+      padding-bottom: 10px;
+    }
+    @media (max-width: 900px) { .idx-list { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .idx-list { grid-template-columns: 1fr; } }
+
+    .idx-item {
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 8px 2px;
       text-decoration: none;
-      color: white;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      color: var(--c-text);
+      transition: color .16s ease, transform .16s ease;
+      will-change: transform;
     }
-
-    .quick-link:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    .idx-item::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--c-primary);
+      border-radius: 1px;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .22s cubic-bezier(.4, 0, .2, 1);
     }
-
-    .quick-link svg {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 8px;
+    .idx-item:hover {
+      color: var(--c-primary);
+      transform: translateX(3px) scale(1.015);
+      transform-origin: left center;
     }
-
-    .quick-link span {
+    .idx-item:hover::after { transform: scaleX(1); }
+    .idx-item:hover .nm { font-weight: 600; }
+    .idx-item:hover .no { color: var(--c-primary); }
+    .idx-item .no {
+      font-family: var(--font-num);
+      font-size: 13px;
+      color: var(--c-text-3);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      min-width: 18px;
+    }
+    .idx-item .nm {
       font-size: 14px;
-      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: font-weight .12s ease;
     }
-
+    .idx-item .ds {
+      margin-left: auto;
+      font-size: 12.5px;
+      color: var(--c-text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    .idx-item:hover .ds { color: var(--c-text-2); }
     /* ========= 响应式 ========= */
     @media (max-width: 900px) {
       .message-bar {
@@ -540,8 +701,25 @@
 
   <!-- ========== 主内容区域 ========== -->
   <main class="container">
-    <h1 class="page-title">走进新天地&middot;Railway</h1>
-    <p class="page-subtitle">车迷的栖息地</p>
+    <header class="home-hero">
+      <div class="hero-eyebrow">Shenzhen Metro · 车迷档案</div>
+      <h1 class="page-title">走进新天地&middot;Railway</h1>
+      <p class="page-subtitle">车迷的栖息地</p>
+      <dl class="hero-stats">
+        <div class="stat-row">
+          <span class="stat-k">已开通</span>
+          <div class="stat-cell"><dd id="statLines">—</dd><dt>线路</dt></div>
+          <div class="stat-cell"><dd id="statStations">—</dd><dt>车站</dt></div>
+          <div class="stat-cell"><dd id="statKm">—</dd><dt>里程 km</dt></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-k">建设中</span>
+          <div class="stat-cell"><dd id="statBuilding">—</dd><dt>线路</dt></div>
+          <div class="stat-cell"><dd id="statBuildStations">—</dd><dt>车站</dt></div>
+          <div class="stat-cell"><dd id="statBuildKm">—</dd><dt>里程 km</dt></div>
+        </div>
+      </dl>
+    </header>
 
     <h2 class="section-title">目前已开通线路</h2>
     <div class="lines-grid" id="openedLinesGrid">
@@ -553,60 +731,101 @@
       <!-- 由JS动态生成 -->
     </div>
 
-    <h2 class="section-title">快捷入口</h2>
-    <div class="quick-links">
-      <!-- 【可修改】快捷入口：href 改链接，渐变色改 style，图标改 svg，文字改 span -->
-      <a href="videos" class="quick-link" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        <span>视频</span>
-      </a>
-      <a href="photos" class="quick-link" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span>照片</span>
-      </a>
-      <a href="materials" class="quick-link" style="background: linear-gradient(135deg, #a855f7, #9333ea);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-        <span>资料</span>
-      </a>
-      <a href="wiki" class="quick-link" style="background: linear-gradient(135deg, #f97316, #ea580c);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        <span>Wiki</span>
-      </a>
-      <a href="articles" class="quick-link" style="background: linear-gradient(135deg, #ec4899, #db2777);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-        </svg>
-        <span>图文</span>
-      </a>
-      <a href="announcements" class="quick-link" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-        </svg>
-        <span>报站</span>
-      </a>
-      <a href="progress-tracking" class="quick-link" style="background: linear-gradient(135deg, #b45309, #92400e);">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-        <span>进度跟踪</span>
-      </a>
-  <a href="tools" class="quick-link" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-      <path d="M4.7 19.3a1 1 0 0 0 1.4 0l3.77-3.77" />
-    </svg>
-    <span>工具</span>
-  </a>
+    <div class="idx-groups">
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">01</span>
+          <span class="nm">内容</span>
+          <span class="cnt">07</span>
+        </div>
+        <div class="idx-list">
+          <a href="videos" class="idx-item"><span class="no">01</span><span class="nm">视频</span><span class="ds">列车与站台实拍</span></a>
+          <a href="photos" class="idx-item"><span class="no">02</span><span class="nm">照片</span><span class="ds">高清原图图库</span></a>
+          <a href="materials" class="idx-item"><span class="no">03</span><span class="nm">资料</span><span class="ds">线路与史实档案</span></a>
+          <a href="wiki" class="idx-item"><span class="no">04</span><span class="nm">Wiki</span><span class="ds">线路百科条目</span></a>
+          <a href="articles" class="idx-item"><span class="no">05</span><span class="nm">图文</span><span class="ds">长文与杂谈</span></a>
+          <a href="announcements" class="idx-item"><span class="no">06</span><span class="nm">报站</span><span class="ds">车内广播音源</span></a>
+          <a href="progress-tracking" class="idx-item"><span class="no">07</span><span class="nm">进度跟踪</span><span class="ds">五期线路建设进度</span></a>
+        </div>
+      </div>
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">02</span>
+          <span class="nm">工具</span>
+          <span class="cnt">06</span>
+        </div>
+        <div class="idx-list">
+          <a href="tools" class="idx-item"><span class="no">01</span><span class="nm">工具总览</span><span class="ds">全部工具入口</span></a>
+          <a href="pids" class="idx-item"><span class="no">02</span><span class="nm">PIDS 还原</span><span class="ds">车内屏 1:1 复刻</span></a>
+          <a href="station-sign.html" class="idx-item"><span class="no">03</span><span class="nm">站名牌生成器</span><span class="ds">按线路字体出图</span></a>
+          <a href="sz_metro_fare" class="idx-item"><span class="no">04</span><span class="nm">票价计算器</span><span class="ds">里程与票价查询</span></a>
+          <a href="toilet" class="idx-item"><span class="no">05</span><span class="nm">卫生间查询</span><span class="ds">闸机内外分布</span></a>
+          <a href="dashboard" class="idx-item"><span class="no">06</span><span class="nm">线路仪表板</span><span class="ds">全线路数据总览</span></a>
+        </div>
+      </div>
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">03</span>
+          <span class="nm">账户与服务</span>
+          <span class="cnt">02</span>
+        </div>
+        <div class="idx-list">
+          <a href="ai" class="idx-item"><span class="no">01</span><span class="nm">AI 问答助手</span><span class="ds">地铁知识库问答</span></a>
+          <a href="account" class="idx-item"><span class="no">02</span><span class="nm">账户中心</span><span class="ds">登录 / 套餐 / 用量</span></a>
+        </div>
+      </div>
     </div>
   </main>
+
+  <script>
+    // ===== 首页 Hero 数据条 =====
+    (function () {
+      try {
+        var data = (typeof ALL_LINES_ENHANCED !== 'undefined') ? ALL_LINES_ENHANCED : [];
+        var opened = data.filter(function (l) { return l.category === 'operating'; });
+        var building = data.filter(function (l) { return l.category === 'construction'; });
+        // 20 号线一期 5 站已开通，二期 10 站在建 —— stationList 混在一起，需拆分
+        var L20_P1 = ['会展城', '国展北', '国展', '国展南', '机场北'];
+        var L20_P2 = ['机场东', '狮子山公园', '航城大道东', '西乡公园', '文汇', '甲岸',
+                      '中山公园西', '南头古城', '深大', '高新园', '白石洲'];
+        // 车站数按去重口径统计（换乘站只算一次）
+        var seen = Object.create(null);
+        opened.forEach(function (l) {
+          var list = l.stationList || [];
+          if (String(l.id) === '20') {
+            list = list.filter(function (s) { return L20_P1.indexOf(s) >= 0; });
+          }
+          list.forEach(function (s) { seen[s] = true; });
+        });
+        var stations = Object.keys(seen).length;
+        var km = opened.reduce(function (s, l) { return s + (l.lengthKm || 0); }, 0);
+
+        // 建设中：8 条 construction + 20 号线二期 10 站
+        var seenB = Object.create(null);
+        building.forEach(function (l) {
+          (l.stationList || []).forEach(function (s) { seenB[s] = true; });
+        });
+        L20_P2.forEach(function (s) { seenB[s] = true; });
+        var buildStations = Object.keys(seenB).length;
+        var buildKm = building.reduce(function (s, l) { return s + (l.lengthKm || 0); }, 0);
+        // 20 号线二期（机场北→白石洲）全长约 24.8 km，一期里程已计入已开通，二期单独补
+        var l20 = data.filter(function (l) { return String(l.id) === '20'; })[0];
+        if (l20 && l20.lengthKmPhase2) buildKm += l20.lengthKmPhase2;
+        var fmt = function (id, v) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = v;
+        };
+        fmt('statLines', opened.length);
+        fmt('statStations', stations);
+        fmt('statKm', km.toFixed(1));
+        fmt('statBuilding', building.length);
+        fmt('statBuildStations', buildStations);
+        fmt('statBuildKm', buildKm.toFixed(1));
+      } catch (e) {
+        console.warn('[hero-stats]', e);
+      }
+    })();
+  </script>
 
   <script src="festival-data.js"></script>
   <script src="banner-shuffle.js"></script>
@@ -764,7 +983,11 @@
 
     // ========= 消息滚动栏逻辑 =========
 const baseMessages = [
-  "个人站(v130) 更新公告（2026.10.31 01:30）请查收：",
+  "个人站(v131) 更新公告（2026.10.31 17:40）请查收：",
+  "主页焕新：顶部新增线路与里程数据条（已开通 17 线 / 352 站 / 646.0 km；建设中 8 线 / 126 站 / 196.6 km），快捷入口改为目录式排版，共 15 个入口，新增「AI 问答助手」与「账户中心」",
+  "「收集的资料」页改为目录式列表，去掉彩色图标块，信息更集中、更好扫读",
+  "20 号线二期数据修正：补入「机场东站」，二期 11 站 / 24.8 km 与官方环评及规划公示对齐；沿线站序、换乘关系同步更新",
+  "清理了部分页面标题前残留的装饰图标，全站页面标题样式统一",
   "新工具「深圳地铁 PIDS 还原」上线：1、5、7 号线车内屏 + 7 号线 2016 开通初期版，全部按实车照片 1:1 复刻（含换乘徽标、跑马灯开门提示、列车方向箭头）",
   "「站名牌生成器」并入工具页统一入口：中文按各线路指定字体渲染、英文统一 Arial Bold、底部为线路色带，支持一键下载 PNG",
   "工具页新增「相关工具」分区，收录 6 个站外好工具：AARC 线网图绘制器、MTR PIDS Simulator、千岁计划 Sign Maker、NaL 导向标志、地铁通车站列表、深铁 logo 素材下载",

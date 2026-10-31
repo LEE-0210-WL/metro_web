@@ -347,7 +347,7 @@
 
       const links = [
         { icon: "📋", text: "线路仪表盘", url: `dashboard?line=${LINE_ID}` },
-        // { icon: "📰", text: "进度跟踪", url: `progress-tracking` },
+        { icon: "📈", text: "线路进度", url: `progress-tracking?line=${LINE_ID}`, disabled: true, hint: "暂未开放" },
         { icon: "📊", text: "客流查询", url: `passenger-flow?line=${LINE_ID}` },
         { icon: "🚇", text: "车辆信息", url: `trains` },
         // { icon: "🏗️", text: "建设历程", url: `history` },
@@ -356,9 +356,10 @@
         { icon: "📷", text: "照片", url: `photos?line=${LINE_ID}` },
       ];
 
-      container.innerHTML = links.map(l => `
-        <a href="${l.url}" class="related-link-item">${l.icon} ${l.text}</a>
-      `).join('');
+      container.innerHTML = links.map(l => l.disabled
+        ? `<span class="related-link-item is-disabled" title="${l.hint || '暂未开放'}" aria-disabled="true">${l.icon} ${l.text}<em>未开放</em></span>`
+        : `<a href="${l.url}" class="related-link-item">${l.icon} ${l.text}</a>`
+      ).join('');
     })();
 
 

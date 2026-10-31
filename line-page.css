@@ -811,3 +811,25 @@ html, body { overflow-x: hidden; max-width: 100%; }
 .hist-body code,
 .hist-body pre,
 .hist-body a { word-break: break-word; overflow-wrap: anywhere; }
+/* ===== 相关链接：禁用态（线路进度预留接口） ===== */
+.related-link-item.is-disabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: .5;
+  filter: grayscale(1);
+  position: relative;
+}
+.related-link-item.is-disabled em {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--c-warn-fg, #92400e);
+  background: var(--c-warn-bg, #fffbeb);
+  border: 1px solid var(--c-warn-bd, #fde68a);
+  border-radius: 3px;
+  padding: 0 4px;
+  line-height: 1.4;
+}

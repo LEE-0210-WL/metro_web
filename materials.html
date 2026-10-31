@@ -26,62 +26,79 @@
     .page-subtitle {  font-size: 16px;
   color: #6b7280;
   margin-bottom: 32px;}
+    /* ===== 目录式资料列表 ===== */
     .materials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 20px;
+      counter-reset: mat;
+      border-top: 1px solid var(--c-border);
     }
     .material-card {
-      background: white; border-radius: var(--r-lg); padding: 20px;
-      box-shadow: var(--sh-md);
-      transition: all 0.3s ease;
-      text-decoration: none; color: inherit;
-      display: flex; align-items: flex-start; gap: 16px;
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 13px 2px;
+      text-decoration: none;
+      color: var(--c-text);
+      border-bottom: 1px solid var(--c-border);
+      counter-increment: mat;
+      transition: color .16s ease, transform .16s ease;
+    }
+    .material-card::before {
+      content: counter(mat, decimal-leading-zero);
+      font-family: var(--font-num);
+      font-size: 13px;
+      color: var(--c-text-3);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      min-width: 22px;
+      transition: color .16s ease;
+    }
+    .material-card::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 2px;
+      background: var(--c-primary);
+      border-radius: 1px;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .22s cubic-bezier(.4,0,.2,1);
     }
     .material-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      color: var(--c-primary);
+      transform: translateX(3px) scale(1.012);
+      transform-origin: left center;
     }
-    .material-icon {
-      width: 56px; height: 56px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .material-icon svg { width: 24px; height: 24px; }
-    .material-content { flex: 1; min-width: 0; }
+    .material-card:hover::after { transform: scaleX(1); }
+    .material-card:hover::before { color: var(--c-primary); }
+    .material-card:hover .material-title { font-weight: 600; }
+
+    .material-content { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 10px; }
     .material-title {
-      font-size: 16px; font-weight: 600; color: #111827;
-      margin-bottom: 6px;
-      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 400; color: inherit;
+      white-space: nowrap; flex-shrink: 0;
+      transition: font-weight .12s ease;
     }
-    .material-title svg { width: 16px; height: 16px; color: var(--c-text-3); opacity: 0; transition: opacity 0.3s ease; }
-    .material-card:hover .material-title svg { opacity: 1; }
-    .material-description { font-size: 14px; color: #6b7280; margin-bottom: 10px; line-height: 1.5; }
-    .material-meta { display: flex; align-items: center; gap: 12px; }
-    .material-type { font-size: var(--fs-sm); padding: 4px 10px; border-radius: 20px; font-weight: 500; }
-    .material-size { font-size: var(--fs-sm); color: var(--c-text-3); }
-    .material-date { font-size: var(--fs-sm); color: var(--c-text-3); }
-    .type-map { background: #dcfce7; color: #166534; }
-    .type-history { background: #fef3c7; color: #92400e; }
-    .type-train { background: #dbeafe; color: #1e40af; }
-    .type-announcement { background: #fce7f3; color: #be185d; }
-    .type-article { background: #e0e7ff; color: #3730a3; }
-    .type-link { background: #ffedd5; color: #c2410c; }
-    .type-wiki { background: #e0f2fe; color: #0369a1; }
-    .icon-map { background: #dcfce7; color: #166534; }
-    .icon-history { background: #fef3c7; color: #92400e; }
-    .icon-train { background: #dbeafe; color: #1e40af; }
-    .icon-announcement { background: #fce7f3; color: #be185d; }
-    .icon-article { background: #e0e7ff; color: #3730a3; }
-    .icon-link { background: #ffedd5; color: #c2410c; }
-    .icon-wiki { background: #e0f2fe; color: #0369a1; }
-    .icon-font {
-      background: #e0f2fe;
-      color: #0369a1;
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
+    .material-description {
+      font-size: 12.5px; color: var(--c-text-3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1; min-width: 0; margin: 0;
     }
+    .material-meta {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-left: auto; flex-shrink: 0;
+    }
+    .material-type {
+      font-size: 12px; color: var(--c-text-2);
+      background: var(--c-surface-2); padding: 1px 8px;
+      border-radius: var(--r-sm); font-weight: 400;
+    }
+    .material-size, .material-date {
+      font-size: 12.5px; color: var(--c-text-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .type-map, .type-history, .type-train, .type-announcement,
+    .type-article, .type-link, .type-wiki { background: var(--c-surface-2); color: var(--c-text-2); }
     .info-box {
       background: #f3e8ff; border-radius: var(--r-lg);
       padding: 16px 20px; margin-top: 32px;
@@ -126,18 +143,8 @@
     <p class="page-subtitle">轨道交通相关资源整理</p>
     <div class="materials-grid" id="materialsGrid">
       <a href="passenger-flow" class="material-card">
-        <div class="material-icon icon-map">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 20V10M12 20V4M6 20v-6"/>
-          </svg>
-        </div>
         <div class="material-content">
-          <h3 class="material-title">
-            深圳地铁客流
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </h3>
+          <h3 class="material-title">深圳地铁客流</h3>
           <p class="material-description">各线路每日客流量统计（不含港铁4号线、13号线）</p>
           <div class="material-meta">
             <span class="material-type type-article">数据</span>
@@ -164,29 +171,7 @@
       { id: '8', title: '港铁深圳官方网站', description: '4，13号线运营商官网', type: 'link', typeLabel: '链接', date: '2025.6', url: 'https://www.mtrsz.com.cn' }
     ];
 
-    const icons = {
-      map: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7" /></svg>',
-      history: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
-      train: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>',
-      announcement: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>',
-      article: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>',
-      link: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>',
-      wiki: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>'
-    };
-
-    // SVG绘制的A+文图标 - 放大版
-    const fontIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="56" height="56">
-      <!-- 背景圆角矩形 -->
-      <rect x="2" y="2" width="44" height="44" rx="10" fill="#e0f2fe"/>
-      <!-- 左上气泡框 -->
-      <path d="M8 12 Q8 6 14 6 L28 6 Q34 6 34 12 L34 20 Q34 26 28 26 L22 26 L16 32 L16 26 L14 26 Q8 26 8 20 Z" fill="white" stroke="#0369a1" stroke-width="2"/>
-      <!-- 大写 A -->
-      <text x="21" y="21" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0369a1" text-anchor="middle">A</text>
-      <!-- 右下气泡框 -->
-      <path d="M14 28 Q14 22 20 22 L34 22 Q40 22 40 28 L40 36 Q40 42 34 42 L26 42 L20 48 L20 42 L20 42 Q14 42 14 36 Z" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
-      <!-- 文 -->
-      <text x="27" y="38" font-family="'HarmonyOS Sans', 'PingFang SC', sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">文</text>
-    </svg>`;
+    
 
     const materialsGrid = document.getElementById('materialsGrid');
     materials.forEach(material => {
@@ -195,20 +180,9 @@
       card.href = material.url;
       card.target = material.type === 'link' ? '_blank' : '_self';
 
-      const isFont = material.type === 'wiki' && material.title.includes('字体');
-      const iconHtml = isFont
-        ? `<div class="material-icon icon-font">${fontIconSvg}</div>`
-        : `<div class="material-icon icon-${material.type}">${icons[material.type]}</div>`;
-
       card.innerHTML = `
-        ${iconHtml}
         <div class="material-content">
-          <h3 class="material-title">
-            ${material.title}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </h3>
+          <h3 class="material-title">${material.title}</h3>
           <p class="material-description">${material.description}</p>
           <div class="material-meta">
             <span class="material-type type-${material.type}">${material.typeLabel}</span>
