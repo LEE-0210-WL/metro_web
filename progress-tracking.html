@@ -863,7 +863,7 @@
     const st = line.stations;
     const N = st.length;
     const SW = 900, SH = 770;
-    const X0 = 110, Y0 = 75, W = 680, H = 570, RD = 95;
+    const X0 = 110, Y0 = 75, W = 680, H = 570, RD = 55;
     const COLOR = line.color || '#2563eb';
     const cxm = X0 + W / 2, cym = Y0 + H / 2;
 
@@ -924,22 +924,21 @@
 
     /* 站点只布置在四条直边上（避开圆角），按周长顺时针分配 */
     const sL = H - 2 * RD, sW = W - 2 * RD, arc = Math.PI * RD / 2;
+    /* 站点只在四条直边上：每条边内部等距，左右/上下镜像对称 */
     const EDGES = [
-      { n: 7, d0: sL + arc },                    // 上边（向右）
-      { n: 5, d0: sL + arc + sW + arc },         // 右边（向下）
-      { n: 7, d0: sL + arc + sW + 2 * arc + sL },// 下边（向左）
-      { n: 5, d0: sL + arc + sW + 2 * arc + sL + sW + arc }  // 左边（向上）
+      { n: 7, len: sW, d0: sL + arc },                      // 上边（向右）
+      { n: 5, len: sL, d0: sL + arc + sW + arc },           // 右边（向下）
+      { n: 7, len: sW, d0: sL + arc + sW + 2 * arc + sL },  // 下边（向左）
+      { n: 5, len: sL, d0: sL + arc + sW + 2 * arc + sL + sW + arc }  // 左边（向上）
     ];
-    const EDGE_LEN = [sW, sL, sW, sL];
 
-    // 计算每个站点的周长距离 d
     const stationD = [];
     let ei = 0, ek = 0;
     for (let i = 0; i < N; i++) {
-      if (ei < EDGES.length && ek >= EDGES[ei].n) { ei++; ek = 0; }
-      const E = EDGES[Math.min(ei, EDGES.length - 1)];
-      const t01 = (ek + 0.5) / E.n;
-      stationD.push(E.d0 + t01 * EDGE_LEN[Math.min(ei, EDGES.length - 1)]);
+      while (ei < EDGES.length - 1 && ek >= EDGES[ei].n) { ei++; ek = 0; }
+      const E = EDGES[ei];
+      const t01 = (ek + 0.5) / E.n;      // 半间距起，左右对称
+      stationD.push(E.d0 + t01 * E.len);
       ek++;
     }
 
@@ -947,7 +946,7 @@
 
     /* 区间：按站点间的周长折线绘制，内圈=左线、外圈=右线 */
     const LP = loopLen(0);
-    [[-8, 'l'], [8, 'r']].forEach(([off, side]) => {
+    [[-6, 'l'], [6, 'r']].forEach(([off, side]) => {
       for (let i = 0; i < N; i++) {
         const dA = stationD[i];
         let dB = stationD[(i + 1) % N];
@@ -976,31 +975,35 @@
 
       const ang = Math.atan2(q.nx, -q.ny) * 180 / Math.PI;
       const BW = 44, BH = 32;   // 盖住 ±8 偏移 + 6px 描边的轨道
-      s += `<rect x="${(q.x - BW / 2).toFixed(1)}" y="${(q.y - BH / 2).toFixed(1)}" width="${BW}" height="${BH}" rx="4" fill="${fill}" stroke="${COLOR}" stroke-width="4" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
+      s += `<rect x="${(q.x - BW / 2).toFixed(1)}" y="${(q.y - BH / 2).toFixed(1)}" width="${BW}" height="${BH}" rx="4" fill="${fill}" stroke="${COLOR}" stroke-width="5" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
 
-      const ix = q.x - q.nx * 42, iy = q.y - q.ny * 42;
+      const ix = q.x - q.nx * 32, iy = q.y - q.ny * 32;
       const anchor = q.nx > 0.4 ? 'end' : (q.nx < -0.4 ? 'start' : 'middle');
       s += `<text class="st-label" x="${ix.toFixed(1)}" y="${(iy + 5).toFixed(1)}" text-anchor="${anchor}">${name}</text>`;
 
       const tf = transferBadges(line, name);
       if (tf.length) {
-        const ox = q.x + q.nx * 36, oy = q.y + q.ny * 36;
+        const ox = q.x + q.nx * 42, oy = q.y + q.ny * 42;
         let bx, by;
         if (q.nx > 0.4) { bx = ox + 4; by = oy - 11; }
-        else if (q.nx < -0.4) { bx = ox - 4 - tf.length * 21; by = oy - 10; }
-        else { bx = ox - (tf.length * 21 - 3) / 2; by = oy - 10; }
+        else if (q.nx < -0.4) { bx = ox - 4 - tf.length * 27; by = oy - 13; }
+        else { bx = ox - (tf.length * 27 - 4) / 2; by = oy - 13; }
         tf.forEach((b2, k) => {
-          const x0 = bx + k * 21;
-          s += `<rect x="${x0.toFixed(1)}" y="${by.toFixed(1)}" width="18" height="18" rx="4" fill="${b2.bg}"/>`;
-          s += `<text x="${(x0 + 9).toFixed(1)}" y="${(by + 13).toFixed(1)}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${b2.disp.length > 1 ? 10 : 12}" font-weight="400" fill="${b2.fg}">${b2.disp}</text>`;
+          const x0 = bx + k * 27;
+          s += `<rect x="${x0.toFixed(1)}" y="${by.toFixed(1)}" width="26" height="26" rx="5" fill="${b2.bg}"/>`;
+          // 单双位统一字号 18px；双位仅收字距，与竖排图保持一致
+          const lsAttr = b2.disp.length > 1 ? ' letter-spacing="-0.7"' : '';
+          s += `<text x="${(x0 + 13).toFixed(1)}" y="${(by + 19).toFixed(1)}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="${b2.fg}"${lsAttr}>${b2.disp}</text>`;
         });
       }
 
       const note = STATION_NOTES[name];
       if (note) {
         const nw = note.length * 11 + 10;
-        s += `<rect x="${(ix - nw / 2).toFixed(1)}" y="${(iy + 9).toFixed(1)}" width="${nw}" height="16" rx="3" fill="#fef3c7" stroke="#fde68a"/>`;
-        s += `<text x="${ix.toFixed(1)}" y="${(iy + 21).toFixed(1)}" text-anchor="middle" font-family="var(--font)" font-size="11" fill="#92400e">${note}</text>`;
+        // 再往环内挪 30px，避开站名与站点矩形
+        const ntx = ix - q.nx * 30, nty = iy - q.ny * 30;
+        s += `<rect x="${(ntx - nw / 2).toFixed(1)}" y="${(nty - 8).toFixed(1)}" width="${nw}" height="16" rx="3" fill="#fef3c7" stroke="#fde68a"/>`;
+        s += `<text x="${ntx.toFixed(1)}" y="${(nty + 4).toFixed(1)}" text-anchor="middle" font-family="var(--font)" font-size="11" fill="#92400e">${note}</text>`;
       }
     }
 
