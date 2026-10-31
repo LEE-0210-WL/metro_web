@@ -533,7 +533,7 @@
       margin-bottom: 8px;
     }
     .pg-ring { display: block; margin: 0 auto; width: 100%; height: auto; }
-    .pg-ring .st-label { font-family: var(--font); font-size: 13px; fill: var(--c-text); }
+    .pg-ring .st-label { font-family: var(--font); font-size: 15px; fill: var(--c-text); }
     .pg-ring .st-label.hl { font-weight: 600; fill: var(--c-primary); }
 
     /* 站点特殊标注（如越站通过）：绝对定位在矩形左侧，不参与布局 */
@@ -862,8 +862,8 @@
   function renderRing(line) {
     const st = line.stations;
     const N = st.length;
-    const S = 900;
-    const X0 = 80, Y0 = 70, W = 740, H = 540, RD = 90;
+    const SW = 900, SH = 770;
+    const X0 = 110, Y0 = 75, W = 680, H = 570, RD = 95;
     const COLOR = line.color || '#2563eb';
     const cxm = X0 + W / 2, cym = Y0 + H / 2;
 
@@ -922,59 +922,85 @@
       return { x: x1 + r * Math.cos(th), y: y2 + r * Math.sin(th), nx: Math.cos(th), ny: Math.sin(th) };
     }
 
-    const LEN = loopLen(0) * 1.0;
-    let s = `<div class="pg-ring-wrap"><svg class="pg-ring" viewBox="0 0 ${S} ${S}" role="img" aria-label="线路矩形环线示意图">`;
+    /* 站点只布置在四条直边上（避开圆角），按周长顺时针分配 */
+    const sL = H - 2 * RD, sW = W - 2 * RD, arc = Math.PI * RD / 2;
+    const EDGES = [
+      { n: 7, d0: sL + arc },                    // 上边（向右）
+      { n: 5, d0: sL + arc + sW + arc },         // 右边（向下）
+      { n: 7, d0: sL + arc + sW + 2 * arc + sL },// 下边（向左）
+      { n: 5, d0: sL + arc + sW + 2 * arc + sL + sW + arc }  // 左边（向上）
+    ];
+    const EDGE_LEN = [sW, sL, sW, sL];
 
-    /* 区间：内圈=左线、外圈=右线，用 dash 沿闭环切段着色 */
-    [[-10, 'l'], [10, 'r']].forEach(([inset, side]) => {
-      const dPath = loopPath(inset);
-      const L = loopLen(inset);
-      const segLen = L / N;
+    // 计算每个站点的周长距离 d
+    const stationD = [];
+    let ei = 0, ek = 0;
+    for (let i = 0; i < N; i++) {
+      if (ei < EDGES.length && ek >= EDGES[ei].n) { ei++; ek = 0; }
+      const E = EDGES[Math.min(ei, EDGES.length - 1)];
+      const t01 = (ek + 0.5) / E.n;
+      stationD.push(E.d0 + t01 * EDGE_LEN[Math.min(ei, EDGES.length - 1)]);
+      ek++;
+    }
+
+    let s = `<div class="pg-ring-wrap"><svg class="pg-ring" viewBox="0 0 ${SW} ${SH}" role="img" aria-label="线路矩形环线示意图">`;
+
+    /* 区间：按站点间的周长折线绘制，内圈=左线、外圈=右线 */
+    const LP = loopLen(0);
+    [[-13, 'l'], [13, 'r']].forEach(([off, side]) => {
       for (let i = 0; i < N; i++) {
+        const dA = stationD[i];
+        let dB = stationD[(i + 1) % N];
+        if (dB <= dA) dB += LP;              // 跨端点时补一圈
         const seg = segState(line, st[i], st[(i + 1) % N]);
         const col = SEG_COLOR[seg[side]] || '#d1d5db';
-        s += `<path d="${dPath}" fill="none" stroke="${col}" stroke-width="6" stroke-dasharray="${segLen.toFixed(2)} ${(L - segLen).toFixed(2)}" stroke-dashoffset="${(-i * segLen).toFixed(2)}"/>`;
+        // 采样折线
+        const STEPS = 24;
+        let path = '';
+        for (let k = 0; k <= STEPS; k++) {
+          const d = dA + (dB - dA) * (k / STEPS);
+          const q = posAt(d);
+          const ox = q.x + q.nx * off, oy = q.y + q.ny * off;
+          path += (k === 0 ? 'M ' : ' L ') + ox.toFixed(1) + ' ' + oy.toFixed(1);
+        }
+        s += `<path d="${path}" fill="none" stroke="${col}" stroke-width="7"/>`;
       }
     });
 
-    /* 站点矩形标记（在环上）+ 环内站名 + 环外换乘徽标 */
+    /* 站点矩形标记（盖住轨道）+ 环内站名 + 环外徽标 */
     for (let i = 0; i < N; i++) {
       const name = st[i];
-      const q = posAt((i / N) * LEN);
+      const q = posAt(stationD[i]);
       const ss = line.stationStatus && line.stationStatus[name];
       const fill = ss ? (ST_DOT_COLOR[ss] || '#fff') : '#fff';
 
-      // 站点：小矩形（沿切线方向摆正）
-      const tx = -q.ny, ty = q.nx;   // 切线
-      const ang = Math.atan2(ty, tx) * 180 / Math.PI;
-      s += `<rect x="${(q.x - 11).toFixed(1)}" y="${(q.y - 7).toFixed(1)}" width="22" height="14" rx="3" fill="${fill}" stroke="${COLOR}" stroke-width="2.5" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
+      const ang = Math.atan2(q.nx, -q.ny) * 180 / Math.PI;
+      const BW = 40, BH = 30;   // 足够盖住 ±13 偏移 + 7px 描边
+      s += `<rect x="${(q.x - BW / 2).toFixed(1)}" y="${(q.y - BH / 2).toFixed(1)}" width="${BW}" height="${BH}" rx="4" fill="${fill}" stroke="${COLOR}" stroke-width="2.5" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
 
-      // 站名：环内侧
-      const ix = q.x - q.nx * 36, iy = q.y - q.ny * 36;
+      const ix = q.x - q.nx * 42, iy = q.y - q.ny * 42;
       const anchor = q.nx > 0.4 ? 'end' : (q.nx < -0.4 ? 'start' : 'middle');
-      s += `<text class="st-label" x="${ix.toFixed(1)}" y="${(iy + 4).toFixed(1)}" text-anchor="${anchor}">${name}</text>`;
+      s += `<text class="st-label" x="${ix.toFixed(1)}" y="${(iy + 5).toFixed(1)}" text-anchor="${anchor}">${name}</text>`;
 
-      // 换乘徽标：环外侧
       const tf = transferBadges(line, name);
       if (tf.length) {
-        const ox = q.x + q.nx * 34, oy = q.y + q.ny * 34;
+        const ox = q.x + q.nx * 36, oy = q.y + q.ny * 36;
         let bx, by;
-        if (q.nx > 0.4) { bx = ox + 4; by = oy - 8; }
-        else if (q.nx < -0.4) { bx = ox - 4 - tf.length * 19; by = oy - 8; }
-        else { bx = ox - (tf.length * 19 - 3) / 2; by = oy - 8; }
+        if (q.nx > 0.4) { bx = ox + 4; by = oy - 11; }
+        else if (q.nx < -0.4) { bx = ox - 4 - tf.length * 21; by = oy - 10; }
+        else { bx = ox - (tf.length * 21 - 3) / 2; by = oy - 10; }
         tf.forEach((b2, k) => {
-          const x0 = bx + k * 19;
-          s += `<rect x="${x0.toFixed(1)}" y="${by.toFixed(1)}" width="16" height="16" rx="3" fill="${b2.bg}"/>`;
-          s += `<text x="${(x0 + 8).toFixed(1)}" y="${(by + 12).toFixed(1)}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${b2.disp.length > 1 ? 9 : 11}" font-weight="400" fill="${b2.fg}">${b2.disp}</text>`;
+          const x0 = bx + k * 21;
+          s += `<rect x="${x0.toFixed(1)}" y="${by.toFixed(1)}" width="18" height="18" rx="4" fill="${b2.bg}"/>`;
+          s += `<text x="${(x0 + 9).toFixed(1)}" y="${(by + 13).toFixed(1)}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${b2.disp.length > 1 ? 10 : 12}" font-weight="400" fill="${b2.fg}">${b2.disp}</text>`;
         });
       }
 
-      // 特殊状态标注
       const note = STATION_NOTES[name];
       if (note) {
         const nw = note.length * 11 + 10;
-        s += `<rect x="${(ix - nw / 2).toFixed(1)}" y="${(iy + 8).toFixed(1)}" width="${nw}" height="16" rx="3" fill="#fef3c7" stroke="#fde68a"/>`;
-        s += `<text x="${ix.toFixed(1)}" y="${(iy + 20).toFixed(1)}" text-anchor="middle" font-family="var(--font)" font-size="11" fill="#92400e">${note}</text>`;
+        s += `<rect x="${(ix - nw / 2).toFixed(1)}" y="${(iy + 9).toFixed(1)}" width="${nw}" height="16" rx="3" fill="#fef3c7" stroke="#fde68a"/>`;
+        s += `<text x="${ix.toFixed(1)}" y="${(iy + 21).toFixed(1)}" text-anchor="middle" font-family="var(--font)" font-size="11" fill="#92400e">${note}</text>`;
       }
     }
 
