@@ -947,7 +947,7 @@
 
     /* 区间：按站点间的周长折线绘制，内圈=左线、外圈=右线 */
     const LP = loopLen(0);
-    [[-13, 'l'], [13, 'r']].forEach(([off, side]) => {
+    [[-8, 'l'], [8, 'r']].forEach(([off, side]) => {
       for (let i = 0; i < N; i++) {
         const dA = stationD[i];
         let dB = stationD[(i + 1) % N];
@@ -963,7 +963,7 @@
           const ox = q.x + q.nx * off, oy = q.y + q.ny * off;
           path += (k === 0 ? 'M ' : ' L ') + ox.toFixed(1) + ' ' + oy.toFixed(1);
         }
-        s += `<path d="${path}" fill="none" stroke="${col}" stroke-width="7"/>`;
+        s += `<path d="${path}" fill="none" stroke="${col}" stroke-width="6"/>`;
       }
     });
 
@@ -975,8 +975,8 @@
       const fill = ss ? (ST_DOT_COLOR[ss] || '#fff') : '#fff';
 
       const ang = Math.atan2(q.nx, -q.ny) * 180 / Math.PI;
-      const BW = 40, BH = 30;   // 足够盖住 ±13 偏移 + 7px 描边
-      s += `<rect x="${(q.x - BW / 2).toFixed(1)}" y="${(q.y - BH / 2).toFixed(1)}" width="${BW}" height="${BH}" rx="4" fill="${fill}" stroke="${COLOR}" stroke-width="2.5" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
+      const BW = 44, BH = 32;   // 盖住 ±8 偏移 + 6px 描边的轨道
+      s += `<rect x="${(q.x - BW / 2).toFixed(1)}" y="${(q.y - BH / 2).toFixed(1)}" width="${BW}" height="${BH}" rx="4" fill="${fill}" stroke="${COLOR}" stroke-width="4" transform="rotate(${ang.toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)})"/>`;
 
       const ix = q.x - q.nx * 42, iy = q.y - q.ny * 42;
       const anchor = q.nx > 0.4 ? 'end' : (q.nx < -0.4 ? 'start' : 'middle');
