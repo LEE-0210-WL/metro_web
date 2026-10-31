@@ -527,6 +527,33 @@
     }
     /* 车站工序状态色条 */
     .pg-box.has-st { padding-left: 26px; }
+    /* 换乘线路徽标：绝对定位在矩形右侧，不参与布局 */
+    .pg-tf {
+      position: absolute;
+      left: calc(50% + 60px);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 4px;
+      z-index: 3;
+    }
+    .tf-badge {
+      width: 39px;            /* 与站点矩形同高，正方形 */
+      height: 39px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    /* 双位线路：缩窄字间距，保证落在正方形内 */
+    .tf-badge.tf-2d { font-size: 16px; letter-spacing: -0.05em; }
+    @media (max-width: 640px) { .pg-tf { left: calc(50% + 58px); gap: 3px; } }
+
     .pg-box .st {
       position: absolute;
       left: 0; top: 0; bottom: 0;
@@ -747,12 +774,49 @@
     <div id="pgContainer"></div>
   </main>
 
-<script src="progress-data.js"></script>
+<script src="all-lines-enhanced.js"></script>
+  <script src="progress-data.js"></script>
   <script>
   // ================= 线路进度数据 =================
   // status: done=已贯通 / wip=掘进中 / todo=未开工
   // 数据来源均标注在 sources 里，只有官方/权威媒体的才写
   // 文字对比色：与全站 index.html / trains.html / wiki.html 的 getTextColor 完全一致
+  /* ===== 换乘线路徽标（参考首页线路入口：底色=线路色，文字按亮度取黑/白） ===== */
+  const LINE_MAP = {};
+  const STATION_TRANSFERS = {};
+  if (typeof ALL_LINES_ENHANCED !== 'undefined') {
+    ALL_LINES_ENHANCED.forEach(l => {
+      LINE_MAP[String(l.id)] = l;
+      Object.keys(l.transfers || {}).forEach(stName => {
+        if (!STATION_TRANSFERS[stName]) STATION_TRANSFERS[stName] = {};
+        // 该站所属线路本身也是换乘方（反之亦然）
+        STATION_TRANSFERS[stName][String(l.id)] = true;
+        (l.transfers[stName] || []).forEach(id => { STATION_TRANSFERS[stName][String(id)] = true; });
+      });
+    });
+  }
+
+  function transferBadges(line, stName) {
+    const set = STATION_TRANSFERS[stName];
+    if (!set) return [];
+    // 当前线路自身不算换乘（13s→13、20b→20）
+    const selfId = line.id === '20b' ? '20' : (line.id === '13s' ? '13' : String(line.id));
+    const ids = Object.keys(set)
+      .filter(id => id !== selfId)
+      .sort((a, b) => (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0));
+    return ids.map(id => {
+      const L = LINE_MAP[id];
+      const open = !!(L && L.category === 'operating');
+      const color = (L && L.color) ? L.color : '#888888';
+      return {
+        disp: id === '6z' ? '6Z' : id,
+        open,
+        bg: open ? color : '#4b5563',                 // 未开通：深灰
+        fg: open ? getTextColor(color) : '#ffffff'    // 已开通：按亮度取黑/白
+      };
+    });
+  }
+
   function getTextColor(hex) {
     let r, g, b;
     if (hex && hex.startsWith('#')) {
@@ -837,10 +901,14 @@
         </div>`;
       }
       const ss = line.stationStatus && line.stationStatus[st[i]];
+      const tf = transferBadges(line, st[i]);
+      const tfHtml = tf.length ? '<div class="pg-tf">' + tf.map(b =>
+        `<span class="tf-badge${b.disp.length > 1 ? ' tf-2d' : ''}${b.open ? '' : ' tf-off'}" style="background:${b.bg};color:${b.fg}">${b.disp}</span>`
+      ).join('') + '</div>' : '';
       if (ss) {
-        html += `<div class="pg-station"><div class="pg-box has-st"><span class="st st-${ss}"></span>${st[i]}</div></div>`;
+        html += `<div class="pg-station"><div class="pg-box has-st"><span class="st st-${ss}"></span>${st[i]}</div>${tfHtml}</div>`;
       } else {
-        html += `<div class="pg-station"><div class="pg-box">${st[i]}</div></div>`;
+        html += `<div class="pg-station"><div class="pg-box">${st[i]}</div>${tfHtml}</div>`;
       }
     }
     html += `</div>`;
