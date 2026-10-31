@@ -45,7 +45,8 @@ const PROGRESS_DATA = [
       sources: '深圳市城市轨道交通13号线二期（南延）线路全长 4.1 km、全地下敷设、设站 3 座，起于东角头站（换乘 2 号线）、止于深圳湾口岸站（不含）。主要依据：<a href="http://www.mcc5.com.cn/index.php/show/41162.html" target="_blank" rel="noopener noreferrer">中国五冶 2025-07-09（东角头—歌剧院区间双线洞通）</a>；<a href="https://tl.powerchina.cn/col/col9356/art/2025/art_2b74f17560a34c77b078016ccc95b8e6.html" target="_blank" rel="noopener noreferrer">中国电建 2025-04-30（歌-日区间双线贯通、3 站全部封顶）</a>；<a href="http://sz.people.com.cn/n2/2026/0106/c202846-41464577.html" target="_blank" rel="noopener noreferrer">深圳特区报 / 人民网 2026-01-06</a>；<a href="http://7j.powerchina.cn/col/col11171/art/2026/art_e0c96cdf7ef24a0e9842276bfc562841.html" target="_blank" rel="noopener noreferrer">中国电建水电七局 2026-07-17（日深区间右线贯通）</a>；<a href="https://szexgrp.com/jyfw/details.html?contentId=20593290" target="_blank" rel="noopener noreferrer">深圳交易集团 2026-08-22（歌剧院站公共区装修招标，含车站规模数据）</a>；<a href="https://szexgrp.com/jyfw/details.html?contentId=20576515" target="_blank" rel="noopener noreferrer">深圳交易集团 2026-08-14（一工区公共区装修招标计划）</a>。'
     },
     {
-      id: '15', name: '15 号线（前南线）', color: '#84BD00',
+      id: '15', name: '15 号线（前南线 · 环线）', color: '#84BD00',
+      isLoop: true,
       lengthKm: 32.21, stationCount: 24,
       stations: ['听海','铲湾南','铲湾中','金港','海城','坪洲','西乡公园','流塘','宝安公园','洪浪北','同乐关','打石山','西丽高铁站','朗山路','麻雀岭','深大北','深大南','名海','东滨路','四海','月亮湾公园','铁路公园','通港路','前保'],
       // 区间状态按站序，"名海-深大南" 已贯通（2026-10-13）；"跨海区间" 贯通（2026-07-29）

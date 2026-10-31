@@ -527,6 +527,15 @@
     }
     /* 车站工序状态色条 */
     .pg-box.has-st { padding-left: 26px; }
+    /* 环线（环形地铁线路）SVG 布局 */
+    .pg-ring-wrap {
+      padding: 12px 0 6px;
+      margin-bottom: 8px;
+    }
+    .pg-ring { display: block; margin: 0 auto; width: 100%; height: auto; }
+    .pg-ring .st-label { font-family: var(--font); font-size: 13px; fill: var(--c-text); }
+    .pg-ring .st-label.hl { font-weight: 600; fill: var(--c-primary); }
+
     /* 站点特殊标注（如越站通过）：绝对定位在矩形左侧，不参与布局 */
     .pg-tag {
       position: absolute;
@@ -841,6 +850,91 @@
     });
   }
 
+  /* ===== 环线（环线地铁）SVG 渲染 ===== */
+  const ST_DOT_COLOR = {
+    operating: '#7E57C2', capped: '#66BB6A', mep: '#26C6DA'
+  };
+  const SEG_COLOR = {
+    through: '#16a34a', done: '#16a34a', track: '#06b6d4',
+    wip: '#f59e0b', todo: '#d1d5db'
+  };
+
+  function renderRing(line) {
+    const st = line.stations;
+    const N = st.length;
+    const S = 900, CX = S / 2, CY = S / 2, R = 285;
+    const COLOR = line.color || '#2563eb';
+
+    function pt(i, r) {
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / N;
+      return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+    }
+
+    let s = `<div class="pg-ring-wrap"><svg class="pg-ring" viewBox="0 0 ${S} ${S}" role="img" aria-label="线路环线示意图">`;
+
+    // 区间弧：内圈=左线，外圈=右线
+    for (let i = 0; i < N; i++) {
+      const j = (i + 1) % N;
+      const seg = segState(line, st[i], st[j]);
+      [[R - 8, seg.l], [R + 8, seg.r]].forEach(([r, v]) => {
+        const [x1, y1] = pt(i, r);
+        const [x2, y2] = pt(j, r);
+        s += `<path d="M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}" fill="none" stroke="${SEG_COLOR[v] || '#d1d5db'}" stroke-width="6" stroke-linecap="butt"/>`;
+      });
+    }
+
+    // 站点圆点 + 站名 + 换乘徽标
+    for (let i = 0; i < N; i++) {
+      const name = st[i];
+      const [x, y] = pt(i, R);
+      const ss = line.stationStatus && line.stationStatus[name];
+      const fill = ss ? (ST_DOT_COLOR[ss] || '#fff') : '#fff';
+      s += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="10" fill="${fill}" stroke="${COLOR}" stroke-width="2.5"/>`;
+
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / N;
+      const cosA = Math.cos(a), sinA = Math.sin(a);
+      const [lx, ly] = pt(i, R + 26);
+      const anchor = cosA > 0.35 ? 'start' : (cosA < -0.35 ? 'end' : 'middle');
+      const dy = sinA < -0.85 ? -4 : (sinA > 0.85 ? 14 : 5);
+      s += `<text class="st-label" x="${lx.toFixed(2)}" y="${(ly + dy).toFixed(2)}" text-anchor="${anchor}">${name}</text>`;
+
+      const labelW = name.length * 13;
+
+      // 换乘徽标
+      const tf = transferBadges(line, name);
+      if (tf.length) {
+        let bx, by;
+        if (anchor === 'middle') {
+          // 顶部/底部：徽标放到站名下方，避免压到相邻站名
+          bx = lx - (tf.length * 19 - 3) / 2;
+          by = ly + dy + 3;
+        } else if (anchor === 'start') {
+          bx = lx + labelW + 4; by = ly + dy - 12;
+        } else {
+          bx = lx - labelW - 4 - tf.length * 19; by = ly + dy - 12;
+        }
+        tf.forEach((b, k) => {
+          const x0 = bx + k * 19;
+          s += `<rect x="${x0.toFixed(2)}" y="${by.toFixed(2)}" width="16" height="16" rx="3" fill="${b.bg}"/>`;
+          s += `<text x="${(x0 + 8).toFixed(2)}" y="${(by + 12).toFixed(2)}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${b.disp.length > 1 ? 9 : 11}" font-weight="400" fill="${b.fg}">${b.disp}</text>`;
+        });
+      }
+
+      // 特殊状态标注（如越站通过）
+      const note = STATION_NOTES[name];
+      if (note) {
+        const nw = note.length * 12 + 10;
+        const nx = lx - labelW / 2 - 6 - nw;
+        const ny = ly + dy - 13;
+        s += `<rect x="${nx.toFixed(2)}" y="${ny.toFixed(2)}" width="${nw}" height="17" rx="3" fill="#fef3c7" stroke="#fde68a"/>`;
+        s += `<text x="${(nx + nw / 2).toFixed(2)}" y="${(ny + 12).toFixed(2)}" text-anchor="middle" font-family="var(--font)" font-size="11" fill="#92400e">${note}</text>`;
+      }
+    }
+
+    s += '</svg></div>';
+    return s;
+  }
+
   function getTextColor(hex) {
     let r, g, b;
     if (hex && hex.startsWith('#')) {
@@ -914,7 +1008,11 @@
       <span style="margin-left:auto">左 / 右线分列于站体两侧</span>
     </div>`;
 
-    html += `<div class="pg-body">`;
+    if (line.isLoop) {
+      html += `<div class="pg-ring-legend" style="font-size:12.5px;color:var(--c-text-3);text-align:center;margin:6px 0 2px">环形示意：内圈为左线、外圈为右线</div>`;
+      html += renderRing(line);
+    }
+    html += `<div class="pg-body"${line.isLoop ? ' style="display:none"' : ''}>`;
     for (let i = 0; i < st.length; i++) {
       const isFirst = i === 0, isLast = i === st.length - 1;
       if (!isFirst) {

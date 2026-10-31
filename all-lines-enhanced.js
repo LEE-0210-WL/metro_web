@@ -1564,11 +1564,11 @@ const ALL_LINES_ENHANCED = [
   },
   {
     "id": "15",
-    "name": "深圳地铁15号线（前南线）",
+    "name": "深圳地铁15号线（前南线·环线）",
     "alias": "Line 15 / Qiannan Line",
     "color": "#84BD00",
     "openDate": "预计2028年6月",
-    "lengthDesc": "约 32.21 公里",
+    "lengthDesc": "约 32.21 公里（环形）",
     "stationsDesc": "24座（全部为地下站）",
     "formationDesc": "4节或6节编组A型列车",
     "maxSpeedDesc": "80公里/小时",
@@ -1579,7 +1579,8 @@ const ALL_LINES_ENHANCED = [
     "formationCode": "4A/6A",
     "maxSpeedKmh": 80,
     "operator": "深圳市地铁集团有限公司",
-    "category": "construction",
+    "isLoop": true,
+        "category": "construction",
     "stationList": [
       "听海",
       "铲湾南",
