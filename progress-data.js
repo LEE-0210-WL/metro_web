@@ -33,16 +33,16 @@ const PROGRESS_DATA = [
         '潮汐公园-歌剧院': { l: 'track', r: 'track' },
         '歌剧院-东角头': { l: 'through', r: 'through' }
       },
-      overall: '全线隧道「洞通」节点如期完成（9-29）；车站均已封顶，转入附属结构、站后工程及轨道铺设',
+      overall: '全线隧道洞通（日深区间左线 9-29 贯通）；3 座车站全部封顶并进入装饰装修：东角头站、潮汐公园站 2026-07 起开展设备区及轨行区装修，2026-08 启动公共区装修招标；歌剧院站 2026-08-22 发布公共区装修招标计划',
       dataDate: '2026-09-30',
       bars: [
         { k: '主体结构', v: 100 }, { k: '盾构区间', v: 100 },
         { k: '附属工程', v: 55 }
       ],
-      staStat: '3 座车站全部封顶',
+      staStat: '3 座车站全部封顶 · 均进入装饰装修',
       summary: {},
-      footnote: '深圳湾口岸站为一期已开通车站，不计入二期南延的 3 座新建车站（潮汐公园、歌剧院、东角头）。潮汐公园站原名「日出剧场站」。东角头站可与 2 号线换乘。',
-      sources: '深圳交通 2026-01-05（深圳市政府账号）'
+      footnote: '东角头站为线路起点、与 2 号线换乘，地下两层岛式双线换乘站，东西向布置，明挖顺做法，总建筑面积 14642.16 ㎡，设 2 个出入口并与蛇口公交站互通。歌剧院站为线路中间标准站，地下三层岛式（B1 漫游层 / B2 站厅 / B3 站台），总长 295 m，设 3 个出入口、2 组地面风亭、1 座冷却塔，总建筑面积 24328.74 ㎡（主体 20785.69 ㎡、附属 3543.05 ㎡）。潮汐公园站原名「日出剧场站」，为线路第 3 座车站，地下四层岛式「哑铃状」车站，位于填海造陆形成的海积平原，距后海海岸线约 70 m。深圳湾口岸站为 13 号线一期已开通车站，不计入二期南延的 3 座新建车站。控制中心设于深圳线网控制中心 NOCC。',
+      sources: '深圳市城市轨道交通13号线二期（南延）线路全长 4.1 km、全地下敷设、设站 3 座，起于东角头站（换乘 2 号线）、止于深圳湾口岸站（不含）。主要依据：<a href="http://www.mcc5.com.cn/index.php/show/41162.html" target="_blank" rel="noopener noreferrer">中国五冶 2025-07-09（东角头—歌剧院区间双线洞通）</a>；<a href="https://tl.powerchina.cn/col/col9356/art/2025/art_2b74f17560a34c77b078016ccc95b8e6.html" target="_blank" rel="noopener noreferrer">中国电建 2025-04-30（歌-日区间双线贯通、3 站全部封顶）</a>；<a href="http://sz.people.com.cn/n2/2026/0106/c202846-41464577.html" target="_blank" rel="noopener noreferrer">深圳特区报 / 人民网 2026-01-06</a>；<a href="http://7j.powerchina.cn/col/col11171/art/2026/art_e0c96cdf7ef24a0e9842276bfc562841.html" target="_blank" rel="noopener noreferrer">中国电建水电七局 2026-07-17（日深区间右线贯通）</a>；<a href="https://szexgrp.com/jyfw/details.html?contentId=20593290" target="_blank" rel="noopener noreferrer">深圳交易集团 2026-08-22（歌剧院站公共区装修招标，含车站规模数据）</a>；<a href="https://szexgrp.com/jyfw/details.html?contentId=20576515" target="_blank" rel="noopener noreferrer">深圳交易集团 2026-08-14（一工区公共区装修招标计划）</a>。'
     },
     {
       id: '15', name: '15 号线（前南线）', color: '#84BD00',
