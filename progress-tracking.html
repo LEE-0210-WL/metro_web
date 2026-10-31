@@ -544,14 +544,14 @@
       align-items: center;
       justify-content: center;
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 26px;        /* 单位与双位统一字号，不做响应式缩放 */
+      font-weight: 400;       /* 不加粗 */
       line-height: 1;
       border-radius: 5px;
       flex-shrink: 0;
     }
-    /* 双位线路：缩窄字间距，保证落在正方形内 */
-    .tf-badge.tf-2d { font-size: 16px; letter-spacing: -0.05em; }
+    /* 双位线路：仅缩窄字间距，保证落在正方形内 */
+    .tf-badge.tf-2d { letter-spacing: -0.13em; }
     @media (max-width: 640px) { .pg-tf { left: calc(50% + 58px); gap: 3px; } }
 
     .pg-box .st {
