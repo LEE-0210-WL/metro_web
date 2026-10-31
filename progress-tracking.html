@@ -527,6 +527,25 @@
     }
     /* 车站工序状态色条 */
     .pg-box.has-st { padding-left: 26px; }
+    /* 站点特殊标注（如越站通过）：绝对定位在矩形左侧，不参与布局 */
+    .pg-tag {
+      position: absolute;
+      right: calc(50% + 58px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) { .pg-tag { display: none; } }
+
     /* 换乘线路徽标：绝对定位在矩形右侧，不参与布局 */
     .pg-tf {
       position: absolute;
@@ -699,7 +718,7 @@
     .pg-bar .track {
       height: 7px;
       border-radius: 4px;
-      background: var(--c-surface-2);
+      background: #e5e7eb;   /* 未完成部分的灰色底槽 */
       overflow: hidden;
     }
     .pg-bar .fill {
@@ -782,6 +801,11 @@
   // 数据来源均标注在 sources 里，只有官方/权威媒体的才写
   // 文字对比色：与全站 index.html / trains.html / wiki.html 的 getTextColor 完全一致
   /* ===== 换乘线路徽标（参考首页线路入口：底色=线路色，文字按亮度取黑/白） ===== */
+  /* 站点特殊运营状态标注 */
+  const STATION_NOTES = {
+    '西丽高铁站': '越站通过'
+  };
+
   const LINE_MAP = {};
   const STATION_TRANSFERS = {};
   if (typeof ALL_LINES_ENHANCED !== 'undefined') {
@@ -905,10 +929,12 @@
       const tfHtml = tf.length ? '<div class="pg-tf">' + tf.map(b =>
         `<span class="tf-badge${b.disp.length > 1 ? ' tf-2d' : ''}${b.open ? '' : ' tf-off'}" style="background:${b.bg};color:${b.fg}">${b.disp}</span>`
       ).join('') + '</div>' : '';
+      const note = STATION_NOTES[st[i]];
+      const tagHtml = note ? `<span class="pg-tag">${note}</span>` : '';
       if (ss) {
-        html += `<div class="pg-station"><div class="pg-box has-st"><span class="st st-${ss}"></span>${st[i]}</div>${tfHtml}</div>`;
+        html += `<div class="pg-station">${tagHtml}<div class="pg-box has-st"><span class="st st-${ss}"></span>${st[i]}</div>${tfHtml}</div>`;
       } else {
-        html += `<div class="pg-station"><div class="pg-box">${st[i]}</div>${tfHtml}</div>`;
+        html += `<div class="pg-station">${tagHtml}<div class="pg-box">${st[i]}</div>${tfHtml}</div>`;
       }
     }
     html += `</div>`;
@@ -939,6 +965,9 @@
       </div>`;
     }
 
+    if (st.indexOf('西丽高铁站') >= 0) {
+      html += `<div class="pg-note">※ 西丽高铁站（13 号线）现状为「越站通过」——列车经过但暂不停站，站台屏蔽门已安装完成。</div>`;
+    }
     if (line.footnote) {
       html += `<div class="pg-footnote">${line.footnote}</div>`;
     }

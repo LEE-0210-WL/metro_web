@@ -820,3 +820,18 @@ html, body { overflow-x: hidden; max-width: 100%; }
   padding: 0 4px;
   line-height: 1.4;
 }
+
+/* 站点标签内的特殊状态标注（如越站通过） */
+.station-tag .tag-note {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  vertical-align: 1px;
+}

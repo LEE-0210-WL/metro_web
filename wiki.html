@@ -331,6 +331,19 @@
       color: var(--c-text-2, #374151);
     }
 
+    .line-modal-body .tf-note {
+      display: inline-block;
+      margin-left: 3px;
+      padding: 0 4px;
+      border-radius: 3px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.5;
+      vertical-align: 1px;
+    }
     .line-modal-body .transfers-label {
       font-weight: 600;
       color: var(--c-text-3, #6b7280);
@@ -550,12 +563,17 @@
           .filter(x => x.ids.length > 0);
       }
 
+      /* 站点特殊运营状态标注 */
+      const STATION_NOTES = { '西丽高铁站': '越站通过' };
+
       function formatTransfers(transfersObj) {
         const list = visibleTransfers(transfersObj);
         if (list.length === 0) return '';
         return list.map(x => {
           const ids = x.ids.map(id => (id === '6z' ? '6Z' : id)).join('/');
-          return `${x.station}(${ids})`;
+          const note = STATION_NOTES[x.station];
+          const noteHtml = note ? ` <span class="tf-note">${note}</span>` : '';
+          return `${x.station}(${ids})${noteHtml}`;
         }).join('、');
       }
 

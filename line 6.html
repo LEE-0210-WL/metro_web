@@ -465,9 +465,13 @@
 
       const transferStations = new Set(Object.keys(lineData.transfers || {}));
 
+      /* 站点特殊运营状态标注 */
+      const STATION_NOTES = { '西丽高铁站': '越站通过' };
       list.innerHTML = lineData.stationList.map(station => {
         const isTransfer = transferStations.has(station);
-        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}</span>`;
+        const note = STATION_NOTES[station];
+        const noteHtml = note ? ` <span class="tag-note" title="${note}">${note}</span>` : '';
+        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}${noteHtml}</span>`;
       }).join('');
     })();
 
