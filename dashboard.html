@@ -49,7 +49,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 区块标题 */
 .line-table{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px}
-.line-table-head,.line-row{display:grid;grid-template-columns:52px 104px 96px 80px 80px minmax(0,1fr);align-items:center;gap:12px;padding:0 18px}
+.line-table-head,.line-row{display:grid;grid-template-columns:48px 90px 82px 66px 66px minmax(0,1fr) 200px;align-items:center;gap:12px;padding:0 18px}
 .line-table-head{height:36px;align-items:center;font-size:11.5px;color:#9ca3af;letter-spacing:.03em;background:#fafafa;border-bottom:1px solid #e5e7eb}
 .line-table-head .num{text-align:left}
 .line-row{height:46px;align-items:center;text-decoration:none;color:inherit;border-bottom:1px solid #f3f4f6;transition:background .12s ease}
@@ -61,6 +61,13 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .line-row-num{font-size:13.5px;color:#374151;font-variant-numeric:tabular-nums;text-align:left;white-space:nowrap}
 .line-row-num i{font-style:normal;font-size:10.5px;color:#9ca3af;margin-left:3px}
 .line-row-date{font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.line-row-lines{display:flex;align-items:center;gap:3px;min-width:0;overflow:hidden;flex-wrap:nowrap}
+.lt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 4px;border-radius:4px;font-size:11px;font-weight:600;line-height:1;flex-shrink:0}
+.lt-more{font-size:11px;color:#9ca3af;flex-shrink:0}
+@media(max-width:1080px){
+.line-table-head,.line-row{grid-template-columns:44px 86px 78px 64px 64px minmax(0,1fr);padding:0 16px;gap:10px}
+.line-table-head span:nth-child(6),.line-row .line-row-lines:nth-child(6){display:none}
+}
 @media(max-width:780px){
 .line-table-head,.line-row{grid-template-columns:40px 86px 80px 66px minmax(0,1fr);padding:0 14px;gap:10px}
 .line-table-head span:nth-child(5),.line-row .line-row-num:nth-child(5){display:none}
@@ -653,14 +660,14 @@ container.innerHTML=`
 <!-- 已开通线路 -->
 <h2 class="section-title">已开通线路 (${operating.length})</h2>
 <div class="line-table">
-<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>开通日期</span></div>
+<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>可换乘线路</span><span>开通日期</span></div>
 ${operating.map(l=>lineRow(l)).join('')}
 </div>
 
 <!-- 建设中线路 -->
 <h2 class="section-title">建设中线路 (${construction.length})</h2>
 <div class="line-table">
-<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>开通日期</span></div>
+<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>可换乘线路</span><span>开通日期</span></div>
 ${construction.map(l=>lineRow(l)).join('')}
 </div>
 
@@ -692,6 +699,21 @@ function lineRow(l){
 const shortName=l.name.replace('深圳地铁','').split('（')[0];
 const stations=l.stationList?l.stationList.length:0;
 const transfers=Object.keys(l.transfers||{}).length;
+const tset=[];
+Object.keys(l.transfers||{}).forEach(st=>{(l.transfers[st]||[]).forEach(id=>{if(tset.indexOf(id)<0)tset.push(id);});});
+tset.sort((a,b)=>{
+const na=(a==='6z')?99:parseInt(a,10)||0;
+const nb=(b==='6z')?99:parseInt(b,10)||0;
+return na-nb;
+});
+const lineBadges=tset.slice(0,9).map(id=>{
+const other=ALL_LINES_ENHANCED.find(x=>x.id===id);
+const bg=other?(other.color||'#9CA3AF'):'#9CA3AF';
+const mm=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(bg);
+let fg='#fff';
+if(mm){const r=parseInt(mm[1],16),g=parseInt(mm[2],16),b=parseInt(mm[3],16);fg=(0.299*r+0.587*g+0.114*b)>130?'#111827':'#fff';}
+return '<span class="lt-badge" style="background:'+bg+';color:'+fg+'">'+(id==='6z'?'6Z':id)+'</span>';
+}).join('')+(tset.length>9?('<span class="lt-more">+'+(tset.length-9)+'</span>'):'');
 const parts=(l.openDate||'').split(/；|;/).map(s=>s.trim()).filter(Boolean);
 const first=parts.length?parts[0].replace(/[：:]/,' '):'—';
 const more=parts.length>1?(' 等'+parts.length+'期'):'';
@@ -701,6 +723,7 @@ return`<a class="line-row" href="dashboard?line=${l.id}" title="${shortName}">
 <span class="line-row-num">${l.lengthKm||0}<i>km</i></span>
 <span class="line-row-num">${stations}<i>座</i></span>
 <span class="line-row-num">${transfers}<i>座</i></span>
+<span class="line-row-lines">${lineBadges}</span>
 <span class="line-row-date">${first}${more}</span>
 </a>`;
 }
