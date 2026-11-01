@@ -451,7 +451,7 @@
       const transferStations = new Set(Object.keys(lineData.transfers || {}));
 
       /* 站点特殊运营状态标注 */
-      const STATION_NOTES = { '西丽高铁站': '越站通过' };
+      const STATION_NOTES = { '西丽高铁站': '越站通过', '湖贝': '出站换乘', '红岭南': '出站换乘' };
       list.innerHTML = lineData.stationList.map(station => {
         const isTransfer = transferStations.has(station);
         const note = STATION_NOTES[station];

@@ -588,6 +588,9 @@ const ALL_LINES_ENHANCED = [
       "大剧院"
     ],
     "transfers": {
+      "湖贝": [
+        "2"
+      ],
       "赤湾": [
         "2"
       ],
