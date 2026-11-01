@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="theme.css">
   <title>404 - 走进新天地·Railway</title>
+<meta name="description" content="页面未找到 —— 走进新天地·Railway。">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="404 - 走进新天地·Railway">
+<meta property="og:description" content="页面未找到 —— 走进新天地·Railway。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/404.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="404 - 走进新天地·Railway">
+<meta name="twitter:description" content="页面未找到 —— 走进新天地·Railway。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -105,9 +118,34 @@
       color: #374151;
     }
 
+    .quick-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      max-width: 520px;
+    }
+
+    .quick-nav a {
+      padding: 8px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #374151;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: background .15s ease, border-color .15s ease;
+    }
+
+    .quick-nav a:hover { background: #f3f4f6; border-color: #b8bec5; }
+
     @media (max-width: 480px) {
       .error-code { font-size: 100px; }
       .error-title { font-size: 18px; }
+      .quick-nav { gap: 8px; }
+      .quick-nav a { padding: 7px 13px; font-size: 13px; }
     }
   </style>
 <link rel="stylesheet" href="components.css">
@@ -118,6 +156,15 @@
   <p class="error-desc">
     找错东西了，喵喵喵
   </p>
+
+  <div class="quick-nav">
+    <a href="/">首页</a>
+    <a href="/wiki">线路百科</a>
+    <a href="/dashboard">线路仪表板</a>
+    <a href="/progress-tracking">进度跟踪</a>
+    <a href="/passenger-flow">客流数据</a>
+    <a href="/tools">工具箱</a>
+  </div>
 
   <div class="countdown"><span id="sec">5</span> 秒后自动返回首页</div>
 
