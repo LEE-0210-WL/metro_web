@@ -79,7 +79,7 @@
     
     /* 窄屏：标题与返回按钮自动换行，按钮靠右 */
     @media (max-width: 640px) {
-      .lines-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+      .lines-grid { grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
       .page-title {
         flex-wrap: wrap;
         align-items: center;
@@ -352,10 +352,6 @@
     }
 
     @media (max-width: 640px) {
-      .line-card { width: 120px; height: 68px; }
-      .lb-num { font-size: 46px; }
-      .lb-cn { font-size: 22px; }
-      .lb-en { font-size: 12px; }
       .line-modal { max-width: 100%; }
     }
     
@@ -419,9 +415,6 @@
         min-width: 80px;
       }
       
-      .lines-grid {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 <link rel="stylesheet" href="page-header.css">
