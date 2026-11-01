@@ -821,8 +821,8 @@ html, body { overflow-x: hidden; max-width: 100%; }
   line-height: 1.4;
 }
 
-/* 站点标签内的特殊状态标注（如越站通过） */
-.station-tag .tag-note {
+/* 站点特殊状态标注（越站通过 / 出站换乘），站点列表与换乘信息共用 */
+.tag-note {
   display: inline-block;
   margin-left: 4px;
   padding: 0 4px;
