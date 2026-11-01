@@ -168,7 +168,7 @@
   }
 
   /* 平板断点 */
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 821px) and (max-width: 1024px) {
     .navbar-row-top {
       padding: 6px 16px 6px 20px;
       gap: 6px 12px;
@@ -190,17 +190,17 @@
   }
 
   /* 窄平板压缩菜单间距 */
-  @media (min-width: 769px) and (max-width: 900px) {
+  @media (min-width: 821px) and (max-width: 900px) {
     .navbar-nav a { padding: 6px 10px; font-size: 13px; }
     .navbar-nav { gap: 6px; }
   }
-  @media (min-width: 769px) and (max-width: 820px) {
+  @media (min-width: 821px) and (max-width: 820px) {
     .navbar-nav a { padding: 6px 8px; font-size: 13px; }
     .navbar-nav { gap: 4px; }
   }
 
   /* 手机断点 */
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-row-top {
       padding: 8px 20px 6px 20px;
       gap: 4px 8px;
@@ -415,7 +415,7 @@
   /* ===== 移动端：按钮再加大，并整体上移、左移，离屏幕右下角远一点 =====
      现在手机屏幕普遍很大，贴着右下角的按钮既落在系统返回/主页手势区里，
      单手拇指按也不容易按准，所以这里把 bottom 抬得更高、right 也多留一点。 */
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-ai-btn {
       bottom: 146px;
       right: 22px;
@@ -440,7 +440,7 @@
     .navbar-ai-btn:hover .btn-text { max-width: none; margin-left: 6px; }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-help-btn {
       bottom: 92px;
       right: 22px;
@@ -588,7 +588,7 @@
   body.no-backtop .navbar-account-btn { bottom: 156px; }
 
   /* 移动端保持"文字常显"的老样子（手指点不到浮出标签） */
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-help-btn,
     .navbar-ai-btn,
     .navbar-account-btn {
@@ -642,7 +642,7 @@
      ========================================================================== */
   .navbar-help-btn svg { width: 30px; height: 30px; }
 
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-help-btn:hover .btn-text,
     .navbar-ai-btn:hover .btn-text,
     .navbar-account-btn:hover .btn-text {
@@ -698,7 +698,7 @@
     margin-left: 0 !important;
   }
   /* 移动端这些按钮本身就是带文字的胶囊，悬停保持原样 */
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-help-btn:hover,
     .navbar-ai-btn:hover,
     .navbar-account-btn:hover {
@@ -726,7 +726,7 @@
   body.no-backtop .navbar-ai-btn      { bottom: 82px !important; }
   body.no-backtop .navbar-account-btn { bottom: 140px !important; }
 
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     .navbar-help-btn      { bottom: 78px !important; }
     .navbar-ai-btn        { bottom: 132px !important; }
     .navbar-account-btn   { bottom: 186px !important; }
@@ -738,7 +738,7 @@
   /* ===== 底部菜单栏（移动端专用）：替代右侧三个浮动按钮 ===== */
   .navbar-bottom-bar { display: none; }
 
-  @media (max-width: 768px) {
+  @media (max-width: 820px) {
     /* 隐藏原来的三个浮动圆按钮 */
     .navbar-help-btn,
     .navbar-ai-btn,
@@ -1023,6 +1023,8 @@
       return;
     }
     if (document.getElementById('navbar-back-to-top')) return;
+    /* 页面自带返回顶部按钮时不再创建，避免两个按钮尺寸不同叠在一起 */
+    if (document.getElementById('backToTop')) return;
     const btn = document.createElement('button');
     btn.id = 'navbar-back-to-top';
     btn.className = 'navbar-back-to-top';
