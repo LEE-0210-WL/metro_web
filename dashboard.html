@@ -25,21 +25,46 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .back-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 20px;background:#111827;color:white;text-decoration:none;border-radius:10px;font-size:14px;font-weight:500}
 
 /* KPI 卡片 */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:28px}
 @media(min-width:900px){.kpi-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:899px){
+.kpi-card:nth-child(2n+1){border-left:none}
+.kpi-card:nth-child(-n+2){border-top:none}
+}
+@media(min-width:900px){
+.kpi-card:nth-child(4n+1){border-left:none}
+.kpi-card:nth-child(-n+4){border-top:none}
+}
 .rank-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px 0}
 .rank-tab{padding:6px 14px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:#374151;font-size:var(--fs-sm);cursor:pointer;transition:all .18s ease;font-family:inherit}
 .rank-tab:hover{border-color:#9ca3af;background:#f9fafb}
 .rank-tab.active{background:#111827;color:#fff;border-color:#111827}
 .rank-badge{font-size:var(--fs-sm);color:#6b7280;font-weight:500;white-space:nowrap}
 .rank-badge b{color:#111827;font-weight:700}
-.kpi-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px;transition:border-color .15s ease}
-.kpi-card:hover{border-color:#d1d5db}
+.kpi-card{padding:16px 20px 17px;border-left:1px solid #e5e7eb;border-top:1px solid #e5e7eb;transition:background .15s ease}
+.kpi-card:hover{background:#f9fafb}
 .kpi-card-icon{font-size:24px;margin-bottom:8px}
-.kpi-card-value{font-size:30px;font-weight:600;color:#111827;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.kpi-card-label{font-size:12.5px;color:#6b7280;margin-top:8px}
+.kpi-card-value{font-size:28px;font-weight:600;color:#111827;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi-card-label{font-size:12px;color:#6b7280;margin-top:7px;letter-spacing:.01em}
 
 /* 区块标题 */
+.line-table{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px}
+.line-table-head,.line-row{display:grid;grid-template-columns:54px minmax(88px,0.75fr) 92px 80px 80px minmax(170px,1.6fr);align-items:center;gap:16px;padding:0 18px}
+.line-table-head{height:36px;font-size:11.5px;color:#9ca3af;letter-spacing:.03em;background:#fafafa;border-bottom:1px solid #e5e7eb}
+.line-table-head .num{text-align:right}
+.line-row{height:46px;text-decoration:none;color:inherit;border-bottom:1px solid #f3f4f6;transition:background .12s ease}
+.line-row:last-child{border-bottom:none}
+.line-row:hover{background:#f9fafb}
+.line-row-id{display:flex;align-items:center}
+.line-row-badge{width:26px;height:26px;border-radius:6px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;line-height:1}
+.line-row-name{font-size:14px;font-weight:500;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.line-row-num{font-size:13.5px;color:#374151;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.line-row-num i{font-style:normal;font-size:10.5px;color:#9ca3af;margin-left:3px}
+.line-row-date{font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:780px){
+.line-table-head,.line-row{grid-template-columns:40px minmax(70px,1fr) 72px 64px minmax(0,1.3fr);padding:0 14px;gap:10px}
+.line-table-head span:nth-child(5),.line-row .line-row-num:nth-child(5){display:none}
+}
 .section-title{font-size:17px;font-weight:600;color:#111827;margin:32px 0 14px;display:flex;align-items:center;gap:10px;padding-bottom:0;border-bottom:none}
 
 /* 排名图表 */
@@ -627,14 +652,16 @@ container.innerHTML=`
 
 <!-- 已开通线路 -->
 <h2 class="section-title">已开通线路 (${operating.length})</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
-${operating.map(l=>lineCard(l)).join('')}
+<div class="line-table">
+<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>开通日期</span></div>
+${operating.map(l=>lineRow(l)).join('')}
 </div>
 
 <!-- 建设中线路 -->
 <h2 class="section-title">建设中线路 (${construction.length})</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
-${construction.map(l=>lineCard(l)).join('')}
+<div class="line-table">
+<div class="line-table-head"><span>线路</span><span>名称</span><span class="num">里程</span><span class="num">车站</span><span class="num">换乘</span><span>开通日期</span></div>
+${construction.map(l=>lineRow(l)).join('')}
 </div>
 
 <!-- ===== 排名图表区（合并为一张图 + tab 切换）===== -->
@@ -661,26 +688,21 @@ renderRankPanel({svgId:'rank-overview',tabsId:'rankOvTabs',titleId:'rankOvTitle'
 });
 }
 
-function lineCard(l){
-const isOp=l.category==='operating';
+function lineRow(l){
 const shortName=l.name.replace('深圳地铁','').split('（')[0];
-return`
-<a href="dashboard?line=${l.id}" style="text-decoration:none;color:inherit;">
-<div style="background:#fff;border:1px solid #e5e7eb;border-left:3px solid ${l.color||'#999'};border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;height:100%;">
-<div style="position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-<div style="width:34px;height:34px;border-radius:8px;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;line-height:1;">${l.id==='6z'?'6Z':l.id}</div>
-<div style="flex:1;min-width:0;">
-<div style="font-size:14.5px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
-<div style="font-size:12px;color:#9ca3af;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.alias||''}</div></div>
-</div>
-<div style="display:flex;gap:14px;font-size:12.5px;color:#6b7280;font-variant-numeric:tabular-nums;">
-<span>${l.lengthKm||0} km</span>
-<span>${l.stationList?.length||0} 站</span></div>
-<div style="margin-top:auto;font-size:12px;color:#6b7280;line-height:1.75;">
-${fmtOpenDate(l.openDate)}
-</div></div>
-</a>
-`;
+const stations=l.stationList?l.stationList.length:0;
+const transfers=Object.keys(l.transfers||{}).length;
+const parts=(l.openDate||'').split(/；|;/).map(s=>s.trim()).filter(Boolean);
+const first=parts.length?parts[0].replace(/[：:]/,' '):'—';
+const more=parts.length>1?(' 等'+parts.length+'期'):'';
+return`<a class="line-row" href="dashboard?line=${l.id}" title="${shortName}">
+<span class="line-row-id"><span class="line-row-badge" style="background:${l.color||'#999'}">${l.id==='6z'?'6Z':l.id}</span></span>
+<span class="line-row-name">${l.id==='6z'?'6号线支线':shortName}</span>
+<span class="line-row-num">${l.lengthKm||0}<i>km</i></span>
+<span class="line-row-num">${stations}<i>座</i></span>
+<span class="line-row-num">${transfers}<i>座</i></span>
+<span class="line-row-date">${first}${more}</span>
+</a>`;
 }
 
 // ==================== 4. 单线路渲染 ====================
