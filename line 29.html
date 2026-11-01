@@ -386,7 +386,7 @@
       ];
 
       container.innerHTML = links.map(l => l.disabled
-        ? `<span class="related-link-item is-disabled" title="${l.hint || '暂未开放'}" aria-disabled="true">${l.icon} ${l.text}<em>未开放</em></span>`
+        ? `<span class="related-link-item is-disabled" title="${l.hint || '暂未开放'}" aria-disabled="true">${l.text}<em>未开放</em></span>`
         : `<a href="${l.url}" class="related-link-item">${l.text}</a>`
       ).join('');
     })();
