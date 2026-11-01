@@ -388,10 +388,14 @@ labelsG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('lab
 valuesG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('val-'+containerId+'-','')))el.remove()});
 
 /* ===== 分页条 ===== */
-const host=container.parentElement.parentElement;
+/* 分页条挂在图表卡片内（.rank-chart-container），位置在图表与 footer 之间 */
+const host=container.parentElement;
 let pager=host.querySelector(':scope > .rank-pager');
 if(pageCount>1){
-if(!pager){pager=document.createElement('div');pager.className='rank-pager';host.appendChild(pager);}
+if(!pager){
+pager=document.createElement('div');pager.className='rank-pager';
+host.appendChild(pager);
+}
 let html='<button type="button" class="rank-pager-btn" data-to="'+(page-1)+'"'+(page<=1?' disabled':'')+'>上一页</button>';
 for(let pi=1;pi<=pageCount;pi++){
 html+='<button type="button" class="rank-pager-num'+(pi===page?' active':'')+'" data-to="'+pi+'">'+pi+'</button>';
