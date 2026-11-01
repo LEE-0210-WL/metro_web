@@ -43,7 +43,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .section-title{font-size:17px;font-weight:600;color:#111827;margin:32px 0 14px;display:flex;align-items:center;gap:10px;padding-bottom:0;border-bottom:none}
 
 /* 排名图表 */
-.rank-chart-container{background:white;border-radius: var(--r-xl);box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:24px}
+.rank-chart-container{background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:none;overflow:hidden;margin-bottom:24px}
 .rank-chart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fafafa}
 .rank-chart-title{font-size:15px;font-weight:600;color:#111827}
 .rank-chart-legend{display:flex;align-items:center;gap:16px}
@@ -61,7 +61,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-pager-info{margin-left:8px;font-size:12.5px;color:#6b7280;font-variant-numeric:tabular-nums}
 
 /* 线路走向图占位 */
-.route-map-section{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);margin-bottom:24px;display:none}
+.route-map-section{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;box-shadow:none;margin-bottom:24px;display:none}
 .route-map-container{width:100%;overflow:auto;border-radius: var(--r-md)}
 .route-map-image{display:block;width:100%;height:auto;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;pointer-events:none}
 .route-map-caption{text-align:center;font-size:14px;color:#6b7280;margin-top:12px}
@@ -71,7 +71,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 换乘信息卡片 */
 .transfer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
-.transfer-card{background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-left:4px solid var(--line-color,#3b82f6);display:flex;align-items:center;justify-content:space-between;transition:all 0.2s}
+.transfer-card{background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--line-color,#3b82f6);border-radius:10px;padding:16px 18px;box-shadow:none;display:flex;align-items:center;justify-content:space-between}
 .transfer-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .transfer-station-name{font-size:18px;font-weight:700;color:#111827}
 .transfer-station-sub{font-size:13px;color:#6b7280;margin-top:2px}
@@ -80,7 +80,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 车辆信息卡片 */
 .train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
-.train-card{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);border-top:4px solid var(--line-color,#3b82f6)}
+.train-card{background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--line-color,#3b82f6);border-radius:10px;padding:20px;box-shadow:none}
 .train-card-model{font-size:20px;font-weight:700;color:#111827;margin-bottom:12px}
 .train-card-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;color:#4b5563;border-bottom:1px dashed #e5e7eb}
 .train-card-row:last-child{border-bottom:none}
@@ -90,7 +90,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .train-note{font-size:var(--fs-sm);color:var(--c-text-3);margin-top:8px;font-style:italic}
 
 /* 建设中时间线 */
-.timeline-section{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);margin-bottom:24px}
+.timeline-section{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;box-shadow:none;margin-bottom:24px}
 .timeline{position:relative;padding-left:28px}
 .timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:#e5e7eb}
 .timeline-item{position:relative;padding-bottom:20px}
@@ -102,7 +102,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 相关链接 */
 .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.related-link{display:flex;align-items:center;gap:10px;padding:14px 18px;background:white;border-radius: var(--r-lg);text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow: var(--sh-sm);transition:all 0.2s}
+.related-link{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none;color:#374151;font-size:14px;font-weight:500;box-shadow:none;transition:border-color .15s ease}
 .related-link:hover{background:var(--line-color,#3b82f6);color:var(--line-text,#fff);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12)}
 
 /* 错误页面 */
@@ -823,7 +823,7 @@ ${train.note?`<div class="train-note">备注：${train.note}</div>`:''}
 `;
 }).join('')}
 </div>
-`:'<h2 class="section-title">车辆信息</h2><p style="color: var(--c-text-3);padding:20px;background:white;border-radius: var(--r-xl);">暂无车辆信息</p>'}
+`:'<h2 class="section-title">车辆信息</h2><p style="color:#9ca3af;padding:18px 20px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;margin:0;">暂无车辆信息</p>'}
 
 <!-- 建设中时间线 -->
 ${!isOperating?`
