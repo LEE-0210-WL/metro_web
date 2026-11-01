@@ -235,6 +235,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* 必须允许收缩，否则长标题会把栅格列撑破 */
+  min-width: 0;
+  flex: 1 1 auto;
   transition: font-weight .12s ease;
 }
 .idx-item .ds {
@@ -251,7 +254,7 @@
 
 /* 文章列表：标题较长，固定 2 列 */
 .idx-art .idx-list { grid-template-columns: repeat(2, 1fr); }
-@media (max-width: 640px) { .idx-art .idx-list { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .idx-art .idx-list { grid-template-columns: 1fr; } }
 
 
 /* 当前阅读标记 */
