@@ -321,7 +321,7 @@
     .station-tag {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       padding: 6px 14px;
       background: #f3f4f6;
       border-radius: 20px;
@@ -335,16 +335,6 @@
       color: var(--line-text, #ffffff);
     }
 
-    .station-tag.transfer::after {
-      content: "⇄";
-      font-size: 12px;
-      color: #ef4444;
-      font-weight: bold;
-    }
-
-    .station-tag.transfer:hover::after {
-      color: var(--line-text, #ffffff);
-    }
 
     /* 换乘信息 - 宽屏两列卡片式 */
     .transfer-grid {
@@ -841,7 +831,6 @@ html, body { overflow-x: hidden; max-width: 100%; }
   display: inline-block;
   min-width: 16px;
   height: 16px;
-  margin-left: 3px;
   padding: 0 2px;
   box-sizing: border-box;
   border-radius: 3px;
@@ -854,3 +843,25 @@ html, body { overflow-x: hidden; max-width: 100%; }
   white-space: nowrap;
 }
 
+/* 线路号方块容器：统一控制方块之间的间隔 */
+.station-tag .st-lines {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 换乘站标记（位于站名之后、线路号方块之前） */
+.station-tag .tf-arrow {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ef4444;
+}
+.station-tag.transfer:hover .tf-arrow { color: var(--line-text, #ffffff); }
+
+/* 站点列表上方的线路走向说明 */
+.route-desc {
+  margin: -4px 0 14px;
+  font-size: 14px;
+  color: var(--c-text-2, #4b5563);
+}

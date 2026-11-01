@@ -62,10 +62,8 @@
         <!-- JS动态填充 -->
       </div>
 
-      <h2>线路走向与站点设置</h2>
-      <p id="lineRouteDesc">加载中...</p>
-
       <h2>站点列表（<span id="stationCount">0</span>站）</h2>
+      <p id="lineRouteDesc" class="route-desc">加载中...</p>
       <div class="station-list" id="stationList">
         <!-- JS动态填充 -->
       </div>
@@ -304,7 +302,9 @@
           const label = key === '6z' ? '6Z' : key;
           return `<span class="st-line" style="background:${lc};color:${tc}" title="${label} 号线">${label}</span>`;
         }).join('');
-        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}${lineHtml}${noteHtml}</span>`;
+        const linesWrap = lids.length ? `<span class="st-lines">${lineHtml}</span>` : '';
+        const arrowHtml = isTransfer ? '<span class="tf-arrow" title="换乘站">⇄</span>' : '';
+        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}${arrowHtml}${linesWrap}${noteHtml}</span>`;
       }).join('');
     })();
 
