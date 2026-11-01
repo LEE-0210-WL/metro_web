@@ -50,7 +50,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-chart-legend{display:flex;align-items:center;gap:16px}
 .rank-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:#6b7280}
 .rank-chart-legend-dot{width:10px;height:10px;border-radius:3px}
-.rank-chart-svg-wrapper{padding:24px;position:relative}
+.rank-chart-svg-wrapper{padding:24px;position:relative;overflow-x:auto;overflow-y:hidden}
 .rank-chart-svg-wrapper rect{transform-box:fill-box}
 .rank-chart-svg-wrapper svg{width:100%;display:block}
 .rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:var(--fs-sm);color:var(--c-text-3);text-align:center}
@@ -208,7 +208,11 @@ anim.onfinish=()=>{element.style.transition='';element.style.transform=''};
 function renderRankChart(containerId,items,unit,decimals,highlightKey){
 const container=document.getElementById(containerId);
 if(!container)return;
-const{width,height,margin,barWidth,barFillRatio,fontSize,animDuration,barRadius,yMaxPadding,gridSteps}=rankChartConfig;
+const{height,margin,barWidth,barFillRatio,fontSize,animDuration,barRadius,yMaxPadding,gridSteps}=rankChartConfig;
+/* 每根柱子至少占 56px 横向空间：数值标签约 30px，留 26px 间隙，保证标签不重叠。
+   柱数多时图表比容器宽，由 .rank-chart-svg-wrapper 横向滚动。 */
+const SLOT_MIN_W=56;
+const width=Math.max(rankChartConfig.width,items.length*SLOT_MIN_W+margin.left+margin.right);
 const chartW=width-margin.left-margin.right;
 const chartH=height-margin.top-margin.bottom;
 const n=items.length;
@@ -225,7 +229,9 @@ if(!svg){
 svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
 svg.setAttribute('viewBox','0 0 '+width+' '+height);
 svg.setAttribute('preserveAspectRatio','xMidYMid meet');
-svg.style.width='100%';
+/* 关键：宽度按 viewBox 原始像素输出（1:1），否则被容器拉伸后标签又会被放大导致重叠 */
+svg.style.width=width+'px';
+svg.style.minWidth='100%';
 svg.style.display='block';
 const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
 const filter=document.createElementNS('http://www.w3.org/2000/svg','filter');
