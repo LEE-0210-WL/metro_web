@@ -49,20 +49,20 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 区块标题 */
 .line-table{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px}
-.line-table-head,.line-row{display:grid;grid-template-columns:54px minmax(88px,0.75fr) 92px 80px 80px minmax(170px,1.6fr);align-items:center;gap:16px;padding:0 18px}
-.line-table-head{height:36px;font-size:11.5px;color:#9ca3af;letter-spacing:.03em;background:#fafafa;border-bottom:1px solid #e5e7eb}
-.line-table-head .num{text-align:right}
-.line-row{height:46px;text-decoration:none;color:inherit;border-bottom:1px solid #f3f4f6;transition:background .12s ease}
+.line-table-head,.line-row{display:grid;grid-template-columns:52px 104px 96px 80px 80px minmax(0,1fr);align-items:center;gap:12px;padding:0 18px}
+.line-table-head{height:36px;align-items:center;font-size:11.5px;color:#9ca3af;letter-spacing:.03em;background:#fafafa;border-bottom:1px solid #e5e7eb}
+.line-table-head .num{text-align:left}
+.line-row{height:46px;align-items:center;text-decoration:none;color:inherit;border-bottom:1px solid #f3f4f6;transition:background .12s ease}
 .line-row:last-child{border-bottom:none}
 .line-row:hover{background:#f9fafb}
 .line-row-id{display:flex;align-items:center}
 .line-row-badge{width:26px;height:26px;border-radius:6px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;line-height:1}
 .line-row-name{font-size:14px;font-weight:500;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.line-row-num{font-size:13.5px;color:#374151;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.line-row-num{font-size:13.5px;color:#374151;font-variant-numeric:tabular-nums;text-align:left;white-space:nowrap}
 .line-row-num i{font-style:normal;font-size:10.5px;color:#9ca3af;margin-left:3px}
 .line-row-date{font-size:12.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:780px){
-.line-table-head,.line-row{grid-template-columns:40px minmax(70px,1fr) 72px 64px minmax(0,1.3fr);padding:0 14px;gap:10px}
+.line-table-head,.line-row{grid-template-columns:40px 86px 80px 66px minmax(0,1fr);padding:0 14px;gap:10px}
 .line-table-head span:nth-child(5),.line-row .line-row-num:nth-child(5){display:none}
 }
 .section-title{font-size:17px;font-weight:600;color:#111827;margin:32px 0 14px;display:flex;align-items:center;gap:10px;padding-bottom:0;border-bottom:none}
