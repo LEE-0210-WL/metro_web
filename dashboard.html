@@ -54,6 +54,12 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-chart-svg-wrapper rect{transform-box:fill-box}
 .rank-chart-svg-wrapper svg{width:100%;display:block}
 .rank-chart-footer{padding:12px 24px;border-top:1px solid #e5e7eb;background:#fafafa;font-size:var(--fs-sm);color:var(--c-text-3);text-align:center}
+.rank-pager{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 24px 18px}
+.rank-pager-btn,.rank-pager-num{font-family:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.rank-pager-btn:hover:not(:disabled),.rank-pager-num:hover{background:#f3f4f6;border-color:#d1d5db}
+.rank-pager-num.active{background:#111827;border-color:#111827;color:#fff;font-weight:600}
+.rank-pager-btn:disabled{opacity:.4;cursor:not-allowed}
+.rank-pager-info{margin-left:8px;font-size:12.5px;color:#6b7280;font-variant-numeric:tabular-nums}
 
 /* 线路走向图占位 */
 .route-map-section{background:white;border-radius: var(--r-xl);padding:24px;box-shadow: var(--sh-sm);margin-bottom:24px;display:none}
@@ -205,12 +211,23 @@ const anim=element.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transfor
 anim.onfinish=()=>{element.style.transition='';element.style.transform=''};
 }
 
-function renderRankChart(containerId,items,unit,decimals,highlightKey){
+function renderRankChart(containerId,allItems,unit,decimals,highlightKey){
 const container=document.getElementById(containerId);
 if(!container)return;
+
+/* ===== 分页：每页 10 根柱子，避免横向滚动 ===== */
+const PER_PAGE=10;
+const totalCount=allItems.length;
+const pageCount=Math.max(1,Math.ceil(totalCount/PER_PAGE));
+let page=container._page||1;
+if(page>pageCount)page=pageCount;
+if(page<1)page=1;
+container._page=page;
+const pageStart=(page-1)*PER_PAGE;
+const items=allItems.slice(pageStart,pageStart+PER_PAGE);
+
 const{height,margin,barWidth,barFillRatio,fontSize,animDuration,barRadius,yMaxPadding,gridSteps}=rankChartConfig;
-/* 每根柱子至少占 56px 横向空间：数值标签约 30px，留 26px 间隙，保证标签不重叠。
-   柱数多时图表比容器宽，由 .rank-chart-svg-wrapper 横向滚动。 */
+/* 每根柱子至少占 56px 横向空间：数值标签约 30px，留 26px 间隙，保证标签不重叠。 */
 const SLOT_MIN_W=56;
 const width=Math.max(rankChartConfig.width,items.length*SLOT_MIN_W+margin.left+margin.right);
 const chartW=width-margin.left-margin.right;
@@ -229,9 +246,7 @@ if(!svg){
 svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
 svg.setAttribute('viewBox','0 0 '+width+' '+height);
 svg.setAttribute('preserveAspectRatio','xMidYMid meet');
-/* 关键：宽度按 viewBox 原始像素输出（1:1），否则被容器拉伸后标签又会被放大导致重叠 */
-svg.style.width=width+'px';
-svg.style.minWidth='100%';
+svg.style.width='100%';
 svg.style.display='block';
 const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
 const filter=document.createElementNS('http://www.w3.org/2000/svg','filter');
@@ -371,6 +386,28 @@ const curKeys=new Set(items.map(d=>d.key));
 barsG.querySelectorAll('rect').forEach(el=>{if(!curKeys.has(el.id.replace('bar-'+containerId+'-','')))el.remove()});
 labelsG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('lab-'+containerId+'-','')))el.remove()});
 valuesG.querySelectorAll('text').forEach(el=>{if(!curKeys.has(el.id.replace('val-'+containerId+'-','')))el.remove()});
+
+/* ===== 分页条 ===== */
+const host=container.parentElement.parentElement;
+let pager=host.querySelector(':scope > .rank-pager');
+if(pageCount>1){
+if(!pager){pager=document.createElement('div');pager.className='rank-pager';host.appendChild(pager);}
+let html='<button type="button" class="rank-pager-btn" data-to="'+(page-1)+'"'+(page<=1?' disabled':'')+'>上一页</button>';
+for(let pi=1;pi<=pageCount;pi++){
+html+='<button type="button" class="rank-pager-num'+(pi===page?' active':'')+'" data-to="'+pi+'">'+pi+'</button>';
+}
+html+='<button type="button" class="rank-pager-btn" data-to="'+(page+1)+'"'+(page>=pageCount?' disabled':'')+'>下一页</button>';
+html+='<span class="rank-pager-info">第 '+(pageStart+1)+'-'+Math.min(pageStart+PER_PAGE,totalCount)+' 名 / 共 '+totalCount+' 条</span>';
+pager.innerHTML=html;
+pager.querySelectorAll('button[data-to]').forEach(function(b){
+b.addEventListener('click',function(){
+const to=parseInt(b.getAttribute('data-to'),10);
+if(!(to>=1&&to<=pageCount)||to===page)return;
+container._page=to;
+renderRankChart(containerId,allItems,unit,decimals,highlightKey);
+});
+});
+}else if(pager){pager.remove();}
 }
 
 // ==================== 数据预处理 ====================
@@ -493,6 +530,8 @@ const idx=s.data.findIndex(d=>d.key===o.highlightKey);
 badge.innerHTML=idx>=0?('<b>第 '+(idx+1)+' 名</b> / '+s.data.length+' 条'):'<span style="opacity:.6">该指标不含本线路</span>';
 }else{badge.innerHTML='';}
 }
+const svgHost=document.getElementById(o.svgId);
+if(svgHost)svgHost._page=1;   /* 切换指标时回到第 1 页 */
 renderRankChart(o.svgId,s.data,s.unit,s.decimals,o.highlightKey);
 for(const b of tabs.children)b.classList.toggle('active',b.dataset.id===active);
 }
