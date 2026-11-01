@@ -27,7 +27,7 @@
 
 .card--flat {
   box-shadow: none;
-  border: 1px solid var(--c-border, #e5e7eb);
+  border: 1px solid var(--c-border, #d1d5db);
 }
 
 .card--lg {
@@ -69,7 +69,7 @@
 
 .chip--outline {
   background: transparent;
-  border: 1px solid var(--c-border, #e5e7eb);
+  border: 1px solid var(--c-border, #d1d5db);
   color: var(--c-text-2, #4b5563);
 }
 
@@ -106,7 +106,7 @@
 
 .btn--ghost {
   background: transparent;
-  border: 1px solid var(--c-border, #e5e7eb);
+  border: 1px solid var(--c-border, #d1d5db);
   color: var(--c-text-2, #4b5563);
 }
 .btn--ghost:hover { background: var(--c-surface-2, #f3f4f6); }
@@ -152,9 +152,9 @@
 /* ---------- 目录式列表（与首页一致） ---------- */
 .idx-groups {
   margin-top: 8px;
-  border-top: 1px solid var(--c-border, #e5e7eb);
+  border-top: 1px solid var(--c-border, #d1d5db);
 }
-.idx-group { border-bottom: 1px solid var(--c-border, #e5e7eb); }
+.idx-group { border-bottom: 1px solid var(--c-border, #d1d5db); }
 .idx-group-head {
   display: flex;
   align-items: baseline;

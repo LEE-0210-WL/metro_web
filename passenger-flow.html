@@ -36,7 +36,7 @@ html, body {
 
 .total-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 10px;
   padding: 0;
   box-shadow: none;
@@ -45,7 +45,7 @@ html, body {
   grid-template-columns: minmax(240px,1.4fr) repeat(3, minmax(120px,1fr)) minmax(140px,1fr);
   overflow: hidden;
 }
-.total-cell { padding: 16px 20px; border-left: 1px solid #e5e7eb; display: flex; flex-direction: column; justify-content: center; }
+.total-cell { padding: 16px 20px; border-left: 1px solid #d1d5db; display: flex; flex-direction: column; justify-content: center; }
 .total-cell:first-child { border-left: none; }
 .total-cell-main { gap: 2px; }
 .total-label { font-size: 12px; color: #6b7280; margin-bottom: 6px; font-weight: 400; }
@@ -54,9 +54,11 @@ html, body {
 .total-cell-date .total-sub { font-size: 13px; font-weight: 500; color: #4b5563; }
 @media (max-width: 900px) {
   .total-card { grid-template-columns: repeat(2, 1fr); }
-  .total-cell { border-top: 1px solid #e5e7eb; }
+  .total-cell { border-top: 1px solid #d1d5db; }
   .total-cell:nth-child(-n+2) { border-top: none; }
   .total-cell:nth-child(odd) { border-left: none; }
+  /* 第 5 格（日期）独占一行，避免上分割线只画半宽 */
+  .total-cell:last-child { grid-column: 1 / -1; border-left: none; }
 }
 
 .total-left {
@@ -157,7 +159,7 @@ html, body {
   right: 0;
   background: white;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   max-height: 0;
   overflow: hidden;
@@ -219,7 +221,7 @@ html, body {
 }
 
 .custom-select-option.active {
-  background: #e5e7eb;
+  background: #d1d5db;
   font-weight: 600;
   color: #111827;
 }
@@ -359,7 +361,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
   background: #fafafa;
 }
 
@@ -401,7 +403,7 @@ html, body {
 
 .chart-footer {
   padding: 12px 24px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #d1d5db;
   background: #fafafa;
   font-size: var(--fs-sm);
   color: var(--c-text-3);
@@ -425,7 +427,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 10px;
   overflow: hidden;
   gap: 0;
@@ -435,16 +437,16 @@ html, body {
 .stats-grid .stat-card:nth-child(3n+1) { border-left: none; }
 .stats-grid .stat-card:nth-child(-n+3) { border-top: none; }
 @media (min-width: 1100px) {
-  .stats-grid .stat-card:nth-child(3n+1) { border-left: 1px solid #e5e7eb; }
+  .stats-grid .stat-card:nth-child(3n+1) { border-left: 1px solid #d1d5db; }
   .stats-grid .stat-card:nth-child(6n+1) { border-left: none; }
-  .stats-grid .stat-card:nth-child(-n+3) { border-top: 1px solid #e5e7eb; }
+  .stats-grid .stat-card:nth-child(-n+3) { border-top: 1px solid #d1d5db; }
   .stats-grid .stat-card:nth-child(-n+6) { border-top: none; }
 }
 
 .stat-card {
   padding: 14px 18px;
-  border-left: 1px solid #e5e7eb;
-  border-top: 1px solid #e5e7eb;
+  border-left: 1px solid #d1d5db;
+  border-top: 1px solid #d1d5db;
   transition: background .15s ease;
 }
 
@@ -482,7 +484,7 @@ html, body {
   display: none;
   pointer-events: none;
   z-index: 100;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   min-width: 140px;
 }
 
@@ -1279,7 +1281,7 @@ rect, text {
       line.setAttribute('y1', y);
       line.setAttribute('x2', width - margin.right);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#e5e7eb');
+      line.setAttribute('stroke', '#d1d5db');
       line.setAttribute('stroke-width', '1');
       line.setAttribute('stroke-dasharray', i === 0 ? '' : '4,4');
       gridG.appendChild(line);
@@ -1537,7 +1539,7 @@ rect, text {
       line.setAttribute('y1', y);
       line.setAttribute('x2', width - margin.right);
       line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#e5e7eb');
+      line.setAttribute('stroke', '#d1d5db');
       line.setAttribute('stroke-width', '1');
       line.setAttribute('stroke-dasharray', i === 0 ? '' : '4,4');
       gridG.appendChild(line);
