@@ -35,16 +35,28 @@ html, body {
   margin-bottom: 32px;}
 
 .total-card {
-  background: white;
-  border-radius: var(--r-xl);
-  padding: 28px 32px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0;
+  box-shadow: none;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: minmax(240px,1.4fr) repeat(3, minmax(120px,1fr)) minmax(140px,1fr);
+  overflow: hidden;
+}
+.total-cell { padding: 16px 20px; border-left: 1px solid #e5e7eb; display: flex; flex-direction: column; justify-content: center; }
+.total-cell:first-child { border-left: none; }
+.total-cell-main { gap: 2px; }
+.total-label { font-size: 12px; color: #6b7280; margin-bottom: 6px; font-weight: 400; }
+.total-main { display: flex; align-items: baseline; gap: 8px; }
+.total-sub { font-size: 15px; font-weight: 600; color: #111827; font-variant-numeric: tabular-nums; }
+.total-cell-date .total-sub { font-size: 13px; font-weight: 500; color: #4b5563; }
+@media (max-width: 900px) {
+  .total-card { grid-template-columns: repeat(2, 1fr); }
+  .total-cell { border-top: 1px solid #e5e7eb; }
+  .total-cell:nth-child(-n+2) { border-top: none; }
+  .total-cell:nth-child(odd) { border-left: none; }
 }
 
 .total-left {
@@ -411,23 +423,32 @@ html, body {
 /* === 线路专属视图 === */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 0;
   margin-bottom: 20px;
+}
+@media (min-width: 1100px) { .stats-grid { grid-template-columns: repeat(6, 1fr); } }
+.stats-grid .stat-card:nth-child(3n+1) { border-left: none; }
+.stats-grid .stat-card:nth-child(-n+3) { border-top: none; }
+@media (min-width: 1100px) {
+  .stats-grid .stat-card:nth-child(3n+1) { border-left: 1px solid #e5e7eb; }
+  .stats-grid .stat-card:nth-child(6n+1) { border-left: none; }
+  .stats-grid .stat-card:nth-child(-n+3) { border-top: 1px solid #e5e7eb; }
+  .stats-grid .stat-card:nth-child(-n+6) { border-top: none; }
 }
 
 .stat-card {
-  background: white;
-  border-radius: var(--r-lg);
-  padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-top: 3px solid var(--line-color, #00B140);
-  transition: transform .2s ease;
+  padding: 14px 18px;
+  border-left: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+  transition: background .15s ease;
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-}
+.stat-card:hover { background: #f9fafb; }
 
 .stat-label {
   font-size: var(--fs-sm);
@@ -436,9 +457,12 @@ html, body {
 }
 
 .stat-value {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: #111827;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
 }
 
 .stat-unit {
@@ -644,9 +668,7 @@ html, body {
     width: 100%;
     justify-content: flex-end;
   }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  
   .data-table {
     font-size: 13px;
   }
@@ -720,9 +742,6 @@ rect, text {
 
 <!-- ===== 全线路通用视图 ===== -->
 <div id="allLinesView">
-<div class="hint-bar" id="hintBar">
-<span>在下方选择日期，条形图形式清晰展示各线路数据。</span>
-</div>
 <div class="date-selector" id="dateSelector">
 <div class="custom-select" id="monthSelectWrapper">
 <div class="custom-select-trigger" id="monthSelectTrigger">
@@ -750,12 +769,26 @@ rect, text {
 </div>
 </div>
 <div class="total-card">
-<div class="total-left">
-<span class="total-label">总客流</span>
-<span class="total-value" id="totalValue">0</span>
-<span class="total-unit">万人次</span>
+<div class="total-cell total-cell-main">
+<div class="total-label">总客流</div>
+<div class="total-main"><span class="total-value" id="totalValue">0</span><span class="total-unit">万人次</span></div>
 </div>
-<div class="total-date" id="totalDate">-</div>
+<div class="total-cell">
+<div class="total-label">较前一日</div>
+<div class="total-sub" id="totalDelta">—</div>
+</div>
+<div class="total-cell">
+<div class="total-label">最高线路</div>
+<div class="total-sub" id="totalTopLine">—</div>
+</div>
+<div class="total-cell">
+<div class="total-label">在统线路</div>
+<div class="total-sub" id="totalLineCount">—</div>
+</div>
+<div class="total-cell total-cell-date">
+<div class="total-label">日期</div>
+<div class="total-sub" id="totalDate">—</div>
+</div>
 </div>
 <div class="controls-bar">
 <div class="sort-group">
@@ -1139,11 +1172,32 @@ rect, text {
   }
 
   // ----- 主渲染函数 -----
+  /* 把 Y 轴最大值对齐到「整数步长 × 格数」，让刻度全部落在整数上。
+     与 dashboard 排名图同一套算法。 */
+  function niceAxisMax(maxValue, steps) {
+    const rough = maxValue / steps;
+    if (!isFinite(rough) || rough <= 0) return { max: steps, isInt: true };
+    const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const cands = [1, 1.5, 2, 2.5, 3, 4, 5, 10];
+    let step = 10 * mag;
+    for (let k = 0; k < cands.length; k++) {
+      const s = cands[k] * mag;
+      if (rough <= s) { step = s; break; }
+    }
+    const isInt = step >= 1;
+    if (isInt) step = Math.ceil(step);
+    else step = Number(step.toPrecision(2));
+    return { max: step * steps, isInt: isInt };
+  }
+
   function renderChart(animate) {
     const data = getSortedData();
     if (!data) {
       document.getElementById('totalValue').textContent = '0';
       document.getElementById('totalDate').textContent = '无数据';
+      ['totalDelta','totalTopLine','totalLineCount'].forEach(function(id){
+        const el=document.getElementById(id); if(el)el.textContent='—';
+      });
       document.getElementById('chartTitle').textContent = '无数据';
       return;
     }
@@ -1155,12 +1209,42 @@ rect, text {
     const slotW = chartW / n;
     const bw = Math.min(barWidth, slotW * barFillRatio);
     const gap = slotW - bw;
-    const maxFlow = Math.max(...data.lines.map(l => l.passengers), 1);
-    const scaleY = chartH / (maxFlow * yMaxPadding);
+    const axisInfo = niceAxisMax(Math.max(...data.lines.map(l => l.passengers), 1) * yMaxPadding, gridSteps);
+    const maxFlow = axisInfo.max / yMaxPadding;   /* 兼容原逻辑：maxFlow*yMaxPadding = 轴最大值 */
+    const axisMax = axisInfo.max;
+    const scaleY = chartH / axisMax;
     const baseY = height - margin.bottom;
 
     document.getElementById('totalValue').textContent = data.total.toFixed(2);
     document.getElementById('totalDate').textContent = data.date + ' ' + data.weekday;
+
+    /* 较前一日 */
+    (function () {
+      const el = document.getElementById('totalDelta');
+      if (!el) return;
+      const dates = Object.keys(passengerData).sort();
+      const i = dates.indexOf(currentDate);
+      const prev = i > 0 ? passengerData[dates[i - 1]] : null;
+      if (prev && prev.total) {
+        const pct = (data.total - prev.total) / prev.total * 100;
+        const sign = pct >= 0 ? '+' : '';
+        el.textContent = sign + pct.toFixed(1) + '%';
+        el.style.color = pct >= 0 ? '#059669' : '#dc2626';
+      } else { el.textContent = '—'; el.style.color = '#111827'; }
+    })();
+
+    /* 最高线路 */
+    (function () {
+      const el = document.getElementById('totalTopLine');
+      if (el && data.lines && data.lines.length) {
+        const top = data.lines.reduce((a, b) => (b.passengers > a.passengers ? b : a));
+        const nm = top.key === '6z' ? '6Z' : top.key;
+        el.textContent = nm + '号线 ' + top.passengers.toFixed(1) + '万';
+      }
+    })();
+
+    /* 在统线路数 */
+    document.getElementById('totalLineCount').textContent = (data.lines ? data.lines.length : 0) + ' 条';
     document.getElementById('chartTitle').textContent = data.date + ' 各线路客流量';
 
     const gridG = document.getElementById('gridLines');
@@ -1188,7 +1272,7 @@ rect, text {
     // 网格线
     gridG.innerHTML = '';
     for (let i = 0; i <= gridSteps; i++) {
-      const val = (maxFlow * yMaxPadding / gridSteps) * i;
+      const val = (axisMax / gridSteps) * i;
       const y = baseY - val * scaleY;
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', margin.left);
@@ -1206,7 +1290,7 @@ rect, text {
       text.setAttribute('fill', '#9ca3af');
       text.setAttribute('font-size', fontSize.yAxis);
       text.setAttribute('font-weight', '500');
-      text.textContent = val.toFixed(1);
+      text.textContent = axisInfo.isInt ? Math.round(val).toString() : val.toFixed(1);
       gridG.appendChild(text);
     }
 
@@ -1437,7 +1521,8 @@ rect, text {
     const chartH = height - margin.top - margin.bottom;
     const n = history.length;
     if (n < 2) return;
-    const maxVal = Math.max(...history.map(h => h.passengers)) * 1.12 || 1;
+    const _axis = niceAxisMax(Math.max(...history.map(h => h.passengers)) * 1.12 || 1, 5);
+    const maxVal = _axis.max;
     const minVal = 0;
     const getX = i => margin.left + (n === 1 ? chartW / 2 : (i / (n - 1)) * chartW);
     const getY = v => margin.top + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
@@ -1463,7 +1548,7 @@ rect, text {
       text.setAttribute('fill', '#9ca3af');
       text.setAttribute('font-size', '11');
       text.setAttribute('font-weight', '500');
-      text.textContent = val.toFixed(1);
+      text.textContent = _axis.isInt ? Math.round(val).toString() : val.toFixed(1);
       gridG.appendChild(text);
     }
 
@@ -1498,10 +1583,10 @@ rect, text {
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c.setAttribute('cx', cx);
       c.setAttribute('cy', cy);
-      c.setAttribute('r', 4);
+      c.setAttribute('r', 2.5);
       c.setAttribute('fill', color);
-      c.setAttribute('stroke', 'white');
-      c.setAttribute('stroke-width', 2);
+      c.setAttribute('stroke', 'none');
+      c.setAttribute('stroke-width', 0);
       c.setAttribute('style', 'cursor:pointer;');
       c.addEventListener('mouseenter', (e) => {
         c.setAttribute('r', 6);
