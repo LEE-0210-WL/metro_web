@@ -835,3 +835,22 @@ html, body { overflow-x: hidden; max-width: 100%; }
   line-height: 1.5;
   vertical-align: 1px;
 }
+
+/* 站点标签后的线路号小方块（站点列表内联，替代原「换乘信息」区块） */
+.station-tag .st-line {
+  display: inline-block;
+  min-width: 16px;
+  height: 16px;
+  margin-left: 3px;
+  padding: 0 2px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: center;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+

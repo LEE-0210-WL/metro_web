@@ -70,11 +70,6 @@
         <!-- JS动态填充 -->
       </div>
 
-      <h2>换乘信息（<span id="transferCount">0</span>座换乘站）</h2>
-      <div class="transfer-grid" id="transferContainer">
-        <!-- JS动态填充 -->
-      </div>
-
       <h2>车辆信息</h2>
       <div class="train-grid" id="trainGrid">
         <!-- JS动态填充 -->
@@ -285,39 +280,24 @@
 
       /* 站点特殊运营状态标注 */
       const STATION_NOTES = { '西丽高铁站': '越站通过', '湖贝': '出站换乘', '红岭南': '出站换乘' };
+
+      /* 尚未开通的线路：换乘徽标置灰（五期 8 条 + 13 号线二期南延 + 20 号线二期） */
+      const UNOPENED_LINES = new Set(['13s', '20b', '15', '17', '19', '22', '25', '27', '29', '32']);
+
       list.innerHTML = lineData.stationList.map(station => {
         const isTransfer = transferStations.has(station);
         const note = STATION_NOTES[station];
         const noteHtml = note ? ` <span class="tag-note" title="${note}">${note}</span>` : '';
-        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}${noteHtml}</span>`;
-      }).join('');
-    })();
-
-    // ==================== 5. 渲染换乘信息 ====================
-    (function() {
-      const container = document.getElementById('transferContainer');
-      const count = document.getElementById('transferCount');
-      if (!container || !lineData.transfers) return;
-
-      const entries = Object.entries(lineData.transfers);
-      count.textContent = entries.length;
-
-      /* 换乘站的特殊状态标注（出站换乘 / 越站通过） */
-      const TRANSFER_NOTES = { '湖贝': '出站换乘', '红岭南': '出站换乘', '西丽高铁站': '越站通过' };
-
-      container.innerHTML = entries.map(([station, lines]) => {
-        const badges = lines.map(lid => {
-          const lc = getOtherLineColor(lid);
-          return `<span class="line-badge" style="background:${lc}">${lid}号线</span>`;
+        const lids = (lineData.transfers || {})[station] || [];
+        const lineHtml = lids.map(lid => {
+          const key = String(lid);
+          const opened = !UNOPENED_LINES.has(key);
+          const lc = opened ? getOtherLineColor(key) : '#4b5563';
+          const tc = opened ? getContrastText(lc) : '#ffffff';
+          const label = key === '6z' ? '6Z' : key;
+          return `<span class="st-line" style="background:${lc};color:${tc}" title="${label} 号线">${label}</span>`;
         }).join('');
-        const nt = TRANSFER_NOTES[station];
-        const ntHtml = nt ? ` <span class="tag-note">${nt}</span>` : '';
-        return `
-          <div class="transfer-card">
-            <span class="transfer-station">${/站$/.test(station) ? station : station + '站'}${ntHtml}</span>
-            <div class="transfer-lines">${badges}</div>
-          </div>
-        `;
+        return `<span class="station-tag ${isTransfer ? 'transfer' : ''}" title="${isTransfer ? '换乘站' : ''}">${station}${lineHtml}${noteHtml}</span>`;
       }).join('');
     })();
 
