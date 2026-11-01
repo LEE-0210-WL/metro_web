@@ -314,6 +314,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   var token = localStorage.getItem(TOKEN_KEY) || '';
   var mode = 'login';
   var currentPlan = 'free';
+  var currentAccount = '';   // 登录后的站内账号名，购买时自动复制
 
   var $ = function (id) { return document.getElementById(id); };
   var loginCard = $('loginCard'), profileCard = $('profileCard'), securityCard = $('securityCard');
@@ -331,6 +332,29 @@ html, body { overflow-x: hidden; max-width: 100%; }
       Authorization: 'Bearer ' + token
     }, opts.headers || {});
     return fetch(API_BASE + path, opts);
+  }
+
+  /* 复制文本：优先 Clipboard API，失败则回退到 execCommand */
+  function copyText(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function () { fallbackCopy(text); });
+        return;
+      }
+    } catch (e) { /* 继续走回退 */ }
+    fallbackCopy(text);
+  }
+  function fallbackCopy(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch (e) { /* 静默失败，toast 里已经显示了账号名 */ }
   }
 
   function toast(text) {
@@ -378,7 +402,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
         '<div class="unit">' + unit + '</div>' +
         (p.price > 0
           ? '<button class="buy-btn" data-plan="' + p.key + '">立即购买</button>' +
-            '<div class="buy-hint">爱发电支付 · 期限请选<b>「1个月」</b></div>'
+            '<div class="buy-hint">爱发电支付 · 期限请选<b>「1个月」</b> · 账号会自动复制</div>'
           : '') +
         '</div>';
     }
@@ -399,8 +423,16 @@ html, body { overflow-x: hidden; max-width: 100%; }
           return;
         }
         var url = 'https://afdian.com/order/create?plan_id=' + encodeURIComponent(pid);
+
+        // 把账号名复制到剪贴板，付款时直接粘贴到爱发电的「留言」里即可自动开通
+        if (currentAccount) {
+          copyText(currentAccount);
+          toast('已复制账号「' + currentAccount + '」，付款时粘贴到爱发电的「留言」里');
+        } else {
+          toast('已打开爱发电付款页；请在「留言」填写你的站内账号名');
+        }
+
         window.open(url, '_blank', 'noopener');
-        toast('已打开爱发电付款页；付款时请在「留言」填写你的账号名');
       };
     }
   }
@@ -638,6 +670,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
       loadLoginHistory();
       $('who').textContent = d.user.username;
       $('vAccount').textContent = d.user.username;
+      currentAccount = String(d.user.username || d.user.email || '');
 
       var q = d.quota || {};
       currentPlan = q.plan || 'free';
