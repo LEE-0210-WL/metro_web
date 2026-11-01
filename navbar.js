@@ -1004,13 +1004,22 @@
   })();
 
   // ===== 高亮当前页面 =====
-  const currentPage = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.navbar-nav a').forEach(function (a) {
-    if (a.getAttribute('href') === currentPage ||
-      (currentPage === '' && a.getAttribute('href') === 'index.html')) {
-      a.classList.add('active');
-    }
-  });
+  // 注意：导航里的 href 是不带 .html 的（如 tools），而 location.pathname 带后缀，
+  // 两边都要归一化后再比较，否则永远不相等、当前页永远不高亮。
+  (function () {
+    const norm = function (s) {
+      return String(s || '')
+        .split('?')[0].split('#')[0]
+        .replace(/^\/+/, '')
+        .replace(/\/+$/, '')
+        .replace(/\.html$/, '');
+    };
+    let cur = norm(location.pathname.split('/').pop());
+    if (cur === '' || cur === 'index') cur = 'index';
+    document.querySelectorAll('.navbar-nav a').forEach(function (a) {
+      if (norm(a.getAttribute('href')) === cur) a.classList.add('active');
+    });
+  })();
 
   // ===== 返回顶部按钮 =====
   // 首页内容不够长，滚动量到不了阈值（1000px），按钮永远不会出现；
