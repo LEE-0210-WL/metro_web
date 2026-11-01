@@ -211,6 +211,26 @@ const anim=element.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transfor
 anim.onfinish=()=>{element.style.transition='';element.style.transform=''};
 }
 
+/* 把 Y 轴最大值对齐到「好看的整数步长 × 格数」，让刻度全部落在整数上。
+   例：数据峰值 57.56 → 原轴 64.47 / 5 格 = 12.89（小数）；
+       改为步长 15 × 5 格 = 75，刻度 0/15/30/45/60/75 全为整数。 */
+function niceAxisMax(maxValue,steps){
+const rough=maxValue/steps;
+if(!isFinite(rough)||rough<=0)return{max:steps,step:1,isInt:true};
+const mag=Math.pow(10,Math.floor(Math.log10(rough)));
+const cands=[1,1.5,2,2.5,3,4,5,10];
+let step=10*mag;
+for(let k=0;k<cands.length;k++){
+const s=cands[k]*mag;
+if(rough<=s){step=s;break;}
+}
+/* 步长 ≥1 时向上取整，保证刻度都是整数 */
+const isInt=step>=1;
+if(isInt)step=Math.ceil(step);
+else step=Number(step.toPrecision(2));
+return{max:step*steps,step:step,isInt:isInt};
+}
+
 function renderRankChart(containerId,allItems,unit,decimals,highlightKey){
 const container=document.getElementById(containerId);
 if(!container)return;
@@ -236,7 +256,8 @@ const n=items.length;
 const slotW=chartW/n;
 const bw=Math.min(barWidth,slotW*barFillRatio);
 const gap=slotW-bw;
-const maxVal=Math.max(...items.map(d=>d.value))*yMaxPadding;
+const axisInfo=niceAxisMax(Math.max(...items.map(d=>d.value))*yMaxPadding,gridSteps);
+const maxVal=axisInfo.max;
 const scaleY=chartH/maxVal;
 const baseY=height-margin.bottom;
 
@@ -300,7 +321,7 @@ const text=document.createElementNS('http://www.w3.org/2000/svg','text');
 text.setAttribute('x',margin.left-8);text.setAttribute('y',y+4);
 text.setAttribute('text-anchor','end');text.setAttribute('fill','#9ca3af');
 text.setAttribute('font-size',fontSize.yAxis);text.setAttribute('font-weight','500');
-text.textContent=decimals===0?Math.round(val).toString():val.toFixed(decimals);
+text.textContent=axisInfo.isInt?Math.round(val).toString():(decimals===0?Math.round(val).toString():val.toFixed(decimals));
 gridG.appendChild(text);
 }
 
