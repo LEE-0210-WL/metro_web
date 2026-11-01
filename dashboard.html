@@ -13,14 +13,13 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 
 /* 线路标题栏 */
-.line-header{border-radius:20px;padding:40px 32px;margin-bottom:24px;color:var(--line-text,#fff);display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
-.line-header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);pointer-events:none}
-.line-number-big{width:100px;height:100px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;flex-shrink:0;position:relative;z-index:1;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
-.line-header-info{flex:1;position:relative;z-index:1}
-.line-header-name{font-size:40px;font-weight:700;margin-bottom:6px}
-.line-header-alias{font-size:18px;opacity:0.9;margin-bottom:12px}
-.line-header-tags{display:flex;gap:10px;flex-wrap:wrap}
-.line-header-tag{font-size:13px;padding:5px 14px;border-radius:20px;background:rgba(255,255,255,0.2);backdrop-filter:blur(4px);font-weight:500}
+.line-header{border-radius:14px;padding:22px 26px;margin-bottom:24px;background:#fff;border:1px solid #e5e7eb;border-left:6px solid var(--lc,#2563eb);color:#111827;display:flex;align-items:center;gap:18px;position:relative}
+.line-number-big{width:44px;height:44px;border-radius:10px;background:var(--lc,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;line-height:1;flex-shrink:0;position:relative;z-index:1}
+.line-header-info{flex:1;min-width:0;position:relative;z-index:1}
+.line-header-name{font-size:26px;font-weight:700;margin-bottom:4px;color:#111827;letter-spacing:-.01em}
+.line-header-alias{font-size:13px;color:#6b7280;margin-bottom:10px}
+.line-header-tags{display:flex;gap:8px;flex-wrap:wrap}
+.line-header-tag{font-size:12px;padding:3px 10px;border-radius:6px;background:#f3f4f6;border:1px solid #e5e7eb;color:#4b5563;font-weight:500}
 
 /* 返回链接 */
 .back-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 20px;background:#111827;color:white;text-decoration:none;border-radius:10px;font-size:14px;font-weight:500}
@@ -34,14 +33,14 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .rank-tab.active{background:#111827;color:#fff;border-color:#111827}
 .rank-badge{font-size:var(--fs-sm);color:#6b7280;font-weight:500;white-space:nowrap}
 .rank-badge b{color:#111827;font-weight:700}
-.kpi-card{background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-top:4px solid var(--line-color,#3b82f6);transition:transform 0.2s}
-.kpi-card:hover{transform:translateY(-2px)}
+.kpi-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px 20px;transition:border-color .15s ease}
+.kpi-card:hover{border-color:#d1d5db}
 .kpi-card-icon{font-size:24px;margin-bottom:8px}
-.kpi-card-value{font-size:26px;font-weight:700;color:#111827;line-height:1}
-.kpi-card-label{font-size:var(--fs-sm);color:#6b7280;margin-top:6px}
+.kpi-card-value{font-size:30px;font-weight:600;color:#111827;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi-card-label{font-size:12.5px;color:#6b7280;margin-top:8px}
 
 /* 区块标题 */
-.section-title{font-size:20px;font-weight:700;color:#111827;margin:32px 0 16px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--line-color,#e5e7eb)}
+.section-title{font-size:17px;font-weight:600;color:#111827;margin:32px 0 14px;display:flex;align-items:center;gap:10px;padding-bottom:0;border-bottom:none}
 
 /* 排名图表 */
 .rank-chart-container{background:white;border-radius: var(--r-xl);box-shadow:0 4px 16px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:24px}
@@ -112,7 +111,7 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .error-page p{font-size:16px;color:#6b7280}
 
 /* 响应式 */
-@media(max-width:768px){.container{margin-top:70px}.line-header{padding:24px 20px;gap:16px}.line-number-big{width:70px;height:70px;font-size:32px}.line-header-name{font-size:24px}.line-header-alias{font-size:14px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.transfer-grid{grid-template-columns:1fr}.train-grid{grid-template-columns:1fr}.route-map-image{width:100%;height:auto}.rank-tabs{padding:12px 14px 0;gap:6px}.rank-tab{padding:5px 11px;font-size:12px}.rank-chart-svg-wrapper{padding:14px 10px}.rank-chart-header{padding:14px 16px;flex-wrap:wrap;gap:6px}.rank-chart-title{font-size:15px}.rank-chart-footer{padding:10px 16px;font-size:12px}}
+@media(max-width:768px){.container{margin-top:70px}.line-header{padding:18px 20px;gap:14px}.line-number-big{width:38px;height:38px;font-size:17px;border-radius:9px}.line-header-name{font-size:21px}.line-header-alias{font-size:12.5px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.transfer-grid{grid-template-columns:1fr}.train-grid{grid-template-columns:1fr}.route-map-image{width:100%;height:auto}.rank-tabs{padding:12px 14px 0;gap:6px}.rank-tab{padding:5px 11px;font-size:12px}.rank-chart-svg-wrapper{padding:14px 10px}.rank-chart-header{padding:14px 16px;flex-wrap:wrap;gap:6px}.rank-chart-title{font-size:15px}.rank-chart-footer{padding:10px 16px;font-size:12px}}
 </style>
 <base target="_blank">
 <link rel="stylesheet" href="layout.css">
@@ -608,8 +607,8 @@ container.innerHTML=`
 </a>
 
 <!-- 总览标题栏 -->
-<div class="line-header" style="background:linear-gradient(135deg,#2563eb,#1e40af);box-shadow:0 8px 32px #2563eb40;">
-<div class="line-number-big" style="color:#2563eb;font-size:28px;">总</div>
+<div class="line-header" style="--lc:#2563eb">
+<div class="line-number-big">总</div>
 <div class="line-header-info">
 <div class="line-header-name">线路仪表板总览</div>
 <div class="line-header-alias">深圳地铁全线路数据一览</div>
@@ -667,19 +666,17 @@ const isOp=l.category==='operating';
 const shortName=l.name.replace('深圳地铁','').split('（')[0];
 return`
 <a href="dashboard?line=${l.id}" style="text-decoration:none;color:inherit;">
-<div style="background:white;border-radius: var(--r-xl);padding:20px;box-shadow: var(--sh-sm);border-left:4px solid ${l.color||'#999'};transition:all 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)'">
+<div style="background:#fff;border:1px solid #e5e7eb;border-left:3px solid ${l.color||'#999'};border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;height:100%;">
 <div style="position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-<div style="width:44px;height:44px;border-radius:50%;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;">${l.id==='6z'?'6Z':l.id}</div>
-<div style="flex:1;min-width:0;padding-right:70px;">
-<div style="font-size:15px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
-<div style="font-size:var(--fs-sm);color:#6b7280;margin-top:2px;">${l.alias||''}</div></div>
-<div style="position:absolute;top:0;right:0;font-size:var(--fs-xs);padding:3px 8px;border-radius:10px;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;">
-${isOp?'已开通':'建设中'}
-</div></div>
-<div style="display:flex;gap:12px;font-size:13px;color:#4b5563;">
+<div style="width:34px;height:34px;border-radius:8px;background:${l.color||'#999'};color:white;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;line-height:1;">${l.id==='6z'?'6Z':l.id}</div>
+<div style="flex:1;min-width:0;">
+<div style="font-size:14.5px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.id==='6z'?'6号线支线':shortName}</div>
+<div style="font-size:12px;color:#9ca3af;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.alias||''}</div></div>
+</div>
+<div style="display:flex;gap:14px;font-size:12.5px;color:#6b7280;font-variant-numeric:tabular-nums;">
 <span>${l.lengthKm||0} km</span>
 <span>${l.stationList?.length||0} 站</span></div>
-<div style="margin-top:10px;font-size:var(--fs-sm);padding:4px 10px;border-radius: var(--r-lg);display:inline-block;background:${isOp?'#dcfce7':'#fef3c7'};color:${isOp?'#166534':'#92400e'};font-weight:500;line-height:1.6;">
+<div style="margin-top:auto;font-size:12px;color:#6b7280;line-height:1.75;">
 ${fmtOpenDate(l.openDate)}
 </div></div>
 </a>
@@ -732,14 +729,13 @@ container.innerHTML=`
 </a></div>
 
 <!-- 线路标题栏 -->
-<div class="line-header" style="background:linear-gradient(135deg,${COLOR},${DARK_COLOR});box-shadow:0 8px 32px ${COLOR}40;">
-<div class="line-number-big" style="color:${COLOR}">${LINE_ID==='6z'?'6Z':lineData.id}</div>
+<div class="line-header" style="--lc:${COLOR}">
+<div class="line-number-big">${LINE_ID==='6z'?'6Z':lineData.id}</div>
 <div class="line-header-info">
 <div class="line-header-name">${LINE_ID==='6z'?'6号线支线':shortName}</div>
 <div class="line-header-alias">${lineData.alias||''}</div>
 <div class="line-header-tags">
-<span class="line-header-tag">${statusIcon}</span></div>
-<div class="line-header-tags" style="margin-top:6px;flex-direction:column;align-items:flex-start;gap:6px;">
+<span class="line-header-tag">${statusIcon}</span>
 ${(()=>{
 const parts=(lineData.openDate||'').split(/；|;/).map(p=>p.trim()).filter(Boolean);
 return parts.map(part=>{
@@ -748,7 +744,8 @@ const text=m?'<strong>'+m[1]+'：</strong>'+m[2]:part;
 return'<span class="line-header-tag">'+text+'</span>';
 }).join('');
 })()}
-</div></div>
+</div>
+</div>
 </div>
 
 <!-- KPI 卡片 -->
