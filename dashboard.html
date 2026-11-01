@@ -72,6 +72,11 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 .line-table-head,.line-row{grid-template-columns:40px 86px 80px 66px minmax(0,1fr);padding:0 14px;gap:10px}
 .line-table-head span:nth-child(5),.line-row .line-row-num:nth-child(5){display:none}
 }
+.transfer-flow{display:flex;flex-wrap:wrap;gap:8px;padding:18px 20px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:24px}
+.tf-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;background:#f3f4f6;border-radius:20px;font-size:14px;color:#111827;transition:background .15s ease}
+.tf-chip:hover{background:#e5e7eb}
+.tf-lines{display:inline-flex;align-items:center;gap:2px}
+.tf-line{display:inline-block;min-width:16px;height:16px;padding:0 2px;box-sizing:border-box;border-radius:3px;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:400;line-height:16px;text-align:center;white-space:nowrap}
 .section-title{font-size:17px;font-weight:600;color:#111827;margin:32px 0 14px;display:flex;align-items:center;gap:10px;padding-bottom:0;border-bottom:none}
 
 /* 排名图表 */
@@ -197,6 +202,7 @@ return params.get('line')||'';
 }
 
 // ==================== 排名图表通用渲染器 ====================
+const RANK_PER_PAGE=10;   /* 排名图表每页柱数 */
 const rankChartConfig={width:900,height:420,margin:{top:30,right:40,bottom:70,left:50},barWidth:32,barFillRatio:0.75,fontSize:{yAxis:11,lineName:13,value:13},animDuration:600,staggerDelay:25,barRadius:4,yMaxPadding:1.12,gridSteps:5};
 
 function startNumberAnimation(el,from,to,duration){
@@ -267,7 +273,7 @@ const container=document.getElementById(containerId);
 if(!container)return;
 
 /* ===== 分页：每页 10 根柱子，避免横向滚动 ===== */
-const PER_PAGE=10;
+const PER_PAGE=RANK_PER_PAGE;
 const totalCount=allItems.length;
 const pageCount=Math.max(1,Math.ceil(totalCount/PER_PAGE));
 let page=container._page||1;
@@ -587,7 +593,15 @@ badge.innerHTML=idx>=0?('<b>第 '+(idx+1)+' 名</b> / '+s.data.length+' 条'):'<
 }else{badge.innerHTML='';}
 }
 const svgHost=document.getElementById(o.svgId);
-if(svgHost)svgHost._page=1;   /* 切换指标时回到第 1 页 */
+if(svgHost){
+/* 自动跳到当前线路所在的那一页；没有高亮线路时才回到第 1 页 */
+if(o.highlightKey){
+const hi=s.data.findIndex(d=>d.key===o.highlightKey);
+svgHost._page = hi>=0 ? Math.floor(hi/RANK_PER_PAGE)+1 : 1;
+}else{
+svgHost._page=1;
+}
+}
 renderRankChart(o.svgId,s.data,s.unit,s.decimals,o.highlightKey);
 for(const b of tabs.children)b.classList.toggle('active',b.dataset.id===active);
 }
@@ -839,18 +853,15 @@ ${lineData.maxPassengerFlow?`
 <!-- 换乘信息 -->
 ${transferCount>0?`
 <h2 class="section-title">换乘信息 (${transferCount}座换乘站)</h2>
-<div class="transfer-grid">
+<div class="transfer-flow">
 ${Object.entries(lineData.transfers||{}).map(([station,lines])=>{
 const badges=lines.map(lid=>{
-const lc=getOtherLineColor(lid);
-return`<span class="transfer-badge" style="background:${lc};color:${getContrastText(lc)}">${getLineDisplayName(lid)}</span>`;
+const key=String(lid);
+const lc=getOtherLineColor(key);
+return`<span class="tf-line" style="background:${lc};color:${getContrastText(lc)}">${key==='6z'?'6Z':key}</span>`;
 }).join('');
-return`
-<div class="transfer-card">
-<div>
-<div class="transfer-station-name">${/站$/.test(station) ? station : station + '站'}</div></div>
-<div class="transfer-badges">${badges}</div></div>
-`;
+const name=/站$/.test(station) ? station : station + '站';
+return`<span class="tf-chip">${name}<span class="tf-lines">${badges}</span></span>`;
 }).join('')}
 </div>
 `:''}
