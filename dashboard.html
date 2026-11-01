@@ -103,17 +103,17 @@ html,body{font-family:var(--font);background:#f3f4f6;color:#1f2937;line-height:1
 
 /* 换乘信息卡片 */
 .transfer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
-.transfer-card{background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--line-color,#3b82f6);border-radius:10px;padding:16px 18px;box-shadow:none;display:flex;align-items:center;justify-content:space-between}
+.transfer-card{background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--line-color,#3b82f6);border-radius:10px;padding:14px 16px;box-shadow:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .transfer-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-.transfer-station-name{font-size:18px;font-weight:700;color:#111827}
-.transfer-station-sub{font-size:13px;color:#6b7280;margin-top:2px}
+.transfer-station-name{font-size:15px;font-weight:600;color:#111827}
+
 .transfer-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .transfer-badge{display:inline-block;padding:4px 12px;border-radius:14px;font-size:13px;font-weight:600;color:var(--line-text,#fff)}
 
 /* 车辆信息卡片 */
 .train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
 .train-card{background:#fff;border:1px solid #e5e7eb;border-left:3px solid var(--line-color,#3b82f6);border-radius:10px;padding:20px;box-shadow:none}
-.train-card-model{font-size:20px;font-weight:700;color:#111827;margin-bottom:12px}
+.train-card-model{font-size:16px;font-weight:600;color:#111827;margin-bottom:10px}
 .train-card-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;color:#4b5563;border-bottom:1px dashed #e5e7eb}
 .train-card-row:last-child{border-bottom:none}
 .train-card-label{color:#6b7280}
@@ -825,7 +825,8 @@ ${lineData.maxPassengerFlow?`
 <h2 class="section-title">线路图</h2>
 <div class="route-map-section" id="routeMapSection">
 <div class="route-map-container">
-<img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false"</div>
+<img src="" alt="线路走向图" class="route-map-image" id="routeMapImage" draggable="false">
+</div>
 <div class="route-map-caption" id="routeMapCaption"></div></div>
 <div class="route-map-section" id="routeMapPlaceholder" style="display:none;">
 <div class="route-map-placeholder">
@@ -847,8 +848,7 @@ return`<span class="transfer-badge" style="background:${lc};color:${getContrastT
 return`
 <div class="transfer-card">
 <div>
-<div class="transfer-station-name">${/站$/.test(station) ? station : station + '站'}</div>
-<div class="transfer-station-sub">可换乘 ${lines.length} 条线路</div></div>
+<div class="transfer-station-name">${/站$/.test(station) ? station : station + '站'}</div></div>
 <div class="transfer-badges">${badges}</div></div>
 `;
 }).join('')}
