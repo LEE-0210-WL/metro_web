@@ -1148,7 +1148,8 @@
     html += `</div>`;
 
     if (line.bars && line.bars.length) {
-      html += `<div class="pg-bars-head">官方建设进度${line.dataDate ? '<span class="date">数据日期 ' + line.dataDate + '</span>' : ''}</div>`;
+      const bd = line.barsDate || line.dataDate;
+      html += `<div class="pg-bars-head">官方建设进度${bd ? '<span class="date">百分比口径 ' + bd + '</span>' : ''}</div>`;
       html += `<div class="pg-bars">` + line.bars.map(b =>
         `<div class="pg-bar">
            <div class="row"><span class="k">${b.k}</span><span class="v">${b.v}%</span></div>
