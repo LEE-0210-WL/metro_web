@@ -494,11 +494,25 @@
       margin-right: 6px;
       vertical-align: middle;
     }
+    .pg-legend .lg-cap {
+      font-weight: 600;
+      color: var(--c-text-2);
+      margin-right: -8px;
+      white-space: nowrap;
+    }
+    /* 车站色块画成方块（对应站体左侧那条竖色条），区间画成长条（对应两条竖轨） */
+    .pg-legend i.lg-sq {
+      width: 12px; height: 12px;
+      border-radius: 3px;
+      margin-right: 7px;
+      vertical-align: -1px;
+    }
     .pg-legend .lg-through { background: #16a34a; }
     .pg-legend .lg-track   { background: #06b6d4; }
     .pg-legend .lg-st-operating { background: #7E57C2; }
     .pg-legend .lg-st-capped    { background: #66BB6A; }
     .pg-legend .lg-st-mep       { background: #26C6DA; }
+    .pg-legend .lg-st-excavation { background: #FB923C; }
     .pg-legend .lg-sep {
       width: 1px; height: 14px;
       background: var(--c-border-2);
@@ -506,6 +520,7 @@
     }
     .pg-legend .lg-done { background: #16a34a; }
     .pg-legend .lg-wip  { background: #f59e0b; }
+    .pg-legend .lg-shaft { background: #a855f7; }
     .pg-legend .lg-todo { background: #d1d5db; }
 
     /* 进度图主体（竖排） */
@@ -604,6 +619,7 @@
     .st-capped    { background: #66BB6A; }
     .st-mep       { background: #26C6DA; }
     .st-track     { background: #26C6DA; }
+    .st-excavation { background: #FB923C; }
     .st-todo      { background: #d1d5db; }
 
     .pg-box.is-open {
@@ -637,6 +653,7 @@
     .pg-rail.s-track   { background: #06b6d4; }
     .pg-rail.s-done { background: #16a34a; }
     .pg-rail.s-wip  { background: #f59e0b; }
+    .pg-rail.s-shaft { background: #a855f7; }
     .pg-rail.s-todo { background: #d1d5db; }
     .pg-rail .lbl {
       position: absolute;
@@ -865,11 +882,11 @@
 
   /* ===== 环线（环线地铁）SVG 渲染 ===== */
   const ST_DOT_COLOR = {
-    operating: '#7E57C2', capped: '#66BB6A', mep: '#26C6DA'
+    operating: '#7E57C2', capped: '#66BB6A', mep: '#26C6DA', excavation: '#FB923C'
   };
   const SEG_COLOR = {
     through: '#16a34a', done: '#16a34a', track: '#06b6d4',
-    wip: '#f59e0b', todo: '#d1d5db'
+    wip: '#f59e0b', shaft: '#a855f7', todo: '#d1d5db'
   };
 
   function renderRing(line) {
@@ -1086,14 +1103,18 @@
     </div>`;
     const hasSt = !!line.stationStatus;
     html += `<div class="pg-legend">
-      <span class="lg-g"><i class="lg-through"></i>区间贯通</span>
+      <span class="lg-cap">区间（两条竖轨）</span>
+      <span class="lg-g"><i class="lg-through"></i>贯通</span>
       <span class="lg-g"><i class="lg-track"></i>机电/铺轨</span>
       <span class="lg-g"><i class="lg-wip"></i>掘进中</span>
+      <span class="lg-g"><i class="lg-shaft"></i>盾构下井</span>
       <span class="lg-g"><i class="lg-todo"></i>未开工</span>
       ${hasSt ? `<span class="lg-sep"></span>
-      <span class="lg-g"><i class="lg-st-operating"></i>已运营</span>
-      <span class="lg-g"><i class="lg-st-capped"></i>已封顶</span>
-      <span class="lg-g"><i class="lg-st-mep"></i>机电/附属</span>` : ''}
+      <span class="lg-cap">车站（站体左侧色条）</span>
+      <span class="lg-g"><i class="lg-sq lg-st-operating"></i>已运营</span>
+      <span class="lg-g"><i class="lg-sq lg-st-capped"></i>已封顶</span>
+      <span class="lg-g"><i class="lg-sq lg-st-excavation"></i>土方开挖</span>
+      <span class="lg-g"><i class="lg-sq lg-st-mep"></i>机电/附属</span>` : ''}
       <span style="margin-left:auto">左 / 右线分列于站体两侧</span>
     </div>`;
 
