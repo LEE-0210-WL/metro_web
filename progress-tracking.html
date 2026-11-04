@@ -476,9 +476,9 @@
     /* 图例 */
     .pg-legend {
       display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      padding: 10px 18px;
+      flex-direction: column;
+      gap: 7px;
+      padding: 11px 18px;
       background: var(--c-surface);
       border: 1px solid var(--c-border);
       border-top: 0;
@@ -487,12 +487,22 @@
       color: var(--c-text-3);
       margin-bottom: 26px;
     }
+    /* 区间一组、车站一组，各自独立成行，不再靠竖线分隔 */
+    .pg-legend .lg-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      min-height: 20px;
+    }
     .pg-legend i {
       display: inline-block;
       width: 22px; height: 6px;
       border-radius: 3px;
       margin-right: 6px;
       vertical-align: middle;
+      /* 深色描边：让色块读起来是「数据色卡」，与线路色块（无描边）区分开 */
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.28);
     }
     .pg-legend .lg-cap {
       font-weight: 600;
@@ -507,21 +517,21 @@
       margin-right: 7px;
       vertical-align: -1px;
     }
-    .pg-legend .lg-through { background: #16a34a; }
-    .pg-legend .lg-track   { background: #06b6d4; }
-    .pg-legend .lg-st-operating { background: #7E57C2; }
-    .pg-legend .lg-st-capped    { background: #66BB6A; }
-    .pg-legend .lg-st-mep       { background: #26C6DA; }
-    .pg-legend .lg-st-excavation { background: #FB923C; }
+    .pg-legend .lg-through { background: #35A063; }
+    .pg-legend .lg-track   { background: #0C6C8C; }
+    .pg-legend .lg-st-operating { background: #5B21B6; }
+    .pg-legend .lg-st-capped    { background: #1E3A8A; }
+    .pg-legend .lg-st-mep       { background: #17A398; }
+    .pg-legend .lg-st-excavation { background: #D9480F; }
     .pg-legend .lg-sep {
       width: 1px; height: 14px;
       background: var(--c-border-2);
       margin: 0 2px;
     }
-    .pg-legend .lg-done { background: #16a34a; }
-    .pg-legend .lg-wip  { background: #f59e0b; }
-    .pg-legend .lg-shaft { background: #a855f7; }
-    .pg-legend .lg-todo { background: #d1d5db; }
+    .pg-legend .lg-done { background: #35A063; }
+    .pg-legend .lg-wip  { background: #B07000; }
+    .pg-legend .lg-shaft { background: #8B5CF6; }
+    .pg-legend .lg-todo { background: #8E96A0; }
 
     /* 进度图主体（竖排） */
     .pg-body {
@@ -613,14 +623,16 @@
       left: 0; top: 0; bottom: 0;
       width: 10px;
       border-radius: 0;   /* 圆角完全由 .pg-box 的 overflow:hidden 裁切，保证与矩形一致 */
+      /* 右侧留一道白缝：把「状态色」与「线路色边框」隔开，避免同色系撞色看起来是一块 */
+      box-shadow: inset -2px 0 0 #fff;
     }
     .pg-box { position: relative; overflow: hidden; }
-    .st-operating { background: #7E57C2; }
-    .st-capped    { background: #66BB6A; }
-    .st-mep       { background: #26C6DA; }
-    .st-track     { background: #26C6DA; }
-    .st-excavation { background: #FB923C; }
-    .st-todo      { background: #d1d5db; }
+    .st-operating { background: #5B21B6; }
+    .st-capped    { background: #1E3A8A; }
+    .st-mep       { background: #17A398; }
+    .st-track     { background: #0C6C8C; }
+    .st-excavation { background: #D9480F; }
+    .st-todo      { background: #8E96A0; }
 
     .pg-box.is-open {
       background: var(--lc, #2563eb);
@@ -649,12 +661,12 @@
     }
     .pg-rail.l { left: calc(50% - 16px); }
     .pg-rail.r { left: calc(50% + 10px); }
-    .pg-rail.s-through { background: #16a34a; }
-    .pg-rail.s-track   { background: #06b6d4; }
-    .pg-rail.s-done { background: #16a34a; }
-    .pg-rail.s-wip  { background: #f59e0b; }
-    .pg-rail.s-shaft { background: #a855f7; }
-    .pg-rail.s-todo { background: #d1d5db; }
+    .pg-rail.s-through { background: #35A063; }
+    .pg-rail.s-track   { background: #0C6C8C; }
+    .pg-rail.s-done { background: #35A063; }
+    .pg-rail.s-wip  { background: #B07000; }
+    .pg-rail.s-shaft { background: #8B5CF6; }
+    .pg-rail.s-todo { background: #8E96A0; }
     .pg-rail .lbl {
       position: absolute;
       left: 14px;
@@ -882,11 +894,11 @@
 
   /* ===== 环线（环线地铁）SVG 渲染 ===== */
   const ST_DOT_COLOR = {
-    operating: '#7E57C2', capped: '#66BB6A', mep: '#26C6DA', excavation: '#FB923C'
+    operating: '#5B21B6', capped: '#1E3A8A', mep: '#17A398', excavation: '#D9480F'
   };
   const SEG_COLOR = {
-    through: '#16a34a', done: '#16a34a', track: '#06b6d4',
-    wip: '#f59e0b', shaft: '#a855f7', todo: '#d1d5db'
+    through: '#35A063', done: '#35A063', track: '#0C6C8C',
+    wip: '#B07000', shaft: '#8B5CF6', todo: '#8E96A0'
   };
 
   function renderRing(line) {
@@ -1103,19 +1115,23 @@
     </div>`;
     const hasSt = !!line.stationStatus;
     html += `<div class="pg-legend">
-      <span class="lg-cap">区间（两条竖轨）</span>
-      <span class="lg-g"><i class="lg-through"></i>贯通</span>
-      <span class="lg-g"><i class="lg-track"></i>机电/铺轨</span>
-      <span class="lg-g"><i class="lg-wip"></i>掘进中</span>
-      <span class="lg-g"><i class="lg-shaft"></i>盾构下井</span>
-      <span class="lg-g"><i class="lg-todo"></i>未开工</span>
-      ${hasSt ? `<span class="lg-sep"></span>
-      <span class="lg-cap">车站（站体左侧色条）</span>
-      <span class="lg-g"><i class="lg-sq lg-st-operating"></i>已运营</span>
-      <span class="lg-g"><i class="lg-sq lg-st-capped"></i>已封顶</span>
-      <span class="lg-g"><i class="lg-sq lg-st-excavation"></i>土方开挖</span>
-      <span class="lg-g"><i class="lg-sq lg-st-mep"></i>机电/附属</span>` : ''}
-      <span style="margin-left:auto">左 / 右线分列于站体两侧</span>
+      <div class="lg-row">
+        <span class="lg-cap">区间（两条竖轨）</span>
+        <span class="lg-g"><i class="lg-through"></i>贯通</span>
+        <span class="lg-g"><i class="lg-track"></i>机电/铺轨</span>
+        <span class="lg-g"><i class="lg-wip"></i>掘进中</span>
+        <span class="lg-g"><i class="lg-shaft"></i>盾构下井</span>
+        <span class="lg-g"><i class="lg-todo"></i>未开工</span>
+        ${hasSt ? '' : '<span style="margin-left:auto">左 / 右线分列于站体两侧</span>'}
+      </div>
+      ${hasSt ? `<div class="lg-row">
+        <span class="lg-cap">车站（站体左侧色条）</span>
+        <span class="lg-g"><i class="lg-sq lg-st-operating"></i>已运营</span>
+        <span class="lg-g"><i class="lg-sq lg-st-capped"></i>已封顶</span>
+        <span class="lg-g"><i class="lg-sq lg-st-excavation"></i>土方开挖</span>
+        <span class="lg-g"><i class="lg-sq lg-st-mep"></i>机电/附属</span>
+        <span style="margin-left:auto">左 / 右线分列于站体两侧</span>
+      </div>` : ''}
     </div>`;
 
     if (line.isLoop) {
