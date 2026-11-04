@@ -151,10 +151,11 @@ const PROGRESS_DATA = [
       stations: ['南塘围','人民医院','汤坑','锦龙','新围','宝山','新和','坪山剧院','坪山中心','燕子岭','南布','聚龙'],
       stationStatus: { '南塘围': 'capped' },
       segments: {
+        '南塘围-人民医院': { l: 'wip', r: 'wip' },   // 全线首个双线齐发盾构区间：右线 2026-04-10 始发（全线首台），左线 6 月始发（右线已推进 152 环）
         '汤坑-锦龙': { l: 'todo', r: 'wip' },       // 9月底起开展盾构施工
         '聚龙-南布': { l: 'wip', r: 'todo' }        // 聚龙站盾构下井一台
       },
-      overall: '南塘围站主体结构封顶（10 月中旬，一工区）；汤坑站全预制装配式主体结构封顶（9-11，全线重点科技创新示范站点，采用「工厂智造、现场装配」模式）；聚龙站盾构下井。截至 10 月：车站围护结构 98%、主体结构 52%；盾构区间全长 24347 米，7 台盾构机掘进中，已掘进 3234 米；沙湖停车场土方 98%、主体结构 36%、出入线主体结构 95%',
+      overall: '南塘围—人民医院区间为全线首个双线齐发盾构区间（右线 2026-04-10 始发、为全线首台，左线 6 月始发）；南塘围站主体结构封顶（10 月中旬，一工区）；汤坑站全预制装配式主体结构封顶（9-11，全线重点科技创新示范站点，采用「工厂智造、现场装配」模式）；聚龙站盾构下井。截至 10 月：车站围护结构 98%、主体结构 52%；盾构区间全长 24347 米，7 台盾构机掘进中，已掘进 3234 米；沙湖停车场土方 98%、主体结构 36%、出入线主体结构 95%',
       dataDate: '2026-10-12',
       bars: [
         { k: '围护结构', v: 98 }, { k: '土方开挖', v: 76 },
@@ -164,7 +165,7 @@ const PROGRESS_DATA = [
       staStat: '封顶 2 座 · 土建 10 座',
       summary: { capped: 2, shield: 4 },
       footnote: '19 号线一期串联坪山核心片区，是完善深圳东部轨道交通网络、优化城市交通格局、助推片区产业升级的骨干线路。建成后可与地铁 14 号线、16 号线及深大城际无缝衔接。汤坑站为全线重点科技创新示范站点，采用全预制装配式施工模式。',
-      sources: '主要依据：<a href="https://www.szpsq.gov.cn/psjtgdjsbgs/gkmlpt/content/13/13015/post_13015407.html" target="_blank" rel="noopener noreferrer">坪山区交通轨道管理中心 2026-10-12：19 号线一期 10 月施工进展——12 站/4 换乘、围护 98%、主体 52%、盾构区间 24347m 已掘进 3234m、沙湖停车场土方 98%/主体 36%/出入线 95%</a>；<a href="https://ipingshan.sznews.com/content/2026-10/16/content_32190174.htm" target="_blank" rel="noopener noreferrer">坪山新闻网 2026-10-16：南塘围站主体结构封顶</a>；<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12978717.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局，转深圳特区报）2026-09-11：汤坑站全预制装配式主体结构封顶</a>；<a href="https://sz.cnr.cn/gstjsz/20260912/t20260912_527811488.shtml" target="_blank" rel="noopener noreferrer">央广网 2026-09-12：19 号线建设提速、汤坑站主体封顶</a>；<a href="https://mp.weixin.qq.com/s/lrbGH7EKhRuslmVOjzmv6A" target="_blank" rel="noopener noreferrer">深圳地铁官微 2026-10-16：南塘围站主体结构封顶、坪山 6 街道全覆盖、锦龙站可换乘 14 号线</a>。' },
+      sources: '主要依据：<a href="https://www.tunnelling.cn/PNews/NewsDetail.aspx?newsId=59305" target="_blank" rel="noopener noreferrer">隧道网 2026-04-12：19 号线南塘围—人民医院区间右线盾构始发（全线首台，上海隧道工程承建）</a>；<a href="https://www.tunnelling.cn/PNews/NewsDetail.aspx?newsId=59609" target="_blank" rel="noopener noreferrer">隧道网 2026-06-21：南塘围—人民医院区间左线始发，右线已推进 152 环，为全线首个双线齐发盾构区间</a>；<a href="https://www.szpsq.gov.cn/psjtgdjsbgs/gkmlpt/content/13/13015/post_13015407.html" target="_blank" rel="noopener noreferrer">坪山区交通轨道管理中心 2026-10-12：19 号线一期 10 月施工进展——12 站/4 换乘、围护 98%、主体 52%、盾构区间 24347m 已掘进 3234m、沙湖停车场土方 98%/主体 36%/出入线 95%</a>；<a href="https://ipingshan.sznews.com/content/2026-10/16/content_32190174.htm" target="_blank" rel="noopener noreferrer">坪山新闻网 2026-10-16：南塘围站主体结构封顶</a>；<a href="https://www.sz.gov.cn/ztfw/jtly/wyk_184755/content/post_12978717.html" target="_blank" rel="noopener noreferrer">深圳政府在线（深圳市交通运输局，转深圳特区报）2026-09-11：汤坑站全预制装配式主体结构封顶</a>；<a href="https://sz.cnr.cn/gstjsz/20260912/t20260912_527811488.shtml" target="_blank" rel="noopener noreferrer">央广网 2026-09-12：19 号线建设提速、汤坑站主体封顶</a>；<a href="https://mp.weixin.qq.com/s/lrbGH7EKhRuslmVOjzmv6A" target="_blank" rel="noopener noreferrer">深圳地铁官微 2026-10-16：南塘围站主体结构封顶、坪山 6 街道全覆盖、锦龙站可换乘 14 号线</a>。' },
     { id: '25', name: '25 号线（大浪线）', color: '#FEAD77', lengthKm: 16.5, stationCount: 15, transferCount: 6,
       stations: ['杨美北','吉华医院','贝尔路','黄君山','上油松','松和','油福','景龙','龙华','龙华公园','华富','华昌','石凹','创意城','石龙'],
       stationStatus: { '石凹': 'capped', '龙华': 'capped', '华昌': 'capped', '华富': 'capped' },
