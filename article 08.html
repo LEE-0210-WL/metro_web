@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>运营观察 · EP04：111 车全车失灯 - 走进新天地·Railway</title>
+<meta name="description" content="深圳地铁运营观察 · 第 04 篇：1 号线原装庞巴迪 111 车全车失灯事件记录。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="运营观察 · EP04：111 车全车失灯 - 走进新天地·Railway">
+<meta property="og:description" content="深圳地铁运营观察 · 第 04 篇：1 号线原装庞巴迪 111 车全车失灯事件记录。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/article%2008.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="运营观察 · EP04：111 车全车失灯 - 走进新天地·Railway">
+<meta name="twitter:description" content="深圳地铁运营观察 · 第 04 篇：1 号线原装庞巴迪 111 车全车失灯事件记录。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font);
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.8;
+    }.logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .site-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .current-time {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }.container {
+      min-height: calc(100vh - 120px);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: var(--r-sm);
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      background: #374151;
+    }
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    
+    .article-header {
+      margin-bottom: 32px;
+    }
+    
+    .article-series {
+      display: inline-block;
+      background: linear-gradient(135deg, #00A9E0, #0077b3);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .article-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+    
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .article-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .article-content {
+      background: white;
+      border-radius: var(--r-xl);
+      padding: 32px;
+      box-shadow: var(--sh-lg);
+    }
+    
+    .article-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #374151;
+      text-align: justify;
+    }
+    
+    .article-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111827;
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d1d5db;
+    }
+    
+    .article-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 24px 0 12px;
+    }
+    /* 引用块（本文新增：站台广播 / 同好吐槽 / 官方公告原文） */
+    .article-content blockquote {
+      margin: 24px 0;
+      padding: 16px 20px;
+      border-left: 4px solid #2563eb;
+      background: #f8fafc;
+      border-radius: 0 8px 8px 0;
+      color: #475569;
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    /* 文末致谢 / 记录时间 */
+    .article-ack {
+      font-size: var(--fs-sm);
+      color: var(--c-text-3);
+      line-height: 1.9;
+      margin-bottom: 6px;
+    }
+
+    
+    .image-gallery {
+      margin: 32px 0;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-item.full-width {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.full-width img {
+      height: 300px;
+    }
+
+    /* 长图（社交平台讨论截图）三列并排，手机上回落单列 */
+    .gallery-grid.three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .gallery-grid.three-col .gallery-item {
+      grid-column: auto;
+    }
+    .gallery-grid.three-col .gallery-item img {
+      height: auto;
+      object-fit: contain;
+      background: #f3f4f6;
+    }
+    @media (max-width: 768px) {
+      .gallery-grid.three-col {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: white;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .image-modal.active {
+      display: flex;
+    }
+    
+    .image-modal img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: var(--r-md);
+    }
+    
+    .image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .article-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #d1d5db;
+    }
+    
+    .article-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .article-nav a:hover {
+      color: #1d4ed8;
+    }
+    
+    .article-nav a.disabled {
+      color: var(--c-text-3);
+      pointer-events: none;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      background: #1d4ed8;
+      transform: translateY(-4px);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 32px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #d1d5db;
+    }
+
+    @media (max-width: 768px) {.current-time {
+        display: none;
+      }
+      .container {
+        margin-top: 20px;
+      }
+      .page-title {
+        font-size: 22px;
+        flex-wrap: wrap;
+      }
+      .article-title {
+        font-size: 24px;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-item.full-width {
+        grid-column: span 1;
+      }
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+    </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <h1 class="page-title">
+      <span>运营观察 · EP04：111 车全车失灯——1 号线原装庞巴迪的谢幕前奏？</span>
+      <a href="articles" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回图文
+      </a>
+    </h1>
+
+    <!-- 文章头部 -->
+    <div class="article-header">
+      <span class="article-series">运营观察 · EP04</span>
+      <div class="article-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          2026.11.14
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          走进新天地·Railway
+        </span>
+      </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <article class="article-content">
+      <p>2026 年 11 月 14 日早上，1 号线一列车的灯光，全灭了。</p>
+
+      <p>车号 <strong>111</strong>。按本站的车型记录，它属于 <strong>01A2206庞</strong>，号段 101–122，庞巴迪制造。</p>
+
+      <p>接下来发生的事很短：疑似触发紧急制动，列车运行到下一站清客、回库；竹子林备车 <strong>106</strong> 随即顶上正线。</p>
+
+      <p>整件事没有官方通报。下面的内容来自现场观察与车迷社群转述——<strong>请当作记录，而不是结论。</strong></p>
+
+      <h2>一、那几分钟</h2>
+
+      <p>先把已知的部分按顺序排一遍。</p>
+
+      <h3>已知</h3>
+
+      <ul>
+        <li><strong>全车灯光熄灭</strong>——不是单节车厢，是整车。</li>
+        <li><strong>疑似紧急制动</strong>——车上乘客感受到明显减速/停顿。之所以写「疑似」，是因为目前只有目击描述，没有官方确认。</li>
+        <li><strong>下一站清客</strong>——列车没有当场退出，而是继续运行到下一站才终止载客。</li>
+        <li><strong>回库</strong>——清客后空车返回车辆段。</li>
+        <li><strong>备车顶上</strong>——竹子林备车 106 投入正线运营。</li>
+      </ul>
+
+      <h3>未知</h3>
+
+      <ul>
+        <li>具体发生在哪个区间、几点几分</li>
+        <li>触发的是哪一类保护——失灯？辅助供电？还是控制回路？</li>
+        <li>111 车后续是修复后回归，还是直接进厂</li>
+      </ul>
+
+      <h2>二、111 是谁</h2>
+
+      <p>如果要给 1 号线找一批「元老」，那 101–122 这个号段就是了。它们随 1 号线开通而来，是这条线最早的一批电客车。</p>
+
+      <p>本站《已遇到车辆记录》里，1 号线一共记了四个车型：</p>
+
+      <ul>
+        <li><strong>01A2206庞</strong>｜101–122｜庞巴迪</li>
+        <li>01A0406長｜123–126｜长春轨道客车</li>
+        <li>01A2606株｜127–152｜株洲电力机车</li>
+        <li>01A3306株｜153–185｜株洲电力机车</li>
+      </ul>
+
+      <p>111 就在第一行里。它和这次顶上来的 106，是同一批车。</p>
+
+      <p>这批车我拍到过四列：<strong>110、116、119、121</strong>。照片放在下面——不是 111 本人，是同一个号段的同型车。</p>
+
+      <div class="image-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-item" onclick="openModal('图文8-1.jpg')">
+            <img src="图文8-1.jpg" alt="1号线原装庞巴迪同型车 110 车" loading="lazy">
+            <div class="gallery-caption">110 车｜01A2206庞 同型车（非 111 本人）</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文8-2.jpg')">
+            <img src="图文8-2.jpg" alt="1号线原装庞巴迪同型车 116 车" loading="lazy">
+            <div class="gallery-caption">116 车｜01A2206庞 同型车（非 111 本人）</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文8-3.jpg')">
+            <img src="图文8-3.jpg" alt="1号线原装庞巴迪同型车 119 车" loading="lazy">
+            <div class="gallery-caption">119 车｜01A2206庞 同型车（非 111 本人）</div>
+          </div>
+          <div class="gallery-item" onclick="openModal('图文8-4.jpg')">
+            <img src="图文8-4.jpg" alt="1号线原装庞巴迪同型车 121 车" loading="lazy">
+            <div class="gallery-caption">121 车｜01A2206庞 同型车（非 111 本人）</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>三、顶上来的 106，说明了什么</h2>
+
+      <p>备车能立刻顶上，说明两件事。一是车辆段里确实有可用的热备车；二是<strong>替补上来的 106，同样落在 101–122 这个号段里</strong>。</p>
+
+      <p>所以这次换车，并没有把「原装车」的占比换掉——只是从一列原装车，换到了另一列原装车。</p>
+
+      <p>按车迷社群的普遍说法，1 号线原装庞巴迪如今在正线上已经不多见，111 是最常被提到的那一列。这个说法我没有官方数据可以佐证，只能如实标注在这里。</p>
+
+      <h2>四、这次失灯意味着什么</h2>
+
+      <p>先说清楚：<strong>以下全是推测，没有任何官方说明。</strong></p>
+
+      <p>「全车灯光熄灭」在电客车上，常见的方向大致有三个：</p>
+
+      <ul>
+        <li><strong>辅助供电系统</strong>——照明、空调和部分控制电源都靠辅助逆变器与蓄电池供给，这一路掉电，整车照明会一起黑。</li>
+        <li><strong>照明供电回路</strong>——某一路熔断器或接触器动作，也可能让整列同时失灯。</li>
+        <li><strong>列车控制保护动作</strong>——检测到异常时主动切除部分负载，严重时直接施加制动。</li>
+      </ul>
+
+      <p>这三种情况在表象上高度相似，光凭「灯灭了」无法区分。而如果确实伴随了紧急制动，那更像是<strong>保护动作</strong>，而不是单纯的照明故障——但这也只是推测，真正的结论要等车载数据。</p>
+
+      <p>更值得注意的是时间点：一列服役二十余年的老车，在正线上出现整车级故障，通常会被纳入「是否继续投入运营」的评估。所以「拉去翻新」是很自然的联想。不过翻新、大修、退役是三条不同的路，具体走哪条，得运营方说了算。</p>
+
+      <h2>五、最后</h2>
+
+      <p>我对这批车的印象，其实来自更早的东西：车里那块老式动态闪灯图、老街站那片旧站台，还有那些年久但每晚依然亮着的灯带。</p>
+
+      <p>车会老，这是迟早的事。只是没想到它退场的方式，会是一整车的灯突然灭掉。</p>
+
+      <p>希望 111 只是歇一歇。</p>
+
+      <hr>
+
+      <p class="article-ack">图片来源：本文 4 张照片为本人在不同时间拍摄的 1 号线原装庞巴迪同型车（110、116、119、121），<strong>并非 111 车本人</strong>，原图未作压缩处理。</p>
+      <p class="article-ack">车辆号段信息引自本站《已遇到车辆记录》。事件经过为现场观察与车迷社群转述，无官方通报，细节待补。</p>
+      <p class="article-ack">记录时间：2026年11月14日　·　首发于：走进新天地·Railway</p>
+    </article>
+
+<!-- 文章导航 -->
+<div class="article-nav" id="articleNav"></div>
+
+<!-- 文章列表 -->
+<div id="articleListSection"></div>
+  </main>
+
+  <!-- 图片弹窗 -->
+  <div class="image-modal" id="imageModal" onclick="closeModal()">
+    <button class="image-modal-close">&times;</button>
+    <img src="" alt="" id="modalImage">
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[now.getDay()];
+      const el = document.getElementById('currentTime');
+      if (el) el.textContent = `${hours}:${minutes}:${seconds}，${month}月${day}日，${weekDay}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+  
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+    }
+  </script>
+  <script src="article-nav.js"></script>
+</body>
+</html>
