@@ -1,27 +1,27 @@
 {
-  "source": "sz_metro_data_template.xlsx，颜色内置在py脚本ID_COLOR_MAP",
-  "note": "Excel line_id匹配脚本内置id‑color字典，输出json预存color，前端直接读取",
+  "source": "v4",
   "lines": {
     "1号线": {
       "line_id": "1",
-      "color": "#00B140",
+      "color": "#01AF55",
+      "speed_kmh": 35,
       "stations": [
         {
           "seq": 1,
           "name": "罗湖",
-          "segment_km": 0,
+          "segment_km": 0.0,
           "transfer": []
         },
         {
           "seq": 2,
           "name": "国贸",
-          "segment_km": 0.86,
+          "segment_km": 1.275,
           "transfer": []
         },
         {
           "seq": 3,
           "name": "老街",
-          "segment_km": 0.66,
+          "segment_km": 0.644,
           "transfer": [
             "3号线"
           ]
@@ -29,7 +29,7 @@
         {
           "seq": 4,
           "name": "大剧院",
-          "segment_km": 0.94,
+          "segment_km": 0.935,
           "transfer": [
             "2号线"
           ]
@@ -37,7 +37,7 @@
         {
           "seq": 5,
           "name": "科学馆",
-          "segment_km": 1.4,
+          "segment_km": 1.369,
           "transfer": [
             "6号线"
           ]
@@ -45,13 +45,13 @@
         {
           "seq": 6,
           "name": "华强路",
-          "segment_km": 1.01,
+          "segment_km": 1.022,
           "transfer": []
         },
         {
           "seq": 7,
           "name": "岗厦",
-          "segment_km": 2,
+          "segment_km": 1.95,
           "transfer": [
             "10号线"
           ]
@@ -59,7 +59,7 @@
         {
           "seq": 8,
           "name": "会展中心",
-          "segment_km": 0.72,
+          "segment_km": 0.679,
           "transfer": [
             "4号线"
           ]
@@ -67,7 +67,7 @@
         {
           "seq": 9,
           "name": "购物公园",
-          "segment_km": 0.67,
+          "segment_km": 0.671,
           "transfer": [
             "3号线"
           ]
@@ -75,13 +75,13 @@
         {
           "seq": 10,
           "name": "香蜜湖",
-          "segment_km": 1.8,
+          "segment_km": 1.795,
           "transfer": []
         },
         {
           "seq": 11,
           "name": "车公庙",
-          "segment_km": 1.4,
+          "segment_km": 1.363,
           "transfer": [
             "7号线",
             "9号线",
@@ -91,25 +91,25 @@
         {
           "seq": 12,
           "name": "竹子林",
-          "segment_km": 1.3,
+          "segment_km": 1.273,
           "transfer": []
         },
         {
           "seq": 13,
           "name": "侨城东",
-          "segment_km": 1.8,
+          "segment_km": 1.793,
           "transfer": []
         },
         {
           "seq": 14,
           "name": "华侨城",
-          "segment_km": 1.2,
+          "segment_km": 1.157,
           "transfer": []
         },
         {
           "seq": 15,
           "name": "世界之窗",
-          "segment_km": 1.2,
+          "segment_km": 1.186,
           "transfer": [
             "2号线"
           ]
@@ -117,25 +117,25 @@
         {
           "seq": 16,
           "name": "白石洲",
-          "segment_km": 0.79,
+          "segment_km": 0.818,
           "transfer": []
         },
         {
           "seq": 17,
           "name": "高新园",
-          "segment_km": 1.4,
+          "segment_km": 1.38,
           "transfer": []
         },
         {
           "seq": 18,
           "name": "深大",
-          "segment_km": 1.1,
+          "segment_km": 1.123,
           "transfer": []
         },
         {
           "seq": 19,
           "name": "桃园",
-          "segment_km": 2.3,
+          "segment_km": 2.26,
           "transfer": [
             "12号线"
           ]
@@ -143,19 +143,19 @@
         {
           "seq": 20,
           "name": "大新",
-          "segment_km": 1,
+          "segment_km": 1.01,
           "transfer": []
         },
         {
           "seq": 21,
           "name": "鲤鱼门",
-          "segment_km": 1.2,
+          "segment_km": 1.222,
           "transfer": []
         },
         {
           "seq": 22,
           "name": "前海湾",
-          "segment_km": 0.98,
+          "segment_km": 0.881,
           "transfer": [
             "5号线",
             "11号线"
@@ -164,13 +164,13 @@
         {
           "seq": 23,
           "name": "新安",
-          "segment_km": 1.2,
+          "segment_km": 1.156,
           "transfer": []
         },
         {
           "seq": 24,
           "name": "宝安中心",
-          "segment_km": 1.1,
+          "segment_km": 1.04,
           "transfer": [
             "5号线"
           ]
@@ -178,52 +178,52 @@
         {
           "seq": 25,
           "name": "宝体",
-          "segment_km": 0.98,
+          "segment_km": 0.873,
           "transfer": []
         },
         {
           "seq": 26,
           "name": "坪洲",
-          "segment_km": 1.4,
+          "segment_km": 1.377,
           "transfer": []
         },
         {
           "seq": 27,
           "name": "西乡",
-          "segment_km": 1,
+          "segment_km": 1.216,
           "transfer": []
         },
         {
           "seq": 28,
           "name": "固戍",
-          "segment_km": 3.5,
+          "segment_km": 3.335,
           "transfer": []
         },
         {
           "seq": 29,
           "name": "后瑞",
-          "segment_km": 3.3,
+          "segment_km": 3.302,
           "transfer": []
         },
         {
           "seq": 30,
           "name": "机场东",
-          "segment_km": 2.4,
+          "segment_km": 2.423,
           "transfer": [
             "12号线"
           ]
         }
-      ],
-      "speed_kmh": 35
+      ]
     },
     "2号线": {
       "line_id": "2",
-      "color": "#B94700",
+      "color": "#B95800",
+      "speed_kmh": 35,
       "stations": [
         {
           "seq": 1,
           "name": "赤湾",
-          "segment_km": 0,
+          "segment_km": 0.0,
           "transfer": [
             "5号线"
           ]
@@ -306,7 +306,7 @@
         {
           "seq": 13,
           "name": "侨城北",
-          "segment_km": 2,
+          "segment_km": 2.0,
           "transfer": []
         },
         {
@@ -427,13 +427,13 @@
         {
           "seq": 30,
           "name": "莲塘口岸",
-          "segment_km": 1,
+          "segment_km": 1.0,
           "transfer": []
         },
         {
           "seq": 31,
           "name": "仙湖路",
-          "segment_km": 2,
+          "segment_km": 2.0,
           "transfer": []
         },
         {
@@ -445,86 +445,80 @@
         {
           "seq": 33,
           "name": "梧桐山南",
-          "segment_km": 1.4,
+          "segment_km": 1.46,
           "transfer": []
         },
         {
           "seq": 34,
           "name": "沙头角",
-          "segment_km": 4.3,
+          "segment_km": 4.32,
           "transfer": []
         },
         {
           "seq": 35,
           "name": "海山",
-          "segment_km": 1.6,
+          "segment_km": 1.57,
           "transfer": []
         },
         {
           "seq": 36,
           "name": "盐田港西",
-          "segment_km": 1.2,
+          "segment_km": 1.24,
           "transfer": []
         },
         {
           "seq": 37,
           "name": "深外高中",
-          "segment_km": 2.7,
+          "segment_km": 2.68,
           "transfer": []
         },
         {
           "seq": 38,
           "name": "盐田路",
-          "segment_km": 1.4,
+          "segment_km": 1.41,
           "transfer": []
         },
         {
           "seq": 39,
           "name": "鸿安围",
-          "segment_km": 1,
+          "segment_km": 1.1,
           "transfer": []
         },
         {
           "seq": 40,
-          "name": "北山道",
-          "segment_km": 1.2,
+          "name": "盐田墟",
+          "segment_km": 1.14,
           "transfer": []
         },
         {
           "seq": 41,
-          "name": "盐田墟",
-          "segment_km": 1.2,
+          "name": "大梅沙",
+          "segment_km": 3.58,
           "transfer": []
         },
         {
           "seq": 42,
-          "name": "大梅沙",
-          "segment_km": 3.5,
+          "name": "小梅沙",
+          "segment_km": 2.14,
           "transfer": []
         },
         {
           "seq": 43,
-          "name": "小梅沙",
-          "segment_km": 2.2,
-          "transfer": []
-        },
-        {
-          "seq": 44,
           "name": "溪涌",
-          "segment_km": 3.7,
+          "segment_km": 3.79,
           "transfer": []
         }
-      ],
-      "speed_kmh": 35
+      ]
     },
     "3号线": {
       "line_id": "3",
-      "color": "#00A9E0",
+      "color": "#00A9DF",
+      "speed_kmh": 35,
       "stations": [
         {
           "seq": 1,
           "name": "坪地六联",
-          "segment_km": 0,
+          "segment_km": 0.0,
           "transfer": []
         },
         {
@@ -536,7 +530,7 @@
         {
           "seq": 3,
           "name": "白石塘",
-          "segment_km": 1,
+          "segment_km": 1.0,
           "transfer": []
         },
         {
@@ -625,7 +619,7 @@
         {
           "seq": 17,
           "name": "塘坑",
-          "segment_km": 2,
+          "segment_km": 2.0,
           "transfer": []
         },
         {
@@ -676,7 +670,7 @@
         {
           "seq": 25,
           "name": "田贝",
-          "segment_km": 1,
+          "segment_km": 1.0,
           "transfer": [
             "7号线"
           ]
@@ -720,7 +714,7 @@
         {
           "seq": 31,
           "name": "华新",
-          "segment_km": 1,
+          "segment_km": 1.0,
           "transfer": [
             "7号线"
           ]
@@ -728,7 +722,7 @@
         {
           "seq": 32,
           "name": "莲花村",
-          "segment_km": 2,
+          "segment_km": 2.0,
           "transfer": [
             "10号线"
           ]
@@ -778,17 +772,17 @@
           "segment_km": 1.5,
           "transfer": []
         }
-      ],
-      "speed_kmh": 35
+      ]
     },
     "4号线": {
       "line_id": "4",
-      "color": "#DA291C",
+      "color": "#D42E0F",
+      "speed_kmh": 35,
       "stations": [
         {
           "seq": 1,
           "name": "福田口岸",
-          "segment_km": 0,
+          "segment_km": 0.0,
           "transfer": [
             "10号线"
           ]
@@ -796,7 +790,7 @@
         {
           "seq": 2,
           "name": "福民",
-          "segment_km": 0.96,
+          "segment_km": 0.98,
           "transfer": [
             "7号线",
             "10号线"
@@ -805,7 +799,7 @@
         {
           "seq": 3,
           "name": "会展中心",
-          "segment_km": 1.4,
+          "segment_km": 1.42,
           "transfer": [
             "1号线"
           ]
@@ -813,7 +807,7 @@
         {
           "seq": 4,
           "name": "市民中心",
-          "segment_km": 0.78,
+          "segment_km": 0.79,
           "transfer": [
             "2号线"
           ]
@@ -821,7 +815,7 @@
         {
           "seq": 5,
           "name": "少年宫",
-          "segment_km": 0.62,
+          "segment_km": 0.63,
           "transfer": [
             "3号线"
           ]
@@ -829,13 +823,13 @@
         {
           "seq": 6,
           "name": "莲花北",
-          "segment_km": 1.4,
+          "segment_km": 1.47,
           "transfer": []
         },
         {
           "seq": 7,
           "name": "上梅林",
-          "segment_km": 1.1,
+          "segment_km": 1.11,
           "transfer": [
             "9号线"
           ]
@@ -843,13 +837,13 @@
         {
           "seq": 8,
           "name": "民乐",
-          "segment_km": 2.8,
+          "segment_km": 2.89,
           "transfer": []
         },
         {
           "seq": 9,
           "name": "白石龙",
-          "segment_km": 1,
+          "segment_km": 1.05,
           "transfer": []
         },
         {
@@ -864,7 +858,7 @@
         {
           "seq": 11,
           "name": "红山",
-          "segment_km": 1.5,
+          "segment_km": 1.48,
           "transfer": [
             "6号线"
           ]
@@ -872,25 +866,25 @@
         {
           "seq": 12,
           "name": "上塘",
-          "segment_km": 2,
+          "segment_km": 2.03,
           "transfer": []
         },
         {
           "seq": 13,
           "name": "龙胜",
-          "segment_km": 1,
+          "segment_km": 1.03,
           "transfer": []
         },
         {
           "seq": 14,
           "name": "龙华",
-          "segment_km": 1.3,
+          "segment_km": 1.32,
           "transfer": []
         },
         {
           "seq": 15,
           "name": "清湖",
-          "segment_km": 2,
+          "segment_km": 2.04,
           "transfer": []
         },
         {
@@ -902,7 +896,7 @@
         {
           "seq": 17,
           "name": "竹村",
-          "segment_km": 1.8,
+          "segment_km": 1.79,
           "transfer": []
         },
         {
@@ -914,7 +908,7 @@
         {
           "seq": 19,
           "name": "长湖",
-          "segment_km": 1.5,
+          "segment_km": 1.56,
           "transfer": []
         },
         {
@@ -926,32 +920,32 @@
         {
           "seq": 21,
           "name": "松元厦",
-          "segment_km": 1.3,
+          "segment_km": 1.27,
           "transfer": []
         },
         {
           "seq": 22,
           "name": "观澜湖",
-          "segment_km": 1.2,
+          "segment_km": 1.18,
           "transfer": []
         },
         {
           "seq": 23,
           "name": "牛湖",
-          "segment_km": 1.4,
+          "segment_km": 1.41,
           "transfer": []
         }
-      ],
-      "speed_kmh": 35
+      ]
     },
     "5号线": {
       "line_id": "5",
-      "color": "#A05EB5",
+      "color": "#9E4DAA",
+      "speed_kmh": 35,
       "stations": [
         {
           "seq": 1,
           "name": "赤湾",
-          "segment_km": 0,
+          "segment_km": 0.0,
           "transfer": [
             "2号线"
           ]
@@ -1136,7 +1130,7 @@
         {
           "seq": 29,
           "name": "布吉",
-          "segment_km": 1,
+          "segment_km": 1.0,
           "transfer": [
             "3号线",
             "14号线"
@@ -1192,8 +1186,7 @@
           "segment_km": 0.9,
           "transfer": []
         }
-      ],
-      "speed_kmh": 35
+      ]
     }
   }
 }

@@ -343,14 +343,17 @@ function getBusinessOdFare(fromStation, toStation){
   if(fromStation === toStation) return null;
   return businessFareMap?.[fromStation]?.[toStation] ?? null;
 }
-/** 里程 -> 普通票价（前端算法，用于比对） */
+/** 里程 -> 普通票价（前端算法，用于比对）
+ *  口径：官方「里程分段计价」——超出部分不足一个计费区间也按 1 元计（向上取整）。
+ *  旧实现用 floor 会系统性低 1 元（如 40.53km 算 8 元，官方 9 元；60.62km 算 10 元，官方 11 元）。 */
 function calcFareByDistance(distanceKm){
+  const ceilDiv = (a, b) => Math.ceil(a / b);
   if(distanceKm <= 0) return 2;
-  if(distanceKm <=4) return 2;
-  if(distanceKm <=12) return 2 + Math.floor((distanceKm -1)/4);
-  if(distanceKm <=24) return 4 + Math.floor((distanceKm -12)/6);
-  const fare = 6 + Math.floor((distanceKm -24)/8);
-  return Math.min(fare,14);
+  if(distanceKm <= 4) return 2;
+  if(distanceKm <= 12) return 2 + ceilDiv(distanceKm - 4, 4);
+  if(distanceKm <= 24) return 4 + ceilDiv(distanceKm - 12, 6);
+  const fare = 6 + ceilDiv(distanceKm - 24, 8);
+  return Math.min(fare, 14);
 }
 
 // ========== 寻路参数（可自行微调） ==========
@@ -652,7 +655,17 @@ function queryFare(){
   const pass11 = routeContainsLine11(routeResult.route);
   const odBusiness = pass11 ? getBusinessOdFare(startSta, endSta) : null;
 
-  resFare.innerHTML = `普通车厢｜OD官方：${odNormal??"无OD数据"}元 | 算法计算：${calcNormal}元`;
+  // 官方 OD 票价为权威口径；官方表未收录该 OD 时才用里程算法推算
+  const odKnown = odNormal !== null && odNormal !== undefined;
+  const showFare = odKnown ? odNormal : calcNormal;
+  const srcLabel = odKnown ? "官方公布票价" : "算法推算（官方表未收录此 OD）";
+  let fareHtml = `普通车厢 <b style="font-size:1.35em">${showFare}</b> 元`
+    + `<span style="font-size:12.5px;color:#64748b;margin-left:8px">${srcLabel}</span>`;
+  if(odKnown && odNormal !== calcNormal){
+    fareHtml += `<div style="font-size:12.5px;color:#92400e;margin-top:4px">`
+      + `按里程推算为 ${calcNormal} 元，与官方不一致；个别 OD 的官方票价与计价规则本身不符，以官方售票为准</div>`;
+  }
+  resFare.innerHTML = fareHtml;
   resDetail.innerHTML = `里程：${routeResult.distance.toFixed(2)} km｜${routeResult.info}`;
 
   let infoLines = [];
