@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>换乘问答 - 走进新天地·Railway</title>
+<meta name="description" content="换乘问答 — 走进新天地·Railway，给起终点，考换乘次数、换乘站与经过站数（范围同票价计算器的五条经典线路）。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="换乘问答 - 走进新天地·Railway">
+<meta property="og:description" content="给起终点，考换乘次数、换乘站与经过站数。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/transfer-quiz.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="换乘问答 - 走进新天地·Railway">
+<meta name="twitter:description" content="给起终点，考换乘次数、换乘站与经过站数。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+  <style>
+    .game-card {
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .stat-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .stat-row span {
+      background: #f1f5f9; border-radius: 999px; padding: 5px 12px;
+      font-size: 12.5px; color: #475569;
+    }
+    .stat-row b { color: #0f172a; }
+
+    .q-head { font-size: 13px; color: #64748b; margin-bottom: 14px; }
+    .od {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; flex-wrap: wrap; margin: 6px 0 22px;
+    }
+    .od-station {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 18px; border-radius: 12px;
+      background: #f8fafc; border: 1.5px solid #e2e8f0;
+      font-size: 18px; font-weight: 700; color: #0f172a;
+    }
+    .od-arrow { color: #94a3b8; font-size: 22px; font-weight: 700; }
+    .dots { display: inline-flex; gap: 3px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+    .options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .opt {
+      padding: 18px 8px; border: 1.5px solid #cbd5e1; border-radius: 13px;
+      background: #fff; font-family: inherit; font-size: 20px; font-weight: 700;
+      color: #0f172a; cursor: pointer; transition: all .12s ease; line-height: 1.25;
+    }
+    .opt small { display: block; font-size: 11px; font-weight: 400; color: #94a3b8; margin-top: 4px; }
+    .opt:hover:not(:disabled) { border-color: #2563eb; color: #2563eb; transform: translateY(-1px); }
+    .opt:disabled { cursor: default; }
+    .opt.correct { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .opt.wrong { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+    .msg { margin-top: 14px; font-size: 13.5px; color: #dc2626; min-height: 20px; }
+
+    .reveal {
+      margin-top: 18px; padding: 16px; border-radius: 13px;
+      background: #f8fafc; border: 1px solid #e2e8f0;
+      font-size: 13.5px; line-height: 1.9; color: #334155; display: none;
+    }
+    .reveal.show { display: block; }
+    .reveal .leg { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .reveal .lname {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 2px 9px; border-radius: 999px;
+      color: #fff; font-size: 12px; font-weight: 600;
+    }
+    .reveal b { color: #0f172a; }
+
+    .over {
+      margin-top: 18px; padding: 16px; border-radius: 13px;
+      background: #fef2f2; border: 1px solid #fecaca;
+      color: #7f1d1d; font-size: 14px; line-height: 1.8; display: none;
+    }
+    .over.show { display: block; }
+    .btn-primary {
+      margin-top: 12px; padding: 11px 22px; border: none; border-radius: 11px;
+      background: #0f172a; color: #fff; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn-primary:hover { background: #1f2937; }
+
+    .howto {
+      background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 16px;
+      padding: 18px; font-size: 13px; line-height: 1.9; color: #64748b;
+    }
+    .howto h3 { font-size: 14px; color: #475569; margin-bottom: 6px; }
+
+    @media (max-width: 720px) {
+      .game-card { padding: 16px; }
+      .options { grid-template-columns: repeat(2, 1fr); }
+      .opt { padding: 15px 8px; font-size: 18px; }
+      .od-station { font-size: 16px; padding: 10px 14px; }
+      .od { gap: 8px; }
+    }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">
+        换乘问答
+        <a href="games" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回游戏中心
+        </a>
+      </h1>
+    </div>
+
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">换乘次数 / 换乘站 / 经过站数，范围同票价计算器</p>
+    </div>
+
+    <div class="game-card">
+      <div class="stat-row">
+        <span>连击 <b id="stStreak">0</b></span>
+        <span>最高 <b id="stBest">0</b></span>
+        <span>累计答对 <b id="stAnswered">0</b></span>
+      </div>
+
+      <div class="q-head" id="qHead">这趟车在地铁内最少要换乘几次？</div>
+
+      <div class="od">
+        <span class="od-station"><span class="dots" id="dotsA"></span><span id="staA">加载中…</span></span>
+        <span class="od-arrow">→</span>
+        <span class="od-station"><span class="dots" id="dotsB"></span><span id="staB">…</span></span>
+      </div>
+
+      <div class="options" id="options"></div>
+      <div class="msg" id="msg"></div>
+
+      <div class="reveal" id="reveal"></div>
+      <div class="over" id="over"></div>
+    </div>
+
+    <div class="howto">
+      <h3>怎么玩</h3>
+      每次给出起点与终点，题目会在三种里随机出现：<br>
+      · <b>换乘次数</b>：这趟车最少要换乘几次<br>
+      · <b>换乘站</b>：要在哪一站换乘<br>
+      · <b>经过站数</b>：同一条线上直达时，一共经过几个站（含起终点）<br>
+      答对连击 +1，直接下一题；答错本局结束，会揭晓正确答案、一条最短路径和总里程。<br>
+      <b>范围</b>：与本站票价计算器一致，只做 <b>1、2、3、4、5 号线</b>（2 号线含 8 号线，贯通运营，互乘不计换乘）。<br>
+      <b>口径</b>：只算<b>地铁内换乘</b>，不含公交、打车、步行等其它出行方式。
+    </div>
+  </main>
+
+  <script src="all-lines-enhanced.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var elOpts = document.getElementById('options');
+    var elMsg = document.getElementById('msg');
+    var elReveal = document.getElementById('reveal');
+    var elOver = document.getElementById('over');
+
+    function fail(msg) {
+      document.getElementById('qHead').textContent = msg;
+      elOpts.innerHTML = '';
+    }
+
+    // 颜色只从 all-lines-enhanced.js 取，不用它建图
+    var COLOR = {};
+    (function () {
+      if (typeof ALL_LINES_ENHANCED === 'undefined') return;
+      ALL_LINES_ENHANCED.forEach(function (l) { COLOR[String(l.id)] = l.color || '#64748b'; });
+    })();
+    function colorOf(lineName) {
+      var id = String(lineName).replace(/[^0-9]/g, '');
+      return COLOR[id] || '#64748b';
+    }
+
+    // ================= 图（同票价计算器：metro_graph_from_template.json） =================
+    var LINES = {}, SEGKM = {}, ST_LINES = {}, ADJ = {}, POOL = [], INTERCHANGES = [];
+
+    function buildFromGraph(graph) {
+      Object.keys(graph.lines).forEach(function (ln) {
+        var sts = graph.lines[ln].stations || [];
+        if (sts.length < 2) return;
+        var names = sts.map(function (s) { return s.name; });
+        LINES[ln] = { name: ln, color: colorOf(ln), stations: names };
+        SEGKM[ln] = sts.map(function (s) { return typeof s.segment_km === 'number' ? s.segment_km : 0; });
+        names.forEach(function (nm, i) {
+          (ST_LINES[nm] = ST_LINES[nm] || []).push(ln);
+          var key = ln + '|' + nm;
+          ADJ[key] = ADJ[key] || [];
+          if (i > 0) ADJ[key].push(names[i - 1]);
+          if (i < names.length - 1) ADJ[key].push(names[i + 1]);
+        });
+      });
+      POOL = Object.keys(ST_LINES);
+      INTERCHANGES = POOL.filter(function (n) { return ST_LINES[n].length >= 2; });
+    }
+
+    function legKm(lineName, from, to) {
+      var names = (LINES[lineName] || {}).stations;
+      if (!names) return 0;
+      var seg = SEGKM[lineName] || [];
+      var a = names.indexOf(from), b = names.indexOf(to);
+      if (a < 0 || b < 0) return 0;
+      var lo = Math.min(a, b), hi = Math.max(a, b), sum = 0;
+      for (var i = lo + 1; i <= hi; i++) sum += seg[i] || 0;
+      return sum;
+    }
+
+    function pathKm(path) {
+      return (path || []).reduce(function (s, leg) { return s + legKm(leg.lineId, leg.from, leg.to); }, 0);
+    }
+
+    // 最少换乘（0-1 BFS：同线移动 0，换线 1）
+    function solve(a, b) {
+      if (!POOL.length) return null;
+      if (a === b) return { count: 0, path: [] };
+      var dist = {}, prev = {}, pq = [];
+      function key(n, l) { return l + '|' + n; }
+      (ST_LINES[a] || []).forEach(function (l) { dist[key(a, l)] = 0; pq.push({ n: a, l: l, d: 0 }); });
+      var guard = 0;
+      while (pq.length && guard++ < 200000) {
+        var bi = 0;
+        for (var i = 1; i < pq.length; i++) if (pq[i].d < pq[bi].d) bi = i;
+        var cur = pq.splice(bi, 1)[0];
+        var ck = key(cur.n, cur.l);
+        if (cur.d > (dist[ck] === undefined ? Infinity : dist[ck])) continue;
+        if (cur.n === b) return { count: cur.d, path: rebuild(prev, ck) };
+        var nbrs = ADJ[ck] || [];
+        for (var j = 0; j < nbrs.length; j++) {
+          var nk = key(nbrs[j], cur.l);
+          if (dist[nk] === undefined || cur.d < dist[nk]) {
+            dist[nk] = cur.d; prev[nk] = ck; pq.push({ n: nbrs[j], l: cur.l, d: cur.d });
+          }
+        }
+        var ls = ST_LINES[cur.n] || [];
+        for (var m = 0; m < ls.length; m++) {
+          if (ls[m] === cur.l) continue;
+          var lk = key(cur.n, ls[m]);
+          if (dist[lk] === undefined || cur.d + 1 < dist[lk]) {
+            dist[lk] = cur.d + 1; prev[lk] = ck; pq.push({ n: cur.n, l: ls[m], d: cur.d + 1 });
+          }
+        }
+      }
+      return null;
+    }
+
+    function rebuild(prev, endKey) {
+      var chain = [], k = endKey;
+      while (k !== undefined) { chain.unshift(k); k = prev[k]; }
+      var legs = [];
+      chain.forEach(function (item, idx) {
+        var bar = item.indexOf('|');
+        var lineId = item.slice(0, bar), st = item.slice(bar + 1);
+        if (idx === 0) { legs.push({ lineId: lineId, from: st, to: st }); return; }
+        var last = legs[legs.length - 1];
+        if (last.lineId === lineId) last.to = st;
+        else legs.push({ lineId: lineId, from: st, to: st });
+      });
+      return legs;
+    }
+
+    /** 沿最短路一共经过几个站（含起终点） */
+    function stationCount(path) {
+      if (!path || !path.length) return 1;
+      var n = 1;
+      path.forEach(function (leg) {
+        var names = (LINES[leg.lineId] || {}).stations || [];
+        n += Math.abs(names.indexOf(leg.to) - names.indexOf(leg.from));
+      });
+      return n;
+    }
+
+    // ===== 换乘站判定：换乘最少 → 里程最短（与票价计算页「距离最短」同口径） =====
+    // 五线网络内任意两线都有换乘站，最少换乘数只可能是 0 或 1，
+    // 因此直接枚举候选换乘站、按「两段里程之和」取最小，既精确又不会指数爆炸。
+    function lineKm(lineName, from, to) {
+      var names = (LINES[lineName] || {}).stations;
+      if (!names) return null;
+      var a = names.indexOf(from), b = names.indexOf(to);
+      if (a < 0 || b < 0) return null;
+      return legKm(lineName, from, to);
+    }
+
+    var TRANSFER_CACHE = {};
+    function bestTransfer(a, b) {
+      var memo = a + '>' + b;
+      if (TRANSFER_CACHE[memo]) return TRANSFER_CACHE[memo];
+      var best = null;
+      INTERCHANGES.forEach(function (s) {
+        if (s === a || s === b) return;
+        var ls = ST_LINES[s] || [];
+        for (var i = 0; i < ls.length; i++) {
+          for (var j = 0; j < ls.length; j++) {
+            if (i === j) continue;
+            var k1 = lineKm(ls[i], a, s), k2 = lineKm(ls[j], s, b);
+            if (k1 === null || k2 === null) continue;
+            var km = k1 + k2;
+            if (!best || km < best.km - 1e-9) {
+              var vmap = {}; vmap[s] = 1;
+              best = { km: km, answer: s, valid: vmap, validList: [s], count: 1 };
+            } else if (best && Math.abs(km - best.km) <= 1e-9 && !best.valid[s]) {
+              best.valid[s] = 1; best.validList.push(s);
+            }
+          }
+        }
+      });
+      TRANSFER_CACHE[memo] = best;
+      return best;
+    }
+
+    function isOptimalTransfer(s, a, b) {
+      if ((ST_LINES[s] || []).length < 2) return false;
+      var bt = bestTransfer(a, b);
+      return !!(bt && bt.valid[s]);
+    }
+
+    // ================= 出题 =================
+    function randOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      return arr;
+    }
+    function uniq(arr) {
+      var out = [], seen = {};
+      arr.forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } });
+      return out;
+    }
+
+    /** 同线两站（0 次换乘） */
+    function pickSameLine() {
+      for (var t = 0; t < 200; t++) {
+        var ln = randOf(Object.keys(LINES));
+        var names = LINES[ln].stations;
+        if (names.length < 3) continue;
+        var i = Math.floor(Math.random() * names.length);
+        var j = Math.floor(Math.random() * names.length);
+        if (i === j) continue;
+        var a = names[i], b = names[j];
+        var r = solve(a, b);
+        if (!r || r.count !== 0) continue;
+        var cnt = stationCount(r.path);
+        if (cnt < 3) continue;      // 相邻站太简单
+        return { type: 'stations', a: a, b: b, path: r.path, count: 0, answer: cnt };
+      }
+      return null;
+    }
+
+    /** 跨线两站（至少 1 次换乘） */
+    function pickCrossLine() {
+      for (var t = 0; t < 300; t++) {
+        var a = randOf(POOL), b = randOf(POOL);
+        if (a === b) continue;
+        var r = solve(a, b);
+        if (!r || r.count < 1 || r.count > 3) continue;
+        var type = Math.random() < 0.5 ? 'count' : 'transfer';
+        if (type === 'transfer') {
+          var bt = bestTransfer(a, b);
+          if (!bt) type = 'count';
+          else return {
+            type: 'transfer', a: a, b: b, path: r.path, count: r.count,
+            answer: bt.answer, km: bt.km, validList: bt.validList
+          };
+        }
+        return { type: 'count', a: a, b: b, path: r.path, count: r.count, answer: r.count };
+      }
+      return null;
+    }
+
+    function makeQuestion() {
+      var q = (Math.random() < 0.3 ? pickSameLine() : pickCrossLine());
+      if (!q) q = pickSameLine() || pickCrossLine();
+      if (!q) return null;
+      q.options = buildOptions(q);
+      return q;
+    }
+
+    function buildOptions(q) {
+      if (q.type === 'count') {
+        var pool = [0, 1, 2, 3, 4].filter(function (n) { return n !== q.answer; });
+        return shuffle(pool.slice(0, 3).concat([q.answer])).map(String);
+      }
+      if (q.type === 'stations') {
+        var cands = [q.answer - 3, q.answer - 2, q.answer - 1, q.answer + 1, q.answer + 2, q.answer + 3]
+          .filter(function (n) { return n >= 2; });
+        return shuffle(uniq(cands).slice(0, 3).concat([q.answer])).map(String);
+      }
+      // 换乘站：正确站 + 3 个「不是最优换乘站」的干扰
+      var used = {};
+      used[q.answer] = 1;
+      (q.validList || []).forEach(function (s) { used[s] = 1; });
+      var wrong = INTERCHANGES.filter(function (s) { return !used[s]; });
+      wrong = shuffle(wrong).slice(0, 3);
+      var extra = shuffle(POOL.slice()).slice(0, 3);
+      var opts = [q.answer].concat(wrong);
+      while (opts.length < 4) opts.push(extra.pop());
+      return shuffle(opts);
+    }
+
+    function questionText(q) {
+      if (q.type === 'count') return '这趟车在地铁内最少要换乘几次？';
+      if (q.type === 'transfer') return '这趟车要在哪一站换乘？（按换乘最少、里程最短）';
+      return '从 ' + q.a + ' 到 ' + q.b + '，一共经过几个站？（含起终点）';
+    }
+
+    function optionLabel(q, v) {
+      if (q.type === 'transfer') return v;
+      if (q.type === 'count') return v + ' 次';
+      return v + ' 站';
+    }
+
+    // ================= 状态与渲染 =================
+    var LS_KEY = 'mg.transfer.v1';
+    var state = { streak: 0, best: 0, answered: 0, q: null, locked: false };
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) { var s = JSON.parse(raw); if (s) { state.best = s.best || 0; state.answered = s.answered || 0; } }
+    } catch (e) {}
+    function persist() {
+      try { localStorage.setItem(LS_KEY, JSON.stringify({ best: state.best, answered: state.answered })); } catch (e) {}
+    }
+
+    function dotsHTML(station) {
+      return (ST_LINES[station] || []).slice(0, 4).map(function (ln) {
+        return '<span class="dot" style="background:' + colorOf(ln) + '"></span>';
+      }).join('');
+    }
+
+    function renderStats() {
+      document.getElementById('stStreak').textContent = state.streak;
+      document.getElementById('stBest').textContent = state.best;
+      document.getElementById('stAnswered').textContent = state.answered;
+    }
+
+    function renderQuestion() {
+      var q = makeQuestion();
+      if (!q) { fail('题目生成失败，请刷新页面'); return; }
+      state.q = q;
+      state.locked = false;
+      elMsg.textContent = '';
+      elReveal.className = 'reveal';
+      elOver.className = 'over';
+      document.getElementById('qHead').textContent = questionText(q);
+      document.getElementById('staA').textContent = q.a;
+      document.getElementById('staB').textContent = q.b;
+      document.getElementById('dotsA').innerHTML = dotsHTML(q.a);
+      document.getElementById('dotsB').innerHTML = dotsHTML(q.b);
+
+      elOpts.innerHTML = q.options.map(function (v) {
+        return '<button class="opt" data-v="' + v + '">' + optionLabel(q, v) +
+          (q.type === 'count' && v === '0' ? '<small>直达</small>' : '<small>&nbsp;</small>') + '</button>';
+      }).join('');
+      Array.prototype.forEach.call(elOpts.children, function (btn) {
+        btn.addEventListener('click', function () { answer(btn.dataset.v, btn); });
+      });
+      renderStats();
+    }
+
+    function pathHTML(path) {
+      return path.map(function (leg) {
+        var km = legKm(leg.lineId, leg.from, leg.to);
+        return '<div class="leg">' +
+          '<span class="lname" style="background:' + colorOf(leg.lineId) + '">' + leg.lineId + '</span>' +
+          '<span>' + leg.from + ' → ' + leg.to + '</span>' +
+          (km > 0 ? '<span style="color:#94a3b8;font-size:12px">约 ' + km.toFixed(1) + ' km</span>' : '') +
+          '</div>';
+      }).join('');
+    }
+
+    function correctAnswerText(q) {
+      if (q.type === 'count') return q.answer + ' 次换乘';
+      if (q.type === 'transfer') {
+        var extra = (q.validList && q.validList.length > 1) ? '（并列：' + q.validList.join(' / ') + '）' : '';
+        return '在 ' + q.answer + ' 换乘 · 约 ' + (q.km || 0).toFixed(1) + ' km' + extra;
+      }
+      return '一共 ' + q.answer + ' 站';
+    }
+
+    function isCorrect(q, v) {
+      // 换乘站题可能有多条同样最优的路线，任一最优换乘站都算对
+      if (q.type === 'transfer') return isOptimalTransfer(String(v), q.a, q.b);
+      return Number(v) === q.answer;
+    }
+
+    function answer(v, btn) {
+      if (state.locked || !state.q) return;
+      var q = state.q;
+      state.locked = true;
+      var ok = isCorrect(q, v);
+
+      Array.prototype.forEach.call(elOpts.children, function (b) {
+        b.disabled = true;
+        if (isCorrect(q, b.dataset.v)) b.classList.add('correct');
+      });
+
+      if (ok) {
+        btn.classList.add('correct');
+        state.streak += 1; state.answered += 1;
+        if (state.streak > state.best) state.best = state.streak;
+        persist(); renderStats();
+        elMsg.style.color = '#16a34a';
+        elMsg.textContent = '答对了！正在出下一题…';
+        setTimeout(renderQuestion, 700);
+      } else {
+        btn.classList.add('wrong');
+        state.streak = 0; persist(); renderStats();
+        elMsg.style.color = '#dc2626';
+        elMsg.textContent = '答错了，本局结束。';
+        var km = pathKm(q.path);
+        elReveal.className = 'reveal show';
+        elReveal.innerHTML =
+          '<div style="margin-bottom:8px">正确答案：<b>' + correctAnswerText(q) + '</b>' +
+          (km > 0 ? '　总里程约 <b>' + km.toFixed(1) + ' 公里</b>' : '') + '</div>' +
+          '<div style="margin-bottom:6px">一条最短路径：</div>' + pathHTML(q.path);
+        elOver.className = 'over show';
+        elOver.innerHTML = '本局连击：<b>' + state.streak + '</b> ｜ 累计答对：<b>' + state.answered + '</b>' +
+          '<div><button class="btn-primary" id="againBtn">再来一局</button></div>';
+        var again = document.getElementById('againBtn');
+        if (again) again.addEventListener('click', function () {
+          state.streak = 0; renderStats(); renderQuestion();
+        });
+      }
+    }
+
+    window.__TRANSFER_DEBUG__ = {
+      solve: solve, makeQuestion: makeQuestion, buildOptions: buildOptions, bestTransfer: bestTransfer,
+      stationCount: stationCount, isOptimalTransfer: isOptimalTransfer,
+      isCorrect: isCorrect, legKm: legKm, pathKm: pathKm,
+      getPool: function () { return POOL.slice(); },
+      getLines: function () { return LINES; },
+      getStLines: function () { return ST_LINES; }
+    };
+
+    renderStats();
+
+    fetch('metro_graph_from_template.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (graph) {
+        buildFromGraph(graph);
+        if (!POOL.length) { fail('数据为空，请检查 metro_graph_from_template.json'); return; }
+        renderQuestion();
+      })
+      .catch(function () {
+        fail('线路数据加载失败 —— 请通过网站地址访问本页（直接双击本地文件无法读取数据）');
+      });
+  })();
+  </script>
+</body>
+</html>
+
+
+

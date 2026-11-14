@@ -796,6 +796,20 @@
       <div class="idx-group">
         <div class="idx-group-head">
           <span class="no">03</span>
+          <span class="nm">游戏</span>
+          <span class="cnt">05</span>
+        </div>
+        <div class="idx-list">
+          <a href="games.html" class="idx-item"><span class="no">01</span><span class="nm">游戏中心</span><span class="ds">四款小游戏入口</span></a>
+          <a href="guess-station-name.html" class="idx-item"><span class="no">02</span><span class="nm">猜站名</span><span class="ds">每日一站，六次机会</span></a>
+          <a href="transfer-quiz.html" class="idx-item"><span class="no">03</span><span class="nm">换乘问答</span><span class="ds">换乘次数 / 换乘站 / 站数</span></a>
+          <a href="ridership-quiz.html" class="idx-item"><span class="no">04</span><span class="nm">客流猜大小</span><span class="ds">同日两线比客流</span></a>
+          <a href="bingo-quiz.html" class="idx-item"><span class="no">05</span><span class="nm">宾果消消乐</span><span class="ds">5×5 卡凑 5 连</span></a>
+        </div>
+      </div>
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">04</span>
           <span class="nm">账户与服务</span>
           <span class="cnt">02</span>
         </div>
@@ -1013,7 +1027,12 @@
 
     // ========= 消息滚动栏逻辑 =========
 const baseMessages = [
-  "个人站(v133) 更新公告（2026.11.14 16:46）请查收：",
+  "个人站(v134) 更新公告（2026.11.14 20:00）请查收：",
+  "游戏中心上线：猜站名、换乘问答、客流猜大小、宾果消消乐四款，纯前端、进度存本地",
+  "猜站名：每日一站，五条线索（同线 / 字数 / 线路数 / 首字 / 位次），六次机会",
+  "换乘问答：换乘次数、换乘站、经过站数三种题型，范围对齐票价计算器的五条线",
+  "宾果消消乐：5×5 站名卡、四档难度，困难与超难的空抽有上限",
+  "票价计算器精简：清掉内联旧元数据，商务 OD 表改为按需加载（省约 3 MB）",
   "照片页改版：竖向瀑布流 → 等高网格，一屏 20 张，悬停浮出完整文件名",
   "照片页弹窗升级为灯箱画廊：大图 + 缩略图条，← → 键切换，当前项放大提亮",
   "照片库新增 88 张并全部重命名归档，总量 349 张（1/3/4/5/7/9/11/13/14 号线）",
@@ -1027,12 +1046,7 @@ const baseMessages = [
   "打通深圳地铁官微推文抓取，据此补全 22、25、27 号线的逐站逐区间进度",
   "27 号线按官方环评纠正 3 处站名：学府医院、松和、补吉华医院与杨美北",
   "西丽高铁站标注「越站通过」：13 号线列车经过不停，屏蔽门已装好",
-  "10 条线路百科页的「线路进度」入口全部放开",
-  "工具页新增 6 个站外工具",
-  "客流数据补齐至 107 天连续",
-  "百科 v2.0：9 条线历史重写",
   "百科 v2.0：事实分级 + 资料来源",
-  "PIDS 数据层与百科同源",
   "已新增了三篇神秘文章（是什么呢？）",
   "五周年准备中。。。（五周年？好吃吗？）",
   "？卧槽这么多版本了",

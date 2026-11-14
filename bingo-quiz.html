@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>宾果消消乐 - 走进新天地·Railway</title>
+<meta name="description" content="宾果消消乐 — 走进新天地·Railway，5×5 站名卡，从三张候选里挑站消除，凑成 5 连即宾果。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="宾果消消乐 - 走进新天地·Railway">
+<meta property="og:description" content="5×5 站名卡，三选一消除，凑成 5 连。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/bingo-quiz.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="宾果消消乐 - 走进新天地·Railway">
+<meta name="twitter:description" content="5×5 站名卡，三选一消除，凑成 5 连。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+  <style>
+    .game-card {
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .stat-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .stat-row span {
+      background: #f1f5f9; border-radius: 999px; padding: 5px 12px;
+      font-size: 12.5px; color: #475569;
+    }
+    .stat-row b { color: #0f172a; }
+
+    .play-area { display: block; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 0 auto 20px;
+      max-width: 460px;
+    }
+    /* 宽屏：左牌面、右操作，一屏看完 */
+    @media (min-width: 900px) {
+      .play-area {
+        display: grid;
+        grid-template-columns: 400px minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+      .card-grid { max-width: 400px; margin-bottom: 0; }
+      .side-col { max-width: 520px; }
+      .play-area .choices, .play-area .choices-label, .play-area .msg, .play-area .over {
+        max-width: 100%; margin-left: 0; margin-right: 0;
+      }
+      .play-area .choices { grid-template-columns: 1fr; }
+      .play-area .choice { min-height: 56px; font-size: 17px; }
+    }
+    .cell {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+      word-break: break-all;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      overflow: hidden;
+    }
+    .cell .dot {
+      position: absolute;
+      top: 5px; right: 5px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .cell.cleared {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #cbd5e1;
+      text-decoration: line-through;
+    }
+    .cell.cleared .dot { opacity: .28; filter: grayscale(1); }
+    .cell.cleared::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(148,163,184,.12) 6px, rgba(148,163,184,.12) 12px);
+    }
+    .cell.pop { animation: pop .35s ease; }
+    @keyframes pop {
+      0% { transform: scale(1); background: #dcfce7; }
+      45% { transform: scale(1.12); background: #bbf7d0; }
+      100% { transform: scale(1); }
+    }
+    .cell.win-line {
+      border-color: #16a34a;
+      background: #dcfce7;
+      color: #166534;
+      text-decoration: none;
+      animation: glow 1s ease infinite alternate;
+    }
+    .cell.win-line::after { display: none; }
+    .cell.win-line .dot { opacity: .9; filter: none; }
+    @keyframes glow {
+      from { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+      to { box-shadow: 0 0 0 5px rgba(22,163,74,.18); }
+    }
+
+    .diffs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .diff {
+      padding: 6px 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      background: #fff;
+      color: #475569;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .12s ease;
+    }
+    .diff:hover { border-color: #94a3b8; }
+    .diff.active { background: #0f172a; border-color: #0f172a; color: #fff; font-weight: 600; }
+    .over.fail { background: #fef2f2; border-color: #fecaca; color: #7f1d1d; }
+
+    .choices-label { font-size: 13px; color: #64748b; margin: 0 auto 10px; max-width: 460px; }
+    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 460px; margin: 0 auto; }
+    .choice {
+      padding: 16px 8px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 13px;
+      background: #fff;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      cursor: pointer;
+      transition: all .12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 62px;
+      word-break: break-all;
+    }
+    .choice:hover:not(:disabled) { border-color: #2563eb; color: #2563eb; transform: translateY(-1px); }
+    .choice:disabled { cursor: default; opacity: .55; }
+    .choice .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+    .choice.hit-flash { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .choice.miss-flash { background: #fee2e2; border-color: #fca5a5; color: #991b1b; animation: shake .3s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .msg { margin-top: 14px; font-size: 13.5px; color: #64748b; min-height: 20px; }
+
+    .over {
+      margin-top: 18px; padding: 16px; border-radius: 13px;
+      background: #f0fdf4; border: 1px solid #86efac;
+      color: #14532d; font-size: 14px; line-height: 1.9;
+      display: none;
+    }
+    .over.show { display: block; }
+    .btn-primary {
+      margin-top: 12px; padding: 11px 22px; border: none; border-radius: 11px;
+      background: #0f172a; color: #fff; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn-primary:hover { background: #1f2937; }
+
+    .howto {
+      background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 16px;
+      padding: 18px; font-size: 13px; line-height: 1.9; color: #64748b;
+    }
+    .howto h3 { font-size: 14px; color: #475569; margin-bottom: 6px; }
+
+    @media (max-width: 720px) {
+      .game-card { padding: 14px; }
+      .card-grid { gap: 5px; max-width: 100%; }
+      .cell { font-size: 11.5px; border-radius: 9px; padding: 2px; }
+      .choices { grid-template-columns: 1fr; gap: 8px; max-width: 100%; }
+      .choices-label { max-width: 100%; }
+      .choice { padding: 12px 10px; min-height: 0; font-size: 15px; }
+    }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">
+        宾果消消乐
+        <a href="games" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回游戏中心
+        </a>
+      </h1>
+    </div>
+
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">5×5 站名卡，三选一消除，横竖斜凑成 5 连</p>
+    </div>
+
+    <div class="game-card">
+      <div class="stat-row">
+        <span>回合 <b id="stPulls">0</b></span>
+        <span>命中 <b id="stHits">0</b></span>
+        <span>空抽 <b id="stMisses">0</b></span>
+        <span>今日最佳 <b id="stBest">—</b></span>
+      </div>
+
+      <div class="play-area">
+        <div class="board-col">
+          <div class="diffs" id="diffs">
+        <button class="diff" data-d="easy">简单</button>
+        <button class="diff" data-d="normal">中等</button>
+        <button class="diff" data-d="hard">困难</button>
+        <button class="diff" data-d="insane">超难</button>
+      </div>
+
+      <div class="card-grid" id="grid"></div>
+        </div>
+        <div class="side-col">
+          <div class="choices-label" id="choiceLabel">从下面三个站里挑一个</div>
+          <div class="choices" id="choices"></div>
+
+          <div class="msg" id="msg"></div>
+          <div class="over" id="over"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="howto">
+      <h3>怎么玩</h3>
+      卡上 25 个站，每格右上角的色点是它所属线路的颜色。<br>
+      每回合从三个候选站里挑一个：<b>在卡上</b>就消除那一格，<b>不在卡上</b>记一次空抽。<br>
+      横、竖、斜任意一条 <b>5 连</b>清空即宾果，回合数越少越好。<br>
+      每日一副卡（北京时间 0 点换），同一天所有人拿到同一张；结束后可以「随机再来一副」练手。<br>
+      <b>难度</b>：简单/中等不会失败；<b>困难</b>空抽上限 14 次、<b>超难</b>上限 12 次，用尽即告负。切换难度会用同一副卡重开，方便对比回合数。
+    </div>
+  </main>
+
+  <script src="all-lines-enhanced.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    function fail(msg) {
+      document.getElementById('choiceLabel').textContent = msg;
+      document.getElementById('choices').innerHTML = '';
+    }
+    if (typeof ALL_LINES_ENHANCED === 'undefined') {
+      fail('线路数据加载失败，请刷新页面');
+      return;
+    }
+
+    // 与猜站名同一口径：只取已开通线路，剔除延伸段未开通站
+    var EXTENSION_NEW_STATIONS = {
+      '20': ['机场东', '狮子山公园', '航城大道东', '西乡公园', '文汇', '甲岸',
+             '中山公园西', '南头古城', '深大', '高新园', '白石洲'],
+      '13': ['潮汐公园', '歌剧院', '东角头']
+    };
+
+    var COLOR = {}, POOL = [], ST_LINES = {};
+
+    ALL_LINES_ENHANCED.filter(function (l) {
+      return l && l.category === 'operating' && Array.isArray(l.stationList) && l.stationList.length;
+    }).forEach(function (line) {
+      var id = String(line.id);
+      COLOR[id] = line.color || '#64748b';
+      var skip = EXTENSION_NEW_STATIONS[id] || [];
+      line.stationList.forEach(function (nm) {
+        if (skip.indexOf(nm) >= 0) return;
+        if (!ST_LINES[nm]) { ST_LINES[nm] = []; POOL.push(nm); }
+        if (ST_LINES[nm].indexOf(id) < 0) ST_LINES[nm].push(id);
+      });
+    });
+
+    // ---------- 定种随机（mulberry32） ----------
+    function hashSeed(str) {
+      var h = 2166136261;
+      for (var i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+    function makeRng(seed) {
+      var a = seed >>> 0;
+      return function () {
+        a = (a + 0x6D2B79F5) >>> 0;
+        var t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function todayKey() {
+      var d = new Date();
+      var s = new Date(d.getTime() + (d.getTimezoneOffset() + 480) * 60000);
+      return s.getFullYear() + '-' + String(s.getMonth() + 1).padStart(2, '0') + '-' + String(s.getDate()).padStart(2, '0');
+    }
+    function shuffle(arr, rng) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(rng() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    var LINES = [
+      [[0,0],[0,1],[0,2],[0,3],[0,4]],
+      [[1,0],[1,1],[1,2],[1,3],[1,4]],
+      [[2,0],[2,1],[2,2],[2,3],[2,4]],
+      [[3,0],[3,1],[3,2],[3,3],[3,4]],
+      [[4,0],[4,1],[4,2],[4,3],[4,4]],
+      [[0,0],[1,0],[2,0],[3,0],[4,0]],
+      [[0,1],[1,1],[2,1],[3,1],[4,1]],
+      [[0,2],[1,2],[2,2],[3,2],[4,2]],
+      [[0,3],[1,3],[2,3],[3,3],[4,3]],
+      [[0,4],[1,4],[2,4],[3,4],[4,4]],
+      [[0,0],[1,1],[2,2],[3,3],[4,4]],
+      [[0,4],[1,3],[2,2],[3,1],[4,0]]
+    ];
+
+    // ---------- 难度 ----------
+    // maxMiss = 空抽上限（达到即失败）；null 表示不会失败
+    var DIFFS = {
+      easy:   { label: '简单', pOnCard: 0.85, mercy: 1,    maxMiss: null },
+      normal: { label: '中等', pOnCard: 0.60, mercy: 2,    maxMiss: null },
+      // maxMiss 由实测标定：困难 14 → 通关率约 65%；超难 12 → 约 13%
+      hard:   { label: '困难', pOnCard: 0.40, mercy: 3,    maxMiss: 14 },
+      insane: { label: '超难', pOnCard: 0.25, mercy: null, maxMiss: 12 }
+    };
+    var DIFF_ORDER = ['easy', 'normal', 'hard', 'insane'];
+
+    var LS_KEY = 'mg.bingo.v2';
+    var state = {
+      mode: 'daily', date: todayKey(), diff: 'normal', seedKey: '',
+      cells: [], hitSet: {}, pulls: 0, hits: 0, misses: 0,
+      candidates: [], over: false, failed: false, winLine: null, missStreak: 0,
+      bests: { easy: null, normal: null, hard: null, insane: null }
+    };
+
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (s) {
+          if (s.date === state.date && s.best && typeof s.best === 'object') {
+            DIFF_ORDER.forEach(function (k) {
+              if (typeof s.best[k] === 'number') state.bests[k] = s.best[k];
+            });
+          }
+          if (s.diff && DIFFS[s.diff]) state.diff = s.diff;
+        }
+      }
+    } catch (e) {}
+
+    function persist() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify({
+          date: state.date, diff: state.diff, best: state.bests
+        }));
+      } catch (e) {}
+    }
+
+    function diffConf() { return DIFFS[state.diff] || DIFFS.normal; }
+
+    function dotsFor(name) {
+      var ls = ST_LINES[name] || [];
+      return ls.slice(0, 2).map(function (id) {
+        return '<span class="dot" style="background:' + (COLOR[id] || '#94a3b8') + '"></span>';
+      }).join('');
+    }
+
+    // ---------- 开局 ----------
+    function newGame(seedKey, mode, diff) {
+      state.mode = mode || 'daily';
+      state.date = todayKey();
+      if (diff && DIFFS[diff]) state.diff = diff;
+      state.seedKey = seedKey || ('bingo-' + state.date);
+
+      var rng = makeRng(hashSeed(state.seedKey));
+      var picked = shuffle(POOL, rng).slice(0, 25);
+      state.cells = picked.map(function (nm) { return { name: nm, lines: (ST_LINES[nm] || []).slice(0, 2) }; });
+      state.hitSet = {};
+      state.pulls = 0; state.hits = 0; state.misses = 0;
+      state.over = false; state.failed = false; state.winLine = null; state.missStreak = 0;
+      state.candidates = [];
+
+      var over = document.getElementById('over');
+      over.className = 'over';
+      document.getElementById('msg').textContent = '';
+      nextChoices();
+      render();
+    }
+
+    // ---------- 候选 ----------
+    // 每回合按难度概率给一张「卡上站」，顺序随机打乱，位置不泄露答案。
+    function nextChoices() {
+      var conf = diffConf();
+      var rng = makeRng(hashSeed('choices-' + state.pulls + '-' + state.misses + '-' + state.hits + '-' + state.diff));
+
+      var remaining = [];
+      state.cells.forEach(function (c, i) {
+        if (!state.hitSet[i]) remaining.push(c.name);
+      });
+
+      var mercyHit = conf.mercy !== null && state.missStreak >= conf.mercy;
+      var giveOnCard = remaining.length > 0 && (rng() < conf.pOnCard || mercyHit);
+      var out = [];
+      if (giveOnCard) out.push(remaining[Math.floor(rng() * remaining.length)]);
+
+      var guard = 0;
+      while (out.length < 3 && guard++ < 400) {
+        var pick = POOL[Math.floor(rng() * POOL.length)];
+        if (out.indexOf(pick) < 0) out.push(pick);
+      }
+
+      for (var i = out.length - 1; i > 0; i--) {
+        var k = Math.floor(Math.random() * (i + 1));
+        var tmp = out[i]; out[i] = out[k]; out[k] = tmp;
+      }
+
+      state.candidates = out;
+    }
+
+    // ---------- 渲染 ----------
+    function render() {
+      var grid = document.getElementById('grid');
+      var winSet = {};
+      if (state.over && state.winLine) {
+        state.winLine.forEach(function (rc) { winSet[cellIndex(rc[0], rc[1])] = 1; });
+      }
+      grid.innerHTML = state.cells.map(function (c, i) {
+        var cleared = !!state.hitSet[i];
+        return '<div class="cell' + (cleared ? ' cleared' : '') + (winSet[i] ? ' win-line' : '') +
+          '" data-i="' + i + '">' + c.name + dotsFor(c.name) + '</div>';
+      }).join('');
+
+      document.getElementById('stPulls').textContent = state.pulls;
+      document.getElementById('stHits').textContent = state.hits;
+      document.getElementById('stMisses').textContent = state.misses +
+        (diffConf().maxMiss ? '/' + diffConf().maxMiss : '');
+      var best = state.bests[state.diff];
+      document.getElementById('stBest').textContent = best ? best + ' 回合' : '—';
+
+      Array.prototype.forEach.call(document.querySelectorAll('.diff'), function (b) {
+        b.classList.toggle('active', b.dataset.d === state.diff);
+      });
+
+      var box = document.getElementById('choices');
+      if (state.over) { box.innerHTML = ''; return; }
+      box.innerHTML = state.candidates.map(function (nm, k) {
+        return '<button class="choice" data-k="' + k + '">' + nm + dotsFor(nm) + '</button>';
+      }).join('');
+      Array.prototype.forEach.call(box.children, function (btn) {
+        btn.addEventListener('click', function () { choose(Number(btn.dataset.k), btn); });
+      });
+    }
+
+    // ---------- 判定 ----------
+    function cellIndex(r, c) { return r * 5 + c; }
+
+    function findWin() {
+      for (var i = 0; i < LINES.length; i++) {
+        var line = LINES[i], ok = true;
+        for (var j = 0; j < line.length; j++) {
+          if (!state.hitSet[cellIndex(line[j][0], line[j][1])]) { ok = false; break; }
+        }
+        if (ok) return line;
+      }
+      return null;
+    }
+
+    function animateCell(i, cls) {
+      var el = document.querySelector('.cell[data-i="' + i + '"]');
+      if (!el) return;
+      el.classList.add(cls);
+      setTimeout(function () { el.classList.remove(cls); }, 400);
+    }
+
+    function choose(k, btn) {
+      if (state.over) return;
+      var nm = state.candidates[k];
+      if (!nm) return;
+      var idx = -1;
+      state.cells.forEach(function (c, i) { if (c.name === nm && !state.hitSet[i]) idx = i; });
+
+      state.pulls += 1;
+      Array.prototype.forEach.call(document.querySelectorAll('.choice'), function (b) { b.disabled = true; });
+
+      if (idx >= 0) {
+        state.hitSet[idx] = 1;
+        state.hits += 1;
+        state.missStreak = 0;
+        if (btn) btn.classList.add('hit-flash');
+        animateCell(idx, 'pop');
+        document.getElementById('msg').style.color = '#16a34a';
+        document.getElementById('msg').textContent = '命中：' + nm + '（第 ' + state.pulls + ' 回合）';
+        setTimeout(function () {
+          var win = findWin();
+          if (win) {
+            state.over = true;
+            state.winLine = win;
+            endGame('win');
+          } else {
+            nextChoices();
+            render();
+            document.getElementById('msg').textContent = '继续，第 ' + (state.pulls + 1) + ' 回合';
+          }
+        }, 620);
+      } else {
+        state.misses += 1;
+        state.missStreak += 1;
+        if (btn) btn.classList.add('miss-flash');
+        var conf = diffConf();
+        document.getElementById('msg').style.color = '#dc2626';
+        document.getElementById('msg').textContent = '没在卡上：' + nm +
+          '（空抽 ' + state.misses + (conf.maxMiss ? '/' + conf.maxMiss : '') + '）';
+
+        if (conf.maxMiss && state.misses >= conf.maxMiss) {
+          state.over = true;
+          state.failed = true;
+          setTimeout(function () { endGame('fail'); }, 520);
+          return;
+        }
+
+        setTimeout(function () {
+          nextChoices();
+          render();
+          document.getElementById('msg').textContent = '继续，第 ' + (state.pulls + 1) + ' 回合';
+        }, 560);
+      }
+    }
+
+    function endGame(kind) {
+      render();
+
+      if (kind === 'win' && state.mode === 'daily') {
+        var cur = state.bests[state.diff];
+        if (cur === null || state.pulls < cur) state.bests[state.diff] = state.pulls;
+        persist();
+      }
+      if (state.mode === 'daily') persist();
+
+      var conf = diffConf();
+      var best = state.bests[state.diff];
+      document.getElementById('stBest').textContent = best ? best + ' 回合' : '—';
+
+      var over = document.getElementById('over');
+      if (kind === 'win') {
+        over.className = 'over show';
+        over.innerHTML =
+          '宾果！（' + conf.label + '）用了 <b>' + state.pulls + '</b> 回合' +
+          '（命中 ' + state.hits + ' 次 · 空抽 ' + state.misses + ' 次）' +
+          (state.mode === 'daily' ? '<br>本难度今日最佳：<b>' + state.bests[state.diff] + '</b> 回合' : '') +
+          '<div><button class="btn-primary" id="againBtn">再来一副</button></div>';
+      } else {
+        over.className = 'over fail show';
+        over.innerHTML =
+          '空抽用尽，本局失败（' + conf.label + '，上限 ' + conf.maxMiss + ' 次）<br>' +
+          '已消 <b>' + state.hits + '</b> 格 · 共 ' + state.pulls + ' 回合' +
+          '<div><button class="btn-primary" id="againBtn">再来一副</button></div>';
+      }
+
+      var again = document.getElementById('againBtn');
+      if (again) again.addEventListener('click', function () {
+        newGame('bingo-random-' + Date.now(), 'random', state.diff);
+      });
+      document.getElementById('choices').innerHTML = '';
+    }
+
+    // ---------- 难度切换 ----------
+    function setDiff(d) {
+      if (!DIFFS[d] || d === state.diff) return;
+      newGame(state.seedKey || ('bingo-' + state.date), state.mode, d);
+      persist();
+    }
+
+    window.__BINGO_DEBUG__ = {
+      state: state,
+      DIFFS: DIFFS,
+      newGame: newGame,
+      setDiff: setDiff,
+      render: render,
+      findWin: findWin,
+      choose: choose,
+      nextChoices: nextChoices,
+      endGame: endGame,
+      getPool: function () { return POOL.slice(); },
+      getStLines: function () { return ST_LINES; },
+      LINES: LINES,
+      todayKey: todayKey
+    };
+
+    Array.prototype.forEach.call(document.querySelectorAll('.diff'), function (b) {
+      b.addEventListener('click', function () { setDiff(b.dataset.d); });
+    });
+
+        newGame('bingo-' + state.date, 'daily');
+  })();
+  </script>
+</body>
+</html>

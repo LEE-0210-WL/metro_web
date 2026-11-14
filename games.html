@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>游戏中心 - 走进新天地·Railway</title>
+<meta name="description" content="游戏中心 — 走进新天地·Railway，基于深圳地铁线路数据的小游戏：猜站名、换乘数竞猜。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="游戏中心 - 走进新天地·Railway">
+<meta property="og:description" content="游戏中心 — 基于深圳地铁线路数据的小游戏。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/games.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="游戏中心 - 走进新天地·Railway">
+<meta name="twitter:description" content="游戏中心 — 基于深圳地铁线路数据的小游戏。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+  <style>
+    /* 首页同款页头样式（与 tools.html 一致） */
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #1f2937;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background .2s;
+    }
+    .back-link:hover { background: #374151; }
+
+    .idx-item.is-soon {
+      opacity: .55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+      .page-title { flex-wrap: wrap; align-items: center; row-gap: 10px; font-size: 22px; }
+      .page-title .back-link { margin-left: auto; font-size: 13px; padding: 6px 12px; }
+      .page-title .back-link svg { width: 15px; height: 15px; }
+    }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">
+        游戏中心
+        <a href="index" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回首页
+        </a>
+      </h1>
+    </div>
+
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">基于本站线路数据的小游戏，随到随玩</p>
+    </div>
+
+    <div class="idx-groups">
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">01</span>
+          <span class="nm">本站游戏</span>
+          <span class="cnt">04</span>
+        </div>
+        <div class="idx-list">
+          <a href="guess-station-name.html" class="idx-item">
+            <span class="no">01</span><span class="nm">猜站名</span><span class="ds">每日一站，六次机会</span>
+          </a>
+          <a href="transfer-quiz.html" class="idx-item">
+            <span class="no">02</span><span class="nm">换乘问答</span><span class="ds">换乘次数 / 换乘站 / 站数</span>
+          </a>
+          <a href="ridership-quiz.html" class="idx-item">
+            <span class="no">03</span><span class="nm">客流猜大小</span><span class="ds">同日两条线，猜谁更高</span>
+          </a>
+          <a href="bingo-quiz.html" class="idx-item">
+            <span class="no">04</span><span class="nm">宾果消消乐</span><span class="ds">5×5 站名卡，凑 5 连</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="idx-group">
+        <div class="idx-group-head">
+          <span class="no">02</span>
+          <span class="nm">说明</span>
+          <span class="cnt">02</span>
+        </div>
+        <div class="idx-list">
+          <div class="idx-item">
+            <span class="no">01</span><span class="nm">数据范围</span><span class="ds">仅取已开通线路与已开通车站</span>
+          </div>
+          <div class="idx-item">
+            <span class="no">02</span><span class="nm">数据来源</span><span class="ds">all-lines-enhanced.js</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <p>游戏进度保存在本地浏览器，不收集任何个人信息。</p>
+    </div>
+  </main>
+</body>
+</html>
+
+

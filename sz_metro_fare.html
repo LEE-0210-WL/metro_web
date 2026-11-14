@@ -306,165 +306,31 @@
 </div>
 
 <script>
-// ========== ALL_LINES_ENHANCED 内联（元数据，颜色从此取） ==========
-const ALL_LINES_ENHANCED = [
-  {
-    "id": "1",
-    "name": "深圳地铁1号线（罗宝线）",
-    "alias": "Line 1 / Luobao Line",
-    "color": "#00B140",
-    "openDate": "2004年12月28日（一期）；2009年9月28日（续建试验段）；2011年6月15日（续建段）",
-    "lengthDesc": "约 40.88 公里",
-    "stationsDesc": "30座（地下28座、高架2座）",
-    "formationDesc": "6节编组A型列车",
-    "maxSpeedDesc": "80公里/小时",
-    "lengthKm": 40.98,
-    "stationCount": 30,
-    "undergroundCount": 28,
-    "elevatedCount": 2,
-    "formationCode": "6A",
-    "maxSpeedKmh": 80,
-    "operator": "深圳市地铁集团有限公司",
-    "category": "operating",
-    "stationList": [
-      "罗湖","国贸","老街","大剧院","科学馆","华强路","岗厦","会展中心","购物公园","香蜜湖",
-      "车公庙","竹子林","侨城东","华侨城","世界之窗","白石洲","高新园","深大","桃园","大新",
-      "鲤鱼门","前海湾","新安","宝安中心","宝体","坪洲","西乡","固戍","后瑞","机场东"
-    ],
-    "transfers": {"老街":["3","17"],"大剧院":["2","5"],"科学馆":["6"],"岗厦":["10"],"会展中心":["4"],
-      "购物公园":["3"],"车公庙":["7","9","11"],"世界之窗":["2"],"白石洲":["20","29"],"高新园":["20"],
-      "深大":["13","20"],"桃园":["12"],"前海湾":["5","11"],"宝安中心":["5"],"坪洲":["15"],"机场东":["12"]},
-    "trains": [],
-    "maxPassengerFlow": "143.9万人次（2019年12月31日）"
-  },
-  {
-    "id": "2",
-    "name": "深圳地铁2号线（蛇口线）",
-    "alias": "Line 2 / Shekou Line",
-    "color": "#B94700",
-    "openDate": "2010年12月28日（一期）；2011年6月28日（二期）；2020年10月28日（三期）",
-    "lengthDesc": "约 39.57 公里",
-    "stationsDesc": "32座（地下站32座）",
-    "formationDesc": "6节编组A型列车",
-    "maxSpeedDesc": "80公里/小时",
-    "lengthKm": 39.57,
-    "stationCount": 32,
-    "undergroundCount": 32,
-    "elevatedCount": 0,
-    "formationCode": "6A",
-    "maxSpeedKmh": 80,
-    "operator": "深圳市地铁集团有限公司",
-    "category": "operating",
-    "stationList": [
-      "赤湾","蛇口港","海上世界","水湾","东角头","湾厦","海月","登良","后海","科苑","红树湾",
-      "世界之窗","侨城北","深康","安托山","侨香","香蜜","香梅北","景田","莲花西","福田","市民中心",
-      "岗厦北","华强北","燕南","大剧院","湖贝","黄贝岭","新秀","莲塘口岸","仙湖路","莲塘","梧桐山南",
-      "沙头角","海山","盐田港西","深外高中","盐田路","鸿安围","北山道","盐田墟","大梅沙","小梅沙","溪涌"
-    ],
-    "transfers": {"赤湾":["5"],"海上世界":["12"],"东角头":["13"],"后海":["11","13"],"科苑":["13"],
-      "世界之窗":["1"],"安托山":["7"],"香梅北":["22"],"景田":["9"],"福田":["3","11"],"市民中心":["4"],
-      "岗厦北":["10","11","14"],"华强北":["7"],"大剧院":["1","5"],"湖贝":["5"],"黄贝岭":["5"],"莲塘":["8"]},
-    "trains": [],
-    "maxPassengerFlow": "149.31万人次（2/8号线合计，截至2025年7月）"
-  },
-  {
-    "id": "3",
-    "name": "深圳地铁3号线（龙岗线）",
-    "alias": "Line 3 / Longgang Line",
-    "color": "#00A9E0",
-    "openDate": "2010年12月28日（一期）；2011年6月28日（二期）；2020年10月28日（三期）；2024年12月28日（四期）",
-    "lengthDesc": "约52.3公里",
-    "stationsDesc": "38座（地下站15座，高架站23座，换乘站13座）",
-    "formationDesc": "6节编组B型车",
-    "maxSpeedDesc": "100公里/小时",
-    "lengthKm": 52.33,
-    "stationCount": 38,
-    "undergroundCount": 24,
-    "elevatedCount": 7,
-    "formationCode": "6B",
-    "maxSpeedKmh": 100,
-    "operator": "深圳市地铁集团有限公司",
-    "category": "operating",
-    "stationList": [
-      "福保","益田","石厦","购物公园","福田","少年宫","莲花村","华新","通新岭","红岭","老街",
-      "晒布","翠竹","田贝","水贝","草埔","布吉","木棉湾","大芬","丹竹头","六约","塘坑","横岗",
-      "永湖","荷坳","大运","爱联","吉祥","龙城广场","南联","双龙","梨园","新生","坪西","低碳城",
-      "白石塘","富坪","坪地六联"
-    ],
-    "transfers": {"石厦":["7"],"购物公园":["1"],"福田":["2","11"],"少年宫":["4"],"莲花村":["10"],
-      "华新":["7"],"通新岭":["6"],"红岭":["9"],"老街":["1","17"],"田贝":["7"],"布吉":["5","14"],
-      "丹竹头":["17"],"大运":["16"],"双龙":["16"]},
-    "trains": [],
-    "maxPassengerFlow": "115.15万人次（2025年12月31日）"
-  },
-  {
-    "id": "4",
-    "name": "深圳地铁4号线（龙华线）",
-    "alias": "Line 4 / Longhua Line",
-    "color": "#DA291C",
-    "openDate": "2004年12月28日（一期）；2011年6月16日（二期）；2020年10月28日（三期）",
-    "lengthDesc": "约 31.3 公里",
-    "stationsDesc": "23座（14座地下站、1座地面站、8座高架站）",
-    "formationDesc": "6节编组A型列车",
-    "maxSpeedDesc": "80公里/小时",
-    "lengthKm": 31.3,
-    "stationCount": 23,
-    "undergroundCount": 15,
-    "elevatedCount": 8,
-    "formationCode": "6A",
-    "maxSpeedKmh": 80,
-    "operator": "港铁轨道交通（深圳）有限公司",
-    "category": "operating",
-    "stationList": [
-      "福田口岸","福民","会展中心","市民中心","少年宫","莲花北","上梅林","民乐","白石龙","深圳北站",
-      "红山","上塘","龙胜","龙华","清湖","清湖北","竹村","茜坑","长湖","观澜","松元厦","观澜湖","牛湖"
-    ],
-    "transfers": {"福田口岸":["10"],"福民":["7","10"],"会展中心":["1"],"市民中心":["2"],"少年宫":["3"],
-      "上梅林":["9"],"民乐":["22"],"白石龙":["27"],"红山":["6"],"龙华":["25"],"松元厦":["22"],"深圳北站":["5","6"]},
-    "trains": [],
-    "maxPassengerFlow": "91.13万人次（2025年12月31日）"
-  },
-  {
-    "id": "11",
-    "name": "深圳地铁11号线（机场线）",
-    "alias": "Line 11 / Airport Line",
-    "color": "#672146",
-    "openDate": "2016年6月28日（一期）；2022年10月28日（二期①）；2024年12月28日（二期②）；2025年12月28日（二期③）",
-    "lengthDesc": "约 57.56 公里",
-    "stationsDesc": "23座（18座地下站、4座高架站）",
-    "formationDesc": "8节编组A型列车（6节普通+2节商务）",
-    "maxSpeedDesc": "120公里/小时",
-    "lengthKm": 57.56,
-    "stationCount": 22,
-    "undergroundCount": 16,
-    "elevatedCount": 5,
-    "formationCode": "8A",
-    "maxSpeedKmh": 120,
-    "operator": "深圳市地铁集团有限公司",
-    "category": "operating",
-    "stationList": ["红岭南","华强南","福星","岗厦北","福田","车公庙","红树湾南","后海","南山","前海湾",
-      "宝安","碧海湾","机场","机场北","福永","桥头","塘尾","马安山","沙井","后亭","松岗","碧头"],
-    "transfers": {"红岭南":["9"],"华强南":["7"],"岗厦北":["2","10","14"],"福田":["2","3"],"车公庙":["1","7","9"],
-      "红树湾南":["9","27"],"后海":["2","13"],"南山":["12"],"前海湾":["1","5"],"机场北":["20"],"福永":["12"],"松岗":["6","12"]},
-    "trains": [],
-    "maxPassengerFlow": "141.46万人次（2025年12月31日）"
-  }
-];
 
 // ========== 全局变量 ==========
 let metroGraphRaw = null;
 let metro = null;
 let normalFareMap = null;
 let businessFareMap = null;
+let businessFarePromise = null;
+/** 商务车厢 OD 表约 3 MB，只有真的涉及 11 号线时才加载 */
+function loadBusinessFare(){
+  if(businessFareMap) return Promise.resolve(businessFareMap);
+  if(!businessFarePromise){
+    businessFarePromise = fetch("./business_fare_map.json")
+      .then(r => r.json())
+      .then(j => { businessFareMap = j; return j; })
+      .catch(() => { businessFareMap = {}; return {}; });
+  }
+  return businessFarePromise;
+}
 let ready = false;
 
 // ========== 工具函数 ==========
-/** 判断路径是否经过11号线 */
+/** 判断路径是否真的走了 11 号线（按路由元素自带的 line 字段；图中没有该线时恒为 false） */
 function routeContainsLine11(route){
-  const l11 = ALL_LINES_ENHANCED.find(x=>x.id==="11");
-  if(!l11) return false;
-  const s = new Set(l11.stationList);
-  return route.some(it=>s.has(it.name));
+  if(!Array.isArray(route) || !route.length) return false;
+  return route.some(it => it && it.line === "11号线");
 }
 
 /** 普通车厢 官方OD */
@@ -694,10 +560,6 @@ async function loadAllAssets(){
     const resNorm = await fetch("./normal_fare_map.json");
     normalFareMap = await resNorm.json();
 
-    tip.textContent = "加载商务车厢OD票价…";
-    const resBiz = await fetch("./business_fare_map.json");
-    businessFareMap = await resBiz.json();
-
     tip.textContent = "初始化寻路引擎…";
     metro = new MetroData(metroGraphRaw);
     ready = true;
@@ -795,11 +657,17 @@ function queryFare(){
 
   let infoLines = [];
   if(pass11){
-    infoLines.push(`商务车厢｜OD官方：${odBusiness??"无商务OD数据"}元`);
+    infoLines.push(`商务车厢｜OD官方：${odBusiness??(businessFareMap?"无商务OD数据":"正在加载商务OD…")}元`);
   }else{
-    infoLines.push("本行程不经过11号线，不支持商务车厢");
+    infoLines.push("本行程不涉及 11 号线，无商务车厢");
   }
   resInfo.textContent = infoLines.join("\n");
+  if(pass11 && !businessFareMap){
+    loadBusinessFare().then(()=>{
+      const od = getBusinessOdFare(startSta, endSta);
+      resInfo.textContent = `商务车厢｜OD官方：${od??"无商务OD数据"}元`;
+    });
+  }
 
   pathText.textContent = routeResult.route.map(x=>x.name).join(" → ");
   drawRouteMap(routeResult.route);

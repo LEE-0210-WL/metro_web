@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <title>猜站名 - 走进新天地·Railway</title>
+<meta name="description" content="猜站名 — 走进新天地·Railway，凭五条线索找出今日目标站。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="走进新天地·Railway">
+<meta property="og:title" content="猜站名 - 走进新天地·Railway">
+<meta property="og:description" content="猜站名 — 凭五条线索找出今日目标站。">
+<meta property="og:url" content="https://metro-web-b8o.pages.dev/guess-station-name.html">
+<meta property="og:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="游戏中心 - 走进新天地·Railway">
+<meta name="twitter:description" content="游戏中心 — 深圳地铁主题小游戏：猜站名、换乘挑战、客流猜大小。">
+<meta name="twitter:image" content="https://metro-web-b8o.pages.dev/og-image.png">
+  <style>
+    /* ========== 游戏中心 ========== */
+    .game-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 18px 0 20px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .game-tab {
+      flex: 0 0 auto;
+      padding: 9px 16px;
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 999px;
+      background: var(--card-bg, #fff);
+      color: var(--text, #111827);
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .15s ease;
+      font-family: inherit;
+    }
+    .game-tab:hover { border-color: #94a3b8; }
+    .game-tab.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      font-weight: 600;
+    }
+    .game-tab.soon { opacity: .55; cursor: not-allowed; }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .game-card {
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .game-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      margin-bottom: 14px;
+    }
+    .game-name { font-size: 17px; font-weight: 700; }
+    .game-desc { font-size: 13px; color: #6b7280; }
+    .stat-pill {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    .stat-pill span {
+      background: #f1f5f9;
+      border-radius: 999px;
+      padding: 4px 10px;
+      color: #475569;
+    }
+
+    /* 猜测行 */
+    .guess-row {
+      display: grid;
+      grid-template-columns: 132px repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: stretch;
+    }
+    .guess-row .cell {
+      border-radius: 9px;
+      padding: 9px 6px;
+      font-size: 12.5px;
+      text-align: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      line-height: 1.35;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      word-break: break-all;
+    }
+    .guess-row .cell.name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #fff;
+      border-color: #cbd5e1;
+    }
+    .cell.hit { background: #dcfce7; border-color: #86efac; color: #166534; font-weight: 600; }
+    .cell.miss { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    .cell.near { background: #fef9c3; border-color: #fde68a; color: #854d0e; font-weight: 600; }
+    .dots { display: flex; gap: 3px; justify-content: center; flex-wrap: wrap; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+
+    .empty-row .cell {
+      background: #f8fafc;
+      border-style: dashed;
+      color: #cbd5e1;
+      min-height: 46px;
+    }
+
+    /* 输入区 */
+    .input-wrap { position: relative; margin-top: 16px; }
+    .guess-form { display: flex; gap: 8px; }
+    .guess-input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 11px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #fff;
+      color: #0f172a;
+      outline: none;
+    }
+    .guess-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    .guess-btn {
+      flex: 0 0 auto;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 11px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .guess-btn:hover { background: #1d4ed8; }
+    .guess-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+    .suggest {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 11px;
+      box-shadow: 0 10px 28px rgba(15,23,42,.12);
+      overflow: hidden;
+      z-index: 30;
+      display: none;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .suggest.show { display: block; }
+    .suggest-item {
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .suggest-item:hover, .suggest-item.on { background: #eff6ff; }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 13px;
+      min-height: 18px;
+      color: #dc2626;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.7;
+      display: none;
+    }
+    .result.show { display: block; }
+    .result.win { background: #dcfce7; border: 1px solid #86efac; color: #14532d; }
+    .result.lose { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+    .result b { font-size: 16px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 600;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .legend {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.8;
+    }
+    .legend b { color: #64748b; }
+
+    /* 即将上线 */
+    .soon-card {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+      color: #94a3b8;
+    }
+    .soon-card h3 { font-size: 15px; color: #64748b; margin-bottom: 6px; font-weight: 700; }
+    .soon-card p { font-size: 13px; line-height: 1.7; }
+
+    /* 窄屏：猜测行改为流式，空格子隐藏，避免堆成一大片 */
+    @media (max-width: 720px) {
+      .game-card { padding: 14px; border-radius: 13px; }
+      .guess-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .guess-row .cell.name { flex: 0 0 100%; }
+      .guess-row .cell { flex: 1 1 30%; font-size: 11.5px; padding: 7px 4px; }
+      .guess-row.empty-row { display: none; }
+      .stat-pill { margin-left: 0; width: 100%; }
+      .guess-btn { padding: 12px 16px; }
+    }
+
+    .tries-left {
+      font-size: 12.5px;
+      color: #64748b;
+      margin: 10px 0 0;
+    }
+    .tries-left b { color: #0f172a; }
+  </style>
+<link rel="stylesheet" href="page-header.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <script src="navbar.js"></script>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">
+        猜站名
+        <a href="games" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回游戏中心
+        </a>
+      </h1>
+    </div>
+
+    <div class="page-subtitle-wrapper">
+      <p class="page-subtitle">每日一题，全站同题，北京时间 0 点换题</p>
+    </div>
+
+    <!-- ===================== 猜站名 ===================== -->
+    <div class="panel active" id="panel-guess">
+      <div class="game-card">
+        <div class="game-head">
+          <div>
+            <div class="game-name">猜站名</div>
+            <div class="game-desc">凭五条线索找出今日目标站，六次机会</div>
+          </div>
+          <div class="stat-pill">
+            <span id="modeLabel">每日一题</span>
+            <span id="streakLabel">连胜 0</span>
+          </div>
+        </div>
+
+        <div id="guessRows"></div>
+        <div class="tries-left" id="triesLeft"></div>
+
+        <div class="input-wrap">
+          <form class="guess-form" id="guessForm" autocomplete="off">
+            <input class="guess-input" id="guessInput" type="text" placeholder="输入站名，如：会展中心" aria-label="输入站名">
+            <button class="guess-btn" id="guessBtn" type="submit">猜</button>
+          </form>
+          <div class="suggest" id="suggest"></div>
+        </div>
+        <div class="msg" id="msg"></div>
+
+        <div class="result" id="result"></div>
+
+        <div class="legend">
+          <b>线索说明</b>：<span class="dot" style="display:inline-block;background:#22c55e;vertical-align:middle"></span> 绿=完全对上 ·
+          <span class="dot" style="display:inline-block;background:#facc15;vertical-align:middle"></span> 黄=接近（同线位次） ·
+          <span class="dot" style="display:inline-block;background:#ef4444;vertical-align:middle"></span> 红=方向相反 ·
+          灰=无提示<br>
+          <b>同线</b>：你猜的站与答案站有没有同一条线路；色点就是共有的那几条线<br>
+          <b>线路数</b>：该站一共有几条线路经过（例：车公庙 1/7/9/11 → 4 条；单线站为 1）<br>
+          <b>方向</b>：字数 / 线路数 / 位次的差值，都是<b>答案减去你猜的站</b> —— 看到「答案更少」就往少的方向猜。
+        </div>
+      </div>
+
+      <div class="soon-card" style="margin-top:0">
+        <h3>怎么玩</h3>
+        <p>每天一道题，全站同题，北京时间 0 点换题。<br>
+           每次猜一个站名，会返回五条线索：<b>同线</b>（与答案站有没有共同线路）、<b>站名字数</b>、<b>线路数</b>、<b>首字</b>、<b>沿线位次</b>。<br>
+           位次只在「你猜的站和目标站有共同线路」时给出，告诉你目标在它前面还是后面第几站。<br>
+           范围：只取<b>已开通线路与已开通车站</b>，五期在建线路、20 号线二期、13 号线二期南延的新增站不参与。</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="all-lines-enhanced.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    // ---------------- 数据准备 ----------------
+    if (typeof ALL_LINES_ENHANCED === 'undefined') {
+      document.getElementById('guessRows').innerHTML =
+        '<div class="soon-card"><h3>数据加载失败</h3><p>线路数据没能载入，请刷新页面重试。</p></div>';
+      return;
+    }
+
+    var OP_LINES = ALL_LINES_ENHANCED.filter(function (l) {
+      return l && l.category === 'operating' && Array.isArray(l.stationList) && l.stationList.length;
+    });
+
+    // 延伸段尚未开通、但被并入了 operating 线路站表里的站 —— 只在计算时跳过，不改数据文件。
+    // 20 号线：站表 16 站 = 一期 5 站（会展城/国展北/国展/国展南/机场北）+ 二期 11 站（在建）
+    // 13 号线：南延 3 站（在建；北延 11 站已于 2026-06 开通，属正常范围）
+    var EXTENSION_NEW_STATIONS = {
+      '20': ['机场东', '狮子山公园', '航城大道东', '西乡公园', '文汇', '甲岸',
+             '中山公园西', '南头古城', '深大', '高新园', '白石洲'],
+      '13': ['潮汐公园', '歌剧院', '东角头']
+    };
+
+    var STATION = {};   // 站名 -> { lines:[{id,name,color,idx,total}] }
+    OP_LINES.forEach(function (line) {
+      var skip = EXTENSION_NEW_STATIONS[String(line.id)] || [];
+      line.stationList.forEach(function (nm, idx) {
+        if (skip.indexOf(nm) >= 0) return;   // 该延伸段尚未开通，本站不计入
+        if (!STATION[nm]) STATION[nm] = { lines: [] };
+        STATION[nm].lines.push({
+          id: String(line.id),
+          name: line.name,
+          color: line.color || '#64748b',
+          idx: idx,
+          total: line.stationList.length
+        });
+      });
+    });
+
+    // 只保留有换乘数据的站之外也全部保留；站池按名字排序，便于补全
+    var POOL = Object.keys(STATION).sort();
+
+    // ---------------- 工具函数 ----------------
+    function todayKey() {
+      // 固定北京时间，避免跨时区题目不一致
+      var d = new Date();
+      var shanghai = new Date(d.getTime() + (d.getTimezoneOffset() + 480) * 60000);
+      var y = shanghai.getFullYear();
+      var m = String(shanghai.getMonth() + 1).padStart(2, '0');
+      var day = String(shanghai.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+
+    function hashStr(s) {
+      var h = 5381;
+      for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+      return h;
+    }
+
+    function dailyTarget(key) {
+      return POOL[hashStr('metro-guess-' + key) % POOL.length];
+    }
+
+    function randomTarget(exclude) {
+      var t;
+      do { t = POOL[Math.floor(Math.random() * POOL.length)]; } while (t === exclude);
+      return t;
+    }
+
+    function lineIds(name) {
+      return STATION[name].lines.map(function (x) { return x.id; });
+    }
+
+    function commonLines(a, b) {
+      var la = lineIds(a), lb = lineIds(b);
+      return la.filter(function (id) { return lb.indexOf(id) >= 0; });
+    }
+
+    // ---------------- 状态 ----------------
+    var LS_KEY = 'mg.guess.v1';
+    var MAX_TRIES = 6;
+
+    var state = {
+      mode: 'daily',      // daily | random
+      date: todayKey(),
+      target: '',
+      guesses: [],        // [{name, fb}]
+      over: false,
+      won: false,
+      streak: 0,
+      lastWinDate: '',
+      best: 0
+    };
+
+    var storageOK = true;
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var saved = JSON.parse(raw);
+        if (saved && saved.date === state.date && Array.isArray(saved.guesses)) {
+          state.guesses = saved.guesses;
+          state.over = !!saved.over;
+          state.won = !!saved.won;
+        }
+        if (saved) {
+          state.streak = saved.streak || 0;
+          state.lastWinDate = saved.lastWinDate || '';
+          state.best = saved.best || 0;
+        }
+      }
+    } catch (e) { storageOK = false; }
+
+    function persist() {
+      if (!storageOK) return;
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify({
+          date: state.date,
+          guesses: state.guesses,
+          over: state.over,
+          won: state.won,
+          streak: state.streak,
+          lastWinDate: state.lastWinDate,
+          best: state.best
+        }));
+      } catch (e) { storageOK = false; }
+    }
+
+    // 每日题：跨天重置猜测
+    state.target = dailyTarget(state.date);
+    if (state.mode === 'random') state.target = randomTarget('');
+
+    // 存档里的 fb 是旧口径，按新规则重算一遍（只存站名即可）
+    if (state.guesses.length) {
+      state.guesses = state.guesses
+        .filter(function (g) { return g && STATION[g.name]; })
+        .map(function (g) { return { name: g.name, fb: feedback(g.name) }; });
+    }
+
+    // ---------------- 反馈计算 ----------------
+    // 所有差值统一口径：答案 − 你猜的站
+    function feedback(guess) {
+      var g = STATION[guess], t = STATION[state.target];
+      var common = commonLines(guess, state.target);
+
+      // 位次：在共同线路里取「答案与猜测距离最近」的那条，避免按注册顺序取错线
+      var pos = null;
+      common.forEach(function (lid) {
+        var gi = null, ti = null;
+        g.lines.forEach(function (x) { if (x.id === lid) gi = x; });
+        t.lines.forEach(function (x) { if (x.id === lid) ti = x; });
+        if (!gi || !ti) return;
+        var d = ti.idx - gi.idx;
+        if (!pos || Math.abs(d) < Math.abs(pos.diff)) {
+          pos = { lineId: lid, color: ti.color, diff: d, lineName: ti.name };
+        }
+      });
+
+      return {
+        name: guess,
+        common: common.map(function (id) {
+          var c = '#64748b';
+          t.lines.forEach(function (x) { if (x.id === id) c = x.color; });
+          return { id: id, color: c };
+        }),
+        lenDiff: state.target.length - guess.length,          // 答案字数 − 猜测字数
+        lineCount: g.lines.length,
+        lineCountDiff: t.lines.length - g.lines.length,       // 答案线路数 − 猜测线路数
+        firstChar: guess.charAt(0) === state.target.charAt(0),
+        pos: pos
+      };
+    }
+
+    // ---------------- 渲染 ----------------
+    var rowsEl = document.getElementById('guessRows');
+    var inputEl = document.getElementById('guessInput');
+    var formEl = document.getElementById('guessForm');
+    var msgEl = document.getElementById('msg');
+    var resultEl = document.getElementById('result');
+    var suggestEl = document.getElementById('suggest');
+    var btnEl = document.getElementById('guessBtn');
+
+    function dotHTML(color) {
+      return '<span class="dot" style="background:' + color + '"></span>';
+    }
+
+    function renderRows() {
+      var html = '';
+      for (var i = 0; i < MAX_TRIES; i++) {
+        var g = state.guesses[i];
+        if (!g) {
+          html += '<div class="guess-row empty-row">' +
+            '<div class="cell name">—</div>' +
+            '<div class="cell">同线</div><div class="cell">字数</div>' +
+            '<div class="cell">线路数</div><div class="cell">首字</div><div class="cell">位次</div>' +
+            '</div>';
+          continue;
+        }
+        var fb = g.fb;
+
+        // 线路
+        var lineCell;
+        if (fb.common.length) {
+          lineCell = '<div class="cell hit">' + fb.common.map(function (c) { return dotHTML(c.color); }).join('') +
+            '<span style="font-size:11px">同线</span></div>';
+        } else {
+          lineCell = '<div class="cell miss">不同线</div>';
+        }
+
+        // 字数（答案 − 猜测）
+        var lenCell = fb.lenDiff === 0
+          ? '<div class="cell hit">字数相同</div>'
+          : '<div class="cell ' + (Math.abs(fb.lenDiff) <= 1 ? 'near' : 'miss') + '">' +
+            (fb.lenDiff > 0 ? '答案多 ' + fb.lenDiff + ' 字' : '答案少 ' + (-fb.lenDiff) + ' 字') + '</div>';
+
+        // 线路数（答案 − 猜测）
+        var trCell = fb.lineCountDiff === 0
+          ? '<div class="cell hit">线路数相同</div>'
+          : '<div class="cell ' + (Math.abs(fb.lineCountDiff) <= 1 ? 'near' : 'miss') + '">' +
+            (fb.lineCountDiff > 0 ? '答案线路数更多' : '答案线路数更少') + '</div>';
+
+        // 首字
+        var fcCell = fb.firstChar
+          ? '<div class="cell hit">首字相同</div>'
+          : '<div class="cell">首字不同</div>';
+
+        // 位次（答案 − 猜测）
+        var posCell;
+        if (fb.pos) {
+          if (fb.pos.diff === 0) {
+            posCell = '<div class="cell hit">就在这站</div>';
+          } else {
+            posCell = '<div class="cell near">' + (fb.pos.diff > 0 ? '答案在后 ' + fb.pos.diff + ' 站' : '答案在前 ' + (-fb.pos.diff) + ' 站') + '</div>';
+          }
+        } else {
+          posCell = '<div class="cell">—</div>';
+        }
+
+        html += '<div class="guess-row">' +
+          '<div class="cell name">' + g.name + '</div>' +
+          lineCell + lenCell + trCell + fcCell + posCell +
+          '</div>';
+      }
+      rowsEl.innerHTML = html;
+
+      var left = document.getElementById('triesLeft');
+      if (left) {
+        if (state.over) {
+          left.innerHTML = '本局结束 · 共猜 ' + state.guesses.length + ' 次';
+        } else {
+          left.innerHTML = '还剩 <b>' + (MAX_TRIES - state.guesses.length) + '</b> 次机会';
+        }
+      }
+    }
+
+    function renderStats() {
+      document.getElementById('modeLabel').textContent =
+        state.mode === 'daily' ? '每日一题' : '随机模式';
+      document.getElementById('streakLabel').textContent =
+        '连胜 ' + state.streak + (state.best ? ' · 最高 ' + state.best : '');
+    }
+
+    function renderResult() {
+      if (!state.over) { resultEl.className = 'result'; return; }
+      var t = state.target;
+      var badges = STATION[t].lines.map(function (x) {
+        return '<span class="badge" style="background:' + x.color + '">' + x.name.replace('深圳地铁', '') + '</span>';
+      }).join('');
+
+      if (state.won) {
+        resultEl.className = 'result show win';
+        resultEl.innerHTML = '答对了！<b>' + t + '</b>' + badges +
+          '<br>用了 ' + state.guesses.length + ' 次' +
+          (state.mode === 'daily' ? '，连胜 ' + state.streak + ' 天' : '');
+      } else {
+        resultEl.className = 'result show lose';
+        resultEl.innerHTML = '六次机会用完了。今日答案是 <b>' + t + '</b>' + badges +
+          (state.mode === 'daily' ? '<br>连胜中断，明天再来。' : '');
+      }
+      resultEl.innerHTML += '<div style="margin-top:10px"><button class="guess-btn" id="againBtn" type="button" style="background:#0f172a">随机再来一局</button></div>';
+      var again = document.getElementById('againBtn');
+      if (again) again.addEventListener('click', startRandom);
+    }
+
+    // ---------------- 补全 ----------------
+    var sugIdx = -1;
+    var sugItems = [];
+
+    function showSuggest(q) {
+      q = (q || '').trim();
+      if (!q) { suggestEl.classList.remove('show'); sugItems = []; return; }
+      var guessed = state.guesses.map(function (g) { return g.name; });
+      sugItems = POOL.filter(function (nm) {
+        return nm.indexOf(q) >= 0 && guessed.indexOf(nm) < 0;
+      }).slice(0, 8);
+      if (!sugItems.length) { suggestEl.classList.remove('show'); return; }
+      sugIdx = -1;
+      suggestEl.innerHTML = sugItems.map(function (nm, i) {
+        var dots = STATION[nm].lines.slice(0, 4).map(function (x) { return dotHTML(x.color); }).join('');
+        return '<div class="suggest-item" data-i="' + i + '">' + dots + '<span>' + nm + '</span></div>';
+      }).join('');
+      suggestEl.classList.add('show');
+    }
+
+    suggestEl.addEventListener('mousedown', function (e) {
+      var it = e.target.closest('.suggest-item');
+      if (!it) return;
+      e.preventDefault();
+      inputEl.value = sugItems[Number(it.dataset.i)];
+      suggestEl.classList.remove('show');
+      inputEl.focus();
+    });
+
+    function highlightSug() {
+      Array.prototype.forEach.call(suggestEl.children, function (el, i) {
+        el.classList.toggle('on', i === sugIdx);
+      });
+    }
+
+    // ---------------- 主流程 ----------------
+    function submitGuess(name) {
+      name = (name || '').trim();
+      msgEl.textContent = '';
+      if (state.over) return;
+      if (!name) return;
+      if (!STATION[name]) { msgEl.textContent = '没有这个站，检查一下拼写～'; return; }
+      if (state.guesses.some(function (g) { return g.name === name; })) {
+        msgEl.textContent = '这个站已经猜过了'; return;
+      }
+      var fb = feedback(name);
+      state.guesses.push({ name: name, fb: fb });
+      inputEl.value = '';
+      suggestEl.classList.remove('show');
+
+      if (name === state.target) {
+        state.over = true; state.won = true;
+        if (state.mode === 'daily' && state.lastWinDate !== state.date) {
+          state.streak += 1;
+          state.lastWinDate = state.date;
+          if (state.streak > state.best) state.best = state.streak;
+        }
+      } else if (state.guesses.length >= MAX_TRIES) {
+        state.over = true; state.won = false;
+        if (state.mode === 'daily') state.streak = 0;
+      }
+
+      persist();
+      renderRows(); renderStats(); renderResult();
+      if (state.over) { inputEl.disabled = true; btnEl.disabled = true; }
+    }
+
+    function startRandom() {
+      state.mode = 'random';
+      state.target = randomTarget('');
+      state.guesses = [];
+      state.over = false; state.won = false;
+      inputEl.disabled = false; btnEl.disabled = false;
+      inputEl.value = '';
+      resultEl.className = 'result';
+      msgEl.textContent = '';
+      renderRows(); renderStats();
+      inputEl.focus();
+    }
+
+    formEl.addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitGuess(inputEl.value);
+    });
+
+    inputEl.addEventListener('input', function () { showSuggest(inputEl.value); });
+    inputEl.addEventListener('blur', function () {
+      setTimeout(function () { suggestEl.classList.remove('show'); }, 120);
+    });
+    inputEl.addEventListener('keydown', function (e) {
+      if (!suggestEl.classList.contains('show')) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault(); sugIdx = (sugIdx + 1) % sugItems.length; highlightSug();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault(); sugIdx = (sugIdx - 1 + sugItems.length) % sugItems.length; highlightSug();
+      } else if (e.key === 'Enter' && sugIdx >= 0) {
+        e.preventDefault(); inputEl.value = sugItems[sugIdx];
+        suggestEl.classList.remove('show');
+      }
+    });
+
+    // 首屏
+    renderRows();
+    renderStats();
+    if (state.over) {
+      inputEl.disabled = true; btnEl.disabled = true;
+      renderResult();
+    } else {
+      inputEl.focus();
+    }
+
+    // 暴露给自测脚本
+    window.__GAME_DEBUG__ = {
+      pool: POOL,
+      station: STATION,
+      dailyTarget: dailyTarget,
+      feedback: feedback,
+      state: state
+    };
+  })();
+  </script>
+</body>
+</html>
