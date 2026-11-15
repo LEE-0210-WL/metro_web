@@ -1,5 +1,5 @@
 {
-  "source": "v4",
+  "source": "V6：V5 + 8号线三期 溪涌段官方 3.577 km",
   "lines": {
     "1号线": {
       "line_id": "1",
@@ -445,37 +445,37 @@
         {
           "seq": 33,
           "name": "梧桐山南",
-          "segment_km": 1.46,
+          "segment_km": 1.445,
           "transfer": []
         },
         {
           "seq": 34,
           "name": "沙头角",
-          "segment_km": 4.32,
+          "segment_km": 4.31,
           "transfer": []
         },
         {
           "seq": 35,
           "name": "海山",
-          "segment_km": 1.57,
+          "segment_km": 1.602,
           "transfer": []
         },
         {
           "seq": 36,
           "name": "盐田港西",
-          "segment_km": 1.24,
+          "segment_km": 1.156,
           "transfer": []
         },
         {
           "seq": 37,
           "name": "深外高中",
-          "segment_km": 2.68,
+          "segment_km": 2.624,
           "transfer": []
         },
         {
           "seq": 38,
           "name": "盐田路",
-          "segment_km": 1.41,
+          "segment_km": 1.366,
           "transfer": []
         },
         {
@@ -505,7 +505,7 @@
         {
           "seq": 43,
           "name": "溪涌",
-          "segment_km": 3.79,
+          "segment_km": 3.577,
           "transfer": []
         }
       ]
