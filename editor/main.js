@@ -65,6 +65,12 @@ function updateButtons() {
   $('btnRedo').disabled = !state.redo.length;
 }
 
+function fitAllView(W, H) {
+  const pts = state.model.points.map(p => ({ x: p.pos[0], y: p.pos[1] }));
+  const bbox = pts.length ? bboxOf(pts) : { x0: 0, y0: 0, x1: 1600, y1: 900 };
+  return fitView(bbox, W || cv.clientWidth || 1200, H || cv.clientHeight || 800);
+}
+
 function loadRaw(raw, { keepView = false, resetUndo = true } = {}) {
   validateSave(raw);
   state.raw = raw;
@@ -74,7 +80,7 @@ function loadRaw(raw, { keepView = false, resetUndo = true } = {}) {
   state.selLineId = null;
   state.drawLineId = null;
   state.tool = 'select';
-  if (!keepView) state.view = fitView(bboxOf(state.model.points.map(p => ({ x: p.pos[0], y: p.pos[1] }))), cv.clientWidth || 1200, cv.clientHeight || 800);
+  if (!keepView) state.view = fitAllView();
   if (resetUndo) { state.undo = []; state.redo = []; }
   refreshUI();
   updateButtons();
@@ -151,7 +157,12 @@ function refreshUI() {
     const name = document.createElement('input');
     name.placeholder = '站名';
     name.value = p.name || '';
-    name.oninput = () => { p.name = name.value; autosave(); refreshUI(); draw(); };
+    name.onchange = () => {
+      p.name = name.value;
+      state.model = buildModel(state.raw);
+      state.rm = buildRenderModel(state.model);
+      autosave(); refreshUI(); draw();
+    };
     const sta = document.createElement('label');
     sta.className = 'chk';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!p.sta;
@@ -245,6 +256,7 @@ function onPointerDown(e) {
   }
   const hit = hitTest(state.model, state.rm, state.view, sp.x, sp.y, W, H, 16);
   if (hit) {
+    pushUndo();
     state.selPointId = hit.id;
     state.drag = { id: hit.id };
     cv.setPointerCapture(e.pointerId);
@@ -314,11 +326,10 @@ function importFile(file) {
 }
 
 function exportPng() {
-  const bbox = bboxOf(state.model.points.map(p => ({ x: p.pos[0], y: p.pos[1] })));
   const W = 1920, H = 1080;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const cx = c.getContext('2d');
-  const view = fitView(bbox, W, H, 100);
+  const view = fitAllView(W, H);
   render(cx, state.model, state.rm, view, { dpr: 1, labels: true, grid: false, bg: '#f2f4f6', selectedLineId: null, selectedPointId: null });
   c.toBlob(blob => { if (blob) download(blob, 'metro-map.png'); }, 'image/png');
 }
@@ -355,7 +366,7 @@ async function boot() {
   $('file').onchange = () => { const f = $('file').files[0]; if (f) importFile(f); $('file').value = ''; };
   $('btnExport').onclick = exportPng;
   $('btnExportJson').onclick = exportJson;
-  $('btnFit').onclick = () => { state.view = fitView(bboxOf(state.model.points.map(p => ({ x: p.pos[0], y: p.pos[1] }))), cv.clientWidth, cv.clientHeight); draw(); };
+  $('btnFit').onclick = () => { state.view = fitAllView(); draw(); };
   $('btnUndo').onclick = undo;
   $('btnRedo').onclick = redo;
   $('chkLabels').onchange = e => { state.labels = e.target.checked; draw(); };
