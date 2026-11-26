@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线路绘制器 · 走进新天地·Railway</title>
+<link rel="stylesheet" href="editor/editor.css">
+</head>
+<body>
+<header class="ed-top">
+  <a class="ed-back" href="index.html">← 返回</a>
+  <strong class="ed-title">线路绘制器</strong>
+  <span class="ed-status" id="status"></span>
+  <div class="ed-actions">
+    <button id="btnNew">新建线路</button>
+    <button id="btnImport">导入存档</button>
+    <button id="btnExport">导出 PNG</button>
+    <button id="btnExportJson">导出存档</button>
+    <button id="btnFit">适配</button>
+    <button id="btnUndo" disabled>撤销</button>
+    <button id="btnRedo" disabled>重做</button>
+  </div>
+</header>
+<main class="ed-main">
+  <aside class="ed-side">
+    <section>
+      <h3>线路</h3>
+      <div id="lineList" class="ed-list"></div>
+    </section>
+    <section>
+      <h3>当前线路</h3>
+      <div id="linePanel"></div>
+    </section>
+    <section>
+      <h3>选中点</h3>
+      <div id="ptPanel"></div>
+    </section>
+    <section class="ed-options">
+      <label><input type="checkbox" id="chkLabels" checked> 显示站名</label>
+      <label><input type="checkbox" id="chkGrid" checked> 显示网格</label>
+    </section>
+    <section class="ed-hint">
+      <p>滚轮缩放 / 空格或中键拖动 / 点击选中点</p>
+      <p>“新建线路”后点击画布加点，自动吸附 45°；Alt 取消吸附；Esc 结束</p>
+      <p>几何内核移植自 AARC（AGPLv3）</p>
+    </section>
+  </aside>
+  <div class="ed-stage"><canvas id="cv"></canvas></div>
+</main>
+<input type="file" id="file" hidden accept=".json,application/json">
+<script type="module" src="editor/main.js"></script>
+</body>
+</html>
