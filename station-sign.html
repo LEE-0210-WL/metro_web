@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="theme.css">
 <title>站名牌生成器</title>
+<!-- build: 2026-11-20c 6档色阶 -->
 <meta name="description" content="站名牌生成器 — 走进新天地·Railway，深圳地铁主题车迷站。">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="走进新天地·Railway">
@@ -164,6 +165,89 @@ body {
   background: #00b050;
   border-radius: 0 0 38px 38px;
 }
+/* ===== 钢铁马赛克皮肤 ===== */
+.sign.sign-steel {
+  width: 600px;
+  height: 600px;
+  min-width: 600px;
+  min-height: 600px;
+  border-radius: 0;
+  border: 0;
+  padding-bottom: 0;
+  background-color: #121c25;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: 0 16px 40px rgba(8, 15, 22, 0.35);
+}
+.sign.sign-steel .zh {
+  color: #141c23;
+  font-size: 108px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55), 0 -1px 0 rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+.sign.sign-steel .en {
+  color: #26313a;
+  font-size: 36px;
+  margin-top: 10px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  position: relative;
+}
+/* 砖面统一光泽（斜向高光，压暗四角） */
+.steel-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 0;
+  background:
+    radial-gradient(56% 40% at 50% 46%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.18) 58%, rgba(255, 255, 255, 0) 82%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.05) 26%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.14) 100%),
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.24));
+}
+/* 钢质外框：整圈环（mask 挖空中心），圆角处连续、不留缝 */
+.steel-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 40px;
+  padding: 14px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+/* 内圈压边：让砖面像嵌在凹槽里 */
+.steel-inner {
+  position: absolute;
+  inset: 13px;
+  border-radius: 28px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.30),
+              inset 0 2px 8px rgba(0, 0, 0, 0.22);
+  z-index: 2;
+}
+.sign.sign-steel .band {
+  display: none;
+  height: 46px;
+  border-radius: 0 0 38px 38px;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.06) 42%, rgba(0, 0, 0, 0.22) 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45),
+              inset 0 -4px 8px rgba(0, 0, 0, 0.32);
+}
+.sign.sign-steel.is-dark .zh {
+  color: #f3f7fa;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55), 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+.sign.sign-steel.is-dark .en {
+  color: #e8eef3;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+.sign.sign-steel .zh, .sign.sign-steel .en { z-index: 2; }
+.steel-sheen { z-index: 1; }
+.steel-frame { z-index: 3; }
+.sign.sign-steel .band { z-index: 1; }
+
 /* ===== 移动端：顶部菜单栏 + 侧栏折叠 + 站名牌独立缩放到容器宽 ===== */
 .mobile-bar { display: none; }
 .sign-wrap { display: flex; justify-content: center; align-items: flex-start; overflow: hidden; }
@@ -270,6 +354,43 @@ html, body { overflow-x: hidden; max-width: 100%; }
       <label>站点</label>
       <select id="stSel" onchange="render()"></select>
     </div>
+  </div>
+
+  <div class="row-selects" style="margin-top:10px">
+    <div class="field">
+      <label>样式</label>
+      <select id="styleSel" onchange="render()">
+        <option value="classic">经典白瓷</option>
+        <option value="steel">钢铁马赛克</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>砖色</label>
+      <select id="tileSel" onchange="render()">
+        <option value="sea">海水蓝</option>
+        <option value="aqua">湖绿</option>
+        <option value="ivory">暖白瓷</option>
+        <option value="sand">沙金</option>
+        <option value="peach">蜜桃粉</option>
+        <option value="brick">砖红</option>
+        <option value="moss">墨绿</option>
+        <option value="char">炭灰</option>
+        <option value="custom">自选颜色…</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field" id="tileCustomField" style="display:none">
+    <label>自选砖色</label>
+    <input type="color" id="tileCustom" value="#5aa8d8" oninput="render()" onchange="render()">
+  </div>
+
+  <div class="field" id="steelField" style="display:none">
+    <label>钢面</label>
+    <select id="steelSel" onchange="render()">
+      <option value="bright">亮钢</option>
+      <option value="matte">亚光</option>
+    </select>
   </div>
 
   <div class="btns">
@@ -533,6 +654,7 @@ function render(){
   // 信息区：name 已含线路号，不再重复加前缀
   document.getElementById('metaLine').textContent = DATA[lid].name + '　' + DATA[lid].color;
   document.getElementById('metaFont').textContent = font;
+  applySkin();
 }
 
 function next(){
@@ -548,7 +670,184 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
 });
 
+/* ===== 钢铁马赛克：砖面生成 ===== */
+function hashStr(str){
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a = (a + 0x6D2B79F5) >>> 0;
+    let x = Math.imul(a ^ (a >>> 15), 1 | a);
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const TILE_PRESETS = {
+  sea:   { label: '海水蓝', h: 205, s: 55, l: 62 },
+  aqua:  { label: '湖绿',   h: 175, s: 45, l: 58 },
+  ivory: { label: '暖白瓷', h: 40,  s: 18, l: 86 },
+  peach: { label: '蜜桃粉', h: 12,  s: 42, l: 74 },
+  char:  { label: '炭灰',   h: 210, s: 8,  l: 42 },
+  brick: { label: '砖红',   h: 8,   s: 48, l: 52 },
+  moss:  { label: '墨绿',   h: 155, s: 35, l: 34 },
+  sand:  { label: '沙金',   h: 38,  s: 38, l: 70 }
+};
+/* 砖块明度色阶：模拟同一窑出来的 6 个色号，离散取档让相邻砖差肉眼可见 */
+const TILE_LEVELS = [-15, -9, -3, 3, 9, 15];
+const STEEL_TONES = {
+  bright: ['#fbfdff', '#c6d1d9', '#f2f7fa', '#93a1aa', '#dbe5ea'],
+  matte:  ['#e4eaee', '#b6c1c8', '#d6dee3', '#9aa6ae', '#c9d3d9']
+};
+function clamp(v){ return Math.max(0, Math.min(255, Math.round(v))); }
+function clampPct(v){ return Math.max(0, Math.min(100, v)); }
+
+/* HSL(0-360, 0-100, 0-100) → [r,g,b] */
+function hsl2rgb(h, s, l){
+  h = ((h % 360) + 360) % 360;
+  s = clampPct(s) / 100;
+  l = clampPct(l) / 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (h < 60) { r = c; g = x; }
+  else if (h < 120) { r = x; g = c; }
+  else if (h < 180) { g = c; b = x; }
+  else if (h < 240) { g = x; b = c; }
+  else if (h < 300) { r = x; b = c; }
+  else { r = c; b = x; }
+  return [clamp((r + m) * 255), clamp((g + m) * 255), clamp((b + m) * 255)];
+}
+function rgbStr(rgb){
+  return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+}
+function hex2hsl(hex){
+  let h = (hex || '#5aa8d8').replace('#', '');
+  if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const d = max - min;
+  const l = (max + min) / 2;
+  let hue = 0, sat = 0;
+  if (d !== 0) {
+    sat = d / (1 - Math.abs(2 * l - 1));
+    if (max === r) hue = 60 * (((g - b) / d) % 6);
+    else if (max === g) hue = 60 * ((b - r) / d + 2);
+    else hue = 60 * ((r - g) / d + 4);
+  }
+  return { h: (hue + 360) % 360, s: sat * 100, l: l * 100 };
+}
+/* 由基准 HSL 派生：砖缝比砖深一档（真实工艺：填缝剂深于砖面） */
+function makePalette(hsl){
+  const groutHsl = { h: hsl.h, s: clampPct(hsl.s - 18), l: clampPct(hsl.l - 24) };
+  return { hsl: hsl, grout: rgbStr(hsl2rgb(groutHsl.h, groutHsl.s, groutHsl.l)) };
+}
+function resolvePalette(key){
+  if (key === 'custom') {
+    const el = document.getElementById('tileCustom');
+    return makePalette(hex2hsl(el ? el.value : '#5aa8d8'));
+  }
+  const p = TILE_PRESETS[key] || TILE_PRESETS.sea;
+  return makePalette({ h: p.h, s: p.s, l: p.l });
+}
+
+/* 砖面：单块深浅真随机（无插值 → 不会出现色环），
+   少量深档砖模拟混铺；釉面只保留砖块自身的顶光/底影 */
+function mosaicSVG(w, h, cols, rows, pal, seed){
+  const rnd = mulberry32(seed);
+  const tw = w / cols, th = h / rows, gap = Math.max(2.5, tw * 0.075);
+  const base = pal.hsl;
+
+  let s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">';
+  s += '<rect width="100%" height="100%" fill="' + pal.grout + '"/>';
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const dh = (rnd() - 0.5) * 4;                 // 色相 ±2°
+      const ds = (rnd() - 0.5) * 10;                // 饱和 ±5%
+      const dl = TILE_LEVELS[Math.floor(rnd() * TILE_LEVELS.length)];  // 6 档离散色阶
+      // 明度钳制：再暗的砖也不许压到发黑
+      const lFinal = Math.max(18, Math.min(97, base.l + dl));
+
+      const col = rgbStr(hsl2rgb(base.h + dh, base.s + ds, lFinal));
+      const x = c * tw + gap / 2, y = r * th + gap / 2;
+      const ww = tw - gap, hh = th - gap;
+      const rx = (ww * 0.12).toFixed(1);
+      s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + ww.toFixed(1) +
+           '" height="' + hh.toFixed(1) + '" rx="' + rx + '" fill="' + col + '"/>';
+      // 砖块底影（让它像一块块贴上去的砖，而不是一整片色）
+      s += '<rect x="' + x.toFixed(1) + '" y="' + (y + hh - Math.max(1.2, hh * 0.07)).toFixed(1) +
+           '" width="' + ww.toFixed(1) + '" height="' + Math.max(1.2, hh * 0.07).toFixed(1) +
+           '" rx="' + rx + '" fill="rgba(0,0,0,0.10)"/>';
+    }
+  }
+  return s + '</svg>';
+}
+
+const MOSAIC_CACHE = new Map();
+function mosaicURI(w, h, palKey, seed){
+  const customHex = palKey === 'custom'
+    ? (document.getElementById('tileCustom') || {}).value || '#5aa8d8'
+    : '';
+  const key = palKey + (customHex ? ':' + customHex : '') + ':' + seed + ':' + w + 'x' + h;
+  const hit = MOSAIC_CACHE.get(key);
+  if (hit) return hit;
+  const pal = resolvePalette(palKey);
+  const cols = Math.max(6, Math.round(w / 27));
+  const rows = Math.max(6, Math.round(h / 27));
+  const svg = mosaicSVG(w, h, cols, rows, pal, seed);
+  const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  if (MOSAIC_CACHE.size > 120) MOSAIC_CACHE.clear();
+  MOSAIC_CACHE.set(key, uri);
+  return uri;
+}
+
+function steelGradient(tone){
+  const c = STEEL_TONES[tone] || STEEL_TONES.bright;
+  return 'linear-gradient(160deg,' + c[0] + ' 0%,' + c[1] + ' 30%,' + c[2] + ' 50%,' + c[3] + ' 70%,' + c[4] + ' 100%)';
+}
+function isSteel(){
+  const el = document.getElementById('styleSel');
+  return !!(el && el.value === 'steel');
+}
+function applySkin(){
+  const sign = document.getElementById('sign');
+  if (!sign) return;
+  const steel = isSteel();
+  const tileEl = document.getElementById('tileSel');
+  const steelEl = document.getElementById('steelSel');
+  const customField = document.getElementById('tileCustomField');
+  if (tileEl) { tileEl.disabled = !steel; tileEl.style.opacity = steel ? '1' : '.45'; }
+  if (steelEl) { steelEl.disabled = !steel; steelEl.style.opacity = steel ? '1' : '.45'; }
+  if (customField) {
+    customField.style.display = (steel && tileEl && tileEl.value === 'custom') ? '' : 'none';
+  }
+  sign.classList.toggle('sign-steel', steel);
+
+  if (steel) {
+    const tileKey = document.getElementById('tileSel').value;
+    const seed = hashStr(document.getElementById('signZh').textContent + '|' + tileKey);
+    sign.style.backgroundImage = 'url("' + mosaicURI(sign.offsetWidth, sign.offsetHeight, tileKey, seed) + '")';
+    const palL = resolvePalette(tileKey).hsl.l;
+    sign.classList.toggle('is-dark', palL < 55);
+    const enEl = document.getElementById('signEn');
+    if (enEl) enEl.style.color = palL < 55 ? '#e8eef3' : '#26313a';
+  } else {
+    sign.style.backgroundImage = '';
+    sign.classList.remove('is-dark');
+  }
+}
+
 function downloadPNG(){
+  if (isSteel()) return downloadSteelPNG();
   const sign = document.getElementById('sign');
   const zh = document.getElementById('signZh');
   const en = document.getElementById('signEn');
@@ -579,6 +878,54 @@ function downloadPNG(){
   img.src = url;
 }
 
+function downloadSteelPNG(){
+  const sign = document.getElementById('sign');
+  const zh = document.getElementById('signZh');
+  const en = document.getElementById('signEn');
+  const W = sign.offsetWidth, H = sign.offsetHeight;
+  const tileKey = document.getElementById('tileSel').value;
+  const seed = hashStr(zh.textContent + '|' + tileKey);
+  const mosaic = mosaicURI(W, H, tileKey, seed);
+  const zhFont = zh.style.fontFamily.replace(/"/g, "'");
+  const zhColor = getComputedStyle(zh).color || 'rgb(20,28,35)';
+  const enColor = getComputedStyle(en).color || 'rgb(38,49,58)';
+  const zhShadow = getComputedStyle(zh).textShadow && getComputedStyle(zh).textShadow !== 'none'
+    ? getComputedStyle(zh).textShadow : 'none';
+  const enShadow = getComputedStyle(en).textShadow && getComputedStyle(en).textShadow !== 'none'
+    ? getComputedStyle(en).textShadow : 'none';
+
+  const html =
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="position:relative;width:' + W + 'px;height:' + H + 'px;' +
+      'border-radius:0;overflow:hidden;background-color:#121c25;">' +
+      '<div style="position:absolute;inset:0;background-image:url(\'' + mosaic + '\');background-size:100% 100%;"></div>' +
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;">' +
+        '<div style="font-family:' + zhFont + ';font-size:108px;line-height:1;color:' + zhColor + ';letter-spacing:.04em;' +
+          'text-shadow:' + zhShadow + ';">' + zh.textContent + '</div>' +
+        '<div style="font-family:Arial;font-size:36px;font-weight:700;color:' + enColor + ';margin-top:10px;letter-spacing:.02em;' +
+          'text-shadow:' + enShadow + ';">' + en.textContent + '</div>' +
+      '</div>' +
+    '</div>';
+
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">' +
+    '<foreignObject width="100%" height="100%">' + html + '</foreignObject></svg>';
+  const blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = W * 2; c.height = H * 2;
+    const ctx = c.getContext('2d');
+    ctx.scale(2, 2);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.download = (zh.textContent || 'station') + '_站名牌_钢铁.png';
+    a.href = c.toDataURL('image/png');
+    a.click();
+  };
+  img.src = url;
+}
+
 /* ===== 站名牌自适应：按容器宽度等比缩放牌子本身 ===== */
 const SIGN_W = 648;
 const SIGN_H = 432;
@@ -587,11 +934,12 @@ function fitSign(){
   const sign = document.getElementById('sign');
   if (!wrap || !sign) return;
   const avail = wrap.clientWidth;
-  const k = Math.min(1, avail / SIGN_W);
+  const w = sign.offsetWidth, h = sign.offsetHeight;
+  const k = Math.min(1, avail / w);
   sign.style.transformOrigin = 'top center';
   sign.style.transform = 'scale(' + k + ')';
-  // 缩放后 sign 的布局尺寸仍是 648x432，用 wrap 高度收掉多余空白
-  wrap.style.height = (SIGN_H * k) + 'px';
+  // 两种样式尺寸不同，按实际尺寸收掉多余空白
+  wrap.style.height = (h * k) + 'px';
   wrap.style.overflow = 'hidden';
 }
 function toggleMenu(){
@@ -604,6 +952,39 @@ window.addEventListener('resize', fitSign);
 window.addEventListener('orientationchange', () => setTimeout(fitSign, 150));
 
 build();
+
+/* ===== 支持 URL 参数，便于分享特定样式：?style=steel&tile=blue&steel=bright ===== */
+(function initFromQuery(){
+  try {
+    const q = new URLSearchParams(location.search);
+    const setSel = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && val && Array.prototype.some.call(el.options, o => o.value === val)) el.value = val;
+    };
+    setSel('styleSel', q.get('style'));
+    setSel('tileSel', q.get('tile'));
+    setSel('steelSel', q.get('steel'));
+    const col = q.get('color');
+    if (col && /^#[0-9a-fA-F]{6}$/.test(col)) {
+      const ci = document.getElementById('tileCustom');
+      if (ci) ci.value = col;
+    }
+    const li = q.get('line'), st = q.get('station');
+    if (li) {
+      const lineSel = document.getElementById('lineSel');
+      if (Array.prototype.some.call(lineSel.options, o => o.value === li)) {
+        lineSel.value = li;
+        onLine();
+      }
+    }
+    if (st) {
+      const stSel = document.getElementById('stSel');
+      if (Array.prototype.some.call(stSel.options, o => o.value === st)) stSel.value = st;
+    }
+    render();
+  } catch (e) { /* 参数异常时保持默认 */ }
+})();
+
 fitSign();
 </script>
 </body>
