@@ -1,6 +1,6 @@
 // metro_web/editor/render.js
 // Canvas 渲染：线路（白边 + 线色）、站点/换乘胶囊、站名、网格、选中态。
-// 站名位置遵循 AARC：锚点 = 站点 + nameP（地图单位），按 nameP 方向对齐文本。
+// 站名位置：锚点 = 站点 + 存档 nameP（地图单位），按 nameP 方向对齐文本。
 import { buildPath, capsuleOf } from './geometry.js';
 import { labelLayout, labelFontPx, labelBox, namePOf, NAME_DIST } from './namelabel.js';
 

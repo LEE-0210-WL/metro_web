@@ -1,5 +1,5 @@
 // metro_web/editor/namelabel.js
-// 站名布局：AARC 的 nameP（相对站心的偏移，地图单位）+ 8 方向吸附。
+// 站名布局：存档 nameP（相对站心的偏移，地图单位）+ 8 方向吸附。
 export const NAME_DIST = 18;
 export const NAME_DIAG = NAME_DIST / Math.SQRT2; // 12.72792206…
 export const NAME_SNAP_THR = 6;

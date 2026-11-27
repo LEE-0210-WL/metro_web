@@ -1,6 +1,6 @@
 // metro_web/editor/save.js
-// AARC 存档子集：读取 / 校验 / 站点簇推导 / 序列化。
-// 站点簇规则与 AARC 一致：同名合并 + 60 单位内邻近合并（noCluster 点除外）。
+// 存档读取 / 校验 / 站点簇推导 / 序列化。
+// 站点簇规则：同名合并 + 60 单位内邻近合并（noCluster 点除外）。
 
 const CLUSTER_DIST = 60;
 
