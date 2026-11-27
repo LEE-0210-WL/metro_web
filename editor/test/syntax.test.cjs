@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..', '..');
-const files = ['geometry', 'save', 'render', 'view', 'main'];
+const files = ['geometry', 'save', 'render', 'view', 'main', 'namelabel'];
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'edcheck-'));
 let bad = 0;
 for (const f of files) {

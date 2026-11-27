@@ -15,7 +15,12 @@ const ROOT = path.resolve(__dirname, '..', '..');
   const sm = s.buildModel(sz), sr = r.buildRenderModel(sm);
 
   const demoText = JSON.stringify(demo);
+  const samplesHtml = fs.readFileSync(path.join(ROOT, 'samples.html'), 'utf8');
+  const mainJs = fs.readFileSync(path.join(ROOT, 'editor/main.js'), 'utf8');
   const checks = {
+    samplesResizeObserver: samplesHtml.includes('ResizeObserver'),
+    editorResizeObserver: mainJs.includes('ResizeObserver'),
+    editorLabelDrag: mainJs.includes('dragName') && mainJs.includes('snapNameP'),
     demoPoints: dm.points.length === 16,
     demoLines: dm.lines.length === 3,
     demoNoShenzhen: !demoText.includes('罗湖'),

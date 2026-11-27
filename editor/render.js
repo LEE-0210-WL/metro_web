@@ -1,6 +1,8 @@
 // metro_web/editor/render.js
 // Canvas 渲染：线路（白边 + 线色）、站点/换乘胶囊、站名、网格、选中态。
+// 站名位置遵循 AARC：锚点 = 站点 + nameP（地图单位），按 nameP 方向对齐文本。
 import { buildPath, capsuleOf } from './geometry.js';
+import { labelLayout, labelFontPx, labelBox, namePOf, NAME_DIST } from './namelabel.js';
 
 const LINE_W = 13;
 const CASING_W = 19;
@@ -26,13 +28,16 @@ export function buildRenderModel(model) {
     if (c.pts.length < 2) continue;
     const ps = c.pts.map(id => model.byId.get(id)).filter(Boolean);
     if (!ps.length) continue;
+    const rep = ps.find(p => p.nameP) || ps[0];
     transfers.push({
       cid,
       name: c.names[0] || '',
       pts: ps,
       lines: [...c.lines],
       cx: ps.reduce((s, p) => s + p.pos[0], 0) / ps.length,
-      cy: ps.reduce((s, p) => s + p.pos[1], 0) / ps.length
+      cy: ps.reduce((s, p) => s + p.pos[1], 0) / ps.length,
+      nameP: rep.nameP || null,
+      anchorX: rep.anchorX, anchorY: rep.anchorY, repId: rep.id
     });
   }
   const pointColor = new Map();
@@ -40,38 +45,27 @@ export function buildRenderModel(model) {
   return { lines, transfers, pointColor };
 }
 
-function labelCandidates(name, x, y, fs, W, H) {
-  const pad = 4;
-  const lines = fmtName(name);
-  const w = Math.max(...lines.map(t => t.length)) * fs + pad * 2;
-  const h = lines.length * fs * 1.15 + pad * 2;
-  const d = 16;
-  const out = [];
-  const push = (lx, ly) => out.push({ x: lx, y: ly, w, h, text: lines, fs });
-  push(x + d, y - h / 2);
-  push(x - d - w, y - h / 2);
-  push(x - w / 2, y - h - d);
-  push(x - w / 2, y + d);
-  push(x + d, y + d);
-  push(x - d - w, y - h - d);
-  push(x + d, y - h - d);
-  push(x - d - w, y + d);
-  return out;
-}
 function overlaps(a, b) { return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h; }
 
-function drawLabel(ctx, rect) {
-  ctx.font = '600 ' + rect.fs + 'px ' + FONT;
-  ctx.textBaseline = 'top';
+function setFont(ctx, fs) {
+  ctx.font = '600 ' + fs + 'px ' + FONT;
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawLabelText(ctx, lines, gx, gy, alignX, alignY, fs) {
+  setFont(ctx, fs);
+  const lh = fs * 1.15;
+  ctx.textAlign = alignX > 0 ? 'left' : alignX < 0 ? 'right' : 'center';
+  ctx.textBaseline = alignY > 0 ? 'top' : alignY < 0 ? 'bottom' : 'middle';
   ctx.lineJoin = 'round';
   ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-  ctx.lineWidth = rect.fs * 0.42;
+  ctx.lineWidth = fs * 0.42;
   ctx.fillStyle = '#1b2430';
-  rect.text.forEach((t, i) => {
-    const tx = rect.x + 4;
-    const ty = rect.y + 4 + i * rect.fs * 1.15;
-    ctx.strokeText(t, tx, ty);
-    ctx.fillText(t, tx, ty);
+  const y0 = alignY === 0 ? gy - (lines.length - 1) * lh / 2 : gy;
+  lines.forEach((t, i) => {
+    const ty = y0 + i * lh;
+    ctx.strokeText(t, gx, ty);
+    ctx.fillText(t, gx, ty);
   });
 }
 
@@ -122,8 +116,22 @@ export function render(ctx, model, rm, view, opts = {}) {
   }
 
   const labelBoxes = [];
-  const labelFs = Math.max(10, Math.min(16, 12 * Math.sqrt(Math.max(0.5, view.s))));
-  const showLabels = opts.labels !== false && view.s > 0.3;
+  const hitBoxes = [];
+  const labelFs = labelFontPx(view.s);
+  const showLabels = opts.labels !== false && view.s > 0.25;
+
+  function drawLeader(px, py, gx, gy, fs, k) {
+    const r = 7 * k * 1.6;
+    const dx = gx - px, dy = gy - py;
+    const len = Math.hypot(dx, dy);
+    if (len <= r) return;
+    ctx.beginPath();
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = Math.max(1, fs * 0.12);
+    ctx.moveTo(px + dx / len * r, py + dy / len * r);
+    ctx.lineTo(gx, gy);
+    ctx.stroke();
+  }
 
   // 2) 普通站（单点簇 / 不参与簇）
   const drawnClusters = new Set();
@@ -140,15 +148,34 @@ export function render(ctx, model, rm, view, opts = {}) {
     ctx.beginPath(); ctx.arc(x, y, 7 * k, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = rm.pointColor.get(p.id) || '#888';
     ctx.beginPath(); ctx.arc(x, y, 3.6 * k, 0, Math.PI * 2); ctx.fill();
-    if (showLabels) {
-      const name = p.name || (c && c.names[0]) || '';
-      if (name) {
-        const cand = labelCandidates(name, x, y, labelFs);
-        for (const rr of cand) {
-          if (rr.x < 4 || rr.y < 4 || rr.x + rr.w > W - 4 || rr.y + rr.h > H - 4) continue;
-          if (labelBoxes.some(b => overlaps(b, rr))) continue;
-          labelBoxes.push(rr); drawLabel(ctx, rr); break;
-        }
+    if (!showLabels) continue;
+    const name = p.name || (c && c.names[0]) || '';
+    if (!name) continue;
+    const lines = fmtName(name);
+    let placed = false;
+    if (Array.isArray(p.nameP)) {
+      const lay = labelLayout(p, view);
+      const gx = toX(lay.gx), gy = toY(lay.gy);
+      setFont(ctx, labelFs);
+      const box = labelBox(gx, gy, lay.alignX, lay.alignY, labelFs, lines);
+      if (lay.leader) drawLeader(x, y, gx, gy, labelFs, k);
+      drawLabelText(ctx, lines, gx, gy, lay.alignX, lay.alignY, labelFs);
+      labelBoxes.push(box);
+      hitBoxes.push({ id: p.id, ...box });
+      placed = true;
+    }
+    if (!placed) {
+      // 无 nameP：在 8 个方向位里挑一个不撞的（18 地图单位）
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+        const ax = p.pos[0] + dx * NAME_DIST, ay = p.pos[1] + dy * NAME_DIST;
+        const gx = toX(ax), gy = toY(ay);
+        const bx = labelBox(gx, gy, Math.sign(dx), Math.sign(dy), labelFs, lines);
+        if (bx.x < 4 || bx.y < 4 || bx.x + bx.w > W - 4 || bx.y + bx.h > H - 4) continue;
+        if (labelBoxes.some(b => overlaps(b, bx))) continue;
+        drawLabelText(ctx, lines, gx, gy, Math.sign(dx), Math.sign(dy), labelFs);
+        labelBoxes.push(bx);
+        hitBoxes.push({ id: p.id, ...bx });
+        break;
       }
     }
   }
@@ -172,12 +199,19 @@ export function render(ctx, model, rm, view, opts = {}) {
     ctx.restore();
 
     if (showLabels && tr.name) {
-      const cand = labelCandidates(tr.name, x, y, labelFs);
-      for (const rr of cand) {
-        if (rr.x < 4 || rr.y < 4 || rr.x + rr.w > W - 4 || rr.y + rr.h > H - 4) continue;
-        if (labelBoxes.some(b => overlaps(b, rr))) continue;
-        labelBoxes.push(rr); drawLabel(ctx, rr); break;
-      }
+      const np = Array.isArray(tr.nameP) ? tr.nameP : [NAME_DIST, 0];
+      const ax = tr.anchorX != null ? Math.sign(tr.anchorX) : Math.sign(np[0]);
+      const ay = tr.anchorY != null ? Math.sign(tr.anchorY) : Math.sign(np[1]);
+      // 胶囊：站名贴着胶囊外缘，而不是相对某个成员点（避免压在线条上）
+      const halfW = Math.abs(Math.cos(cap.angle)) * len / 2 + Math.abs(Math.sin(cap.angle)) * thick / 2;
+      const halfH = Math.abs(Math.sin(cap.angle)) * len / 2 + Math.abs(Math.cos(cap.angle)) * thick / 2;
+      const gx = x + ax * (halfW + 3);
+      const gy = y + ay * (halfH + 3);
+      const lines = fmtName(tr.name);
+      drawLabelText(ctx, lines, gx, gy, ax, ay, labelFs);
+      const box = labelBox(gx, gy, ax, ay, labelFs, lines);
+      labelBoxes.push(box);
+      hitBoxes.push({ id: null, ...box });
     }
   }
 
@@ -190,6 +224,7 @@ export function render(ctx, model, rm, view, opts = {}) {
     }
   }
   ctx.restore();
+  return hitBoxes;
 }
 
 export function hitTest(model, rm, view, sx, sy, W, H, radius = 14) {

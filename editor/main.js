@@ -4,6 +4,7 @@ import { buildModel, validateSave, serializeSave, nextId, emptySave } from './sa
 import { buildRenderModel, render, hitTest } from './render.js';
 import { createView, fitView, screenToWorld, zoomAt } from './view.js';
 import { bboxOf, snapPoint } from './geometry.js';
+import { snapNameP } from './namelabel.js';
 
 const LS_KEY = 'metro_editor_save_v1';
 const ls = {
@@ -25,6 +26,8 @@ const state = {
   undo: [],
   redo: [],
   drag: null,
+  dragName: null,
+  labelHit: [],
   pan: null,
   space: false,
   dpr: 1
@@ -102,14 +105,14 @@ function resize() {
 function draw() {
   if (!state.model) return;
   const W = cv.width / state.dpr, H = cv.height / state.dpr;
-  render(ctx, state.model, state.rm, state.view, {
+  state.labelHit = render(ctx, state.model, state.rm, state.view, {
     dpr: state.dpr,
     labels: state.labels,
     grid: state.grid,
     selectedLineId: state.selLineId,
     selectedPointId: state.selPointId,
     bg: '#f2f4f6'
-  });
+  }) || [];
 }
 
 function refreshUI() {
@@ -254,6 +257,20 @@ function onPointerDown(e) {
     addDrawPoint(world, { free: e.altKey });
     return;
   }
+  const labelHit = state.labels && state.tool === 'select'
+    ? state.labelHit.find(b => b.id != null && sp.x >= b.x && sp.x <= b.x + b.w && sp.y >= b.y && sp.y <= b.y + b.h)
+    : null;
+  if (labelHit) {
+    const p = state.model.byId.get(labelHit.id);
+    const rp = state.raw.points.find(q => q.id === labelHit.id);
+    if (p && rp) {
+      pushUndo();
+      state.dragName = { id: labelHit.id, startNameP: Array.isArray(p.nameP) ? [...p.nameP] : null };
+      cv.setPointerCapture(e.pointerId);
+      draw();
+      return;
+    }
+  }
   const hit = hitTest(state.model, state.rm, state.view, sp.x, sp.y, W, H, 16);
   if (hit) {
     pushUndo();
@@ -271,6 +288,18 @@ function onPointerMove(e) {
   if (state.pan) {
     state.view.cx = state.pan.cx - (e.clientX - state.pan.x) / state.view.s;
     state.view.cy = state.pan.cy - (e.clientY - state.pan.y) / state.view.s;
+    draw();
+    return;
+  }
+  if (state.dragName) {
+    const p = state.model.byId.get(state.dragName.id);
+    const rp = state.raw.points.find(q => q.id === state.dragName.id);
+    if (!p || !rp) return;
+    const sp = canvasPos(e);
+    const world = screenToWorld(state.view, sp.x, sp.y, cv.clientWidth, cv.clientHeight);
+    const sn = snapNameP(world.x - p.pos[0], world.y - p.pos[1], Math.max(6, 8 / state.view.s));
+    p.nameP = [sn.p[0], sn.p[1]];
+    rp.nameP = [sn.p[0], sn.p[1]];
     draw();
     return;
   }
@@ -296,6 +325,12 @@ function onPointerMove(e) {
 
 function onPointerUp() {
   if (state.pan) { state.pan = null; autosave(); return; }
+  if (state.dragName) {
+    state.dragName = null;
+    autosave();
+    draw();
+    return;
+  }
   if (state.drag) {
     state.drag = null;
     state.model = buildModel(state.raw);
@@ -368,6 +403,13 @@ async function boot() {
   }
   loadRaw(raw);
   window.addEventListener('resize', resize);
+  let rafResize = 0;
+  if (window.ResizeObserver && cv.parentElement) {
+    new ResizeObserver(() => {
+      if (rafResize) return;
+      rafResize = requestAnimationFrame(() => { rafResize = 0; resize(); });
+    }).observe(cv.parentElement);
+  }
   cv.addEventListener('pointerdown', onPointerDown);
   cv.addEventListener('pointermove', onPointerMove);
   cv.addEventListener('pointerup', onPointerUp);
@@ -388,7 +430,17 @@ async function boot() {
     if (e.code === 'Space') { state.space = true; }
     const tag = (e.target && e.target.tagName) || '';
     if (/INPUT|TEXTAREA/.test(tag)) return;
-    if (e.key === 'Escape') { state.tool = 'select'; state.drawLineId = null; refreshUI(); draw(); }
+    if (e.key === 'Escape') {
+      if (state.dragName) {
+        const p = state.model.byId.get(state.dragName.id);
+        const rp = state.raw.points.find(q => q.id === state.dragName.id);
+        const prev = state.dragName.startNameP;
+        if (p) { if (prev) p.nameP = [...prev]; else delete p.nameP; }
+        if (rp) { if (prev) rp.nameP = [...prev]; else delete rp.nameP; }
+        state.dragName = null;
+      }
+      state.tool = 'select'; state.drawLineId = null; refreshUI(); draw();
+    }
     if ((e.key === 'Delete' || e.key === 'Backspace') && state.selPointId != null) { e.preventDefault(); deletePoint(state.selPointId); }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }

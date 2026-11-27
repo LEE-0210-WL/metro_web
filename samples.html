@@ -18,7 +18,7 @@
   .card-head .meta { color:#8a97a5; font-size:12px; }
   .card-head .open { margin-left:auto; background:#1b232c; color:#fff; border-radius:6px; padding:6px 12px; font-size:13px; text-decoration:none; }
   .card-head .open:hover { background:#26313c; }
-  canvas { display:block; width:100%; height:auto; background:#f2f4f6; }
+  canvas { display:block; max-width:100%; background:#f2f4f6; }
   .note { padding:10px 16px 14px; color:#8a97a5; font-size:12px; line-height:1.6; }
   .btns { padding:0 16px 14px; }
   .btns a { display:inline-block; border:1px solid var(--line); border-radius:6px; padding:6px 12px; color:#16202b; text-decoration:none; font-size:13px; margin-right:8px; }
@@ -63,15 +63,31 @@ async function preview(src, cv, metaEl, openEl) {
   const model = buildModel(raw);
   const rm = buildRenderModel(model);
   const ctx = cv.getContext('2d');
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const cssW = cv.clientWidth || 1180;
-  const cssH = Math.round(cssW * cv.height / cv.width);
-  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
-  cv.style.height = cssH + 'px';
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
   const bbox = bboxOf(model.points.map(p => ({ x: p.pos[0], y: p.pos[1] })));
-  const view = fitView(bbox, cv.width / dpr, cv.height / dpr, 40);
-  render(ctx, model, rm, view, { dpr, labels: true, grid: false, bg: '#f2f4f6' });
+
+  function draw() {
+    const host = cv.parentElement;
+    const W = Math.max(320, host ? host.clientWidth : 1180);
+    const H = Math.round(Math.min(560, W * 9 / 16));
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    cv.style.width = W + 'px';
+    cv.style.height = H + 'px';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const view = fitView(bbox, W, H, 40);
+    render(ctx, model, rm, view, { dpr, labels: true, grid: false, bg: '#f2f4f6' });
+  }
+
+  draw();
+  let raf = 0;
+  if (window.ResizeObserver && cv.parentElement) {
+    new ResizeObserver(() => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = 0; draw(); });
+    }).observe(cv.parentElement);
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
   if (metaEl) metaEl.textContent = model.points.length + ' 点 / ' + model.lines.length + ' 线 / ' + rm.transfers.length + ' 换乘';
   if (openEl) openEl.href = 'editor.html?save=' + encodeURIComponent(src);
 }
