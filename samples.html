@@ -13,10 +13,11 @@
   h1 { font-size:22px; margin:8px 0 6px; }
   .sub { color:#7a8794; font-size:13px; margin-bottom:18px; }
   .card { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-bottom:20px; }
-  .card-head { display:flex; align-items:baseline; gap:10px; padding:14px 16px 10px; }
-  .card-head h2 { font-size:16px; margin:0; }
-  .card-head .meta { color:#8a97a5; font-size:12px; }
-  .card-head .open { margin-left:auto; background:#1b232c; color:#fff; border-radius:6px; padding:6px 12px; font-size:13px; text-decoration:none; }
+  .card-head { display:flex; align-items:center; gap:8px; padding:14px 16px 10px; flex-wrap:nowrap; }
+  .card-head h2 { font-size:16px; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1 1 auto; min-width:0; }
+  .card-head .meta { color:#8a97a5; font-size:12px; white-space:nowrap; flex:0 0 auto; }
+  .card-head .open { flex:0 0 auto; white-space:nowrap; background:#1b232c; color:#fff; border-radius:6px; padding:6px 12px; font-size:13px; text-decoration:none; }
+  @media (max-width:560px) { .card-head .meta { display:none; } }
   .card-head .open:hover { background:#26313c; }
   canvas { display:block; max-width:100%; background:#f2f4f6; }
   .note { padding:10px 16px 14px; color:#8a97a5; font-size:12px; line-height:1.6; }
@@ -28,27 +29,27 @@
 <body>
 <main class="wrap">
   <h1>示例存档</h1>
-  <p class="sub">编辑器默认加载合成示例；下面的深圳线网为作者提供的作品，仅在此页展示，不会作为默认数据。</p>
+  <p class="sub">默认加载合成示例；深圳线网单独展示。</p>
 
   <section class="card" id="szCard">
     <div class="card-head">
-      <h2>深圳地铁线网（作者提供）</h2>
+      <h2>深圳地铁线网</h2>
       <span class="meta" id="szMeta">加载中…</span>
-      <a class="open" id="szOpen" href="editor.html">在编辑器中打开</a>
+      <a class="open" id="szOpen" href="editor.html">打开</a>
     </div>
     <canvas id="szCv" width="1180" height="680"></canvas>
-    <div class="note">这份存档是作者的深圳线网作品，保留在 <code>editor/samples/</code> 下，不参与默认示例，也不会被编辑器自动覆盖。</div>
+    <div class="note">作者提供的作品，存放在 <code>editor/samples/</code>，不作为默认示例。</div>
     <div class="btns"><a id="szJson" href="editor/samples/shenzhen-metro-user.save.json" download>下载存档 JSON</a></div>
   </section>
 
   <section class="card">
     <div class="card-head">
-      <h2>合成示例（默认）</h2>
-      <span class="meta">16 点 / 3 线</span>
-      <a class="open" href="editor.html">在编辑器中打开</a>
+      <h2>合成示例</h2>
+      <span class="meta">16 站 · 3 线</span>
+      <a class="open" href="editor.html">打开</a>
     </div>
     <canvas id="demoCv" width="1180" height="420"></canvas>
-    <div class="note">3 条线、16 个站、1 个换乘站，用于演示画线/拖点/换乘胶囊，不含任何真实线网数据。</div>
+    <div class="note">3 条线、16 站、1 个换乘站，演示用。</div>
   </section>
 </main>
 <script src="navbar.js"></script>
