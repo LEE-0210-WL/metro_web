@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>示例存档 · 线路绘制器</title>
+<link rel="stylesheet" href="theme.css">
 <style>
   :root { --ink:#16202b; --line:#dde3ea; --brand:#c8102e; }
   * { box-sizing: border-box; }
-  body { margin:0; font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif; color:var(--ink); background:#eef1f4; }
-  .top { height:52px; display:flex; align-items:center; gap:14px; padding:0 20px; background:#101418; color:#fff; }
-  .top a { color:#cfd6de; text-decoration:none; font-size:14px; }
-  .top a:hover { color:#fff; }
+  body { margin:0; font-family:var(--font,"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif); color:var(--ink); background:#eef1f4; }
   .wrap { max-width:1180px; margin:0 auto; padding:22px 18px 40px; }
   h1 { font-size:22px; margin:8px 0 6px; }
   .sub { color:#7a8794; font-size:13px; margin-bottom:18px; }
@@ -28,7 +26,6 @@
 </style>
 </head>
 <body>
-<header class="top"><a href="editor.html">← 返回编辑器</a><strong>示例存档</strong><span style="color:#9fb0c0;font-size:12px">默认示例是合成数据；深圳线网为作者提供，单独展示</span></header>
 <main class="wrap">
   <h1>示例存档</h1>
   <p class="sub">编辑器默认加载合成示例；下面的深圳线网为作者提供的作品，仅在此页展示，不会作为默认数据。</p>
@@ -54,6 +51,7 @@
     <div class="note">3 条线、16 个站、1 个换乘站，用于演示画线/拖点/换乘胶囊，不含任何真实线网数据。</div>
   </section>
 </main>
+<script src="navbar.js"></script>
 <script type="module">
 import { buildModel } from './editor/save.js';
 import { buildRenderModel, render } from './editor/render.js';
