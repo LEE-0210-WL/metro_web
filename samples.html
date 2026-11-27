@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>示例存档 · 线路绘制器</title>
+<style>
+  :root { --ink:#16202b; --line:#dde3ea; --brand:#c8102e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif; color:var(--ink); background:#eef1f4; }
+  .top { height:52px; display:flex; align-items:center; gap:14px; padding:0 20px; background:#101418; color:#fff; }
+  .top a { color:#cfd6de; text-decoration:none; font-size:14px; }
+  .top a:hover { color:#fff; }
+  .wrap { max-width:1180px; margin:0 auto; padding:22px 18px 40px; }
+  h1 { font-size:22px; margin:8px 0 6px; }
+  .sub { color:#7a8794; font-size:13px; margin-bottom:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-bottom:20px; }
+  .card-head { display:flex; align-items:baseline; gap:10px; padding:14px 16px 10px; }
+  .card-head h2 { font-size:16px; margin:0; }
+  .card-head .meta { color:#8a97a5; font-size:12px; }
+  .card-head .open { margin-left:auto; background:#1b232c; color:#fff; border-radius:6px; padding:6px 12px; font-size:13px; text-decoration:none; }
+  .card-head .open:hover { background:#26313c; }
+  canvas { display:block; width:100%; height:auto; background:#f2f4f6; }
+  .note { padding:10px 16px 14px; color:#8a97a5; font-size:12px; line-height:1.6; }
+  .btns { padding:0 16px 14px; }
+  .btns a { display:inline-block; border:1px solid var(--line); border-radius:6px; padding:6px 12px; color:#16202b; text-decoration:none; font-size:13px; margin-right:8px; }
+  .btns a:hover { border-color:var(--brand); color:var(--brand); }
+</style>
+</head>
+<body>
+<header class="top"><a href="editor.html">← 返回编辑器</a><strong>示例存档</strong><span style="color:#9fb0c0;font-size:12px">默认示例是合成数据；深圳线网为作者提供，单独展示</span></header>
+<main class="wrap">
+  <h1>示例存档</h1>
+  <p class="sub">编辑器默认加载合成示例；下面的深圳线网为作者提供的作品，仅在此页展示，不会作为默认数据。</p>
+
+  <section class="card" id="szCard">
+    <div class="card-head">
+      <h2>深圳地铁线网（作者提供）</h2>
+      <span class="meta" id="szMeta">加载中…</span>
+      <a class="open" id="szOpen" href="editor.html">在编辑器中打开</a>
+    </div>
+    <canvas id="szCv" width="1180" height="680"></canvas>
+    <div class="note">这份存档是作者的深圳线网作品，保留在 <code>editor/samples/</code> 下，不参与默认示例，也不会被编辑器自动覆盖。</div>
+    <div class="btns"><a id="szJson" href="editor/samples/shenzhen-metro-user.save.json" download>下载存档 JSON</a></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>合成示例（默认）</h2>
+      <span class="meta">16 点 / 3 线</span>
+      <a class="open" href="editor.html">在编辑器中打开</a>
+    </div>
+    <canvas id="demoCv" width="1180" height="420"></canvas>
+    <div class="note">3 条线、16 个站、1 个换乘站，用于演示画线/拖点/换乘胶囊，不含任何真实线网数据。</div>
+  </section>
+</main>
+<script type="module">
+import { buildModel } from './editor/save.js';
+import { buildRenderModel, render } from './editor/render.js';
+import { fitView } from './editor/view.js';
+import { bboxOf } from './editor/geometry.js';
+
+async function preview(src, cv, metaEl, openEl) {
+  const raw = await (await fetch(src, { cache: 'no-store' })).json();
+  const model = buildModel(raw);
+  const rm = buildRenderModel(model);
+  const ctx = cv.getContext('2d');
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cssW = cv.clientWidth || 1180;
+  const cssH = Math.round(cssW * cv.height / cv.width);
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+  cv.style.height = cssH + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const bbox = bboxOf(model.points.map(p => ({ x: p.pos[0], y: p.pos[1] })));
+  const view = fitView(bbox, cv.width / dpr, cv.height / dpr, 40);
+  render(ctx, model, rm, view, { dpr, labels: true, grid: false, bg: '#f2f4f6' });
+  if (metaEl) metaEl.textContent = model.points.length + ' 点 / ' + model.lines.length + ' 线 / ' + rm.transfers.length + ' 换乘';
+  if (openEl) openEl.href = 'editor.html?save=' + encodeURIComponent(src);
+}
+
+preview('editor/samples/shenzhen-metro-user.save.json', document.getElementById('szCv'), document.getElementById('szMeta'), document.getElementById('szOpen')).catch(e => { document.getElementById('szMeta').textContent = '加载失败：' + e.message; });
+preview('editor/sample.save.json', document.getElementById('demoCv')).catch(() => {});
+</script>
+</body>
+</html>

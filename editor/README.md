@@ -43,6 +43,12 @@ node editor/test/geometry.test.cjs   # 25 条线、3302 个采样点，误差 0
 node editor/test/save.test.cjs       # round-trip + 4 个吸附方向
 ```
 
+## 示例与展示
+
+- 默认示例：`sample.save.json`，合成数据（3 线 16 站）。
+- 深圳线网示例：`samples/shenzhen-metro-user.save.json`（作者提供，522 点 / 25 线），仅在 `../samples.html` 展示，不作为默认数据。
+- 打开指定存档：`editor.html?save=editor/samples/shenzhen-metro-user.save.json`（仅接受同源 `editor/` 下的 `.save.json`）。
+
 ## 来源与许可
 
 几何算法（`formalize` / 圆角路径 / 换乘胶囊规则）移植自 AARC

@@ -345,10 +345,23 @@ function download(blob, name) {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 
+function saveFromQuery() {
+  try {
+    const src = new URLSearchParams(location.search).get('save');
+    if (!src || !/^editor\/[A-Za-z0-9_./-]+\.save\.json$/.test(src) || src.includes('..')) return null;
+    return src;
+  } catch { return null; }
+}
+
 async function boot() {
   const saved = ls.get(LS_KEY, null);
   let raw = null;
-  if (saved) { try { raw = JSON.parse(saved); } catch { raw = null; } }
+  const src = saveFromQuery();
+  if (src) {
+    try { raw = await (await fetch(src, { cache: 'no-store' })).json(); }
+    catch (e) { raw = null; }
+  }
+  if (!raw && saved) { try { raw = JSON.parse(saved); } catch { raw = null; } }
   if (!raw) {
     try { raw = await (await fetch('editor/sample.save.json', { cache: 'no-store' })).json(); }
     catch (e) { raw = emptySave(); }
