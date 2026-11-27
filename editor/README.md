@@ -47,7 +47,7 @@ node editor/test/save.test.cjs       # round-trip + 4 个吸附方向
 
 几何算法（`formalize` / 圆角路径 / 换乘胶囊规则）移植自 AARC
 （https://github.com/au114514/aarc ，AGPLv3），本目录相关代码同样按 AGPLv3 分发。
-站点与线路数据来自用户提供的 AARC 存档（`sample.save.json`）。
+`sample.save.json` 是合成的演示数据（3 条线、16 个站、1 个换乘站），不含任何个人线网。
 
 ## 尚未实现（后续里程碑）
 

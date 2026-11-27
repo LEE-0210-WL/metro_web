@@ -33,7 +33,6 @@ const ANIM = 'D:/dsh-working-place/anim/src/real2004.cjs';
   }
   console.log(JSON.stringify({ checked, lines, worst: +worst.toFixed(6), worstLine, transfers: rm.transfers.length }));
   if (worst > 1e-6) { console.log('FAIL worst > 1e-6'); process.exitCode = 1; }
-  const qhw = rm.transfers.find(t => t.name === '前海湾');
-  if (!qhw) { console.log('FAIL missing 前海湾 cluster'); process.exitCode = 1; }
+  if (rm.transfers.length < 1 || !rm.transfers.some(t => t.name)) { console.log('FAIL missing transfer cluster'); process.exitCode = 1; }
   if (process.exitCode !== 1) console.log('OK');
 })();
